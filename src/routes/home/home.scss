@@ -1,0 +1,13 @@
+.home {
+  padding: 0 16px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 32px;
+    p {
+      margin: 0;
+    }
+  }
+}
