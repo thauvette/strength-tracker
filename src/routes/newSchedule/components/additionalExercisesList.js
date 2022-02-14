@@ -4,6 +4,7 @@ import EditableSet from "./editableSet"
 export default function AdditionalExercisesList({
   additionalExercises,
   onEdit,
+  onRemove,
 }) {
   return (
     <div>
@@ -18,13 +19,7 @@ export default function AdditionalExercisesList({
               lift,
             })
           }
-          handleRemove={() =>
-            handleAuxExerciseRemove({
-              week: key,
-              mainLift: name,
-              index,
-            })
-          }
+          handleRemove={() => onRemove(index)}
         />
       ))}
     </div>

@@ -1,5 +1,15 @@
 # wendler
 
+TODO: history + save/edit by set.
+TODO: move storage to indexedDB?
+TODO: backup solution.
+TODO: share function
+TODO: create PRs when marking a day complete
+TODO: get initial values for maxes from PRs
+TODO: clean up preview, the two renders (sort by) are very annoying
+TODO: add additional exercises to db.
+TODO: erase, edit, duplicate workouts
+
 ## CLI Commands
 
 ```bash

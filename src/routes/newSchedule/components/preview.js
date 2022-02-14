@@ -122,18 +122,28 @@ export default function Preview({ preview }) {
       </div>
 
       {viewByLift
-        ? Object.entries(previewByLift).map(([name, weeks]) => {
-            return (
-              <div key={name} class="py-4">
-                <h4>{name}</h4>
-                <div class="divide-y">
-                  {Object.entries(weeks).map(([key, sets]) => (
-                    <div key={key} class="py-2 ">
-                      <Accordion title={`Week ${key}`} openByDefault>
+        ? Object.entries(previewByLift).map(([name, weeks]) => (
+            <div key={name} class="py-4">
+              <h4>{name}</h4>
+              <div class="divide-y">
+                {Object.entries(weeks).map(([key, sets]) => (
+                  <div key={key} class="py-2 ">
+                    <Accordion title={`Week ${key}`} openByDefault>
+                      <div>
+                        <p>{name}</p>
+                        {sets.main.map(set => (
+                          <p key={set.text}>{set.text}</p>
+                        ))}
+                        {!!sets?.aux?.length && (
+                          <div>
+                            <p>Aux: {sets.auxName}</p>
+                            {sets.aux.map((set, i) => (
+                              <p key={set.text + i}>{set.text}</p>
+                            ))}
+                          </div>
+                        )}
                         <div>
-                          {sets.main.map(set => (
-                            <p key={set.text}>{set.text}</p>
-                          ))}
+                          <p>Additional Work</p>
                           {additionalExercises?.[key]?.[name]?.length > 0 && (
                             <AdditionalExercisesList
                               additionalExercises={
@@ -144,6 +154,13 @@ export default function Preview({ preview }) {
                                   week: key,
                                   mainLift: name,
                                   lift,
+                                  index,
+                                })
+                              }
+                              onRemove={index =>
+                                handleAuxExerciseRemove({
+                                  week: key,
+                                  mainLift: name,
                                   index,
                                 })
                               }
@@ -159,13 +176,13 @@ export default function Preview({ preview }) {
                             }
                           />
                         </div>
-                      </Accordion>
-                    </div>
-                  ))}
-                </div>
+                      </div>
+                    </Accordion>
+                  </div>
+                ))}
               </div>
-            )
-          })
+            </div>
+          ))
         : Object.entries(preview).map(([key, week]) => {
             return (
               <div key={key} class="">
@@ -177,7 +194,7 @@ export default function Preview({ preview }) {
                         <div key={name}>
                           <Accordion title={`${name} day`} openByDefault>
                             <div>
-                              {name}
+                              <p>{name}</p>
                               {sets.main.map(set => (
                                 <p key={set.text}>{set.text}</p>
                               ))}
@@ -196,6 +213,13 @@ export default function Preview({ preview }) {
                                       week: key,
                                       mainLift: name,
                                       lift,
+                                      index,
+                                    })
+                                  }
+                                  onRemove={index =>
+                                    handleAuxExerciseRemove({
+                                      week: key,
+                                      mainLift: name,
                                       index,
                                     })
                                   }

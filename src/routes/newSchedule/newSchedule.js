@@ -12,10 +12,6 @@ const exercises = {
   ohp: 110,
 }
 
-// TODO: sort by lift preview doesn't show aux.
-// TODO: move storage to indexedDB?
-// TODO: backup solution.
-
 const NewSchedule = () => {
   const [maxes, setMaxes] = useState({ ...exercises })
   const [generatedPreview, setGeneratedPreview] = useState(null)
