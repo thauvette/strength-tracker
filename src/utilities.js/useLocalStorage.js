@@ -14,7 +14,6 @@ export const setItem = (id, item) => {
   if (typeof window === "undefined") {
     return null
   }
-  console.log(item)
   try {
     localStorage.setItem(id, JSON.stringify(item))
   } catch (e) {
