@@ -3,9 +3,10 @@ import { useState } from "preact/hooks"
 import { get, set } from "lodash"
 import Accordion from "../../components/accordion/accordion"
 import { LOCAL_STORAGE_WORKOUT_KEY } from "../../config/constants"
+import { getItemById, setItem } from "../../utilities.js/useLocalStorage"
 
 export default function Workouts({ id }) {
-  const workouts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_WORKOUT_KEY))
+  const workouts = getItemById(LOCAL_STORAGE_WORKOUT_KEY)
   const [workout, setWorkout] = useState(workouts?.[id])
   if (!workout) {
     return <p>Workout not found</p>
@@ -25,7 +26,7 @@ export default function Workouts({ id }) {
 
     // update localStorage
     set(workouts, [id, "weeks", weekKey, mainLift, "isComplete"], !isComplete)
-    localStorage.setItem(LOCAL_STORAGE_WORKOUT_KEY, JSON.stringify(workouts))
+    setItem(LOCAL_STORAGE_WORKOUT_KEY, workouts)
   }
 
   return (

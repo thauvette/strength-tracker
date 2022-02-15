@@ -1,11 +1,12 @@
 import { h } from "preact"
 import { Link } from "preact-router"
 import { LOCAL_STORAGE_WORKOUT_KEY } from "../../config/constants"
+import { getItemById } from "../../utilities.js/useLocalStorage"
 
 import style from "./home.scss"
 
 export default function Home() {
-  const workouts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_WORKOUT_KEY))
+  const workouts = getItemById(LOCAL_STORAGE_WORKOUT_KEY)
 
   return (
     <div class={style.home}>

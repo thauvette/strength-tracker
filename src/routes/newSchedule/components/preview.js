@@ -9,6 +9,7 @@ import { LOCAL_STORAGE_WORKOUT_KEY } from "../../../config/constants"
 
 import AdditionalExerciseForm from "./additionalExerciseForm"
 import AdditionalExercisesList from "./additionalExercisesList"
+import { getItemById, setItem } from "../../../utilities.js/useLocalStorage"
 
 export default function Preview({ preview }) {
   const [viewByLift, setViewByLift] = useState(false)
@@ -43,9 +44,9 @@ export default function Preview({ preview }) {
 
   function saveToWorkouts() {
     const key = Date.now()
-    const localWorkouts = localStorage.getItem(LOCAL_STORAGE_WORKOUT_KEY)
+    const localWorkouts = getItemById(LOCAL_STORAGE_WORKOUT_KEY)
 
-    const currentWorkouts = localWorkouts ? JSON.parse(localWorkouts) : {}
+    const currentWorkouts = localWorkouts || {}
 
     const mainLifts = { ...preview }
 
@@ -64,10 +65,8 @@ export default function Preview({ preview }) {
       description: formData?.description || "",
       weeks: mainLifts,
     }
-    localStorage.setItem(
-      LOCAL_STORAGE_WORKOUT_KEY,
-      JSON.stringify(currentWorkouts)
-    )
+
+    setItem(LOCAL_STORAGE_WORKOUT_KEY, currentWorkouts)
     route("/")
   }
 
