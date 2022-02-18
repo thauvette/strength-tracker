@@ -1,6 +1,7 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
-import { get, set } from "lodash"
+import get from "lodash.get"
+import set from "lodash.set"
 import Accordion from "../../components/accordion/accordion"
 import { LOCAL_STORAGE_WORKOUT_KEY } from "../../config/constants"
 import { getItemById, setItem } from "../../utilities.js/useLocalStorage"

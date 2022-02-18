@@ -1,7 +1,7 @@
 import { h } from "preact"
 import { useState } from "preact/compat"
 import { route } from "preact-router"
-import { set } from "lodash"
+import set from "lodash.set"
 
 import Accordion from "../../../components/accordion/accordion"
 import Modal from "../../../components/modal/Modal"

@@ -29,7 +29,8 @@
     "tailwindcss": "^2.2.8"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2",
     "node-sass": "^5.0.0",
     "preact": "^10.3.2",
     "preact-render-to-string": "^5.1.4",
