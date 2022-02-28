@@ -17,6 +17,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  body.modal-open {
+    overflow: hidden;
+  }
+
   * {
     box-sizing: border-box;
   }

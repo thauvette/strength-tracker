@@ -1,14 +1,21 @@
 import { h } from "preact"
-import { useState } from "preact/hooks"
+import { useState, useEffect } from "preact/hooks"
 import get from "lodash.get"
 import set from "lodash.set"
 import Accordion from "../../components/accordion/accordion"
-import { LOCAL_STORAGE_WORKOUT_KEY } from "../../config/constants"
-import { getItemById, setItem } from "../../utilities.js/useLocalStorage"
+import useDB from "../../context/db"
+
+import EditableSet from "../../components/editableSet/editableSet"
 
 export default function Workouts({ id }) {
-  const workouts = getItemById(LOCAL_STORAGE_WORKOUT_KEY)
-  const [workout, setWorkout] = useState(workouts?.[id])
+  const { getItemById, updateItem } = useDB()
+
+  const [workout, setWorkout] = useState(null)
+
+  useEffect(() => {
+    getItemById(id).then(res => setWorkout(res))
+  }, [getItemById, id])
+
   if (!workout) {
     return <p>Workout not found</p>
   }
@@ -20,14 +27,40 @@ export default function Workouts({ id }) {
       false
     )
 
-    // local version
-    const currentWorkout = { ...workout }
-    set(currentWorkout, ["weeks", weekKey, mainLift, "isComplete"], !isComplete)
-    setWorkout(currentWorkout)
+    updateItem({
+      id,
+      path: ["weeks", weekKey, mainLift, "isComplete"],
+      value: !isComplete,
+    }).then(res => setWorkout(res))
+  }
 
-    // update localStorage
-    set(workouts, [id, "weeks", weekKey, mainLift, "isComplete"], !isComplete)
-    setItem(LOCAL_STORAGE_WORKOUT_KEY, workouts)
+  const updateSet = ({ weekKey, mainLift, mainOrAux, setIndex, setData }) => {
+    updateItem({
+      id,
+      path: ["weeks", weekKey, mainLift, mainOrAux, setIndex],
+      value: setData,
+    }).then(res => setWorkout(res))
+  }
+
+  const toggleSetComplete = ({
+    weekKey,
+    mainLift,
+    mainOrAux,
+    setIndex,
+    completed,
+  }) => {
+    const path = ["weeks", weekKey, mainLift, mainOrAux, setIndex]
+
+    const currentSetData = {
+      ...get(workout, path, {}),
+      completed: completed ? new Date().getTime() : null,
+    }
+    // TODO: add the set to logs. -> not set up yet in indexedBd
+    updateItem({
+      id,
+      path,
+      value: currentSetData,
+    }).then(res => setWorkout(res))
   }
 
   return (
@@ -50,29 +83,110 @@ export default function Workouts({ id }) {
                         <div className="pt-2">
                           <p class="uppercase">Main set: {exercise}</p>
                           {sets?.main?.length > 0 &&
-                            sets.main.map((set, i) => (
-                              <div key={set.text + i}>
-                                <p>{set.text}</p>
-                              </div>
-                            ))}
+                            sets.main.map((set, i) => {
+                              const reps = set.adjusted?.reps || set.reps || 0
+                              const weight =
+                                set.adjusted?.weight || set.rounded || 0
+
+                              const completed = !!set.completed
+                              const adjustedSet = set.adjusted || {}
+
+                              return (
+                                <div key={set.text + i} class="border-b">
+                                  <EditableSet
+                                    onChangeReps={newReps =>
+                                      updateSet({
+                                        weekKey: num,
+                                        mainLift: exercise,
+                                        mainOrAux: "main",
+                                        setIndex: i,
+                                        setData: {
+                                          ...set,
+                                          adjusted: {
+                                            ...adjustedSet,
+                                            reps: newReps,
+                                          },
+                                        },
+                                      })
+                                    }
+                                    onChangeWeight={newWeight =>
+                                      updateSet({
+                                        weekKey: num,
+                                        mainLift: exercise,
+                                        mainOrAux: "main",
+                                        setIndex: i,
+                                        setData: {
+                                          ...set,
+                                          adjusted: {
+                                            ...adjustedSet,
+                                            weight: newWeight,
+                                          },
+                                        },
+                                      })
+                                    }
+                                    reps={+reps}
+                                    weight={+weight}
+                                    isComplete={completed}
+                                    onToggleComplete={checked =>
+                                      toggleSetComplete({
+                                        weekKey: num,
+                                        mainLift: exercise,
+                                        mainOrAux: "main",
+                                        setIndex: i,
+                                        completed: checked,
+                                      })
+                                    }
+                                    title={`${exercise}, set ${i + 1} - ${
+                                      set.text
+                                    }`}
+                                  />
+                                </div>
+                              )
+                            })}
                         </div>
                         <div class="py-4">
                           <p className="uppercase">Aux: {sets.auxName}</p>
                           {sets?.aux?.length > 0 &&
                             sets.aux.map((set, i) => (
-                              <p key={set.text + i}>{set.text}</p>
+                              <div key={set.text + i}>
+                                <EditableSet
+                                  onChangeReps={reps => console.log(reps)}
+                                  onChangeWeight={weight => console.log(weight)}
+                                  reps={set.reps || 0}
+                                  weight={set.rounded ? +set.rounded : 0}
+                                  isComplete={false}
+                                  onToggleComplete={() => {}}
+                                  title={`${sets.auxName}, set ${i + 1} - ${
+                                    set.text
+                                  }`}
+                                />
+                              </div>
                             ))}
                         </div>
                         {!!sets?.additional?.length && (
                           <div>
                             <p className="uppercase">Additional </p>
-                            {sets.additional.map((set, i) => (
-                              <div
-                                key={set.text + i}
-                                class="flex justify-between"
-                              >
-                                <p class="capitalize">{set.exercise}: </p>
-                                <p>{set.text}</p>
+                            {sets.additional.map((group, i) => (
+                              <div key={group.exercise + i} class="">
+                                <p class="capitalize">{group.exercise}: </p>
+                                {!!group?.sets?.length &&
+                                  group.sets.map((set, setIndex) => (
+                                    <div key={setIndex}>
+                                      <EditableSet
+                                        onChangeReps={reps => console.log(reps)}
+                                        onChangeWeight={weight =>
+                                          console.log(weight)
+                                        }
+                                        reps={set.reps || 0}
+                                        weight={set.weight || 0}
+                                        isComplete={false}
+                                        onToggleComplete={() => {}}
+                                        title={`${group.exercise} set ${
+                                          setIndex + 1
+                                        }`}
+                                      />
+                                    </div>
+                                  ))}
                               </div>
                             ))}
                           </div>
@@ -88,8 +202,8 @@ export default function Workouts({ id }) {
                             }
                           >
                             {sets.isComplete
-                              ? "Mark incomplete"
-                              : "Mark complete"}
+                              ? "Mark day incomplete"
+                              : "Mark day complete"}
                           </button>
                         </div>
                       </div>

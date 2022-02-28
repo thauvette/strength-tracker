@@ -1,14 +1,26 @@
 # wendler
 
-TODO: history + save/edit by set.
-TODO: move storage to indexedDB?
+TODO: history + save/edit by set. - use editable sets in workouts
+
 TODO: backup solution.
+
 TODO: share function
+
 TODO: create PRs when marking a day complete
-TODO: get initial values for maxes from PRs
+
+TODO: get initial values for maxes from PRs or previous cycle
+
 TODO: clean up preview, the two renders (sort by) are very annoying
+
 TODO: add additional exercises to db.
-TODO: erase, edit, duplicate workouts
+
+TODO: edit, duplicate workouts
+
+TODO: aux exercise form errors.
+
+TODO: save the estimated maxes used to create cycle.
+
+TODO: remove "+" from last set's reps
 
 ## CLI Commands
 

@@ -5,13 +5,13 @@ import set from "lodash.set"
 
 import Accordion from "../../../components/accordion/accordion"
 import Modal from "../../../components/modal/Modal"
-import { LOCAL_STORAGE_WORKOUT_KEY } from "../../../config/constants"
 
-import AdditionalExerciseForm from "./additionalExerciseForm"
-import AdditionalExercisesList from "./additionalExercisesList"
-import { getItemById, setItem } from "../../../utilities.js/useLocalStorage"
+import AuxExerciseForm from "./auxExerciseForm"
+import useDB from "../../../context/db"
 
-export default function Preview({ preview }) {
+export default function Preview({ preview, maxes }) {
+  const { createCycle } = useDB()
+
   const [viewByLift, setViewByLift] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
@@ -21,8 +21,22 @@ export default function Preview({ preview }) {
   const [additionalExercises, setAdditionalExercises] = useState({})
 
   const [modalIsOpen, setModalIsOpen] = useState(false)
+
+  const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
+  const [auxExerciseFormData, setAuxExerciseFormData] = useState(null)
+
   if (!preview || !Object.keys(preview).length) {
     return null
+  }
+
+  const openAuxExerciseModal = exercise => {
+    setAuxExerciseFormData(exercise)
+    setAuxExerciseModalIsOpen(true)
+  }
+
+  const closeAuxExerciseModal = () => {
+    setAuxExerciseFormData(null)
+    setAuxExerciseModalIsOpen(false)
   }
 
   const previewByLift = Object.entries(preview).reduce((obj, [key, week]) => {
@@ -43,11 +57,6 @@ export default function Preview({ preview }) {
   }
 
   function saveToWorkouts() {
-    const key = Date.now()
-    const localWorkouts = getItemById(LOCAL_STORAGE_WORKOUT_KEY)
-
-    const currentWorkouts = localWorkouts || {}
-
     const mainLifts = { ...preview }
 
     Object.entries(additionalExercises).forEach(([week, lifts]) => {
@@ -60,55 +69,46 @@ export default function Preview({ preview }) {
       })
     })
 
-    currentWorkouts[key] = {
+    createCycle({
       title: formData?.title || "",
       description: formData?.description || "",
       weeks: mainLifts,
-    }
-
-    setItem(LOCAL_STORAGE_WORKOUT_KEY, currentWorkouts)
+      maxes,
+    })
     route("/")
   }
 
-  function handleAdditionalExercise({ exercise, mainLift }) {
-    const currentValues = { ...additionalExercises }
+  function handleAddAuxExercise({ exercise, sets, addToAllWeeks }) {
+    const { week: targetWeek, mainLift: targetLift } = auxExerciseFormData
+    // either all weeks or just one week.
+    const weeksToUpdate = addToAllWeeks ? [1, 2, 3] : [targetWeek]
+    const currentAdditionalWorkSets = { ...additionalExercises }
 
-    let weekIndex = 1
-    while (weekIndex <= 3) {
-      if (!currentValues[weekIndex]) {
-        currentValues[weekIndex] = {}
+    const targetIndex = auxExerciseFormData?.initialValues?.index
+    weeksToUpdate.forEach(weekNum => {
+      if (!currentAdditionalWorkSets[weekNum]) {
+        currentAdditionalWorkSets[weekNum] = {}
       }
-      if (!currentValues[weekIndex][mainLift]) {
-        currentValues[weekIndex][mainLift] = []
+      if (!currentAdditionalWorkSets[weekNum][targetLift]) {
+        currentAdditionalWorkSets[weekNum][targetLift] = []
       }
-      currentValues[weekIndex][mainLift].push(...exercise)
-      weekIndex += 1
-    }
 
-    setAdditionalExercises({ ...currentValues })
-  }
-
-  function handleAuxExerciseEdit({ week, mainLift, index, lift }) {
-    const currentValues = { ...additionalExercises }
-
-    currentValues[week][mainLift][index] = lift
-
-    setAdditionalExercises(currentValues)
-  }
-
-  function handleAuxExerciseRemove({ week, mainLift, index }) {
-    const currentValues = { ...additionalExercises }
-    const currentArray = currentValues[week][mainLift]
-
-    currentArray.splice(index, 1)
-
-    setAdditionalExercises({
-      ...currentValues,
-      [week]: {
-        ...currentValues[week],
-        [mainLift]: currentArray,
-      },
+      if (targetIndex !== undefined) {
+        currentAdditionalWorkSets[weekNum][targetLift][targetIndex] = {
+          exercise,
+          sets,
+        }
+      } else {
+        currentAdditionalWorkSets[weekNum][targetLift].push({
+          exercise,
+          sets,
+        })
+      }
     })
+
+    setAdditionalExercises(currentAdditionalWorkSets)
+    setAuxExerciseFormData(null)
+    setAuxExerciseModalIsOpen(false)
   }
 
   return (
@@ -144,36 +144,34 @@ export default function Preview({ preview }) {
                         <div>
                           <p>Additional Work</p>
                           {additionalExercises?.[key]?.[name]?.length > 0 && (
-                            <AdditionalExercisesList
-                              additionalExercises={
-                                additionalExercises?.[key]?.[name]
-                              }
-                              onEdit={({ lift, index }) =>
-                                handleAuxExerciseEdit({
-                                  week: key,
-                                  mainLift: name,
-                                  lift,
-                                  index,
-                                })
-                              }
-                              onRemove={index =>
-                                handleAuxExerciseRemove({
-                                  week: key,
-                                  mainLift: name,
-                                  index,
-                                })
-                              }
-                            />
+                            <div>
+                              <p>Aux Work: </p>
+                              {additionalExercises?.[key]?.[name]?.map(
+                                (additionalSets, index) => (
+                                  <div key={index} class="flex items-center">
+                                    <p class="m-0">
+                                      {additionalSets.sets?.length} sets of{" "}
+                                      {additionalSets.exercise}
+                                    </p>
+                                    <button
+                                      onClick={() =>
+                                        openAuxExerciseModal({
+                                          week: key,
+                                          mainLift: name,
+                                          initialValues: {
+                                            ...additionalSets,
+                                            index,
+                                          },
+                                        })
+                                      }
+                                    >
+                                      Edit Sets
+                                    </button>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           )}
-                          <AdditionalExerciseForm
-                            onSubmit={exercise =>
-                              handleAdditionalExercise({
-                                exercise,
-                                week: key,
-                                mainLift: name,
-                              })
-                            }
-                          />
                         </div>
                       </div>
                     </Accordion>
@@ -192,7 +190,7 @@ export default function Preview({ preview }) {
                       return (
                         <div key={name}>
                           <Accordion title={`${name} day`} openByDefault>
-                            <div>
+                            <div class="pb-10">
                               <p>{name}</p>
                               {sets.main.map(set => (
                                 <p key={set.text}>{set.text}</p>
@@ -203,37 +201,51 @@ export default function Preview({ preview }) {
                               ))}
                               {additionalExercises?.[key]?.[name]?.length >
                                 0 && (
-                                <AdditionalExercisesList
-                                  additionalExercises={
-                                    additionalExercises?.[key]?.[name]
-                                  }
-                                  onEdit={({ lift, index }) =>
-                                    handleAuxExerciseEdit({
-                                      week: key,
-                                      mainLift: name,
-                                      lift,
-                                      index,
-                                    })
-                                  }
-                                  onRemove={index =>
-                                    handleAuxExerciseRemove({
-                                      week: key,
-                                      mainLift: name,
-                                      index,
-                                    })
-                                  }
-                                />
+                                <div>
+                                  <p>Aux Work: </p>
+                                  {additionalExercises?.[key]?.[name]?.map(
+                                    (additionalSets, index) => (
+                                      <div
+                                        key={index}
+                                        class="flex items-center"
+                                      >
+                                        <p class="m-0">
+                                          {additionalSets.sets?.length} sets of{" "}
+                                          {additionalSets.exercise}
+                                        </p>
+                                        <button
+                                          onClick={() =>
+                                            openAuxExerciseModal({
+                                              week: key,
+                                              mainLift: name,
+                                              initialValues: {
+                                                ...additionalSets,
+                                                index,
+                                              },
+                                            })
+                                          }
+                                        >
+                                          Edit Sets
+                                        </button>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
                               )}
+                              <div class="pt-6">
+                                <button
+                                  class="bg-blue-100"
+                                  onClick={() =>
+                                    openAuxExerciseModal({
+                                      week: key,
+                                      mainLift: name,
+                                    })
+                                  }
+                                >
+                                  Add Aux Sets
+                                </button>
+                              </div>
                             </div>
-                            <AdditionalExerciseForm
-                              onSubmit={exercise =>
-                                handleAdditionalExercise({
-                                  exercise,
-                                  week: key,
-                                  mainLift: name,
-                                })
-                              }
-                            />
                           </Accordion>
                         </div>
                       )
@@ -248,6 +260,22 @@ export default function Preview({ preview }) {
           Save
         </button>
       </div>
+
+      <Modal
+        isOpen={auxExerciseModalIsOpen}
+        onRequestClose={() => {
+          closeAuxExerciseModal()
+        }}
+      >
+        <div>
+          <AuxExerciseForm
+            handleSubmit={handleAddAuxExercise}
+            mainLift={auxExerciseFormData?.mainLift}
+            week={auxExerciseFormData?.week}
+            initialValues={auxExerciseFormData?.initialValues || {}}
+          />
+        </div>
+      </Modal>
 
       <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
         <div>

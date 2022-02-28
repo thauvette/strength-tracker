@@ -8,6 +8,8 @@ export default function Accordion({
   title,
   children,
   titleClass = "",
+  toggleButtonOpenText = "Open",
+  toggleButtonClosedText = "Close",
 }) {
   const [isOpen, setIsOpen] = useState(openByDefault)
 
@@ -16,7 +18,7 @@ export default function Accordion({
       <button class="w-full" onClick={() => setIsOpen(!isOpen)}>
         <div class="flex justify-between">
           <p class={titleClass}>{title}</p>
-          <span>{isOpen ? "Close" : "Open"}</span>
+          <span>{isOpen ? toggleButtonClosedText : toggleButtonOpenText}</span>
         </div>
       </button>
       {isOpen && <div>{children}</div>}

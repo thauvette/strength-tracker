@@ -33,7 +33,7 @@ const NewSchedule = () => {
   }
 
   return (
-    <div class={`${style.home} px-4`}>
+    <div class={`${style.home} px-2`}>
       <div>
         <h2 class="mb-2">One Rep Maxes</h2>
         {Object.keys(exercises).map(key => (
@@ -73,7 +73,7 @@ const NewSchedule = () => {
         )}
       </div>
       <hr />
-      <Preview preview={generatedPreview} />
+      <Preview preview={generatedPreview} maxes={maxes} />
     </div>
   )
 }
