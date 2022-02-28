@@ -18,8 +18,6 @@ TODO: edit, duplicate workouts
 
 TODO: aux exercise form errors.
 
-TODO: save the estimated maxes used to create cycle.
-
 TODO: remove "+" from last set's reps
 
 ## CLI Commands

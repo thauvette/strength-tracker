@@ -147,21 +147,66 @@ export default function Workouts({ id }) {
                         <div class="py-4">
                           <p className="uppercase">Aux: {sets.auxName}</p>
                           {sets?.aux?.length > 0 &&
-                            sets.aux.map((set, i) => (
-                              <div key={set.text + i}>
-                                <EditableSet
-                                  onChangeReps={reps => console.log(reps)}
-                                  onChangeWeight={weight => console.log(weight)}
-                                  reps={set.reps || 0}
-                                  weight={set.rounded ? +set.rounded : 0}
-                                  isComplete={false}
-                                  onToggleComplete={() => {}}
-                                  title={`${sets.auxName}, set ${i + 1} - ${
-                                    set.text
-                                  }`}
-                                />
-                              </div>
-                            ))}
+                            sets.aux.map((set, i) => {
+                              const reps = set.adjusted?.reps || set.reps || 0
+                              const weight =
+                                set.adjusted?.weight || set.rounded || 0
+
+                              const completed = !!set.completed
+                              const adjustedSet = set.adjusted || {}
+
+                              return (
+                                <div key={set.text + i}>
+                                  <EditableSet
+                                    onChangeReps={newReps =>
+                                      updateSet({
+                                        weekKey: num,
+                                        mainLift: exercise,
+                                        mainOrAux: "aux",
+                                        setIndex: i,
+                                        setData: {
+                                          ...set,
+                                          adjusted: {
+                                            ...adjustedSet,
+                                            reps: newReps,
+                                          },
+                                        },
+                                      })
+                                    }
+                                    onChangeWeight={newWeight =>
+                                      updateSet({
+                                        weekKey: num,
+                                        mainLift: exercise,
+                                        mainOrAux: "aux",
+                                        setIndex: i,
+                                        setData: {
+                                          ...set,
+                                          adjusted: {
+                                            ...adjustedSet,
+                                            weight: newWeight,
+                                          },
+                                        },
+                                      })
+                                    }
+                                    reps={+reps}
+                                    weight={+weight}
+                                    isComplete={completed}
+                                    onToggleComplete={checked =>
+                                      toggleSetComplete({
+                                        weekKey: num,
+                                        mainLift: exercise,
+                                        mainOrAux: "aux",
+                                        setIndex: i,
+                                        completed: checked,
+                                      })
+                                    }
+                                    title={`${sets.auxName}, set ${i + 1} - ${
+                                      set.text
+                                    }`}
+                                  />
+                                </div>
+                              )
+                            })}
                         </div>
                         {!!sets?.additional?.length && (
                           <div>
