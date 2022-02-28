@@ -29,7 +29,7 @@ export default function generateProgram({ maxes, lessBoring }) {
         obj[objKey][name].main.push({
           weight: target,
           reps: set.reps,
-          text: `${set.reps} @ ${rounded}`,
+          text: `${set.repText || set.reps} @ ${rounded}`,
           rounded,
           exercise: name,
         })

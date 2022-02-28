@@ -18,8 +18,6 @@ TODO: edit, duplicate workouts
 
 TODO: aux exercise form errors.
 
-TODO: remove "+" from last set's reps
-
 ## CLI Commands
 
 ```bash

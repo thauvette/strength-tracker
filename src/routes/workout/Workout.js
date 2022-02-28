@@ -1,7 +1,6 @@
 import { h } from "preact"
 import { useState, useEffect } from "preact/hooks"
 import get from "lodash.get"
-import set from "lodash.set"
 import Accordion from "../../components/accordion/accordion"
 import useDB from "../../context/db"
 
@@ -60,6 +59,29 @@ export default function Workouts({ id }) {
       id,
       path,
       value: currentSetData,
+    }).then(res => setWorkout(res))
+  }
+
+  const updateAdditionalSet = ({
+    weekKey,
+    mainLift,
+    additionalIndex,
+    setIndex,
+    setData,
+  }) => {
+    const path = [
+      "weeks",
+      weekKey,
+      mainLift,
+      "additional",
+      additionalIndex,
+      "sets",
+      setIndex,
+    ]
+    updateItem({
+      id,
+      path,
+      value: setData,
     }).then(res => setWorkout(res))
   }
 
@@ -215,23 +237,62 @@ export default function Workouts({ id }) {
                               <div key={group.exercise + i} class="">
                                 <p class="capitalize">{group.exercise}: </p>
                                 {!!group?.sets?.length &&
-                                  group.sets.map((set, setIndex) => (
-                                    <div key={setIndex}>
-                                      <EditableSet
-                                        onChangeReps={reps => console.log(reps)}
-                                        onChangeWeight={weight =>
-                                          console.log(weight)
-                                        }
-                                        reps={set.reps || 0}
-                                        weight={set.weight || 0}
-                                        isComplete={false}
-                                        onToggleComplete={() => {}}
-                                        title={`${group.exercise} set ${
-                                          setIndex + 1
-                                        }`}
-                                      />
-                                    </div>
-                                  ))}
+                                  group.sets.map((groupSet, setIndex) => {
+                                    const reps = groupSet.reps || 0
+                                    const weight = groupSet.weight || 0
+
+                                    const completed = !!groupSet.completed
+                                    return (
+                                      <div key={setIndex}>
+                                        <EditableSet
+                                          onChangeReps={newReps =>
+                                            updateAdditionalSet({
+                                              weekKey: num,
+                                              mainLift: exercise,
+                                              additionalIndex: i,
+                                              setIndex,
+                                              setData: {
+                                                ...groupSet,
+                                                reps: newReps,
+                                              },
+                                            })
+                                          }
+                                          onChangeWeight={newWeight =>
+                                            updateAdditionalSet({
+                                              weekKey: num,
+                                              mainLift: exercise,
+                                              additionalIndex: i,
+                                              setIndex,
+                                              setData: {
+                                                ...groupSet,
+                                                weight: newWeight,
+                                              },
+                                            })
+                                          }
+                                          reps={reps}
+                                          weight={weight}
+                                          isComplete={completed}
+                                          onToggleComplete={checked =>
+                                            updateAdditionalSet({
+                                              weekKey: num,
+                                              mainLift: exercise,
+                                              additionalIndex: i,
+                                              setIndex,
+                                              setData: {
+                                                ...groupSet,
+                                                completed: checked
+                                                  ? new Date().getTime()
+                                                  : null,
+                                              },
+                                            })
+                                          }
+                                          title={`${group.exercise} set ${
+                                            setIndex + 1
+                                          }`}
+                                        />
+                                      </div>
+                                    )
+                                  })}
                               </div>
                             ))}
                           </div>

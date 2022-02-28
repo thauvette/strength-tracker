@@ -21,8 +21,9 @@ export const weeks = [
       math: 0.9 * 0.75,
     },
     {
-      reps: "5+",
+      reps: 5,
       math: 0.9 * 0.85,
+      repText: "5+",
     },
   ],
   [
@@ -47,8 +48,9 @@ export const weeks = [
       math: 0.9 * 0.8,
     },
     {
-      reps: "3+",
+      reps: 3,
       math: 0.9 * 0.9,
+      repText: "3+",
     },
   ],
   [
@@ -69,7 +71,7 @@ export const weeks = [
       math: 0.9 * 0.75,
     },
     { reps: 3, math: 0.9 * 0.85 },
-    { reps: "1+", math: 0.9 * 0.95 },
+    { reps: 1, repText: "1+", math: 0.9 * 0.95 },
   ],
 ]
 
