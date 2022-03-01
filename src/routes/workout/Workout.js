@@ -106,12 +106,7 @@ export default function Workouts({ id }) {
                           <p class="uppercase">Main set: {exercise}</p>
                           {sets?.main?.length > 0 &&
                             sets.main.map((set, i) => {
-                              const reps = set.adjusted?.reps || set.reps || 0
-                              const weight =
-                                set.adjusted?.weight || set.rounded || 0
-
-                              const completed = !!set.completed
-                              const adjustedSet = set.adjusted || {}
+                              const { reps, weight, completed } = set
 
                               return (
                                 <div key={set.text + i} class="border-b">
@@ -124,10 +119,7 @@ export default function Workouts({ id }) {
                                         setIndex: i,
                                         setData: {
                                           ...set,
-                                          adjusted: {
-                                            ...adjustedSet,
-                                            reps: newReps,
-                                          },
+                                          reps: newReps,
                                         },
                                       })
                                     }
@@ -139,16 +131,13 @@ export default function Workouts({ id }) {
                                         setIndex: i,
                                         setData: {
                                           ...set,
-                                          adjusted: {
-                                            ...adjustedSet,
-                                            weight: newWeight,
-                                          },
+                                          weight: newWeight,
                                         },
                                       })
                                     }
                                     reps={+reps}
                                     weight={+weight}
-                                    isComplete={completed}
+                                    isComplete={!!completed}
                                     onToggleComplete={checked =>
                                       toggleSetComplete({
                                         weekKey: num,
@@ -170,12 +159,7 @@ export default function Workouts({ id }) {
                           <p className="uppercase">Aux: {sets.auxName}</p>
                           {sets?.aux?.length > 0 &&
                             sets.aux.map((set, i) => {
-                              const reps = set.adjusted?.reps || set.reps || 0
-                              const weight =
-                                set.adjusted?.weight || set.rounded || 0
-
-                              const completed = !!set.completed
-                              const adjustedSet = set.adjusted || {}
+                              const { reps, weight, completed } = set
 
                               return (
                                 <div key={set.text + i}>
@@ -188,10 +172,7 @@ export default function Workouts({ id }) {
                                         setIndex: i,
                                         setData: {
                                           ...set,
-                                          adjusted: {
-                                            ...adjustedSet,
-                                            reps: newReps,
-                                          },
+                                          reps: +newReps,
                                         },
                                       })
                                     }
@@ -203,16 +184,13 @@ export default function Workouts({ id }) {
                                         setIndex: i,
                                         setData: {
                                           ...set,
-                                          adjusted: {
-                                            ...adjustedSet,
-                                            weight: newWeight,
-                                          },
+                                          weight: +newWeight,
                                         },
                                       })
                                     }
                                     reps={+reps}
                                     weight={+weight}
-                                    isComplete={completed}
+                                    isComplete={!!completed}
                                     onToggleComplete={checked =>
                                       toggleSetComplete({
                                         weekKey: num,

@@ -25,26 +25,34 @@ export default function generateProgram({ maxes, lessBoring }) {
 
       week.forEach(set => {
         const target = weight * set.math
-        const rounded = target.toFixed(0)
+        const rounded = +target.toFixed(0)
         obj[objKey][name].main.push({
-          weight: target,
-          reps: set.reps,
-          text: `${set.repText || set.reps} @ ${rounded}`,
-          rounded,
+          planned: {
+            weight: target,
+            reps: set.reps,
+          },
           exercise: name,
+          reps: set.reps,
+          weight: rounded,
+          text: `${set.repText || set.reps} @ ${rounded}`,
+          completed: null,
         })
       })
       const auxWeight = maxes[auxPairs[name]]
       let j = 0
       while (j < 5) {
         const target = auxWeight * [firstSetLastWeeksMath[index]]
-        const rounded = target.toFixed(0)
+        const rounded = +target.toFixed(0)
         obj[objKey][name].aux.push({
-          weight: target,
-          reps: 5,
-          text: `5 @ ${rounded}`,
-          rounded,
+          planned: {
+            weight: target,
+            reps: 5,
+          },
           exercise: auxPairs[name],
+          reps: 5,
+          weight: rounded,
+          text: `5 @ ${rounded}`,
+          completed: null,
         })
         j++
       }
