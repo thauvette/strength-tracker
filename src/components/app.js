@@ -5,22 +5,24 @@ import Header from "./header/Header"
 // Code-splitting is automated for `routes` directory
 import NewSchedule from "../routes/newSchedule/newSchedule"
 import Home from "../routes/home/Home"
-import Workout from "../routes/workout/Workout"
+import Wendler from "../routes/wendler/Wendler"
 import useDB, { DBProvider } from "../context/db"
 
-import style from "./app.scss"
+import Workout from "../routes/workouts/Workout"
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
+
   return (
     <div id="app">
       <Header />
       {isInitialized ? (
-        <div class={style.content}>
+        <div class="pt-4 max-w-lg m-auto">
           <Router>
             <Home path="/" />
             <NewSchedule path="/new-wendler" />
-            <Workout path="/workout/:id" />
+            <Wendler path="/wendler/:id" />
+            <Workout path="/wendler/:id/:week/:mainLift" />
           </Router>
         </div>
       ) : (

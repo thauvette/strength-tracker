@@ -1,9 +1,5 @@
 .header {
-  @apply bg-primary-600;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
+  @apply bg-primary-600 max-w-lg m-auto;
   height: 56px;
   padding: 0;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);

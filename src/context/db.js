@@ -1,12 +1,15 @@
 import { useEffect, useState, createContext, useContext } from "preact/compat"
 import set from "lodash.set"
-import { LOCAL_STORAGE_WORKOUT_KEY } from "../config/constants"
 const DBContext = createContext()
 
 const DB_VERSION = 1
 const DB_NAME = "track_strength"
 
-const objectStores = ["wendler_cycles", "exercises"]
+export const objectStores = {
+  wendlerCycles: "wendler_cycles",
+  exercises: "exercises",
+  sets: "sets",
+}
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState(null)
@@ -32,8 +35,10 @@ export const DBProvider = ({ children }) => {
       if (e.oldVersion < 1) {
         // this is the first time this db has been initialized
         // it's safe to initialize all object stores
-        db.createObjectStore("cycles", { autoIncrement: true })
-        const exerciseStore = db.createObjectStore("exercises", {
+        db.createObjectStore(objectStores.wendlerCycles, {
+          autoIncrement: true,
+        })
+        const exerciseStore = db.createObjectStore(objectStores.exercises, {
           autoIncrement: true,
         })
         exerciseStore.createIndex("name", "name", { unique: true })
@@ -42,8 +47,8 @@ export const DBProvider = ({ children }) => {
         })
         exerciseStore.transaction.oncomplete = () => {
           const transaction = db
-            .transaction("exercises", "readwrite")
-            .objectStore("exercises")
+            .transaction(objectStores.exercises, "readwrite")
+            .objectStore(objectStores.exercises)
           transaction.add({ name: "deadlift", primaryGroup: "back" })
           transaction.add({ name: "barbell back squat", primaryGroup: "quads" })
           transaction.add({
@@ -55,14 +60,19 @@ export const DBProvider = ({ children }) => {
             primaryGroup: "chest",
           })
         }
+
+        const setsStore = db.createObjectStore(objectStores.sets, {
+          autoIncrement: true,
+        })
+        setsStore.createIndex("exercise", "exercise", { unique: false })
       }
     }
   }, [])
 
-  const getFromCursor = () =>
+  const getFromCursor = store =>
     new Promise((resolve, reject) => {
-      const transaction = db.transaction("cycles")
-      const objectStore = transaction.objectStore("cycles")
+      const transaction = db.transaction(store)
+      const objectStore = transaction.objectStore(store)
 
       const results = {}
 
@@ -78,11 +88,13 @@ export const DBProvider = ({ children }) => {
       transaction.onerror = err => reject(new Error(err?.message || "oops"))
     })
 
-  const getAllEntries = async () => (db ? await getFromCursor() : null)
+  const getAllEntries = async store => (db ? await getFromCursor(store) : null)
 
   const getItemById = id =>
     new Promise((resolve, reject) => {
-      const objectStore = db.transaction(["cycles"]).objectStore("cycles")
+      const objectStore = db
+        .transaction([objectStores.wendlerCycles])
+        .objectStore(objectStores.wendlerCycles)
       const request = objectStore.get(+id)
       request.onerror = function (err) {
         console.log("Err", err)
@@ -95,8 +107,8 @@ export const DBProvider = ({ children }) => {
     new Promise((resolve, reject) => {
       // get the current item.
       const objectStore = db
-        .transaction(["cycles"], "readwrite")
-        .objectStore("cycles")
+        .transaction([objectStores.wendlerCycles], "readwrite")
+        .objectStore(objectStores.wendlerCycles)
       const request = objectStore.get(+id)
 
       request.onerror = err => reject(err?.message || "unable to find data")
@@ -125,7 +137,10 @@ export const DBProvider = ({ children }) => {
     if (!db) {
       return
     }
-    const transaction = db.transaction(["cycles"], "readwrite")
+    const transaction = db.transaction(
+      [objectStores.wendlerCycles],
+      "readwrite"
+    )
     transaction.oncomplete = function () {}
 
     transaction.onerror = function (event) {
@@ -133,22 +148,22 @@ export const DBProvider = ({ children }) => {
       console.log(event, "oops")
     }
 
-    const objectStore = transaction.objectStore("cycles")
-    objectStore.add(data)
+    const objectStore = transaction.objectStore(objectStores.wendlerCycles)
+    objectStore.add({ ...data, created: new Date().getTime() })
   }
 
-  const deleteEntry = id =>
+  const deleteEntry = (store, id) =>
     new Promise((resolve, reject) => {
       const request = db
-        .transaction(["cycles"], "readwrite")
-        .objectStore("cycles")
+        .transaction([store], "readwrite")
+        .objectStore(store)
         .delete(+id)
       request.onsuccess = async function () {
         try {
-          const remainingData = await getFromCursor()
+          const remainingData = await getFromCursor(store)
           resolve(remainingData)
         } catch (e) {
-          reject(new Error("something went wrong? "))
+          reject(new Error(e?.message || "something went wrong? "))
         }
       }
     })

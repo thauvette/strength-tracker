@@ -20,6 +20,10 @@ TODO: aux exercise form errors.
 
 TODO: delete aux when making new cycle
 
+TODO: allow free form sets at the end of wendler workout
+
+TODO: in wendler view, mark week complete if all days are complete
+
 ## CLI Commands
 
 ```bash
