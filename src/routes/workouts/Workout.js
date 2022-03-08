@@ -113,7 +113,7 @@ export default function Workout({ id, week, mainLift }) {
                   },
                 })
               }}
-              title={`${completed ? "✔️" : ""} set ${i + 1}`}
+              title={`${completed ? "✔️" : ""} Set ${i + 1}`}
             />
             <div class="flex py-4 px-2">
               <button
@@ -141,7 +141,7 @@ export default function Workout({ id, week, mainLift }) {
               setActiveSet(i)
             }}
           >
-            <p>
+            <p class="capitalize">
               {completed && "✔️"}
               {title} Set {i + 1}
             </p>
@@ -167,7 +167,7 @@ export default function Workout({ id, week, mainLift }) {
               i,
               exerciseKey: "main",
               isActiveGroup: activeLiftGroup === 0,
-              title: mainLift,
+              title: workout?.exercise,
               groupIndex: 0,
             })
           )}

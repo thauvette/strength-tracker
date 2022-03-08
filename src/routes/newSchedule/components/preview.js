@@ -9,7 +9,7 @@ import Modal from "../../../components/modal/Modal"
 import AuxExerciseForm from "./auxExerciseForm"
 import useDB from "../../../context/db"
 
-export default function Preview({ preview, maxes }) {
+export default function Preview({ preview, exercises }) {
   const { createCycle } = useDB()
 
   const [viewByLift, setViewByLift] = useState(false)
@@ -19,9 +19,7 @@ export default function Preview({ preview, maxes }) {
   })
 
   const [additionalExercises, setAdditionalExercises] = useState({})
-
   const [modalIsOpen, setModalIsOpen] = useState(false)
-
   const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
   const [auxExerciseFormData, setAuxExerciseFormData] = useState(null)
 
@@ -40,11 +38,11 @@ export default function Preview({ preview, maxes }) {
   }
 
   const previewByLift = Object.entries(preview).reduce((obj, [key, week]) => {
-    Object.entries(week).forEach(([name, data]) => {
-      if (!obj[name]) {
-        obj[name] = {}
+    Object.values(week).forEach(data => {
+      if (!obj[data.exercise]) {
+        obj[data.exercise] = {}
       }
-      obj[name][key] = data
+      obj[data.exercise][key] = data
     })
     return obj
   }, {})
@@ -73,7 +71,7 @@ export default function Preview({ preview, maxes }) {
       title: formData?.title || "",
       description: formData?.description || "",
       weeks: mainLifts,
-      maxes,
+      exerciseFormValues: exercises,
     })
     route("/")
   }
@@ -121,15 +119,15 @@ export default function Preview({ preview, maxes }) {
       </div>
 
       {viewByLift
-        ? Object.entries(previewByLift).map(([name, weeks]) => (
-            <div key={name} class="py-4">
-              <h4>{name}</h4>
+        ? Object.entries(previewByLift).map(([id, weeks]) => (
+            <div key={id} class="py-4">
+              <h4>{id}</h4>
               <div class="divide-y">
                 {Object.entries(weeks).map(([key, sets]) => (
                   <div key={key} class="py-2 ">
                     <Accordion title={`Week ${key}`} openByDefault>
                       <div>
-                        <p>{name}</p>
+                        <p>{id}</p>
                         {sets.main.map(set => (
                           <p key={set.text}>{set.text}</p>
                         ))}
@@ -189,9 +187,12 @@ export default function Preview({ preview, maxes }) {
                     {Object.entries(week).map(([name, sets]) => {
                       return (
                         <div key={name}>
-                          <Accordion title={`${name} day`} openByDefault>
+                          <Accordion
+                            title={`${sets.exercise} day`}
+                            openByDefault
+                          >
                             <div class="pb-10">
-                              <p>{name}</p>
+                              <p>{sets.exercise}</p>
                               {sets.main.map(set => (
                                 <p key={set.text}>{set.text}</p>
                               ))}

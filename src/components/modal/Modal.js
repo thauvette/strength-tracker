@@ -55,10 +55,10 @@ export default function Modal({ isOpen, children, onRequestClose }) {
     >
       <div class="h-full relative">
         <div
-          class="modal-content bg-white w-full px-2 py-4 absolute top-1/2 overflow-scroll"
+          class="modal-content bg-white w-full px-2 py-4 absolute top-1/2 left-1/2 overflow-scroll max-w-lg"
           ref={contentRef}
           style={{
-            transform: "translate(0, -50%)",
+            transform: "translate(-50%, -50%)",
             maxHeight: "calc(100vh - 32px)",
           }}
         >

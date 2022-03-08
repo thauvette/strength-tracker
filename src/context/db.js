@@ -85,7 +85,10 @@ export const DBProvider = ({ children }) => {
       }
       transaction.oncomplete = () => resolve(results)
 
-      transaction.onerror = err => reject(new Error(err?.message || "oops"))
+      transaction.onerror = err => {
+        console.log(err)
+        reject(new Error(err?.message || "oops"))
+      }
     })
 
   const getAllEntries = async store => (db ? await getFromCursor(store) : null)
@@ -101,6 +104,30 @@ export const DBProvider = ({ children }) => {
         reject(err?.message || "unable to find item")
       }
       request.onsuccess = event => resolve(event.target.result)
+    })
+
+  const getItemsByIndex = (storeKey, indexKey, items) =>
+    new Promise((resolve, reject) => {
+      const store = db
+        .transaction([objectStores[storeKey]])
+        .objectStore(objectStores[storeKey])
+
+      const index = store.index(indexKey)
+      const results = []
+      index.openCursor().onsuccess = event => {
+        const cursor = event.target.result
+        if (cursor) {
+          if (items.some(item => item === cursor.key)) {
+            results.push({
+              ...cursor.value,
+              primaryId: cursor.primaryKey,
+            })
+          }
+          cursor.continue()
+        } else {
+          resolve(results)
+        }
+      }
     })
 
   const updateItem = ({ id, path, value }) =>
@@ -173,6 +200,7 @@ export const DBProvider = ({ children }) => {
       value={{
         getItemById,
         getAllEntries,
+        getItemsByIndex,
         createCycle,
         isInitialized: !!db,
         updateItem,

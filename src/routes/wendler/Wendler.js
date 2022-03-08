@@ -46,12 +46,14 @@ export default function Wendler({ id }) {
                 <div key={exercise} className="px-2">
                   <div className="border-b-2">
                     <Accordion
-                      title={`${sets.isComplete ? "✔️ " : ""}${exercise} Day`}
+                      title={`${sets.isComplete ? "✔️ " : ""}${
+                        sets?.exercise
+                      } Day`}
                       titleClass="uppercase font-bold text-lg"
                     >
                       <div className="border-b-1 pl-4">
                         <div className="pt-2">
-                          <p class="uppercase">Main set: {exercise}</p>
+                          <p class="uppercase">Main set: {sets?.exercise}</p>
 
                           {sets?.main?.length > 0 &&
                             sets.main.map((set, i) => {
