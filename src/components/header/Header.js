@@ -5,11 +5,11 @@ import style from "./style.css"
 const Header = () => (
   <header class={style.header}>
     <Link class={style.title} href="/">
-      Wendler
+      Home
     </Link>
     <nav>
-      <Link activeClassName={style.active} href="/new">
-        New
+      <Link activeClassName={style.active} href="/new-wendler">
+        New Wendler Cycle
       </Link>
       {/* <Link activeClassName={style.active} href="/profile">
         Me

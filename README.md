@@ -1,14 +1,32 @@
-# wendler
+# workout app and wendler cycle generator
 
-TODO: history + save/edit by set.
-TODO: move storage to indexedDB?
+This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
+
+TODO: aux exercises need to link to exercise db
+
+TODO: get PRs
+
 TODO: backup solution.
+
 TODO: share function
-TODO: create PRs when marking a day complete
-TODO: get initial values for maxes from PRs
+
+TODO: get initial values for maxes from PRs or previous cycle
+
 TODO: clean up preview, the two renders (sort by) are very annoying
-TODO: add additional exercises to db.
-TODO: erase, edit, duplicate workouts
+
+TODO: duplicate workouts
+
+TODO: aux exercise form errors.
+
+TODO: delete aux when making new cycle
+
+TODO: allow free form sets at the end of wendler workout
+
+TODO: in wendler view, mark week complete if all days are complete
+
+TODO: Free workout.
+
+TODO: connect to watch?
 
 ## CLI Commands
 

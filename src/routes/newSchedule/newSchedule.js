@@ -1,53 +1,105 @@
 import { h } from "preact"
-import { useState } from "preact/compat"
+import { useState, useEffect } from "preact/compat"
 import Preview from "./components/preview"
 
 import style from "./newSchedule.scss"
 import generateProgram from "../../utilities.js/generateProgram"
+import useDB, { objectStores } from "../../context/db"
 
-const exercises = {
-  deadlift: 235,
-  bench: 185,
-  squat: 195,
-  ohp: 110,
-}
+const wendlerCycleExercises = [
+  "deadlift",
+  "barbell bench press",
+  "barbell back squat",
+  "standing overhead press",
+]
 
 const NewSchedule = () => {
-  const [maxes, setMaxes] = useState({ ...exercises })
+  const { getItemsByIndex } = useDB()
+  // TODO: get these from previous workouts
+  const [loading, setLoading] = useState(true)
+  const [formErrors, setFormErrors] = useState({})
+  const [exercises, setExercises] = useState({})
   const [generatedPreview, setGeneratedPreview] = useState(null)
-  const [auxVersion, setAuxVersion] = useState("bbb")
   // needs to be two options. big but boring or less boring.  ✔️
-  // then, first set last, or 5 x 10.
+  // then, TODO: first set last, or 5 x 10.
+  const [auxVersion, setAuxVersion] = useState("bbb")
+
+  useEffect(() => {
+    getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises)
+      .then(res => {
+        const formattedWendlerExercises = wendlerCycleExercises.reduce(
+          (obj, exerciseName) => {
+
+            const matchingDBData = res.find(item => item.name === exerciseName)
+            if (matchingDBData) {
+              return {
+                ...obj,
+                [matchingDBData.primaryId]: matchingDBData,
+              }
+            }
+          },
+          {}
+        )
+        setExercises(formattedWendlerExercises)
+      })
+      .catch(e => console.log(e))
+      .finally(() => setLoading(false))
+  }, [getItemsByIndex])
 
   function handleInput(e) {
-    setMaxes({
-      ...maxes,
-      [e.target.name]: e.target.value,
+    setExercises({
+      ...exercises,
+      [e.target.name]: {
+        ...exercises[e.target.name],
+        weight: +e.target.value || "",
+      },
     })
   }
 
-  function generatePreview() {
+  async function generatePreview() {
+    setFormErrors({})
+    const errors = {}
+
+    Object.values(exercises).forEach(exercise => {
+      if (exercise?.weight === undefined || exercise?.weight < 0) {
+        errors[exercise.primaryId] = "This is field required"
+      }
+    })
+
+    if (Object.keys(errors)?.length) {
+      return setFormErrors(errors)
+    }
+
     setGeneratedPreview(
-      generateProgram({ maxes, lessBoring: auxVersion === "bbslb" })
+      generateProgram({
+        exercises,
+        lessBoring: auxVersion === "bbslb",
+      })
     )
   }
 
-  return (
-    <div class={`${style.home} px-4`}>
+  return loading ? (
+    <div class="text-center pt-4">
+      <p>Loading</p>
+    </div>
+  ) : (
+    <div class={`${style.home} px-2`}>
       <div>
         <h2 class="mb-2">One Rep Maxes</h2>
-        {Object.keys(exercises).map(key => (
+        {Object.entries(exercises).map(([key, info]) => (
           <div key={key} class="pb-4">
             <label class="text-lg" htmlFor={key}>
-              {key}
+              {info.name}
             </label>
             <br />
             <input
               id={key}
               name={key}
-              value={maxes[key]}
+              value={info.weight || ""}
               onInput={handleInput}
+              class="py-3 px-2 text-base"
             />
+            {formErrors?.[key] && <p>{formErrors.[key]}</p>}
           </div>
         ))}
       </div>
@@ -59,6 +111,7 @@ const NewSchedule = () => {
           id="aux-type-select"
           value={auxVersion}
           onInput={e => setAuxVersion(e.target.value)}
+          class="py-3 px-2 text-base"
         >
           <option value="bbb">Big But Boring</option>
           <option value="bbslb">Big But Slightly Less Boring</option>
@@ -73,7 +126,7 @@ const NewSchedule = () => {
         )}
       </div>
       <hr />
-      <Preview preview={generatedPreview} />
+      <Preview preview={generatedPreview} exercises={exercises} />
     </div>
   )
 }

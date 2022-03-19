@@ -4,25 +4,38 @@ import { Router } from "preact-router"
 import Header from "./header/Header"
 // Code-splitting is automated for `routes` directory
 import NewSchedule from "../routes/newSchedule/newSchedule"
-import Profile from "../routes/profile"
 import Home from "../routes/home/Home"
-import Workout from "../routes/workout/Workout"
+import Wendler from "../routes/wendler/Wendler"
+import useDB, { DBProvider } from "../context/db"
 
-import style from "./app.scss"
+import WendlerWorkout from "../routes/wendler/WendlerWorkout"
+
+const DBWrapper = () => {
+  const { isInitialized } = useDB()
+
+  return (
+    <div id="app" class="flex flex-col w-full max-w-lg mx-auto ">
+      <Header />
+      {isInitialized ? (
+        <div class="pt-4 flex-1">
+          <Router>
+            <Home path="/" />
+            <NewSchedule path="/new-wendler" />
+            <Wendler path="/wendler/:id" />
+            <WendlerWorkout path="/wendler/:id/:week/:mainLift" />
+          </Router>
+        </div>
+      ) : (
+        <p>Loading</p>
+      )}
+    </div>
+  )
+}
 
 const App = () => (
-  <div id="app">
-    <Header />
-    <div class={style.content}>
-      <Router>
-        <Home path="/" />
-        <NewSchedule path="/new" />
-        <Workout path="/workout/:id" />
-        <Profile path="/profile/" user="me" />
-        <Profile path="/profile/:user" />
-      </Router>
-    </div>
-  </div>
+  <DBProvider>
+    <DBWrapper />
+  </DBProvider>
 )
 
 export default App
