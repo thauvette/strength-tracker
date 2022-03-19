@@ -8,9 +8,9 @@ import useDB, { objectStores } from "../../context/db"
 
 const wendlerCycleExercises = [
   "deadlift",
+  "barbell bench press",
   "barbell back squat",
   "standing overhead press",
-  "barbell bench press",
 ]
 
 const NewSchedule = () => {
@@ -29,6 +29,7 @@ const NewSchedule = () => {
       .then(res => {
         const formattedWendlerExercises = wendlerCycleExercises.reduce(
           (obj, exerciseName) => {
+
             const matchingDBData = res.find(item => item.name === exerciseName)
             if (matchingDBData) {
               return {

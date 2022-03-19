@@ -1,13 +1,18 @@
 import { h } from "preact"
 import { useState, useEffect } from "preact/hooks"
 import get from "lodash.get"
-import useDB from "../../context/db"
+import useDB, { objectStores } from "../../context/db"
 import EditableSet from "../../components/editableSet/editableSet"
 
 const liftGroups = ["main", "aux", "additional", "free"]
 
-export default function Workout({ id, week, mainLift }) {
-  const { getItemById, updateItem } = useDB()
+export default function WendlerWorkout({ id, week, mainLift }) {
+  const {
+    getItemById,
+    updateWendlerItem,
+    createOrUpdateLoggedSet,
+    deleteLoggedSet,
+  } = useDB()
   const [workout, setWorkout] = useState(null)
   const [activeLiftGroup, setActiveLiftGroup] = useState(0)
   const [activeSet, setActiveSet] = useState(0)
@@ -44,22 +49,44 @@ export default function Workout({ id, week, mainLift }) {
     } else {
       setActiveLiftGroup(activeLiftGroup + 1)
     }
-
     setActiveSet(0)
   }
 
-  const updateSet = ({ exerciseKey, setIndex, setData }) => {
-    updateItem({
+  const updateSet = async ({ exerciseKey, setIndex, setData }) => {
+    let setId
+    if (!setData?.completed && setData?.setId) {
+      try {
+        await deleteLoggedSet(setData?.setId)
+      } catch (err) {
+        console.log(err)
+      }
+    } else {
+      try {
+        const res = await createOrUpdateLoggedSet(setData.setId, {
+          reps: setData.reps,
+          weight: setData.weight,
+          exercise: setData.primaryId,
+        })
+        setId = res?.id
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    const data = { ...setData, setId: setId || null }
+    if (setId) {
+      data.setId = setId
+    }
+    updateWendlerItem({
       id,
       path: ["weeks", week, mainLift, exerciseKey, setIndex],
-      value: setData,
+      value: data,
     }).then(res => {
       setWorkout(get(res, ["weeks", week, mainLift], null))
     })
   }
 
   const updateAdditionalSet = ({ groupIndex, setIndex, setData }) => {
-    updateItem({
+    updateWendlerItem({
       id,
       path: [
         "weeks",
@@ -99,7 +126,7 @@ export default function Workout({ id, week, mainLift }) {
                   setIndex: i,
                   setData: {
                     ...set,
-                    reps: newReps,
+                    reps: +newReps,
                   },
                 })
               }}
@@ -109,7 +136,7 @@ export default function Workout({ id, week, mainLift }) {
                   setIndex: i,
                   setData: {
                     ...set,
-                    weight: newWeight,
+                    weight: +newWeight,
                   },
                 })
               }}
@@ -117,7 +144,22 @@ export default function Workout({ id, week, mainLift }) {
             />
             <div class="flex py-4 px-2">
               <button
-                class="w-full bg-blue-900 text-white text-bold px-4 py-2 ml-2"
+                class="w-1/2 bg-gray-400 text-gray-900"
+                onClick={() => {
+                  updateSet({
+                    exerciseKey,
+                    setIndex: i,
+                    setData: {
+                      ...set,
+                      completed: null,
+                    },
+                  })
+                }}
+              >
+                Undo
+              </button>
+              <button
+                class="w-1/2 bg-blue-900 text-white text-bold px-4 py-2 ml-2"
                 onClick={() => {
                   updateSet({
                     exerciseKey,

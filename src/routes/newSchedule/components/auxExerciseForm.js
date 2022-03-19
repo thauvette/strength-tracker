@@ -1,6 +1,8 @@
 import { h } from "preact"
-import { useState } from "preact/hooks"
+import { useState, useEffect } from "preact/hooks"
 import EditableSet from "../../../components/editableSet/editableSet"
+import ExerciseForm from "../../../components/exerciseForm"
+import useDB, { objectStores } from "../../../context/db"
 
 const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
   const [sets, setSets] = useState(
@@ -9,6 +11,20 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
   const [exercise, setExercise] = useState(initialValues?.exercise || "")
 
   const [addToAllWeeks, setAddToAllWeeks] = useState(true)
+  const [formToShow, setFormToShow] = useState("aux") // aux, new-exercise
+
+  const [exerciseOptions, setExerciseOptions] = useState(null)
+  const { getAllUniqueItemKeysByIndex } = useDB()
+
+  const fetchExerciseOptions = () => {
+    getAllUniqueItemKeysByIndex(objectStores.exercises, "name").then(res => {
+      setExerciseOptions(res)
+    })
+  }
+
+  useEffect(() => {
+    fetchExerciseOptions()
+  }, [])
 
   const handleInput = ({ index, key, value }) => {
     const currentSets = [...sets]
@@ -40,7 +56,7 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
     handleSubmit({ exercise, sets, addToAllWeeks })
   }
 
-  return (
+  return formToShow === "aux" ? (
     <div>
       <p>
         Adding to {mainLift} week {week}
@@ -57,7 +73,24 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
       <p class="text-sm">*each week can be further customized</p>
       <label htmlFor="exercise-name">
         <p>Exercise</p>
-        <input value={exercise} onInput={e => setExercise(e.target.value)} />
+        <select
+          value={exercise}
+          onInput={e => {
+            if (e.target.value === "other") {
+              return setFormToShow("new-exercise")
+            }
+            setExercise(e.target.value)
+          }}
+        >
+          <option value="">Select</option>
+          {exerciseOptions?.length > 0 &&
+            exerciseOptions.map(option => (
+              <option value={option} key={option}>
+                {option}
+              </option>
+            ))}
+          <option value="other">Add New</option>
+        </select>
       </label>
       {sets.map((setValues, index) => {
         return (
@@ -105,6 +138,16 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
         </button>
       </div>
     </div>
+  ) : (
+    <ExerciseForm
+      onSubmit={data => {
+        fetchExerciseOptions()
+        if (data?.name) {
+          setExercise(data?.name)
+        }
+        setFormToShow("aux")
+      }}
+    />
   )
 }
 

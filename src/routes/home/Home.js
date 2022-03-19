@@ -23,9 +23,9 @@ export default function Home() {
   }
 
   return (
-    <div class="pb-3 px-2">
-      {error && <p>{error}</p>}
-      <div class="pt-6">
+    <div class="pb-3 px-2 h-full flex flex-col">
+      <div class="pt-6 flex-1">
+        {error && <p>{error}</p>}
         <div class="flex justify-between">
           <h3>Wendler Cycles</h3>
           <Link href="/new-wendler">Create+</Link>
@@ -51,6 +51,13 @@ export default function Home() {
               </div>
             </div>
           ))}
+      </div>
+      <div>
+        <p class="text-sm italic text-grey-400">
+          Is you've stumbled upon this, it's just a personal project. I'm hoping
+          to add features soon. If you have any request you can open up a
+          feature request on my github.
+        </p>
       </div>
     </div>
   )

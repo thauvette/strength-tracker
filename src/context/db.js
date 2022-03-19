@@ -50,14 +50,14 @@ export const DBProvider = ({ children }) => {
             .transaction(objectStores.exercises, "readwrite")
             .objectStore(objectStores.exercises)
           transaction.add({ name: "deadlift", primaryGroup: "back" })
+          transaction.add({
+            name: "barbell bench press",
+            primaryGroup: "chest",
+          })
           transaction.add({ name: "barbell back squat", primaryGroup: "quads" })
           transaction.add({
             name: "standing overhead press",
             primaryGroup: "shoulders",
-          })
-          transaction.add({
-            name: "barbell bench press",
-            primaryGroup: "chest",
           })
         }
 
@@ -130,7 +130,28 @@ export const DBProvider = ({ children }) => {
       }
     })
 
-  const updateItem = ({ id, path, value }) =>
+  const getAllUniqueItemKeysByIndex = (storeKey, indexKey) =>
+    new Promise((resolve, reject) => {
+      const store = db
+        .transaction([objectStores[storeKey]])
+        .objectStore(objectStores[storeKey])
+
+      const index = store.index(indexKey)
+      const results = []
+      index.openKeyCursor().onsuccess = event => {
+        const cursor = event.target.result
+        if (cursor) {
+          if (!results.some(result => result === cursor?.key)) {
+            results.push(cursor?.key)
+          }
+          cursor.continue()
+        } else {
+          resolve(results)
+        }
+      }
+    })
+
+  const updateWendlerItem = ({ id, path, value }) =>
     new Promise((resolve, reject) => {
       // get the current item.
       const objectStore = db
@@ -160,6 +181,59 @@ export const DBProvider = ({ children }) => {
       }
     })
 
+  const createOrUpdateLoggedSet = (id, data) =>
+    new Promise((resolve, reject) => {
+      const transaction = db.transaction([objectStores.sets], "readwrite")
+
+      const objectStore = transaction.objectStore(objectStores.sets)
+
+      if (!id) {
+        const addRequest = objectStore.add({
+          ...data,
+          created: new Date().getTime(),
+        })
+        addRequest.onerror = e => console.log(e)
+        addRequest.onsuccess = event => {
+          return resolve({
+            ...data,
+            created: new Date().getTime(),
+            id: event?.target?.result,
+          })
+        }
+      } else {
+        const request = objectStore.get(+id)
+        request.onsuccess = () => {
+          if (!request.result) {
+            reject(new Error("unable to find entry"))
+          }
+          const newValue = {
+            ...request.result,
+            ...data,
+            updated: new Date().getTime(),
+          }
+          const requestUpdate = objectStore.put(newValue, +id)
+          requestUpdate.onerror = err =>
+            reject(err?.message || "unable to update entry")
+
+          // Success - the data is updated!
+          requestUpdate.onsuccess = e =>
+            resolve({ ...newValue, id: e?.target?.result })
+        }
+      }
+    })
+
+  const deleteLoggedSet = id =>
+    new Promise((resolve, reject) => {
+      const transaction = db.transaction([objectStores.sets], "readwrite")
+
+      const objectStore = transaction.objectStore(objectStores.sets)
+
+      const deleteRequest = objectStore.delete(id)
+      deleteRequest.onsuccess = () => resolve(true)
+      deleteRequest.onerror = err =>
+        reject(err?.message || "unable to delete item")
+    })
+
   const createCycle = data => {
     if (!db) {
       return
@@ -178,6 +252,24 @@ export const DBProvider = ({ children }) => {
     const objectStore = transaction.objectStore(objectStores.wendlerCycles)
     objectStore.add({ ...data, created: new Date().getTime() })
   }
+
+  const createEntry = (store, data) =>
+    new Promise((resolve, reject) => {
+      const transaction = db.transaction([store], "readwrite")
+
+      const objectStore = transaction.objectStore(store)
+      objectStore.add({ ...data, created: new Date().getTime() })
+      transaction.oncomplete = resolve({
+        ...data,
+        created: new Date().getTime(),
+      })
+
+      transaction.onerror = function (err) {
+        // todo: Don't forget to handle errors!
+        console.log(err, "oops")
+        reject(new Error(err?.message || "unable to create item"))
+      }
+    })
 
   const deleteEntry = (store, id) =>
     new Promise((resolve, reject) => {
@@ -201,10 +293,14 @@ export const DBProvider = ({ children }) => {
         getItemById,
         getAllEntries,
         getItemsByIndex,
+        getAllUniqueItemKeysByIndex,
         createCycle,
         isInitialized: !!db,
-        updateItem,
+        updateWendlerItem,
         deleteEntry,
+        createEntry,
+        createOrUpdateLoggedSet,
+        deleteLoggedSet,
       }}
     >
       {children}

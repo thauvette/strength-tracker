@@ -7,7 +7,7 @@ import Accordion from "../../components/accordion/accordion"
 import useDB from "../../context/db"
 
 export default function Wendler({ id }) {
-  const { getItemById, updateItem } = useDB()
+  const { getItemById, updateWendlerItem } = useDB()
 
   const [workout, setWorkout] = useState(null)
 
@@ -26,7 +26,7 @@ export default function Wendler({ id }) {
       false
     )
 
-    updateItem({
+    updateWendlerItem({
       id,
       path: ["weeks", weekKey, mainLift, "isComplete"],
       value: !isComplete,

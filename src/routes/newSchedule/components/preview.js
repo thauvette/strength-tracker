@@ -117,7 +117,7 @@ export default function Preview({ preview, exercises }) {
           {viewByLift ? "Sort by week" : "Sort by lift"}
         </button>
       </div>
-
+      {/* TODO: needs aux form */}
       {viewByLift
         ? Object.entries(previewByLift).map(([id, weeks]) => (
             <div key={id} class="py-4">

@@ -8,21 +8,21 @@ import Home from "../routes/home/Home"
 import Wendler from "../routes/wendler/Wendler"
 import useDB, { DBProvider } from "../context/db"
 
-import Workout from "../routes/workouts/Workout"
+import WendlerWorkout from "../routes/wendler/WendlerWorkout"
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
 
   return (
-    <div id="app">
+    <div id="app" class="flex flex-col w-full max-w-lg mx-auto ">
       <Header />
       {isInitialized ? (
-        <div class="pt-4 max-w-lg m-auto">
+        <div class="pt-4 flex-1">
           <Router>
             <Home path="/" />
             <NewSchedule path="/new-wendler" />
             <Wendler path="/wendler/:id" />
-            <Workout path="/wendler/:id/:week/:mainLift" />
+            <WendlerWorkout path="/wendler/:id/:week/:mainLift" />
           </Router>
         </div>
       ) : (
