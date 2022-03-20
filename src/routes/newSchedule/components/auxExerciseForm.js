@@ -14,12 +14,10 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
   const [formToShow, setFormToShow] = useState("aux") // aux, new-exercise
 
   const [exerciseOptions, setExerciseOptions] = useState(null)
-  const { getAllUniqueItemKeysByIndex } = useDB()
+  const { getExerciseOptions } = useDB()
 
   const fetchExerciseOptions = () => {
-    getAllUniqueItemKeysByIndex(objectStores.exercises, "name").then(res => {
-      setExerciseOptions(res)
-    })
+    getExerciseOptions().then(res => setExerciseOptions(res))
   }
 
   useEffect(() => {
@@ -53,9 +51,10 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
   }
 
   const save = () => {
-    handleSubmit({ exercise, sets, addToAllWeeks })
-  }
+    const matchingExercise = exerciseOptions?.find(ex => +ex.id === +exercise)
 
+    handleSubmit({ exercise: matchingExercise, sets, addToAllWeeks })
+  }
   return formToShow === "aux" ? (
     <div>
       <p>
@@ -85,8 +84,8 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
           <option value="">Select</option>
           {exerciseOptions?.length > 0 &&
             exerciseOptions.map(option => (
-              <option value={option} key={option}>
-                {option}
+              <option value={option.id} key={option.id}>
+                {option.name}
               </option>
             ))}
           <option value="other">Add New</option>
@@ -142,8 +141,9 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
     <ExerciseForm
       onSubmit={data => {
         fetchExerciseOptions()
-        if (data?.name) {
-          setExercise(data?.name)
+
+        if (data?.id) {
+          setExercise(data?.id)
         }
         setFormToShow("aux")
       }}

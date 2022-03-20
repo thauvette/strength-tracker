@@ -3,7 +3,7 @@ import { useState, useEffect } from "preact/hooks"
 import useDB, { objectStores } from "../context/db"
 
 const ExerciseForm = ({ onSubmit }) => {
-  const { getAllUniqueItemKeysByIndex, createEntry } = useDB()
+  const { getExerciseOptions, createEntry } = useDB()
   const [loading, setLoading] = useState(true)
   const [primaryGroupOptions, setPrimaryGroupOptions] = useState([])
   const [formData, setFormData] = useState({
@@ -14,12 +14,18 @@ const ExerciseForm = ({ onSubmit }) => {
 
   useEffect(() => {
     //   get all the current primaryGroup options.
-    getAllUniqueItemKeysByIndex(objectStores.exercises, "primaryGroup")
+    getExerciseOptions(objectStores.exercises, "primaryGroup")
       .then(res => {
-        setPrimaryGroupOptions(res || [])
+        const uniq = []
+        res?.forEach(item => {
+          if (!uniq.some(val => val === item.primaryGroup)) {
+            uniq.push(item.primaryGroup)
+          }
+        })
+        setPrimaryGroupOptions(uniq)
       })
       .finally(() => setLoading(false))
-  }, [getAllUniqueItemKeysByIndex])
+  }, [getExerciseOptions])
 
   const submit = e => {
     const { name, primaryGroup, altPrimary } = formData
@@ -33,7 +39,7 @@ const ExerciseForm = ({ onSubmit }) => {
     }
 
     createEntry(objectStores.exercises, data)
-      .then(() => {
+      .then(res => {
         if (primaryGroup === "other") {
           setPrimaryGroupOptions(currentOptions => [
             ...currentOptions,
@@ -42,7 +48,7 @@ const ExerciseForm = ({ onSubmit }) => {
         }
         if (onSubmit) {
           e.stopPropagation()
-          onSubmit(data)
+          onSubmit(res)
         } else {
           setFormData({
             name: "",

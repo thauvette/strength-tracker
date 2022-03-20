@@ -130,19 +130,22 @@ export const DBProvider = ({ children }) => {
       }
     })
 
-  const getAllUniqueItemKeysByIndex = (storeKey, indexKey) =>
+  const getExerciseOptions = () =>
     new Promise((resolve, reject) => {
       const store = db
-        .transaction([objectStores[storeKey]])
-        .objectStore(objectStores[storeKey])
-
-      const index = store.index(indexKey)
+        .transaction([objectStores.exercises])
+        .objectStore(objectStores.exercises)
       const results = []
-      index.openKeyCursor().onsuccess = event => {
+
+      store.openCursor().onsuccess = event => {
         const cursor = event.target.result
         if (cursor) {
-          if (!results.some(result => result === cursor?.key)) {
-            results.push(cursor?.key)
+          if (cursor.value?.name) {
+            results.push({
+              id: cursor.primaryKey,
+              name: cursor.value?.name,
+              primaryGroup: cursor.value?.primaryGroup,
+            })
           }
           cursor.continue()
         } else {
@@ -258,11 +261,16 @@ export const DBProvider = ({ children }) => {
       const transaction = db.transaction([store], "readwrite")
 
       const objectStore = transaction.objectStore(store)
-      objectStore.add({ ...data, created: new Date().getTime() })
-      transaction.oncomplete = resolve({
+      const request = objectStore.add({
         ...data,
         created: new Date().getTime(),
       })
+      request.onsuccess = event =>
+        resolve({
+          ...data,
+          id: event.target?.result,
+          created: new Date().getTime(),
+        })
 
       transaction.onerror = function (err) {
         // todo: Don't forget to handle errors!
@@ -293,7 +301,6 @@ export const DBProvider = ({ children }) => {
         getItemById,
         getAllEntries,
         getItemsByIndex,
-        getAllUniqueItemKeysByIndex,
         createCycle,
         isInitialized: !!db,
         updateWendlerItem,
@@ -301,6 +308,7 @@ export const DBProvider = ({ children }) => {
         createEntry,
         createOrUpdateLoggedSet,
         deleteLoggedSet,
+        getExerciseOptions,
       }}
     >
       {children}

@@ -88,7 +88,7 @@ export default function Wendler({ id }) {
                             <p className="uppercase">Additional </p>
                             {sets.additional.map((group, i) => (
                               <div key={group.exercise + i} class="">
-                                <p class="capitalize">{group.exercise}: </p>
+                                <p class="capitalize">{group.exercise?.name}</p>
                                 {!!group?.sets?.length &&
                                   group.sets.map((groupSet, setIndex) => {
                                     const reps = groupSet.reps || 0

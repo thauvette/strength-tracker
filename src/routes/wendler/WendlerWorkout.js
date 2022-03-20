@@ -52,7 +52,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     setActiveSet(0)
   }
 
-  const updateSet = async ({ exerciseKey, setIndex, setData }) => {
+  const updateSetsDB = async setData => {
     let setId
     if (!setData?.completed && setData?.setId) {
       try {
@@ -72,6 +72,11 @@ export default function WendlerWorkout({ id, week, mainLift }) {
         console.log(err)
       }
     }
+    return setId
+  }
+
+  const updateSet = async ({ exerciseKey, setIndex, setData }) => {
+    const setId = await updateSetsDB(setData)
     const data = { ...setData, setId: setId || null }
     if (setId) {
       data.setId = setId
@@ -85,7 +90,13 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     })
   }
 
-  const updateAdditionalSet = ({ groupIndex, setIndex, setData }) => {
+  const updateAdditionalSet = async ({ groupIndex, setIndex, setData }) => {
+    const setId = await updateSetsDB(setData)
+    const data = { ...setData, setId: setId || null }
+    if (setId) {
+      data.setId = setId
+    }
+
     updateWendlerItem({
       id,
       path: [
@@ -97,7 +108,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
         "sets",
         setIndex,
       ],
-      value: setData,
+      value: data,
     }).then(res => {
       setWorkout(get(res, ["weeks", week, mainLift], null))
     })
@@ -240,9 +251,10 @@ export default function WendlerWorkout({ id, week, mainLift }) {
 
             return (
               <div key={groupIndex}>
-                <p>{additionalGroup.exercise}</p>
+                <p>{additionalGroup.exercise?.name}</p>
                 {!!additionalGroup?.sets?.length &&
                   additionalGroup.sets.map((set, setIndex) => {
+                    const primaryId = additionalGroup.exercise?.id
                     const { weight, reps, completed } = set
                     const isActive =
                       isActiveAdditionalGroup && setIndex === activeSet
@@ -261,6 +273,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                               setIndex,
                               setData: {
                                 ...set,
+                                primaryId,
                                 reps: newReps,
                               },
                             })
@@ -271,6 +284,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                               setIndex,
                               setData: {
                                 ...set,
+                                primaryId,
                                 weight: newWeight,
                               },
                             })
@@ -286,6 +300,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                                 setIndex,
                                 setData: {
                                   ...set,
+                                  primaryId,
                                   completed: new Date().getTime(),
                                 },
                               })

@@ -2,9 +2,9 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-TODO: aux exercises need to link to exercise db
+TODO: view exercise history and get PRs
 
-TODO: get PRs
+TODO: unlock publishing on netlify
 
 TODO: backup solution.
 

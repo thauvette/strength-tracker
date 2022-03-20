@@ -149,7 +149,7 @@ export default function Preview({ preview, exercises }) {
                                   <div key={index} class="flex items-center">
                                     <p class="m-0">
                                       {additionalSets.sets?.length} sets of{" "}
-                                      {additionalSets.exercise}
+                                      {additionalSets.exercise?.label}
                                     </p>
                                     <button
                                       onClick={() =>
@@ -212,7 +212,7 @@ export default function Preview({ preview, exercises }) {
                                       >
                                         <p class="m-0">
                                           {additionalSets.sets?.length} sets of{" "}
-                                          {additionalSets.exercise}
+                                          {additionalSets.exercise?.label}
                                         </p>
                                         <button
                                           onClick={() =>
