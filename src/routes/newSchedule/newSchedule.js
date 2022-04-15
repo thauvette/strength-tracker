@@ -22,7 +22,7 @@ const NewSchedule = () => {
   const [generatedPreview, setGeneratedPreview] = useState(null)
   // needs to be two options. big but boring or less boring.  ✔️
   // then, TODO: first set last, or 5 x 10.
-  const [auxVersion, setAuxVersion] = useState("bbb")
+  const [auxVersion, setAuxVersion] = useState("")
 
   useEffect(() => {
     getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises)
@@ -73,7 +73,8 @@ const NewSchedule = () => {
     setGeneratedPreview(
       generateProgram({
         exercises,
-        lessBoring: auxVersion === "bbslb",
+        auxVersion,
+
       })
     )
   }
@@ -113,6 +114,7 @@ const NewSchedule = () => {
           onInput={e => setAuxVersion(e.target.value)}
           class="py-3 px-2 text-base"
         >
+          <option value="">None</option>
           <option value="bbb">Big But Boring</option>
           <option value="bbslb">Big But Slightly Less Boring</option>
         </select>
