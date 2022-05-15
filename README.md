@@ -10,8 +10,6 @@ TODO: backup solution.
 
 TODO: share function
 
-TODO: get initial values for maxes from PRs or previous cycle
-
 TODO: clean up preview, the two renders (sort by) are very annoying
 
 TODO: duplicate workouts

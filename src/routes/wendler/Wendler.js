@@ -34,7 +34,7 @@ export default function Wendler({ id }) {
   }
 
   return (
-    <div class="px-4">
+    <div class="px-2">
       <p>{workout.title}</p>
       <p>{workout.description}</p>
       <hr />
@@ -46,12 +46,10 @@ export default function Wendler({ id }) {
                 <div key={exercise} className="px-2">
                   <div className="border-b-2">
                     <Accordion
-                      title={`${sets.isComplete ? "✔️ " : ""}${
-                        sets?.exercise
-                      } Day`}
-                      titleClass="uppercase font-bold text-lg"
+                      title={`${sets.isComplete ? "✔️ " : ""}${sets?.exercise}`}
+                      titleClass="uppercase font-bold text-sm"
                     >
-                      <div className="border-b-1 pl-4">
+                      <div className="border-b-1 pl-2">
                         <div className="pt-2">
                           <p class="uppercase">Main set: {sets?.exercise}</p>
 
@@ -109,26 +107,30 @@ export default function Wendler({ id }) {
                             ))}
                           </div>
                         )}
-                        <div class="py-4 flex justify-between">
-                          <button
-                            class="uppercase bg-blue-100 px-2 py-3 text-base"
-                            onClick={() =>
-                              toggleDayComplete({
-                                weekKey: num,
-                                mainLift: exercise,
-                              })
-                            }
-                          >
-                            {sets.isComplete
-                              ? "Mark day incomplete"
-                              : "Mark day complete"}
-                          </button>
-                          <Link
-                            class="uppercase bg-yellow-100 px-2 py-3 text-base no-underline"
-                            href={`/wendler/${id}/${num}/${exercise}`}
-                          >
-                            Do workout
-                          </Link>
+                        <div class="py-4 ">
+                          <div class="pb-4 flex">
+                            <Link
+                              class="uppercase bg-yellow-100 px-2 py-3 text-base no-underline w-full text-center"
+                              href={`/wendler/${id}/${num}/${exercise}`}
+                            >
+                              Do workout
+                            </Link>
+                          </div>
+                          <div>
+                            <button
+                              class="uppercase bg-blue-100 px-2 py-3 text-base w-full"
+                              onClick={() =>
+                                toggleDayComplete({
+                                  weekKey: num,
+                                  mainLift: exercise,
+                                })
+                              }
+                            >
+                              {sets.isComplete
+                                ? "Mark day incomplete"
+                                : "Mark day complete"}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </Accordion>

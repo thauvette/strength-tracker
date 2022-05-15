@@ -14,8 +14,7 @@ const wendlerCycleExercises = [
 ]
 
 const NewSchedule = () => {
-  const { getItemsByIndex } = useDB()
-  // TODO: get these from previous workouts
+  const { getItemsByIndex, getAllEntries } = useDB()
   const [loading, setLoading] = useState(true)
   const [formErrors, setFormErrors] = useState({})
   const [exercises, setExercises] = useState({})
@@ -25,12 +24,15 @@ const NewSchedule = () => {
   const [auxVersion, setAuxVersion] = useState("")
 
   useEffect(() => {
-    getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises)
-      .then(res => {
-        const formattedWendlerExercises = wendlerCycleExercises.reduce(
-          (obj, exerciseName) => {
 
-            const matchingDBData = res.find(item => item.name === exerciseName)
+    const promises = [
+      getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises),
+      getAllEntries(objectStores.wendlerCycles)
+    ]
+    Promise.all(promises).then(responses => {
+  const formattedWendlerExercises = wendlerCycleExercises.reduce(
+          (obj, exerciseName) => {
+            const matchingDBData = responses[0].find(item => item.name === exerciseName)
             if (matchingDBData) {
               return {
                 ...obj,
@@ -40,11 +42,23 @@ const NewSchedule = () => {
           },
           {}
         )
-        setExercises(formattedWendlerExercises)
-      })
-      .catch(e => console.log(e))
+        let lastWeights = null
+          if(responses[1] && Object.keys(responses[1])?.length) {
+            lastWeights = Object.values(responses[1]).sort((a,b) => {
+            return a.created > b.created ? -1 : 1
+          })[0]?.exerciseFormValues
+        }
+        if(lastWeights) {
+          setExercises({
+            ...formattedWendlerExercises,
+            ...lastWeights
+          })
+        } else {
+          setExercises(formattedWendlerExercises)
+        }
+    }).catch(e => console.log(e))
       .finally(() => setLoading(false))
-  }, [getItemsByIndex])
+  }, [getItemsByIndex, getAllEntries])
 
   function handleInput(e) {
     setExercises({
