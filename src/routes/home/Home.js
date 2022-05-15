@@ -33,24 +33,26 @@ export default function Home() {
 
         {workouts &&
           Object.keys(workouts)?.length > 0 &&
-          Object.entries(workouts).map(([id, data]) => (
-            <div
-              key={id}
-              className="border-b border-gray-400 flex justify-between align-center py-4"
-            >
-              <Link href={`/wendler/${id}`}>
-                {data?.title} - {data.description}
-              </Link>
-              <div>
-                <button
-                  class="border border-red-900 rounded-full w-8 h-8 p-0 leading-none color-red-900"
-                  onClick={() => handleDelete(id)}
-                >
-                  X
-                </button>
+          Object.entries(workouts)
+            .sort(([aKey, a], [bKey, b]) => (a.created > b.created ? -1 : 1))
+            .map(([id, data]) => (
+              <div
+                key={id}
+                className="border-b border-gray-400 flex justify-between align-center py-4"
+              >
+                <Link href={`/wendler/${id}`}>
+                  {data?.title} - {data.description}
+                </Link>
+                <div>
+                  <button
+                    class="border border-red-900 rounded-full w-8 h-8 p-0 leading-none color-red-900"
+                    onClick={() => handleDelete(id)}
+                  >
+                    X
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
       </div>
       <div>
         <p class="text-sm italic text-grey-400">
