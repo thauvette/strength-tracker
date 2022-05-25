@@ -6,6 +6,7 @@ import Header from "./header/Header"
 import NewSchedule from "../routes/newSchedule/newSchedule"
 import Home from "../routes/home/Home"
 import Wendler from "../routes/wendler/Wendler"
+import Exercise from "../routes/exercise/Exercise"
 import useDB, { DBProvider } from "../context/db"
 
 import WendlerWorkout from "../routes/wendler/WendlerWorkout"
@@ -23,6 +24,7 @@ const DBWrapper = () => {
             <NewSchedule path="/new-wendler" />
             <Wendler path="/wendler/:id" />
             <WendlerWorkout path="/wendler/:id/:week/:mainLift" />
+            <Exercise path="/exercise/:id/:remaining_path*" />
           </Router>
         </div>
       ) : (

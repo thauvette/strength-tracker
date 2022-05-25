@@ -2,7 +2,7 @@ import { useEffect, useState, createContext, useContext } from "preact/compat"
 import set from "lodash.set"
 const DBContext = createContext()
 
-const DB_VERSION = 1
+const DB_VERSION = 2
 const DB_NAME = "track_strength"
 
 export const objectStores = {
@@ -66,6 +66,13 @@ export const DBProvider = ({ children }) => {
         })
         setsStore.createIndex("exercise", "exercise", { unique: false })
       }
+      if (e.oldVersion < 2) {
+        // get setsStore and createIndex
+        const setStore = e.currentTarget.transaction.objectStore(
+          objectStores.sets
+        )
+        setStore.createIndex("created", "created", { unique: false })
+      }
     }
   }, [])
 
@@ -91,8 +98,9 @@ export const DBProvider = ({ children }) => {
       }
     })
 
-  const getAllEntries = async store => (db ? await getFromCursor(store) : null)
+  const getAllEntries = async store => await getFromCursor(store)
 
+  // TODO: rename or rework
   const getItemById = id =>
     new Promise((resolve, reject) => {
       const objectStore = db
@@ -295,6 +303,45 @@ export const DBProvider = ({ children }) => {
       }
     })
 
+  const getExerciseById = id =>
+    new Promise((resolve, reject) => {
+      const store = db
+        .transaction([objectStores.exercises])
+        .objectStore(objectStores.exercises)
+      // const index = store.index("exercise")
+      const keyRange = IDBKeyRange.only(+id)
+
+      const cursorRequest = store.openCursor(keyRange)
+      cursorRequest.onsuccess = event => {
+        resolve(event?.target?.result?.value)
+      }
+    })
+
+  const getExerciseHistoryById = id =>
+    new Promise((resolve, reject) => {
+      getExerciseById(id).then(exerciseResponse => {
+        const store = db
+          .transaction([objectStores.sets])
+          .objectStore(objectStores.sets)
+        const index = store.index("exercise")
+        const keyRange = IDBKeyRange.only(+id)
+
+        const cursorRequest = index.openCursor(keyRange)
+
+        const results = []
+
+        cursorRequest.onsuccess = function (event) {
+          const data = event?.target?.result?.value
+          if (data) {
+            results.push({ ...data, id: event?.target?.result?.primaryKey })
+            event?.target?.result.continue()
+          } else {
+            resolve({ ...exerciseResponse, items: results })
+          }
+        }
+      })
+    })
+
   return (
     <DBContext.Provider
       value={{
@@ -309,6 +356,8 @@ export const DBProvider = ({ children }) => {
         createOrUpdateLoggedSet,
         deleteLoggedSet,
         getExerciseOptions,
+        getExerciseHistoryById,
+        getExerciseById,
       }}
     >
       {children}

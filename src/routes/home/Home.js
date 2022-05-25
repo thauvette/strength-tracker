@@ -56,9 +56,7 @@ export default function Home() {
       </div>
       <div>
         <p class="text-sm italic text-grey-400">
-          Is you've stumbled upon this, it's just a personal project. I'm hoping
-          to add features soon. If you have any request you can open up a
-          feature request on my github.
+          TODO: footer menu, with start workout, calendar view?
         </p>
       </div>
     </div>
