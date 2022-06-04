@@ -4,8 +4,6 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: view exercise history and get PRs
 
-TODO: backup solution.
-
 TODO: when incrementing weight jump to nearest 5 then go up by 5
 
 TODO: icons and styles.

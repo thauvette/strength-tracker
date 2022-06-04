@@ -8,7 +8,7 @@ import NewSchedule from "../routes/newSchedule/newSchedule"
 import Home from "../routes/home/Home"
 import Wendler from "../routes/wendler/Wendler"
 import Exercise from "../routes/exercise/Exercise"
-import Backups from "../routes/backups/Backups"
+import Backups from "../routes/backups/backups"
 
 import useDB, { DBProvider } from "../context/db"
 
