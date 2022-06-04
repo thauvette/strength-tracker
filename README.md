@@ -6,6 +6,8 @@ TODO: view exercise history and get PRs
 
 TODO: backup solution.
 
+TODO: when incrementing weight jump to nearest 5 then go up by 5
+
 TODO: icons and styles.
 
 TODO: in wendler view, mark week complete if all days are complete

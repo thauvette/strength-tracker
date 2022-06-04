@@ -195,7 +195,6 @@ export const DBProvider = ({ children }) => {
   const createOrUpdateLoggedSet = (id, data) =>
     new Promise((resolve, reject) => {
       const transaction = db.transaction([objectStores.sets], "readwrite")
-
       const objectStore = transaction.objectStore(objectStores.sets)
 
       if (!id) {
@@ -342,6 +341,95 @@ export const DBProvider = ({ children }) => {
       })
     })
 
+  async function generateBackupData() {
+    const arr = []
+    const headerItems = ["store", "id"]
+
+    for (const storeName of Array.from(db?.objectStoreNames || []).filter(
+      name => name !== objectStores.wendlerCycles
+    )) {
+      const entries = await getFromCursor(storeName)
+      if (Object.keys(entries || {}).length) {
+        Object.entries(entries).forEach(([id, data]) => {
+          const rowData = [storeName, id]
+          if (Object.keys(data || {}).length) {
+            Object.entries(data).forEach(([key, val]) => {
+              const currentIndex = headerItems.indexOf(key)
+              const position =
+                currentIndex === -1 ? headerItems?.length : currentIndex
+
+              if (currentIndex === -1) {
+                headerItems.push(key)
+              }
+              rowData[position] =
+                typeof val === "string" ? val.replace(",", "__comma__") : val
+            })
+          }
+
+          arr.push(rowData.join())
+        })
+      }
+    }
+    return `${headerItems.join()}\n${arr.join("\n")}`
+  }
+
+  const createBackup = () => {
+    generateBackupData().then(res => {
+      const hiddenElement = document.createElement("a")
+      hiddenElement.href = `data:text/csv;charset=utf-8, ${encodeURI(res)}`
+      hiddenElement.target = "_blank"
+      hiddenElement.download = `backup-${new Date().getTime()}`
+      hiddenElement.click()
+    })
+  }
+
+  const clearStore = store =>
+    new Promise((resolve, reject) => {
+      try {
+        const objectStoreRequest = db
+          .transaction([store], "readwrite")
+          .objectStore(store)
+          .clear()
+
+        objectStoreRequest.onsuccess = () => {
+          return resolve({ success: true })
+        }
+        objectStoreRequest.onerror = () =>
+          reject(`unable to clear data from ${store}`)
+      } catch (err) {
+        console.log(err)
+        return reject(err?.message || `unable to clear data from ${store}`)
+      }
+    })
+
+  const writeItemFromBackup = item =>
+    new Promise((resolve, reject) => {
+      const { store, data, id } = item
+
+      const objectStore = db
+        .transaction([store], "readwrite")
+        .objectStore(store)
+        .put(data, id)
+
+      objectStore.onsuccess = () => resolve(item)
+
+      objectStore.onerror = err => reject(err)
+    })
+
+  const restoreFromBackup = async entries => {
+    // get list of stores to clear.
+    const storeClearPromises = entries.stores.map(store => clearStore(store))
+    const itemPromises = entries.items.map(item => writeItemFromBackup(item))
+
+    const storesResponse = await Promise.all(storeClearPromises)
+    const itemResponses = await Promise.all(itemPromises)
+
+    return {
+      storesResponse,
+      itemResponses,
+    }
+  }
+
   return (
     <DBContext.Provider
       value={{
@@ -358,6 +446,8 @@ export const DBProvider = ({ children }) => {
         getExerciseOptions,
         getExerciseHistoryById,
         getExerciseById,
+        createBackup,
+        restoreFromBackup,
       }}
     >
       {children}

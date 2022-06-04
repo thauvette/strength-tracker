@@ -8,6 +8,7 @@ export default function Home() {
   const { getAllEntries, deleteEntry } = useDB()
   const [workouts, setWorkouts] = useState(null)
   const [error, setError] = useState(null)
+
   useEffect(() => {
     getAllEntries(objectStores.wendlerCycles)
       .then(res => {
