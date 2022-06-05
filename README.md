@@ -4,23 +4,17 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: view exercise history and get PRs
 
-TODO: icons and styles.
+TODO: free workouts + allow free form sets at the end of wendler workout
 
-TODO: in wendler view, mark week complete if all days are complete
+TODO: icons and styles.
 
 TODO: share function
 
 TODO: clean up preview, the two renders (sort by) are very annoying
 
-TODO: duplicate workouts
-
 TODO: aux exercise form errors.
 
 TODO: delete aux when making new cycle
-
-TODO: allow free form sets at the end of wendler workout
-
-TODO: Free workout.
 
 TODO: Super sets
 

@@ -27,7 +27,7 @@ const DBWrapper = () => {
       <Header toggleMenu={toggleMenu} />
       {menuIsOpen && (
         <div class="absolute inset-0 top-14 bg-white">
-          <div>
+          <div class="p-4">
             <Link href="/backups">Backups</Link>
           </div>
         </div>

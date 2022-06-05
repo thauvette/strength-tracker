@@ -39,9 +39,13 @@ export default function Wendler({ id }) {
       <p>{workout.description}</p>
       <hr />
       {Object.entries(workout?.weeks || {}).map(([num, week]) => {
+        const weekIsComplete = Object.values(week).every(day => day.isComplete)
         return (
           <div key={num}>
-            <Accordion title={`Week ${num}`} titleClass="font-bold text-xl">
+            <Accordion
+              title={`${weekIsComplete ? "✔️ " : ""}Week ${num}`}
+              titleClass="font-bold text-xl"
+            >
               {Object.entries(week || {}).map(([exercise, sets]) => (
                 <div key={exercise} className="px-2">
                   <div className="border-b-2">
