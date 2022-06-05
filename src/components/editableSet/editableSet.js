@@ -61,7 +61,8 @@ const EditableSet = ({
           <button
             disabled={weight <= 0}
             onClick={() => {
-              onChangeWeight(+weight > 5 ? +weight - 5 : 0)
+              const remainder = +weight % 5
+              onChangeWeight(+weight > 5 ? +weight - (remainder || 5) : 0)
             }}
           >
             -
@@ -74,7 +75,7 @@ const EditableSet = ({
 
           <button
             onClick={() => {
-              onChangeWeight(+weight + 5)
+              onChangeWeight(+weight + 5 - (+weight % 5))
             }}
           >
             +
