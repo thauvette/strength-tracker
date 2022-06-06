@@ -1,5 +1,6 @@
 import { useEffect, useState, createContext, useContext } from "preact/compat"
 import set from "lodash.set"
+import dayjs from "dayjs"
 const DBContext = createContext()
 
 const DB_VERSION = 2
@@ -341,6 +342,29 @@ export const DBProvider = ({ children }) => {
       })
     })
 
+  const getAllSetsHistory = () =>
+    new Promise((resolve, reject) => {
+      return Promise.all([
+        getFromCursor(objectStores.exercises),
+        getFromCursor(objectStores.sets),
+      ]).then(([exercises, entries]) => {
+        const results = Object.values(entries || {})?.reduce((obj, entry) => {
+          const dateKey = dayjs(entry.created).format("YYYY-MM-DD")
+          const exercise = exercises[entry.exercise]
+          const currentItems = obj[dateKey] || []
+          currentItems.push({
+            ...entry,
+            ...exercise,
+          })
+          return {
+            ...obj,
+            [dateKey]: currentItems,
+          }
+        }, {})
+        resolve(results)
+      })
+    })
+
   async function generateBackupData() {
     const arr = []
     const headerItems = ["store", "id"]
@@ -448,6 +472,7 @@ export const DBProvider = ({ children }) => {
         getExerciseById,
         createBackup,
         restoreFromBackup,
+        getAllSetsHistory,
       }}
     >
       {children}

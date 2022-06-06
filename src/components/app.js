@@ -14,6 +14,7 @@ import useDB, { DBProvider } from "../context/db"
 
 import WendlerWorkout from "../routes/wendler/WendlerWorkout"
 import { useState } from "preact/hooks"
+import Logs from "../routes/logs/logs"
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -30,6 +31,9 @@ const DBWrapper = () => {
           <div class="p-4">
             <Link href="/backups">Backups</Link>
           </div>
+          <div class="p-4">
+            <Link href="/history">History</Link>
+          </div>
         </div>
       )}
       {isInitialized ? (
@@ -41,6 +45,7 @@ const DBWrapper = () => {
             <WendlerWorkout path="/wendler/:id/:week/:mainLift" />
             <Exercise path="/exercise/:id/:remaining_path*" />
             <Backups path="/backups" />
+            <Logs path="/history" />
           </Router>
         </div>
       ) : (

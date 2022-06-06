@@ -6,6 +6,8 @@ TODO: view exercise history and get PRs
 
 TODO: free workouts + allow free form sets at the end of wendler workout
 
+TODO: clean up useDB, that got out of hand 😬
+
 TODO: icons and styles.
 
 TODO: share function
