@@ -5,6 +5,7 @@ import dayjs from "dayjs"
 import useDB from "../../context/db"
 import ExerciseHistory from "./ExerciseHistory"
 import Track from "./Track"
+import { routes } from "../../config/routes"
 
 const Exercise = props => {
   const { id, remaining_path } = props
@@ -60,7 +61,7 @@ const Exercise = props => {
       <h1 class="capitalize mb-2">{exerciseHistory?.name}</h1>
       <div class="flex pb-4">
         <Link
-          href={`/exercise/${id}`}
+          href={`${routes.exerciseBase}/${id}`}
           class={`px-4 py-2 bg-blue-100 text-gray-800 no-underline border-b-4 border-blue-900 ${
             !remaining_path ? "" : "border-opacity-0"
           }`}
@@ -68,7 +69,7 @@ const Exercise = props => {
           Track
         </Link>
         <Link
-          href={`/exercise/${id}/history`}
+          href={`${routes.exerciseBase}/${id}/history`}
           class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
             remaining_path === "history" ? "" : "border-opacity-0"
           }`}
@@ -79,7 +80,7 @@ const Exercise = props => {
 
       <Router>
         <Track
-          path="/exercise/:id"
+          path={`${routes.exerciseBase}/:id`}
           todaysHistory={
             exerciseHistory?.items?.[dayjs().format("YYYY-MM-DD")] || []
           }
@@ -87,7 +88,7 @@ const Exercise = props => {
           onAddSet={getData}
         />
         <ExerciseHistory
-          path="/exercise/:id/history"
+          path={`${routes.exerciseBase}/:id/history`}
           exerciseHistory={exerciseHistory}
         />
       </Router>

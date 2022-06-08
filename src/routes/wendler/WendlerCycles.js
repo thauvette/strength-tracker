@@ -1,10 +1,11 @@
 import { h } from "preact"
-import { Link } from "preact-router"
+import { Link, route } from "preact-router"
 import { useState, useEffect } from "preact/hooks"
+import { routes } from "../../config/routes"
 
 import useDB, { objectStores } from "../../context/db"
 
-export default function Home() {
+export default function WendlerCycles() {
   const { getAllEntries, deleteEntry } = useDB()
   const [workouts, setWorkouts] = useState(null)
   const [error, setError] = useState(null)
@@ -15,7 +16,7 @@ export default function Home() {
         setWorkouts(res)
       })
       .catch(err => {
-        setError(err?.message || "something is borked")
+        setError(err?.message || "something is wrong")
       })
   }, [getAllEntries])
 
@@ -29,7 +30,7 @@ export default function Home() {
         {error && <p>{error}</p>}
         <div class="flex justify-between">
           <h3>Wendler Cycles</h3>
-          <Link href="/new-wendler">Create+</Link>
+          <Link href={routes.wendlerNew}>Create+</Link>
         </div>
 
         {workouts &&
@@ -41,7 +42,7 @@ export default function Home() {
                 key={id}
                 className="border-b border-gray-400 flex justify-between align-center py-4"
               >
-                <Link href={`/wendler/${id}`}>
+                <Link href={`${routes.wendlerBase}/${id}`}>
                   {data?.title} - {data.description}
                 </Link>
                 <div>

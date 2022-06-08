@@ -5,16 +5,19 @@ import { Link } from "preact-router/match"
 import Header from "./header/Header"
 // Code-splitting is automated for `routes` directory
 import NewSchedule from "../routes/newSchedule/newSchedule"
-import Home from "../routes/home/Home"
-import Wendler from "../routes/wendler/Wendler"
+import WendlerCycles from "../routes/wendler/WendlerCycles"
+import WendlerCycle from "../routes/wendler/WendlerCycle"
 import Exercise from "../routes/exercise/Exercise"
 import Backups from "../routes/backups/backups"
+
+import { routes, menuItems } from "../config/routes"
 
 import useDB, { DBProvider } from "../context/db"
 
 import WendlerWorkout from "../routes/wendler/WendlerWorkout"
 import { useState } from "preact/hooks"
 import Logs from "../routes/logs/logs"
+import Wendler from "../routes/wendler/Wendler"
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -28,24 +31,20 @@ const DBWrapper = () => {
       <Header toggleMenu={toggleMenu} />
       {menuIsOpen && (
         <div class="absolute inset-0 top-14 bg-white">
-          <div class="p-4">
-            <Link href="/backups">Backups</Link>
-          </div>
-          <div class="p-4">
-            <Link href="/history">History</Link>
-          </div>
+          {menuItems.map(item => (
+            <div key={item.href} class="p-4">
+              <Link href={item.href}>{item.title}</Link>
+            </div>
+          ))}
         </div>
       )}
       {isInitialized ? (
         <div class="pt-4 flex-1">
           <Router onChange={closeMenu}>
-            <Home path="/" />
-            <NewSchedule path="/new-wendler" />
-            <Wendler path="/wendler/:id" />
-            <WendlerWorkout path="/wendler/:id/:week/:mainLift" />
-            <Exercise path="/exercise/:id/:remaining_path*" />
-            <Backups path="/backups" />
-            <Logs path="/history" />
+            <Wendler path={`${routes.wendlerBase}/:remaining_path*`} />
+            <Exercise path={routes.exercise} />
+            <Backups path={routes.backups} />
+            <Logs path={routes.logs} />
           </Router>
         </div>
       ) : (
