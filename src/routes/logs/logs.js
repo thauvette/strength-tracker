@@ -4,6 +4,8 @@ import { useEffect, useState } from "preact/hooks"
 import useDB from "../../context/db"
 import Modal from "../../components/modal/Modal"
 import Calendar from "../../components/calendar/Calendar"
+import { Link } from "preact-router"
+import { routes } from "../../config/routes"
 
 const Logs = () => {
   const { getAllSetsHistory } = useDB()
@@ -23,7 +25,7 @@ const Logs = () => {
         data: res,
       })
     })
-  }, [])
+  }, []) // eslint-disable-line
 
   if (logState.loading) {
     return (
@@ -39,7 +41,17 @@ const Logs = () => {
       </div>
     )
   }
-  const activeDayData = logState.data?.[activeDate]
+  const activeDayData = logState.data?.[activeDate] || []
+  const sortedDayData = activeDayData.reduce((obj, exercise) => {
+    const key = exercise.name
+
+    const currentExerciseSets = obj[key] || []
+    currentExerciseSets.push(exercise)
+    return {
+      ...obj,
+      [key]: currentExerciseSets,
+    }
+  }, {})
 
   const stepByDate = amount =>
     setActiveDate(dayjs(activeDate).add(amount, "days").format("YYYY-MM-DD"))
@@ -52,7 +64,7 @@ const Logs = () => {
   }
 
   return (
-    <div>
+    <div class="p-2">
       <div className="flex items-center justify-between">
         <button onClick={() => stepByDate(-1)}>{"←"}</button>
         <button class="m-0" onClick={toggleCalendar}>
@@ -60,15 +72,29 @@ const Logs = () => {
         </button>
         <button onClick={() => stepByDate(1)}>{"→"}</button>
       </div>
-      {activeDayData?.length > 0 &&
-        activeDayData.map(item => {
-          return (
-            <p key={item.created}>
-              {item.name}: {item.reps}@{item.weight}
-            </p>
-          )
-        })}
 
+      {Object.entries(sortedDayData).map(([name, sets]) => (
+        <div key={name} class="mb-4 border-4 p-4">
+          <p class="font-bold">{name}</p>
+          {sets.map(set => (
+            <div key={set.created}>
+              <p>
+                {set.reps} @ {set.weight}
+              </p>
+            </div>
+          ))}
+          <div class="flex justify-end">
+            {sets?.[0]?.exercise && (
+              <Link href={`${routes.exerciseBase}/${sets[0].exercise}`}>
+                View
+              </Link>
+            )}
+          </div>
+        </div>
+      ))}
+      {activeDate === dayjs().format("YYYY-MM-DD") && (
+        <Link href={routes.newWorkout}>Add +</Link>
+      )}
       <Modal isOpen={calendarIsOpen} onRequestClose={toggleCalendar}>
         <Calendar
           startDate={activeDate}

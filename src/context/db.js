@@ -77,10 +77,18 @@ export const DBProvider = ({ children }) => {
     }
   }, [])
 
+  const openObjectStoreTransaction = store => {
+    const transaction = db.transaction([store], "readwrite")
+    const objectStore = transaction.objectStore(store)
+    return {
+      transaction,
+      objectStore,
+    }
+  }
+
   const getFromCursor = store =>
     new Promise((resolve, reject) => {
-      const transaction = db.transaction(store)
-      const objectStore = transaction.objectStore(store)
+      const { transaction, objectStore } = openObjectStoreTransaction(store)
 
       const results = {}
 
@@ -104,9 +112,9 @@ export const DBProvider = ({ children }) => {
   // TODO: rename or rework
   const getItemById = id =>
     new Promise((resolve, reject) => {
-      const objectStore = db
-        .transaction([objectStores.wendlerCycles])
-        .objectStore(objectStores.wendlerCycles)
+      const { objectStore } = openObjectStoreTransaction(
+        objectStores.wendlerCycles
+      )
       const request = objectStore.get(+id)
       request.onerror = function (err) {
         console.log("Err", err)
@@ -117,10 +125,9 @@ export const DBProvider = ({ children }) => {
 
   const getItemsByIndex = (storeKey, indexKey, items) =>
     new Promise((resolve, reject) => {
-      const store = db
-        .transaction([objectStores[storeKey]])
-        .objectStore(objectStores[storeKey])
-
+      const { objectStore: store } = openObjectStoreTransaction(
+        objectStores[storeKey]
+      )
       const index = store.index(indexKey)
       const results = []
       index.openCursor().onsuccess = event => {
@@ -141,11 +148,10 @@ export const DBProvider = ({ children }) => {
 
   const getExerciseOptions = () =>
     new Promise((resolve, reject) => {
-      const store = db
-        .transaction([objectStores.exercises])
-        .objectStore(objectStores.exercises)
+      const { objectStore: store } = openObjectStoreTransaction(
+        objectStores.exercises
+      )
       const results = []
-
       store.openCursor().onsuccess = event => {
         const cursor = event.target.result
         if (cursor) {
@@ -166,9 +172,9 @@ export const DBProvider = ({ children }) => {
   const updateWendlerItem = ({ id, path, value }) =>
     new Promise((resolve, reject) => {
       // get the current item.
-      const objectStore = db
-        .transaction([objectStores.wendlerCycles], "readwrite")
-        .objectStore(objectStores.wendlerCycles)
+      const { objectStore } = openObjectStoreTransaction(
+        objectStores.wendlerCycles
+      )
       const request = objectStore.get(+id)
 
       request.onerror = err => reject(err?.message || "unable to find data")
@@ -195,8 +201,7 @@ export const DBProvider = ({ children }) => {
 
   const createOrUpdateLoggedSet = (id, data) =>
     new Promise((resolve, reject) => {
-      const transaction = db.transaction([objectStores.sets], "readwrite")
-      const objectStore = transaction.objectStore(objectStores.sets)
+      const { objectStore } = openObjectStoreTransaction(objectStores.sets)
 
       if (!id) {
         const addRequest = objectStore.add({
@@ -235,40 +240,39 @@ export const DBProvider = ({ children }) => {
 
   const deleteLoggedSet = id =>
     new Promise((resolve, reject) => {
-      const transaction = db.transaction([objectStores.sets], "readwrite")
-
-      const objectStore = transaction.objectStore(objectStores.sets)
-
+      const { objectStore } = openObjectStoreTransaction(objectStores.sets)
       const deleteRequest = objectStore.delete(id)
       deleteRequest.onsuccess = () => resolve(true)
       deleteRequest.onerror = err =>
         reject(err?.message || "unable to delete item")
     })
 
-  const createCycle = data => {
-    if (!db) {
-      return
-    }
-    const transaction = db.transaction(
-      [objectStores.wendlerCycles],
-      "readwrite"
-    )
-    transaction.oncomplete = function () {}
+  const createCycle = data =>
+    new Promise((resolve, reject) => {
+      {
+        if (!db) {
+          return
+        }
+        const { objectStore, transaction } = openObjectStoreTransaction(
+          objectStores.wendlerCycles
+        )
 
-    transaction.onerror = function (event) {
-      // todo: Don't forget to handle errors!
-      console.log(event, "oops")
-    }
+        transaction.oncomplete = function (event) {
+          resolve({ success: true })
+        }
 
-    const objectStore = transaction.objectStore(objectStores.wendlerCycles)
-    objectStore.add({ ...data, created: new Date().getTime() })
-  }
+        transaction.onerror = function (event) {
+          // todo: Don't forget to handle errors!
+          console.log(event, "oops")
+          reject()
+        }
+        objectStore.add({ ...data, created: new Date().getTime() })
+      }
+    })
 
   const createEntry = (store, data) =>
     new Promise((resolve, reject) => {
-      const transaction = db.transaction([store], "readwrite")
-
-      const objectStore = transaction.objectStore(store)
+      const { transaction, objectStore } = openObjectStoreTransaction(store)
       const request = objectStore.add({
         ...data,
         created: new Date().getTime(),
@@ -305,13 +309,10 @@ export const DBProvider = ({ children }) => {
 
   const getExerciseById = id =>
     new Promise((resolve, reject) => {
-      const store = db
-        .transaction([objectStores.exercises])
-        .objectStore(objectStores.exercises)
-      // const index = store.index("exercise")
+      const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
       const keyRange = IDBKeyRange.only(+id)
 
-      const cursorRequest = store.openCursor(keyRange)
+      const cursorRequest = objectStore.openCursor(keyRange)
       cursorRequest.onsuccess = event => {
         resolve(event?.target?.result?.value)
       }
@@ -320,10 +321,8 @@ export const DBProvider = ({ children }) => {
   const getExerciseHistoryById = id =>
     new Promise((resolve, reject) => {
       getExerciseById(id).then(exerciseResponse => {
-        const store = db
-          .transaction([objectStores.sets])
-          .objectStore(objectStores.sets)
-        const index = store.index("exercise")
+        const { objectStore } = openObjectStoreTransaction(objectStores.sets)
+        const index = objectStore.index("exercise")
         const keyRange = IDBKeyRange.only(+id)
 
         const cursorRequest = index.openCursor(keyRange)
@@ -353,8 +352,8 @@ export const DBProvider = ({ children }) => {
           const exercise = exercises[entry.exercise]
           const currentItems = obj[dateKey] || []
           currentItems.push({
-            ...entry,
             ...exercise,
+            ...entry,
           })
           return {
             ...obj,

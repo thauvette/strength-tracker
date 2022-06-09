@@ -2,13 +2,13 @@ import { h } from "preact"
 import { useState, useEffect } from "preact/hooks"
 import EditableSet from "../../../components/editableSet/editableSet"
 import ExerciseForm from "../../../components/exerciseForm"
-import useDB, { objectStores } from "../../../context/db"
+import useDB from "../../../context/db"
 
-const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
+const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
   const [sets, setSets] = useState(
     initialValues?.sets || [{ reps: "", weight: "" }]
   )
-  const [exercise, setExercise] = useState(initialValues?.exercise || "")
+  const [exercise, setExercise] = useState(initialValues?.exercise?.id || "")
 
   const [addToAllWeeks, setAddToAllWeeks] = useState(true)
   const [formToShow, setFormToShow] = useState("aux") // aux, new-exercise
@@ -22,7 +22,7 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
 
   useEffect(() => {
     fetchExerciseOptions()
-  }, [])
+  }, []) // eslint-disable-line
 
   const handleInput = ({ index, key, value }) => {
     const currentSets = [...sets]
@@ -57,9 +57,9 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
   }
   return formToShow === "aux" ? (
     <div>
-      <p>
-        Adding to {mainLift} week {week}
-      </p>
+      <h2>
+        Adding to {title} {addToAllWeeks ? "" : `week ${week}`}
+      </h2>
       <label class="flex items-center">
         <input
           type="checkbox"
@@ -67,7 +67,7 @@ const AuxExerciseForm = ({ mainLift, week, handleSubmit, initialValues }) => {
           checked={addToAllWeeks}
           onInput={e => setAddToAllWeeks(e.target.checked)}
         />
-        <p class="m-0">Add to all {mainLift} days</p>
+        <p class="m-0">Add to all {title} days</p>
       </label>
       <p class="text-sm">*each week can be further customized</p>
       <label htmlFor="exercise-name">

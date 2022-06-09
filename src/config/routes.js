@@ -8,6 +8,7 @@ export const routes = {
   wendlerDay: "/wendler/:id/:week/:mainLift",
   exercise: "/exercise/:id/:remaining_path*",
   exerciseBase: "/exercise",
+  newWorkout: "/workout",
 }
 
 export const menuItems = [
@@ -18,5 +19,9 @@ export const menuItems = [
   {
     href: routes.wendlerCycles,
     title: "Wendler",
+  },
+  {
+    href: routes.newWorkout,
+    title: "Start Workout",
   },
 ]

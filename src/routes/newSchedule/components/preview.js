@@ -9,6 +9,8 @@ import Modal from "../../../components/modal/Modal"
 import AuxExerciseForm from "./auxExerciseForm"
 import useDB from "../../../context/db"
 
+import { routes } from "../../../config/routes"
+
 export default function Preview({ preview, exercises }) {
   const { createCycle } = useDB()
 
@@ -39,10 +41,10 @@ export default function Preview({ preview, exercises }) {
 
   const previewByLift = Object.entries(preview).reduce((obj, [key, week]) => {
     Object.values(week).forEach(data => {
-      if (!obj[data.exercise]) {
-        obj[data.exercise] = {}
+      if (!obj[data.primaryId]) {
+        obj[data.primaryId] = {}
       }
-      obj[data.exercise][key] = data
+      obj[data.primaryId][key] = data
     })
     return obj
   }, {})
@@ -72,8 +74,9 @@ export default function Preview({ preview, exercises }) {
       description: formData?.description || "",
       weeks: mainLifts,
       exerciseFormValues: exercises,
+    }).then(() => {
+      route(routes.wendlerCycles)
     })
-    route("/")
   }
 
   function handleAddAuxExercise({ exercise, sets, addToAllWeeks }) {
@@ -121,13 +124,13 @@ export default function Preview({ preview, exercises }) {
       {viewByLift
         ? Object.entries(previewByLift).map(([id, weeks]) => (
             <div key={id} class="py-4">
-              <h4>{id}</h4>
+              <h4>{weeks?.[1]?.exercise || ""}</h4>
               <div class="divide-y">
                 {Object.entries(weeks).map(([key, sets]) => (
                   <div key={key} class="py-2 ">
                     <Accordion title={`Week ${key}`} openByDefault>
                       <div>
-                        <p>{id}</p>
+                        <p>{weeks?.[1]?.exercise}</p>
                         {sets.main.map(set => (
                           <p key={set.text}>{set.text}</p>
                         ))}
@@ -140,22 +143,22 @@ export default function Preview({ preview, exercises }) {
                           </div>
                         )}
                         <div>
-                          <p>Additional Work</p>
-                          {additionalExercises?.[key]?.[name]?.length > 0 && (
+                          {additionalExercises?.[key]?.[id]?.length > 0 && (
                             <div>
                               <p>Aux Work: </p>
-                              {additionalExercises?.[key]?.[name]?.map(
+                              {additionalExercises?.[key]?.[id]?.map(
                                 (additionalSets, index) => (
                                   <div key={index} class="flex items-center">
                                     <p class="m-0">
                                       {additionalSets.sets?.length} sets of{" "}
-                                      {additionalSets.exercise?.label}
+                                      {additionalSets.exercise?.name}
                                     </p>
                                     <button
                                       onClick={() =>
                                         openAuxExerciseModal({
                                           week: key,
-                                          mainLift: name,
+                                          mainLift: id,
+                                          title: weeks?.[1]?.exercise,
                                           initialValues: {
                                             ...additionalSets,
                                             index,
@@ -170,6 +173,20 @@ export default function Preview({ preview, exercises }) {
                               )}
                             </div>
                           )}
+                          <div class="pt-6">
+                            <button
+                              class="bg-blue-100"
+                              onClick={() =>
+                                openAuxExerciseModal({
+                                  title: weeks?.[1]?.exercise,
+                                  week: key,
+                                  mainLift: id,
+                                })
+                              }
+                            >
+                              Add Aux Sets
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </Accordion>
@@ -212,13 +229,14 @@ export default function Preview({ preview, exercises }) {
                                       >
                                         <p class="m-0">
                                           {additionalSets.sets?.length} sets of{" "}
-                                          {additionalSets.exercise?.label}
+                                          {additionalSets.exercise?.name}
                                         </p>
                                         <button
                                           onClick={() =>
                                             openAuxExerciseModal({
                                               week: key,
                                               mainLift: name,
+                                              title: sets.exercise,
                                               initialValues: {
                                                 ...additionalSets,
                                                 index,
@@ -238,6 +256,7 @@ export default function Preview({ preview, exercises }) {
                                   class="bg-blue-100"
                                   onClick={() =>
                                     openAuxExerciseModal({
+                                      title: sets.exercise,
                                       week: key,
                                       mainLift: name,
                                     })
@@ -272,6 +291,7 @@ export default function Preview({ preview, exercises }) {
           <AuxExerciseForm
             handleSubmit={handleAddAuxExercise}
             mainLift={auxExerciseFormData?.mainLift}
+            title={auxExerciseFormData?.title}
             week={auxExerciseFormData?.week}
             initialValues={auxExerciseFormData?.initialValues || {}}
           />

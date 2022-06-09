@@ -18,6 +18,7 @@ import WendlerWorkout from "../routes/wendler/WendlerWorkout"
 import { useState } from "preact/hooks"
 import Logs from "../routes/logs/logs"
 import Wendler from "../routes/wendler/Wendler"
+import NewWorkout from "../routes/workout/newWorkout"
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -45,6 +46,7 @@ const DBWrapper = () => {
             <Exercise path={routes.exercise} />
             <Backups path={routes.backups} />
             <Logs path={routes.logs} />
+            <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
           </Router>
         </div>
       ) : (
