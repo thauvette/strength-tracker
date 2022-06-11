@@ -4,7 +4,7 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: view exercise history and get PRs
 
-TODO: free workouts + allow free form sets at the end of wendler workout
+TODO: if no wendler sets try to get form values from history
 
 TODO: clean up useDB, that got out of hand 😬
 

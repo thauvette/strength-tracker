@@ -30,26 +30,56 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   }
 
   const goToNextSet = () => {
+    let dayIsComplete = false
     const currentGroupLength = get(
       workout,
       [liftGroups[activeLiftGroup]],
       []
     ).length
 
-    if (currentGroupLength > activeSet + 1) {
-      return setActiveSet(activeSet + 1)
+    // additional sets are slightly different
+    if (liftGroups[activeLiftGroup] === "additional") {
+      const additionalGroup = workout?.additional?.[activeAdditionalGroup]
+
+      if (additionalGroup.sets.length > activeSet + 1) {
+        return setActiveSet(activeSet + 1)
+      }
+      if (workout?.additional?.length > activeAdditionalGroup + 1) {
+        setActiveAdditionalGroup(activeAdditionalGroup + 1)
+        setActiveSet(0)
+        return
+      }
+      setActiveAdditionalGroup(0)
+      setActiveSet(0)
+      setActiveLiftGroup(3)
+      dayIsComplete = true
+    } else {
+      if (currentGroupLength > activeSet + 1) {
+        return setActiveSet(activeSet + 1)
+      }
+
+      let nextIndex = activeLiftGroup + 1
+
+      while (nextIndex <= 2) {
+        const nextKey = liftGroups[nextIndex]
+        // check if we have something in the schedule
+        if (workout?.[nextKey]?.length) {
+          break
+        }
+        nextIndex += 1
+      }
+      setActiveLiftGroup(nextIndex)
+      setActiveSet(0)
+      dayIsComplete = nextIndex + 1 === liftGroups?.length
     }
 
-    // we should always have main and aux, might not have additional.
-    if (
-      liftGroups[activeLiftGroup + 1] === "additional" &&
-      !workout?.additional
-    ) {
-      setActiveLiftGroup(3)
-    } else {
-      setActiveLiftGroup(activeLiftGroup + 1)
+    if (dayIsComplete) {
+      updateWendlerItem({
+        id,
+        path: ["weeks", week, mainLift, "isComplete"],
+        value: true,
+      })
     }
-    setActiveSet(0)
   }
 
   const updateSetsDB = async setData => {
@@ -304,23 +334,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                                   completed: new Date().getTime(),
                                 },
                               })
-
-                              if (additionalGroup.sets.length > activeSet + 1) {
-                                return setActiveSet(activeSet + 1)
-                              }
-                              if (
-                                workout?.additional?.length >
-                                activeAdditionalGroup + 1
-                              ) {
-                                setActiveAdditionalGroup(
-                                  activeAdditionalGroup + 1
-                                )
-                                setActiveSet(0)
-                                return
-                              }
-                              setActiveAdditionalGroup(0)
-                              setActiveSet(0)
-                              setActiveLiftGroup(3)
+                              goToNextSet()
                             }}
                           >
                             Save
