@@ -2,15 +2,15 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-TODO: view exercise history and get PRs
+TODO: more stats on exercise view
+
+TODO: non-wendler routines
 
 TODO: if no wendler sets try to get form values from history
 
 TODO: clean up useDB, that got out of hand 😬
 
 TODO: icons and styles.
-
-TODO: share function
 
 TODO: clean up preview, the two renders (sort by) are very annoying
 

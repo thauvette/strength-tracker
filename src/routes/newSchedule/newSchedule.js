@@ -19,7 +19,6 @@ const NewSchedule = () => {
   const [formErrors, setFormErrors] = useState({})
   const [exercises, setExercises] = useState({})
   const [generatedPreview, setGeneratedPreview] = useState(null)
-  // needs to be two options. big but boring or less boring.  ✔️
   // then, TODO: first set last, or 5 x 10.
   const [auxVersion, setAuxVersion] = useState("")
 

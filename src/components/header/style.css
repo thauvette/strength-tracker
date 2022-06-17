@@ -1,8 +1,9 @@
 .header {
   @apply bg-primary-600;
   height: 56px;
-  padding: 0;
+  padding: 0 16px 0;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 2;
 }
 
 .title {
@@ -42,4 +43,43 @@
 
 .header nav a.active {
   background: rgba(0, 0, 0, 0.4);
+}
+
+header nav button.hamburger {
+  position: relative;
+  width: 32px;
+  padding: 0;
+  min-width: 32px;
+}
+
+.hamburger div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: 0 0;
+  width: 24px;
+  height: 2px;
+  background-color: #fff;
+  transition: all 0.5s;
+}
+
+.hamburger div:first-child {
+  transform: translate(-50%, calc(-50% - 6px));
+  width: 18px;
+}
+.hamburger div:last-child {
+  transform: translate(-50%, calc(-50% + 6px));
+  width: 18px;
+}
+
+.hamburger.hamburgerActive div {
+  transform: translate(calc(-50% + 6px), calc(-50% - 9px)) rotate(45deg);
+}
+.hamburger.hamburgerActive div:first-child {
+  opacity: 0;
+}
+.hamburger.hamburgerActive div:last-child {
+  transform: translate(calc(-50% - -4px), calc(-50% + 8px)) rotate(-45deg);
+  width: 24px;
 }
