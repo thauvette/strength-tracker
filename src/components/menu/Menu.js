@@ -1,7 +1,7 @@
 import { h } from "preact"
-import { Link } from "preact-router"
 
 import { menuItems } from "../../config/routes"
+import LinkList from "../linkList/LinkList"
 
 import styles from "./menu.scss"
 
@@ -11,11 +11,12 @@ const Menu = ({ isOpen }) => (
       isOpen ? styles.active : ""
     }`}
   >
-    {menuItems.map(item => (
-      <div key={item.href} class="p-4">
-        <Link href={item.href}>{item.title}</Link>
-      </div>
-    ))}
+    <LinkList
+      links={menuItems.map(item => ({
+        href: item.href,
+        text: item.title,
+      }))}
+    />
   </div>
 )
 

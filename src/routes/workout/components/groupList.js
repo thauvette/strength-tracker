@@ -1,14 +1,15 @@
 import { h } from "preact"
-import { Link } from "preact-router"
+import LinkList from "../../../components/linkList/LinkList"
 import { routes } from "../../../config/routes"
 
 const GroupList = ({ groups }) => (
   <div>
-    {groups.map(group => (
-      <div key={group}>
-        <Link href={`${routes.newWorkout}/${encodeURI(group)}`}>{group}</Link>
-      </div>
-    ))}
+    <LinkList
+      links={groups.map(group => ({
+        href: `${routes.newWorkout}/${encodeURI(group)}`,
+        text: group,
+      }))}
+    />
   </div>
 )
 
