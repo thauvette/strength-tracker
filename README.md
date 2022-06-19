@@ -4,6 +4,12 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: more stats on exercise view
 
+TODO: search on add exercise list
+
+TODO: add new on exercise list
+
+TODO: exercise history modal
+
 TODO: non-wendler routines
 
 TODO: if no wendler sets try to get form values from history
@@ -21,6 +27,10 @@ TODO: delete aux when making new cycle
 TODO: Super sets
 
 TODO: connect to watch?
+
+TODO: plate calculator
+
+TODO: Wendler: calculate week from a goal.
 
 ## CLI Commands
 

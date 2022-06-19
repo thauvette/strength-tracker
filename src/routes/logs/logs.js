@@ -92,9 +92,6 @@ const Logs = () => {
           </div>
         </div>
       ))}
-      {activeDate === dayjs().format("YYYY-MM-DD") && (
-        <Link href={routes.newWorkout}>Add +</Link>
-      )}
       <Modal isOpen={calendarIsOpen} onRequestClose={toggleCalendar}>
         <Calendar
           startDate={activeDate}
@@ -105,9 +102,12 @@ const Logs = () => {
             const groupString = hasData
               ? Array.from(
                   new Set(
-                    dayData.map(exercise =>
-                      exercise.primaryGroup.substring(0, 1)
-                    )
+                    dayData.map(exercise => {
+                      if (!exercise.primaryGroup) {
+                        console.log(exercise)
+                      }
+                      return exercise.primaryGroup?.substring(0, 1)
+                    })
                   )
                 )
               : null

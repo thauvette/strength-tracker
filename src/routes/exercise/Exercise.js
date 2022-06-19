@@ -21,8 +21,8 @@ const Exercise = props => {
               const dayKey = dayjs(item.created).format("YYYY-MM-DD")
               const items = obj?.[dayKey] || []
               const estOneRepMax = (
-                item.weight * item.reps * 0.033 +
-                item.weight
+                +item.weight * +item.reps * 0.033 +
+                +item.weight
               ).toFixed(2)
               if (!eorm || eorm.max < estOneRepMax) {
                 eorm = {
