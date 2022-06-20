@@ -135,14 +135,6 @@ export default function WendlerCycle({ id }) {
                                 : "Mark day complete"}
                             </button>
                           </div>
-                          <div class="flex">
-                            <Link
-                              class="uppercase bg-blue-100 px-2 py-3 text-base no-underline w-full text-center"
-                              href={`/exercise/${exercise}`}
-                            >
-                              View Exercise History
-                            </Link>
-                          </div>
                         </div>
                       </div>
                     </Accordion>

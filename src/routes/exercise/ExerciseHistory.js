@@ -6,7 +6,7 @@ const ExerciseHistory = ({ exerciseHistory }) => {
   return (
     <div class="px-2">
       {exerciseHistory?.items &&
-        Object.keys(exerciseHistory?.items)?.length > 0 &&
+      Object.keys(exerciseHistory?.items)?.length > 0 ? (
         Object.entries(exerciseHistory.items)
           .sort(([aKey], [bKey]) => (dayjs(aKey).isAfter(bKey) ? -1 : 1))
           .map(([dayKey, items]) => {
@@ -38,7 +38,10 @@ const ExerciseHistory = ({ exerciseHistory }) => {
                 </div>
               </div>
             )
-          })}
+          })
+      ) : (
+        <p>No history found</p>
+      )}
     </div>
   )
 }

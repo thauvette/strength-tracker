@@ -3,6 +3,7 @@ import { useState, useEffect } from "preact/hooks"
 import get from "lodash.get"
 import useDB, { objectStores } from "../../context/db"
 import EditableSet from "../../components/editableSet/editableSet"
+import ExerciseHistoryModal from "../../components/exerciseHistoryModal"
 
 const liftGroups = ["main", "aux", "additional", "free"]
 
@@ -236,13 +237,18 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   }
 
   return (
-    <div class="px-2">
+    <div class="">
       {!!workout?.main?.length && (
         <div>
           {workout?.main?.[0]?.exercise && (
-            <p class="font-bold uppercase text-lg">
-              {workout?.main?.[0]?.exercise}
-            </p>
+            <div class="flex align-center justify-between sticky top-0 bg-primary-50 px-4 py-2 border-b-4">
+              <p class="font-bold uppercase text-lg">
+                {workout?.main?.[0]?.exercise}
+              </p>
+              {workout?.main?.[0]?.primaryId && (
+                <ExerciseHistoryModal id={workout?.main?.[0]?.primaryId} />
+              )}
+            </div>
           )}
           {workout.main.map((set, i) =>
             renderSet({
@@ -258,7 +264,12 @@ export default function WendlerWorkout({ id, week, mainLift }) {
       )}
       {!!workout?.aux?.length && (
         <div>
-          <p class="font-bold uppercase text-lg">{workout.auxName}</p>
+          <div class="flex align-center justify-between sticky top-0 bg-primary-50 px-4 py-2 border-b-4">
+            <p class="font-bold uppercase text-lg">{workout.auxName}</p>
+            {workout.aux?.[0]?.primaryId && (
+              <ExerciseHistoryModal id={workout.aux?.[0]?.primaryId} />
+            )}
+          </div>
           {workout.aux.map((set, i) =>
             renderSet({
               set,
@@ -281,7 +292,14 @@ export default function WendlerWorkout({ id, week, mainLift }) {
 
             return (
               <div key={groupIndex}>
-                <p>{additionalGroup.exercise?.name}</p>
+                <div class="flex align-center justify-between sticky top-0 bg-primary-50 px-4 py-2 border-b-4">
+                  <p class="font-bold uppercase text-lg">
+                    {additionalGroup.exercise?.name}
+                  </p>
+                  {additionalGroup?.exercise?.id && (
+                    <ExerciseHistoryModal id={additionalGroup?.exercise?.id} />
+                  )}
+                </div>
                 {!!additionalGroup?.sets?.length &&
                   additionalGroup.sets.map((set, setIndex) => {
                     const primaryId = additionalGroup.exercise?.id

@@ -4,11 +4,7 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: more stats on exercise view
 
-TODO: search on add exercise list
-
-TODO: add new on exercise list
-
-TODO: exercise history modal
+TODO: auto open next wendler day.
 
 TODO: non-wendler routines
 

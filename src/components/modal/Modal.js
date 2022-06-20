@@ -1,9 +1,8 @@
 import { h } from "preact"
-import { useEffect, useRef } from "preact/compat"
+import { useEffect, useRef, createPortal } from "preact/compat"
 
-export default function Modal({ isOpen, children, onRequestClose }) {
+const ModalElement = ({ isOpen, children, onRequestClose }) => {
   const contentRef = useRef(null)
-
   useEffect(() => {
     function handleOutsideClick(e) {
       if (contentRef.current && !contentRef.current.contains(e.target)) {
@@ -68,3 +67,23 @@ export default function Modal({ isOpen, children, onRequestClose }) {
     </div>
   )
 }
+
+const getBody = () => {
+  if (!document) {
+    return null
+  }
+  return document.body
+}
+
+const Modal = ({ isOpen, children, onRequestClose }) => {
+  return createPortal(
+    <ModalElement
+      isOpen={isOpen}
+      children={children}
+      onRequestClose={onRequestClose}
+    />,
+    getBody()
+  )
+}
+
+export default Modal
