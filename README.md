@@ -2,6 +2,8 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: bar weight and plates need to come from settings.
+
 TODO: more stats on exercise view
 
 TODO: auto open next wendler day.

@@ -68,12 +68,7 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
   )
 }
 
-const getBody = () => {
-  if (!document) {
-    return null
-  }
-  return document.body
-}
+const getElement = () => (document ? document.getElementById("app") : null)
 
 const Modal = ({ isOpen, children, onRequestClose }) => {
   return createPortal(
@@ -82,7 +77,7 @@ const Modal = ({ isOpen, children, onRequestClose }) => {
       children={children}
       onRequestClose={onRequestClose}
     />,
-    getBody()
+    getElement()
   )
 }
 
