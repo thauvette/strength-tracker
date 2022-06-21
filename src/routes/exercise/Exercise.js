@@ -14,6 +14,16 @@ const Exercise = props => {
     return null
   }
 
+  const itemsArrays = Object.values(exerciseHistory?.items || {})
+  const lastIndex = Object.values(exerciseHistory?.items || {})?.length
+    ? Object.values(exerciseHistory?.items || {})?.length - 1
+    : 0
+
+  const lastWorkoutFirstSet =
+    itemsArrays?.[lastIndex]?.sort((a, b) =>
+      a.create < b.create ? -1 : 1
+    )?.[0] || null
+
   return (
     <div>
       <h1 class="capitalize mb-2">{exerciseHistory?.name}</h1>
@@ -44,6 +54,7 @@ const Exercise = props => {
           }
           exerciseId={id}
           onAddSet={getData}
+          lastWorkoutFirstSet={lastWorkoutFirstSet}
         />
         <ExerciseHistory
           path={`${routes.exerciseBase}/:id/history`}

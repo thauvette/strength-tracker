@@ -122,6 +122,19 @@ const EditableSet = ({
           })
         }
       >
+        <div>
+          <button
+            onClick={() =>
+              setPlateModalState({
+                isOpen: false,
+                weight: null,
+              })
+            }
+            class="float-right"
+          >
+            Close x
+          </button>
+        </div>
         <Plates weight={plateModalState.weight} />
       </Modal>
     </>

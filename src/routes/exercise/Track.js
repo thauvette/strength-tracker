@@ -5,16 +5,18 @@ import EditableSet from "../../components/editableSet/editableSet"
 import calculateOneRepMax from "../../utilities.js/calculateOneRepMax"
 import Modal from "../../components/modal/Modal"
 
-// TODO: switch this to map todaysHistory + a new form at the end,
-//  or a new form at the start + editable list???
-
-const Track = ({ todaysHistory, exerciseId, onAddSet }) => {
+const Track = ({
+  todaysHistory,
+  exerciseId,
+  onAddSet,
+  lastWorkoutFirstSet,
+}) => {
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
 
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()
   const [newSet, setNewSet] = useState({
-    weight: lastSet?.weight || 0,
-    reps: lastSet?.reps || 0,
+    weight: lastSet?.weight || lastWorkoutFirstSet?.weight || 0,
+    reps: lastSet?.reps || lastWorkoutFirstSet?.reps || 0,
   })
   const [activeSet, setActiveSet] = useState(null)
   const [deleteConfirmIsOpen, setDeleteConfirmIsOpen] = useState(false)
