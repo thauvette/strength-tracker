@@ -6,6 +6,8 @@ import style from "./newSchedule.scss"
 import generateProgram from "../../utilities.js/generateProgram"
 import useDB, { objectStores } from "../../context/db"
 
+import OneRepMaxInput from "./components/oneRepMaxInput"
+
 const wendlerCycleExercises = [
   "deadlift",
   "barbell bench press",
@@ -23,15 +25,17 @@ const NewSchedule = () => {
   const [auxVersion, setAuxVersion] = useState("")
 
   useEffect(() => {
-
     const promises = [
       getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises),
-      getAllEntries(objectStores.wendlerCycles)
+      getAllEntries(objectStores.wendlerCycles),
     ]
-    Promise.all(promises).then(responses => {
-  const formattedWendlerExercises = wendlerCycleExercises.reduce(
+    Promise.all(promises)
+      .then(responses => {
+        const formattedWendlerExercises = wendlerCycleExercises.reduce(
           (obj, exerciseName) => {
-            const matchingDBData = responses[0].find(item => item.name === exerciseName)
+            const matchingDBData = responses[0].find(
+              item => item.name === exerciseName
+            )
             if (matchingDBData) {
               return {
                 ...obj,
@@ -42,20 +46,17 @@ const NewSchedule = () => {
           {}
         )
         let lastWeights = null
-          if(responses[1] && Object.keys(responses[1])?.length) {
-            lastWeights = Object.values(responses[1]).sort((a,b) => {
+        if (responses[1] && Object.keys(responses[1])?.length) {
+          lastWeights = Object.values(responses[1]).sort((a, b) => {
             return a.created > b.created ? -1 : 1
           })[0]?.exerciseFormValues
         }
-        if(lastWeights) {
-          setExercises({
-            ...formattedWendlerExercises,
-            ...lastWeights
-          })
-        } else {
-          setExercises(formattedWendlerExercises)
-        }
-    }).catch(e => console.log(e))
+        setExercises({
+          ...formattedWendlerExercises,
+          ...(lastWeights || {}),
+        })
+      })
+      .catch(e => console.log(e))
       .finally(() => setLoading(false))
   }, [getItemsByIndex, getAllEntries])
 
@@ -87,7 +88,6 @@ const NewSchedule = () => {
       generateProgram({
         exercises,
         auxVersion,
-
       })
     )
   }
@@ -101,20 +101,13 @@ const NewSchedule = () => {
       <div>
         <h2 class="mb-2">One Rep Maxes</h2>
         {Object.entries(exercises).map(([key, info]) => (
-          <div key={key} class="pb-4">
-            <label class="text-lg" htmlFor={key}>
-              {info.name}
-            </label>
-            <br />
-            <input
-              id={key}
-              name={key}
-              value={info.weight || ""}
-              onInput={handleInput}
-              class="py-3 px-2 text-base"
-            />
-            {formErrors?.[key] && <p>{formErrors.[key]}</p>}
-          </div>
+          <OneRepMaxInput
+            key={key}
+            id={key}
+            info={info}
+            handleInput={handleInput}
+            formErrors={formErrors}
+          />
         ))}
       </div>
       <div>

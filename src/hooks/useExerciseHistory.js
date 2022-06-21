@@ -20,11 +20,11 @@ const useExerciseHistory = id => {
                     +item.weight * +item.reps * 0.033 +
                     +item.weight
                   ).toFixed(2)
-                  if (!eorm || eorm.max < estOneRepMax) {
+                  if (!eorm || eorm.max < +estOneRepMax) {
                     eorm = {
                       time: item.created,
                       day: dayKey,
-                      max: estOneRepMax,
+                      max: +estOneRepMax,
                     }
                   }
                   items.push({

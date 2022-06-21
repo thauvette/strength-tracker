@@ -4,6 +4,10 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: bar weight and plates need to come from settings.
 
+TODO: split new wendler into two steps
+
+TODO: add tabs to Exercise History
+
 TODO: more stats on exercise view
 
 TODO: auto open next wendler day.
@@ -25,10 +29,6 @@ TODO: delete aux when making new cycle
 TODO: Super sets
 
 TODO: connect to watch?
-
-TODO: plate calculator
-
-TODO: Wendler: calculate week from a goal.
 
 ## CLI Commands
 
