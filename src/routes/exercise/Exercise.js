@@ -1,10 +1,10 @@
 import { h } from "preact"
 import { Router, Link } from "preact-router"
 import dayjs from "dayjs"
-import ExerciseHistory from "./ExerciseHistory"
+import ExerciseStats from "./ExerciseStats"
 import Track from "./Track"
 import { routes } from "../../config/routes"
-import useExerciseHistory from "../../hooks/useExerciseHistory"
+import useExerciseHistory from "../../hooks/useExerciseHistory/useExerciseHistory"
 
 const Exercise = props => {
   const { id, remaining_path } = props
@@ -56,7 +56,7 @@ const Exercise = props => {
           onAddSet={getData}
           lastWorkoutFirstSet={lastWorkoutFirstSet}
         />
-        <ExerciseHistory
+        <ExerciseStats
           path={`${routes.exerciseBase}/:id/history`}
           exerciseHistory={exerciseHistory}
         />

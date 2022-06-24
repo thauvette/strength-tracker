@@ -1,13 +1,15 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
-import ExerciseHistoryModal from "../../../components/exerciseHistoryModal"
+
 import Modal from "../../../components/modal/Modal"
-import useExerciseHistory from "../../../hooks/useExerciseHistory"
+import useExerciseHistory from "../../../hooks/useExerciseHistory/useExerciseHistory"
+import ExerciseStats from "../../exercise/ExerciseStats"
 
 const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
   const [exerciseHistory] = useExerciseHistory(id)
   const oneRepMax = exerciseHistory?.eorm?.max
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [historyModalIsOpen, setHistoryModalIsOpen] = useState(false)
   const [targetWeight, setTargetWeight] = useState(oneRepMax || info.weight)
 
   return (
@@ -16,7 +18,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
         <label class="text-lg capitalize" htmlFor={id}>
           {info.name}
         </label>
-        <ExerciseHistoryModal id={info.primaryId} triggerText="history" />
+        <button onClick={() => setHistoryModalIsOpen(true)}>Stats</button>
       </div>
       <input
         id={id}
@@ -75,10 +77,24 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
           </div>
         </div>
       </Modal>
+      <Modal
+        isOpen={historyModalIsOpen}
+        onRequestClose={() => {
+          setHistoryModalIsOpen(false)
+        }}
+      >
+        <div>
+          <div class="flex items-center justify-between">
+            <p class="capitalize">{info.name}</p>
+            <button onClick={() => setHistoryModalIsOpen(false)}>
+              Close X
+            </button>
+          </div>
+          <ExerciseStats exerciseHistory={exerciseHistory} />
+        </div>
+      </Modal>
     </div>
   )
 }
-
-// x * 0.9 * 0.95 = targetWeight
 
 export default OneRepMaxInput

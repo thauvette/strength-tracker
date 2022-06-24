@@ -2,6 +2,10 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: move the prs in exercise stats to useExerciseHistory
+
+TODO: clean up all naming conventions.
+
 TODO: bar weight and plates need to come from settings.
 
 TODO: split new wendler into two steps

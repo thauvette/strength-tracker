@@ -1,9 +1,10 @@
 import { h } from "preact"
 import { useState, useEffect } from "preact/hooks"
 import get from "lodash.get"
-import useDB, { objectStores } from "../../context/db"
+import useDB from "../../context/db"
 import EditableSet from "../../components/editableSet/editableSet"
-import ExerciseHistoryModal from "../../components/exerciseHistoryModal"
+
+import Set from "./components/Set"
 
 const liftGroups = ["main", "aux", "additional", "free"]
 
@@ -145,97 +146,6 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     })
   }
 
-  const renderSet = ({
-    set,
-    i,
-    exerciseKey,
-    isActiveGroup,
-    title,
-    groupIndex,
-  }) => {
-    const { reps, weight, completed } = set
-    return (
-      <div key={i} class="border-b py-4">
-        {isActiveGroup && activeSet === i ? (
-          <div>
-            <EditableSet
-              reps={reps}
-              weight={weight}
-              isComplete={!!completed}
-              onChangeReps={newReps => {
-                updateSet({
-                  exerciseKey,
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    reps: +newReps,
-                  },
-                })
-              }}
-              onChangeWeight={newWeight => {
-                updateSet({
-                  exerciseKey,
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +newWeight,
-                  },
-                })
-              }}
-              title={`${completed ? "✔️" : ""} Set ${i + 1}`}
-            />
-            <div class="flex py-4 px-2">
-              <button
-                class="w-1/2 bg-gray-400 text-gray-900"
-                onClick={() => {
-                  updateSet({
-                    exerciseKey,
-                    setIndex: i,
-                    setData: {
-                      ...set,
-                      completed: null,
-                    },
-                  })
-                }}
-              >
-                Undo
-              </button>
-              <button
-                class="w-1/2 bg-blue-900 text-white text-bold px-4 py-2 ml-2"
-                onClick={() => {
-                  updateSet({
-                    exerciseKey,
-                    setIndex: i,
-                    setData: {
-                      ...set,
-                      completed: new Date().getTime(),
-                    },
-                  })
-                  goToNextSet()
-                }}
-              >
-                {completed ? "Update" : "Save"}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => {
-              setActiveLiftGroup(groupIndex)
-              setActiveSet(i)
-            }}
-          >
-            <p class="capitalize">
-              {completed && "✔️"}
-              {title} Set {i + 1}
-            </p>
-            {set.reps} @ {set.weight}
-          </button>
-        )}
-      </div>
-    )
-  }
-
   return (
     <div class="">
       {!!workout?.main?.length && (
@@ -245,41 +155,124 @@ export default function WendlerWorkout({ id, week, mainLift }) {
               <p class="font-bold uppercase text-lg">
                 {workout?.main?.[0]?.exercise}
               </p>
-              {workout?.main?.[0]?.primaryId && (
-                <ExerciseHistoryModal id={workout?.main?.[0]?.primaryId} />
-              )}
+              <button>Yo</button>
             </div>
           )}
-          {workout.main.map((set, i) =>
-            renderSet({
-              set,
-              i,
-              exerciseKey: "main",
-              isActiveGroup: activeLiftGroup === 0,
-              title: workout?.exercise,
-              groupIndex: 0,
-            })
-          )}
+          {workout.main.map((set, i) => (
+            <Set
+              key={i}
+              handleUndo={() => {
+                updateSet({
+                  exerciseKey: "main",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    completed: null,
+                  },
+                })
+              }}
+              handleSubmit={() => {
+                updateSet({
+                  exerciseKey: "main",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    completed: new Date().getTime(),
+                  },
+                })
+                goToNextSet()
+              }}
+              isActive={activeLiftGroup === 0 && activeSet === i}
+              makeActive={() => {
+                setActiveLiftGroup(0)
+                setActiveSet(i)
+              }}
+              onChangeReps={newReps => {
+                updateSet({
+                  exerciseKey: "main",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    reps: +newReps,
+                  },
+                })
+              }}
+              onChangeWeight={newWeight => {
+                updateSet({
+                  exerciseKey: "main",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    weight: +newWeight,
+                  },
+                })
+              }}
+              set={set}
+              title={workout?.exercise}
+              setNumber={i + 1}
+            />
+          ))}
         </div>
       )}
       {!!workout?.aux?.length && (
         <div>
           <div class="flex align-center justify-between sticky top-0 bg-primary-50 px-4 py-2 border-b-4">
             <p class="font-bold uppercase text-lg">{workout.auxName}</p>
-            {workout.aux?.[0]?.primaryId && (
-              <ExerciseHistoryModal id={workout.aux?.[0]?.primaryId} />
-            )}
           </div>
-          {workout.aux.map((set, i) =>
-            renderSet({
-              set,
-              i,
-              exerciseKey: "aux",
-              isActiveGroup: activeLiftGroup === 1,
-              title: workout.auxName,
-              groupIndex: 1,
-            })
-          )}
+          {workout.aux.map((set, i) => (
+            <Set
+              key={i}
+              handleUndo={() => {
+                updateSet({
+                  exerciseKey: "aux",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    completed: null,
+                  },
+                })
+              }}
+              handleSubmit={() => {
+                updateSet({
+                  exerciseKey: "aux",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    completed: new Date().getTime(),
+                  },
+                })
+                goToNextSet()
+              }}
+              isActive={activeLiftGroup === 1 && activeSet === i}
+              makeActive={() => {
+                setActiveLiftGroup(1)
+                setActiveSet(i)
+              }}
+              onChangeReps={newReps => {
+                updateSet({
+                  exerciseKey: "aux",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    reps: +newReps,
+                  },
+                })
+              }}
+              onChangeWeight={newWeight => {
+                updateSet({
+                  exerciseKey: "aux",
+                  setIndex: i,
+                  setData: {
+                    ...set,
+                    weight: +newWeight,
+                  },
+                })
+              }}
+              set={set}
+              title={workout?.auxName}
+              setNumber={i + 1}
+            />
+          ))}
         </div>
       )}
       {!!workout?.additional?.length && (
@@ -296,9 +289,6 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                   <p class="font-bold uppercase text-lg">
                     {additionalGroup.exercise?.name}
                   </p>
-                  {additionalGroup?.exercise?.id && (
-                    <ExerciseHistoryModal id={additionalGroup?.exercise?.id} />
-                  )}
                 </div>
                 {!!additionalGroup?.sets?.length &&
                   additionalGroup.sets.map((set, setIndex) => {
