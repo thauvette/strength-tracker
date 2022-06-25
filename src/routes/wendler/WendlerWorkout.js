@@ -5,6 +5,7 @@ import useDB from "../../context/db"
 import EditableSet from "../../components/editableSet/editableSet"
 
 import Set from "./components/Set"
+import SetGroup from "./components/SetGroup"
 
 const liftGroups = ["main", "aux", "additional", "free"]
 
@@ -148,99 +149,81 @@ export default function WendlerWorkout({ id, week, mainLift }) {
 
   return (
     <div class="">
-      {!!workout?.main?.length && (
-        <div>
-          {workout?.main?.[0]?.exercise && (
-            <div class="flex align-center justify-between sticky top-0 bg-primary-50 px-4 py-2 border-b-4">
-              <p class="font-bold uppercase text-lg">
-                {workout?.main?.[0]?.exercise}
-              </p>
-              <button>Yo</button>
-            </div>
-          )}
-          {workout.main.map((set, i) => (
-            <Set
-              key={i}
-              handleUndo={({ weight, reps }) => {
-                updateSet({
-                  exerciseKey: "main",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +weight,
-                    reps: +reps,
-                    completed: null,
-                  },
-                })
-              }}
-              handleSubmit={({ weight, reps }) => {
-                updateSet({
-                  exerciseKey: "main",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +weight,
-                    reps: +reps,
-                    completed: new Date().getTime(),
-                  },
-                })
-                goToNextSet()
-              }}
-              isActive={activeLiftGroup === 0 && activeSet === i}
-              makeActive={() => {
-                setActiveLiftGroup(0)
-                setActiveSet(i)
-              }}
-              set={set}
-              title={workout?.exercise}
-              setNumber={i + 1}
-            />
-          ))}
-        </div>
-      )}
+      <SetGroup
+        title={workout?.main?.[0]?.exercise}
+        exerciseId={workout?.main?.[0]?.primaryId}
+        sets={workout.main || []}
+        isActiveGroup={activeLiftGroup === 0}
+        activeSet={activeSet}
+        setActiveSet={setIndex => {
+          setActiveLiftGroup(0)
+          setActiveSet(setIndex)
+        }}
+        handleSubmitSet={({ weight, reps, setIndex, set }) => {
+          updateSet({
+            exerciseKey: "main",
+            setIndex,
+            setData: {
+              ...set,
+              weight: +weight,
+              reps: +reps,
+              completed: new Date().getTime(),
+            },
+          })
+          goToNextSet()
+        }}
+        handleUndoSet={({ weight, reps, setIndex, set }) => {
+          updateSet({
+            exerciseKey: "main",
+            setIndex,
+            setData: {
+              ...set,
+              weight: +weight,
+              reps: +reps,
+              completed: null,
+            },
+          })
+        }}
+      />
+
       {!!workout?.aux?.length && (
         <div>
-          <div class="flex align-center justify-between sticky top-0 bg-primary-50 px-4 py-2 border-b-4">
-            <p class="font-bold uppercase text-lg">{workout.auxName}</p>
-          </div>
-          {workout.aux.map((set, i) => (
-            <Set
-              key={i}
-              handleUndo={({ weight, reps }) => {
-                updateSet({
-                  exerciseKey: "aux",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +weight,
-                    reps: +reps,
-                    completed: null,
-                  },
-                })
-              }}
-              handleSubmit={({ weight, reps }) => {
-                updateSet({
-                  exerciseKey: "aux",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +weight,
-                    reps: +reps,
-                    completed: new Date().getTime(),
-                  },
-                })
-                goToNextSet()
-              }}
-              isActive={activeLiftGroup === 1 && activeSet === i}
-              makeActive={() => {
-                setActiveLiftGroup(1)
-                setActiveSet(i)
-              }}
-              set={set}
-              title={workout?.auxName}
-              setNumber={i + 1}
-            />
-          ))}
+          <SetGroup
+            title={workout.auxName}
+            exerciseId={workout?.aux?.[0]?.primaryId}
+            sets={workout.aux || []}
+            isActiveGroup={activeLiftGroup === 1}
+            activeSet={activeSet}
+            setActiveSet={setIndex => {
+              setActiveLiftGroup(1)
+              setActiveSet(setIndex)
+            }}
+            handleSubmitSet={({ weight, reps, setIndex, set }) => {
+              updateSet({
+                exerciseKey: "aux",
+                setIndex,
+                setData: {
+                  ...set,
+                  weight: +weight,
+                  reps: +reps,
+                  completed: new Date().getTime(),
+                },
+              })
+              goToNextSet()
+            }}
+            handleUndoSet={({ weight, reps, setIndex, set }) => {
+              updateSet({
+                exerciseKey: "aux",
+                setIndex,
+                setData: {
+                  ...set,
+                  weight: +weight,
+                  reps: +reps,
+                  completed: null,
+                },
+              })
+            }}
+          />
         </div>
       )}
       {!!workout?.additional?.length && (
