@@ -161,22 +161,26 @@ export default function WendlerWorkout({ id, week, mainLift }) {
           {workout.main.map((set, i) => (
             <Set
               key={i}
-              handleUndo={() => {
+              handleUndo={({ weight, reps }) => {
                 updateSet({
                   exerciseKey: "main",
                   setIndex: i,
                   setData: {
                     ...set,
+                    weight: +weight,
+                    reps: +reps,
                     completed: null,
                   },
                 })
               }}
-              handleSubmit={() => {
+              handleSubmit={({ weight, reps }) => {
                 updateSet({
                   exerciseKey: "main",
                   setIndex: i,
                   setData: {
                     ...set,
+                    weight: +weight,
+                    reps: +reps,
                     completed: new Date().getTime(),
                   },
                 })
@@ -186,26 +190,6 @@ export default function WendlerWorkout({ id, week, mainLift }) {
               makeActive={() => {
                 setActiveLiftGroup(0)
                 setActiveSet(i)
-              }}
-              onChangeReps={newReps => {
-                updateSet({
-                  exerciseKey: "main",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    reps: +newReps,
-                  },
-                })
-              }}
-              onChangeWeight={newWeight => {
-                updateSet({
-                  exerciseKey: "main",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +newWeight,
-                  },
-                })
               }}
               set={set}
               title={workout?.exercise}
@@ -222,22 +206,26 @@ export default function WendlerWorkout({ id, week, mainLift }) {
           {workout.aux.map((set, i) => (
             <Set
               key={i}
-              handleUndo={() => {
+              handleUndo={({ weight, reps }) => {
                 updateSet({
                   exerciseKey: "aux",
                   setIndex: i,
                   setData: {
                     ...set,
+                    weight: +weight,
+                    reps: +reps,
                     completed: null,
                   },
                 })
               }}
-              handleSubmit={() => {
+              handleSubmit={({ weight, reps }) => {
                 updateSet({
                   exerciseKey: "aux",
                   setIndex: i,
                   setData: {
                     ...set,
+                    weight: +weight,
+                    reps: +reps,
                     completed: new Date().getTime(),
                   },
                 })
@@ -247,26 +235,6 @@ export default function WendlerWorkout({ id, week, mainLift }) {
               makeActive={() => {
                 setActiveLiftGroup(1)
                 setActiveSet(i)
-              }}
-              onChangeReps={newReps => {
-                updateSet({
-                  exerciseKey: "aux",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    reps: +newReps,
-                  },
-                })
-              }}
-              onChangeWeight={newWeight => {
-                updateSet({
-                  exerciseKey: "aux",
-                  setIndex: i,
-                  setData: {
-                    ...set,
-                    weight: +newWeight,
-                  },
-                })
               }}
               set={set}
               title={workout?.auxName}
@@ -304,50 +272,31 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                         <EditableSet
                           reps={reps}
                           weight={weight}
-                          isComplete={!!completed}
-                          onChangeReps={newReps => {
-                            updateAdditionalSet({
-                              groupIndex,
-                              setIndex,
-                              setData: {
-                                ...set,
-                                primaryId,
-                                reps: newReps,
-                              },
-                            })
-                          }}
-                          onChangeWeight={newWeight => {
-                            updateAdditionalSet({
-                              groupIndex,
-                              setIndex,
-                              setData: {
-                                ...set,
-                                primaryId,
-                                weight: newWeight,
-                              },
-                            })
-                          }}
                           title={`${completed ? "✔️" : ""} set ${setIndex + 1}`}
+                          renderCtas={newValues => (
+                            <div>
+                              <button
+                                class="w-full bg-blue-900 text-white"
+                                onClick={() => {
+                                  updateAdditionalSet({
+                                    groupIndex,
+                                    setIndex,
+                                    setData: {
+                                      ...set,
+                                      weight: +newValues.weight,
+                                      reps: +newValues.reps,
+                                      primaryId,
+                                      completed: new Date().getTime(),
+                                    },
+                                  })
+                                  goToNextSet()
+                                }}
+                              >
+                                Save
+                              </button>
+                            </div>
+                          )}
                         />
-                        <div>
-                          <button
-                            class="w-full bg-blue-900 text-white"
-                            onClick={() => {
-                              updateAdditionalSet({
-                                groupIndex,
-                                setIndex,
-                                setData: {
-                                  ...set,
-                                  primaryId,
-                                  completed: new Date().getTime(),
-                                },
-                              })
-                              goToNextSet()
-                            }}
-                          >
-                            Save
-                          </button>
-                        </div>
                       </div>
                     ) : (
                       <div key={setIndex} class="border-b">

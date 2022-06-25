@@ -1,40 +1,32 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
 
-import calculatePlates from "../plates/calculatePlates"
 import Modal from "../modal/Modal"
 import Plates from "../plates/plates"
 
 const EditableSet = ({
   onChangeReps,
   onChangeWeight,
-  reps,
-  weight,
-  isComplete,
-  onToggleComplete,
+  reps: initialReps,
+  weight: initialWeight,
   handleRemove,
   title,
   onDuplicate,
+  renderCtas,
 }) => {
   const [plateModalState, setPlateModalState] = useState({
-    weight: 0,
+    weight: initialWeight,
     isOpen: false,
   })
+  const [reps, setReps] = useState(initialReps)
+  const [weight, setWeight] = useState(initialWeight)
+
   return (
     <>
-      <div class="py-1">
+      <div class="editable-set py-1">
         <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            {!!onToggleComplete && (
-              <input
-                type="checkbox"
-                value={isComplete}
-                checked={isComplete}
-                onChange={e => onToggleComplete(e?.target?.checked)}
-              />
-            )}
-            {title && <p class="m-0 ml-4">{title}</p>}
-          </div>
+          {title && <p class="m-0 ml-4">{title}</p>}
+
           {handleRemove && <button onClick={handleRemove}>X</button>}
         </div>
         <div class="flex pb-3">
@@ -45,7 +37,10 @@ const EditableSet = ({
                 disabled={reps === 0}
                 onClick={() => {
                   const newValue = +reps > 1 ? +reps - 1 : 0
-                  onChangeReps(newValue)
+                  setReps(newValue)
+                  if (onChangeReps) {
+                    onChangeReps(newValue)
+                  }
                 }}
               >
                 -
@@ -53,12 +48,20 @@ const EditableSet = ({
               <input
                 class="flex-1 w-16 text-center"
                 value={reps}
-                onInput={e => onChangeReps(e.target.value)}
+                onInput={e => {
+                  setReps(e.target.value)
+                  if (onChangeReps) {
+                    onChangeReps(e.target.value)
+                  }
+                }}
               />
 
               <button
                 onClick={() => {
-                  onChangeReps(+reps + 1)
+                  setReps(+reps + 1)
+                  if (onChangeReps) {
+                    onChangeReps(+reps + 1)
+                  }
                 }}
               >
                 +
@@ -73,7 +76,11 @@ const EditableSet = ({
                 disabled={weight <= 0}
                 onClick={() => {
                   const remainder = +weight % 5
-                  onChangeWeight(+weight > 5 ? +weight - (remainder || 5) : 0)
+                  const newWeight = +weight > 5 ? +weight - (remainder || 5) : 0
+                  setWeight(newWeight)
+                  if (onChangeWeight) {
+                    onChangeWeight(newWeight)
+                  }
                 }}
               >
                 -
@@ -81,12 +88,21 @@ const EditableSet = ({
               <input
                 class="flex-1 w-16 text-center"
                 value={weight}
-                onInput={e => onChangeWeight(e.target.value)}
+                onInput={e => {
+                  setWeight(e.target.value)
+                  if (onChangeWeight) {
+                    onChangeWeight(e.target.value)
+                  }
+                }}
               />
 
               <button
                 onClick={() => {
-                  onChangeWeight(+weight + 5 - (+weight % 5))
+                  const newWeight = +weight + 5 - (+weight % 5)
+                  setWeight(newWeight)
+                  if (onChangeWeight) {
+                    onChangeWeight(+weight + 5 - (+weight % 5))
+                  }
                 }}
               >
                 +
@@ -107,11 +123,15 @@ const EditableSet = ({
             </div>
           </div>
         </div>
+
         {onDuplicate && (
-          <button class="text-sm float-right" onClick={onDuplicate}>
-            Duplicate set
-          </button>
+          <div class="flex justify-end pb-2">
+            <button class="text-sm " onClick={onDuplicate}>
+              Duplicate set
+            </button>
+          </div>
         )}
+        {renderCtas && renderCtas({ weight, reps })}
       </div>
       <Modal
         isOpen={plateModalState.isOpen}
