@@ -14,21 +14,19 @@ const Track = ({
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
 
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()
-  const [newSet, setNewSet] = useState({
-    weight: lastSet?.weight || lastWorkoutFirstSet?.weight || 0,
-    reps: lastSet?.reps || lastWorkoutFirstSet?.reps || 0,
-  })
+
   const [activeSet, setActiveSet] = useState(null)
   const [deleteConfirmIsOpen, setDeleteConfirmIsOpen] = useState(false)
-  const submitNewSet = async () => {
-    await createOrUpdateLoggedSet(null, { ...newSet, exercise: +exerciseId })
+
+  const submitNewSet = async ({ weight, reps }) => {
+    await createOrUpdateLoggedSet(null, { weight, reps, exercise: +exerciseId })
     onAddSet()
   }
 
-  const updateExistingSet = async () => {
+  const updateExistingSet = async ({ weight, reps }) => {
     await createOrUpdateLoggedSet(activeSet.id, {
-      weight: activeSet.weight,
-      reps: activeSet.reps,
+      weight,
+      reps,
     })
     onAddSet()
     setActiveSet(null)
@@ -46,29 +44,21 @@ const Track = ({
       <div className="border-b-4 pb-4">
         <p>New Set</p>
         <EditableSet
-          onChangeReps={val =>
-            setNewSet({
-              ...newSet,
-              reps: +val,
-            })
-          }
-          onChangeWeight={val =>
-            setNewSet({
-              ...newSet,
-              weight: +val,
-            })
-          }
-          reps={newSet.reps}
-          weight={newSet.weight}
+          reps={lastSet?.reps || lastWorkoutFirstSet?.reps || 0}
+          weight={lastSet?.weight || lastWorkoutFirstSet?.weight || 0}
+          renderCtas={({ weight, reps }) => (
+            <div class="px-2">
+              <button
+                class="bg-blue-900 text-white w-full"
+                onClick={() => {
+                  submitNewSet({ weight, reps })
+                }}
+              >
+                Save
+              </button>
+            </div>
+          )}
         />
-        <div class="px-4">
-          <button
-            class="bg-blue-900 text-white text-bold px-4 py-2 ml-2 w-full"
-            onClick={submitNewSet}
-          >
-            Save
-          </button>
-        </div>
       </div>
       <p>Today</p>
       {!!todaysHistory?.length &&
@@ -89,35 +79,25 @@ const Track = ({
             {item.id === activeSet?.id && (
               <div>
                 <EditableSet
-                  onChangeReps={val =>
-                    setActiveSet({
-                      ...activeSet,
-                      reps: +val,
-                    })
-                  }
-                  onChangeWeight={val =>
-                    setActiveSet({
-                      ...activeSet,
-                      weight: +val,
-                    })
-                  }
                   reps={activeSet.reps}
                   weight={activeSet.weight}
+                  renderCtas={({ weight, reps }) => (
+                    <div class="px-4 ">
+                      <button
+                        class="bg-gray-400 text-gray-900 w-full mb-4"
+                        onClick={() => updateExistingSet({ weight, reps })}
+                      >
+                        Update
+                      </button>
+                      <button
+                        class="bg-red-900 text-white w-full"
+                        onClick={() => setDeleteConfirmIsOpen(true)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 />
-                <div class="px-4 ">
-                  <button
-                    class="bg-gray-400 text-gray-900 w-full mb-4"
-                    onClick={updateExistingSet}
-                  >
-                    Update
-                  </button>
-                  <button
-                    class="bg-red-900 text-white w-full"
-                    onClick={() => setDeleteConfirmIsOpen(true)}
-                  >
-                    Delete
-                  </button>
-                </div>
               </div>
             )}
           </div>
