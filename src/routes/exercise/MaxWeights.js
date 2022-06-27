@@ -14,7 +14,7 @@ const MaxWeights = ({ exerciseHistory }) => (
           <p>
             {set.reps} @ {set.displayWeight}
           </p>
-          <p>{dayjs(set.created).format("DD MMM YYYY")}</p>
+          <p>{dayjs(set.date).format("DD MMM YYYY")}</p>
         </div>
       ))
     ) : (

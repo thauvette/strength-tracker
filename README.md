@@ -2,15 +2,21 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-TODO: move the prs in exercise stats to useExerciseHistory
+TODO: finish cleaning un WendlerWorkout
+
+TODO: back button when menu or modal is open
+
+TODO: Screen always on?
+
+TODO: add notes to sets
+
+TODO: Swipe on calendar view
 
 TODO: clean up all naming conventions.
 
 TODO: bar weight and plates need to come from settings.
 
 TODO: split new wendler into two steps
-
-TODO: add tabs to Exercise History
 
 TODO: more stats on exercise view
 
