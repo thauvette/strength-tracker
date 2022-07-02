@@ -1,5 +1,6 @@
 import { h } from "preact"
 import { useEffect, useRef, createPortal } from "preact/compat"
+import { route } from "preact-router"
 
 const ModalElement = ({ isOpen, children, onRequestClose }) => {
   const contentRef = useRef(null)
@@ -19,6 +20,7 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
       window.addEventListener("click", handleOutsideClick)
       window.addEventListener("keydown", handleEscKey)
     }
+
     return () => {
       if (isOpen && onRequestClose) {
         window.removeEventListener("click", handleOutsideClick)
@@ -26,6 +28,26 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
       }
     }
   }, [isOpen, onRequestClose])
+
+  useEffect(() => {
+    function backOnClose() {
+      route(window.location.pathname, true)
+      onRequestClose()
+    }
+    if (isOpen) {
+      route(`${window.location.pathname}#open`)
+      window.addEventListener("popstate", backOnClose)
+    }
+
+    return () => {
+      if (isOpen) {
+        if (window?.location?.hash === "#open") {
+          window.history.back()
+        }
+        window.removeEventListener("popstate", backOnClose)
+      }
+    }
+  }, [isOpen]) // eslint-disable-line
 
   useEffect(() => {
     if (typeof document === undefined) {
@@ -44,9 +66,6 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
     }
   }, [isOpen])
 
-  if (!isOpen) {
-    return null
-  }
   return (
     <div
       class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-75 p-4 z-50 max-h-screen"
@@ -70,15 +89,16 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
 
 const getElement = () => (document ? document.getElementById("app") : null)
 
-const Modal = ({ isOpen, children, onRequestClose }) => {
-  return createPortal(
-    <ModalElement
-      isOpen={isOpen}
-      children={children}
-      onRequestClose={onRequestClose}
-    />,
-    getElement()
-  )
-}
+const Modal = ({ isOpen, children, onRequestClose }) =>
+  isOpen
+    ? createPortal(
+        <ModalElement
+          isOpen={isOpen}
+          children={children}
+          onRequestClose={onRequestClose}
+        />,
+        getElement()
+      )
+    : null
 
 export default Modal

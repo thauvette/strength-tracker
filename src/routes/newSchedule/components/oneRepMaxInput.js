@@ -20,13 +20,15 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
         </label>
         <button onClick={() => setHistoryModalIsOpen(true)}>Stats</button>
       </div>
-      <input
-        id={id}
-        name={id}
-        value={info.weight || ""}
-        onInput={handleInput}
-        class="py-3 px-2 text-base"
-      />
+      <div>
+        <input
+          id={id}
+          name={id}
+          value={info.weight || ""}
+          onInput={handleInput}
+          class="py-3 px-2 text-base"
+        />
+      </div>
       {formErrors?.[id] && <p>{formErrors[id]}</p>}
       {oneRepMax && (
         <button
