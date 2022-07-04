@@ -6,7 +6,7 @@ import MaxWeights from "./MaxWeights"
 
 const tabs = ["history", "PRs"]
 
-const ExerciseStats = ({ exerciseHistory }) => {
+const ExerciseStats = ({ exerciseHistory, openNoteModal }) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
 
   const renderView = () => {
@@ -15,7 +15,12 @@ const ExerciseStats = ({ exerciseHistory }) => {
         return <MaxWeights exerciseHistory={exerciseHistory} />
       case "history":
       default:
-        return <ExerciseHistory exerciseHistory={exerciseHistory} />
+        return (
+          <ExerciseHistory
+            exerciseHistory={exerciseHistory}
+            openNoteModal={openNoteModal}
+          />
+        )
     }
   }
 

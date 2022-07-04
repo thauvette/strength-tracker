@@ -10,6 +10,7 @@ const Track = ({
   exerciseId,
   onAddSet,
   lastWorkoutFirstSet,
+  openNoteModal,
 }) => {
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
 
@@ -63,18 +64,28 @@ const Track = ({
       <p>Today</p>
       {!!todaysHistory?.length &&
         todaysHistory.map(item => (
-          <div key={item.id} class="px-2">
-            <div
-              class="flex justify-between py-2 items-center"
-              role="button"
-              onClick={() => {
-                setActiveSet(item?.id === activeSet?.id ? null : item)
-              }}
-            >
-              <p class="font-medium">
-                {item.reps} @ {item.weight}
-              </p>
-              <p>{calculateOneRepMax({ ...item })}</p>
+          <div key={item.id} class="px-1">
+            <div class="flex">
+              <button
+                class={`border-2 border-blue-200 mr-2 ${
+                  item?.note?.length ? "" : "opacity-50"
+                }`}
+                onClick={() => openNoteModal(item)}
+              >
+                Note
+              </button>
+              <div
+                class="flex flex-grow justify-between py-2 items-center"
+                role="button"
+                onClick={() => {
+                  setActiveSet(item?.id === activeSet?.id ? null : item)
+                }}
+              >
+                <p class="font-medium">
+                  {item.reps} @ {item.weight}
+                </p>
+                <p>{calculateOneRepMax({ ...item })}</p>
+              </div>
             </div>
             {item.id === activeSet?.id && (
               <div>

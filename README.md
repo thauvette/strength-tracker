@@ -2,11 +2,13 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: styles not loading when offline
+
 TODO: finish cleaning un WendlerWorkout
 
-TODO: back button when menu or modal is open
+TODO: back button when menu is open
 
-TODO: Screen always on?
+TODO: Screen always on? (currently only in chrome 84)
 
 TODO: add notes to sets
 
