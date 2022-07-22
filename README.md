@@ -2,6 +2,8 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: settings need to be added to backups
+
 TODO: styles not loading when offline
 
 TODO: finish cleaning up WendlerWorkout

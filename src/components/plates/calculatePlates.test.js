@@ -22,14 +22,17 @@ describe("Plate Calculation Tests", () => {
         {
           weight: 35,
           count: 2,
+          available: true,
         },
         {
           weight: 25,
           count: 2,
+          available: true,
         },
         {
           weight: 10,
           count: 4,
+          available: true,
         },
       ],
     })
