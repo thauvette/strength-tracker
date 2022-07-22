@@ -4,19 +4,15 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: styles not loading when offline
 
-TODO: finish cleaning un WendlerWorkout
+TODO: finish cleaning up WendlerWorkout
 
 TODO: back button when menu is open
 
 TODO: Screen always on? (currently only in chrome 84)
 
-TODO: add notes to sets
-
 TODO: Swipe on calendar view
 
 TODO: clean up all naming conventions.
-
-TODO: bar weight and plates need to come from settings.
 
 TODO: split new wendler into two steps
 
@@ -26,13 +22,11 @@ TODO: auto open next wendler day.
 
 TODO: non-wendler routines
 
-TODO: if no wendler sets try to get form values from history
-
 TODO: clean up useDB, that got out of hand 😬
 
 TODO: icons and styles.
 
-TODO: clean up preview, the two renders (sort by) are very annoying
+TODO: clean up wendler preview, the two renders (sort by) are very annoying
 
 TODO: aux exercise form errors.
 
@@ -41,6 +35,10 @@ TODO: delete aux when making new cycle
 TODO: Super sets
 
 TODO: connect to watch?
+
+TODO: add bio-metrics like weight.
+
+TODO: add body weight exercise type
 
 ## CLI Commands
 

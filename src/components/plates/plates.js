@@ -1,22 +1,46 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
+import useWeightSettings from "../../hooks/useWeightSettings"
 import calculatePlates from "./calculatePlates"
 import PlateControls from "./plateControls"
 import renderPlateClass from "./renderPlateClass"
 
-const Plates = ({
-  weight: initialWeight,
-  barWeight: initialBarWeight = 45,
-}) => {
-  const [weight, setWeight] = useState(initialWeight)
-  const [barWeight, setBarWeight] = useState(initialBarWeight)
+const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
+  const { weightSettings } = useWeightSettings()
 
-  const { plates: neededPlates } = calculatePlates({
+  const [weight, setWeight] = useState(initialWeight)
+  const [barWeight, setBarWeight] = useState(
+    initialBarWeight || weightSettings?.barWeight || 45
+  )
+
+  const { plates: neededPlates, remainder } = calculatePlates({
     targetWeight: +weight || 0,
     barWeight,
+    plateSet: weightSettings?.availablePlates,
   })
 
   const showBar = weight >= barWeight
+
+  const plateText = Object.entries(
+    neededPlates.reduce((obj, plate) => {
+      if (obj[plate]) {
+        return {
+          ...obj,
+          [plate]: obj[plate] + 1,
+        }
+      }
+      return {
+        ...obj,
+        [plate]: 1,
+      }
+    }, {})
+  )
+    .map(([plate, count]) => ({
+      plate: +plate,
+      count,
+    }))
+    .sort((a, b) => (a.plate > b.plate ? -1 : 1))
+    .map(plate => `${plate.count} x ${plate.plate}`)
 
   return (
     <div>
@@ -53,9 +77,14 @@ const Plates = ({
       </div>
       <div class="py-4">
         {showBar ? <p class="text-center">Bar + </p> : null}
-        <p class="text-center">
-          {neededPlates?.length ? `${neededPlates.join(", ")} per side` : ""}
+        <p class="text-center text-lg">
+          {plateText?.length ? `${plateText.join(", ")} per side` : null}
         </p>
+        {remainder > 0 && (
+          <p class="text-center text-red">
+            Weight is off by {remainder.toFixed(2)} per side
+          </p>
+        )}
       </div>
     </div>
   )

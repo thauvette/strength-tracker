@@ -9,6 +9,7 @@ export const routes = {
   exercise: "/exercise/:id/:remaining_path*",
   exerciseBase: "/exercise",
   newWorkout: "/workout",
+  settings: "/settings",
 }
 
 export const menuItems = [
@@ -21,7 +22,7 @@ export const menuItems = [
     title: "Wendler",
   },
   {
-    href: routes.newWorkout,
-    title: "Start Workout",
+    href: routes.settings,
+    title: "Settings",
   },
 ]
