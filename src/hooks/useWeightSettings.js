@@ -19,12 +19,18 @@ const defaultSettings = {
 }
 
 const initialSettings =
-  window?.localStorage && localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS)
+  window !== undefined &&
+  window?.localStorage &&
+  localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS)
     ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS))
     : defaultSettings
 
 const useWeightSettings = () => {
   const [settings, setSettings] = useState(initialSettings)
+
+  if (window === undefined) {
+    return null
+  }
 
   const updateStorage = newSettings => {
     localStorage.setItem(
