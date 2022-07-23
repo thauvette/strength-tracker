@@ -20,7 +20,7 @@ const defaultSettings = {
 
 let initialSettings = defaultSettings
 if (
-  window !== undefined &&
+  typeof window !== undefined &&
   window?.localStorage &&
   localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS)
 ) {
@@ -30,7 +30,7 @@ if (
 }
 
 const useWeightSettings =
-  window === undefined
+  typeof window === undefined
     ? null
     : () => {
         const [settings, setSettings] = useState(initialSettings)
