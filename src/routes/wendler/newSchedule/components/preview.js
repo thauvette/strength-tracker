@@ -120,7 +120,6 @@ export default function Preview({ preview, exercises }) {
           {viewByLift ? "Sort by week" : "Sort by lift"}
         </button>
       </div>
-      {/* TODO: needs aux form */}
       {viewByLift
         ? Object.entries(previewByLift).map(([id, weeks]) => (
             <div key={id} class="py-4">
@@ -283,9 +282,7 @@ export default function Preview({ preview, exercises }) {
 
       <Modal
         isOpen={auxExerciseModalIsOpen}
-        onRequestClose={() => {
-          closeAuxExerciseModal()
-        }}
+        onRequestClose={closeAuxExerciseModal}
       >
         <div>
           <AuxExerciseForm
@@ -294,6 +291,7 @@ export default function Preview({ preview, exercises }) {
             title={auxExerciseFormData?.title}
             week={auxExerciseFormData?.week}
             initialValues={auxExerciseFormData?.initialValues || {}}
+            onCancel={closeAuxExerciseModal}
           />
         </div>
       </Modal>

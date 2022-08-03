@@ -1,28 +1,21 @@
 import { h } from "preact"
-import { useState, useEffect } from "preact/hooks"
+import { useState } from "preact/hooks"
 import EditableSet from "../../../../components/editableSet/editableSet"
-import ExerciseForm from "../../../../components/exerciseForm"
-import useDB from "../../../../context/db"
+import ExerciseSearch from "../../../../components/exerciseSelection/ExerciseSearch"
 
-const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
+const AuxExerciseForm = ({
+  week,
+  handleSubmit,
+  initialValues,
+  title,
+  onCancel,
+}) => {
   const [sets, setSets] = useState(
     initialValues?.sets || [{ reps: "", weight: "" }]
   )
-  const [exercise, setExercise] = useState(initialValues?.exercise?.id || "")
+  const [exercise, setExercise] = useState(initialValues?.exercise || null)
 
   const [addToAllWeeks, setAddToAllWeeks] = useState(true)
-  const [formToShow, setFormToShow] = useState("aux") // aux, new-exercise
-
-  const [exerciseOptions, setExerciseOptions] = useState(null)
-  const { getExerciseOptions } = useDB()
-
-  const fetchExerciseOptions = () => {
-    getExerciseOptions().then(res => setExerciseOptions(res))
-  }
-
-  useEffect(() => {
-    fetchExerciseOptions()
-  }, []) // eslint-disable-line
 
   const handleInput = ({ index, key, value }) => {
     const currentSets = [...sets]
@@ -51,15 +44,17 @@ const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
   }
 
   const save = () => {
-    const matchingExercise = exerciseOptions?.find(ex => +ex.id === +exercise)
-
-    handleSubmit({ exercise: matchingExercise, sets, addToAllWeeks })
+    handleSubmit({ exercise, sets, addToAllWeeks })
   }
-  return formToShow === "aux" ? (
+
+  return exercise?.id ? (
     <div>
-      <h2>
-        Adding to {title} {addToAllWeeks ? "" : `week ${week}`}
-      </h2>
+      <div class="flex items-center justify-between">
+        <h2>
+          Adding to {title} {addToAllWeeks ? "" : `week ${week}`}
+        </h2>
+        <button onClick={onCancel}>X Cancel</button>
+      </div>
       <label class="flex items-center">
         <input
           type="checkbox"
@@ -69,28 +64,13 @@ const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
         />
         <p class="m-0">Add to all {title} days</p>
       </label>
-      <p class="text-sm">*each week can be further customized</p>
-      <label htmlFor="exercise-name">
-        <p>Exercise</p>
-        <select
-          value={exercise}
-          onInput={e => {
-            if (e.target.value === "other") {
-              return setFormToShow("new-exercise")
-            }
-            setExercise(e.target.value)
-          }}
-        >
-          <option value="">Select</option>
-          {exerciseOptions?.length > 0 &&
-            exerciseOptions.map(option => (
-              <option value={option.id} key={option.id}>
-                {option.name}
-              </option>
-            ))}
-          <option value="other">Add New</option>
-        </select>
-      </label>
+      <p class="text-sm mb-2">*each week can be further customized</p>
+
+      <div class="flex items-center">
+        <button onClick={() => setExercise(null)}>← Back</button>
+        <h2 class="capitalize">{exercise?.name}</h2>
+      </div>
+
       {sets.map((setValues, index) => {
         return (
           <div key={index} class="border-b pb-6">
@@ -118,6 +98,7 @@ const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
               handleAddSet={addSet}
               title={`Set ${index + 1}`}
               onDuplicate={() => duplicateSet(setValues)}
+              disablePlateModal
             />
           </div>
         )
@@ -138,16 +119,7 @@ const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
       </div>
     </div>
   ) : (
-    <ExerciseForm
-      onSubmit={data => {
-        fetchExerciseOptions()
-
-        if (data?.id) {
-          setExercise(data?.id)
-        }
-        setFormToShow("aux")
-      }}
-    />
+    <ExerciseSearch handleSelectExercise={setExercise} />
   )
 }
 

@@ -17,7 +17,7 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
     }
 
     if (isOpen && onRequestClose) {
-      window.addEventListener("click", handleOutsideClick)
+      window.addEventListener("click", handleOutsideClick, { capture: true })
       window.addEventListener("keydown", handleEscKey)
     }
 

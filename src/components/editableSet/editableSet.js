@@ -13,6 +13,7 @@ const EditableSet = ({
   title,
   onDuplicate,
   renderCtas,
+  disablePlateModal,
 }) => {
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
@@ -108,19 +109,21 @@ const EditableSet = ({
                 +
               </button>
             </div>
-            <div class="text-center">
-              <button
-                onClick={() =>
-                  setPlateModalState({
-                    isOpen: true,
-                    weight: +weight,
-                  })
-                }
-                class="text-xs"
-              >
-                plates?
-              </button>
-            </div>
+            {disablePlateModal ? null : (
+              <div class="text-center">
+                <button
+                  onClick={() =>
+                    setPlateModalState({
+                      isOpen: true,
+                      weight: +weight,
+                    })
+                  }
+                  class="text-xs"
+                >
+                  plates?
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
