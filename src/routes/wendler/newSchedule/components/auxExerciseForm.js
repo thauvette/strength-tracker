@@ -1,8 +1,8 @@
 import { h } from "preact"
 import { useState, useEffect } from "preact/hooks"
-import EditableSet from "../../../components/editableSet/editableSet"
-import ExerciseForm from "../../../components/exerciseForm"
-import useDB from "../../../context/db"
+import EditableSet from "../../../../components/editableSet/editableSet"
+import ExerciseForm from "../../../../components/exerciseForm"
+import useDB from "../../../../context/db"
 
 const AuxExerciseForm = ({ week, handleSubmit, initialValues, title }) => {
   const [sets, setSets] = useState(

@@ -5,6 +5,7 @@ export const routes = {
   wendlerCycles: "/wendler/cycles",
   wendlerCycle: "/wendler/:id",
   wendlerNew: "/wendler/new",
+  wendlerNewPreview: "/wendler/new/preview",
   wendlerDay: "/wendler/:id/:week/:mainLift",
   exercise: "/exercise/:id/:remaining_path*",
   exerciseBase: "/exercise",

@@ -2,6 +2,8 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: multiple modals at once is broken
+
 TODO: settings need to be added to backups
 
 TODO: styles not loading when offline
@@ -15,8 +17,6 @@ TODO: Screen always on? (currently only in chrome 84)
 TODO: Swipe on calendar view
 
 TODO: clean up all naming conventions.
-
-TODO: split new wendler into two steps
 
 TODO: more stats on exercise view
 

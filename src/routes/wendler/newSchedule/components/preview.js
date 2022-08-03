@@ -3,13 +3,13 @@ import { useState } from "preact/compat"
 import { route } from "preact-router"
 import set from "lodash.set"
 
-import Accordion from "../../../components/accordion/accordion"
-import Modal from "../../../components/modal/Modal"
+import Accordion from "../../../../components/accordion/accordion"
+import Modal from "../../../../components/modal/Modal"
 
 import AuxExerciseForm from "./auxExerciseForm"
-import useDB from "../../../context/db"
+import useDB from "../../../../context/db"
 
-import { routes } from "../../../config/routes"
+import { routes } from "../../../../config/routes"
 
 export default function Preview({ preview, exercises }) {
   const { createCycle } = useDB()

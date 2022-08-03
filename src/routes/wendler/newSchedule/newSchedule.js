@@ -1,12 +1,13 @@
 import { h } from "preact"
 import { useState, useEffect } from "preact/compat"
-import Preview from "./components/preview"
 
 import style from "./newSchedule.scss"
-import generateProgram from "../../utilities.js/generateProgram"
-import useDB, { objectStores } from "../../context/db"
+import generateProgram from "../../../utilities.js/generateProgram"
+import useDB, { objectStores } from "../../../context/db"
 
 import OneRepMaxInput from "./components/oneRepMaxInput"
+import { route } from "preact-router"
+import { routes } from "../../../config/routes"
 
 const wendlerCycleExercises = [
   "deadlift",
@@ -15,16 +16,19 @@ const wendlerCycleExercises = [
   "standing overhead press",
 ]
 
-const NewSchedule = () => {
+const NewSchedule = ({ onSubmit, savedExercises }) => {
   const { getItemsByIndex, getAllEntries } = useDB()
   const [loading, setLoading] = useState(true)
   const [formErrors, setFormErrors] = useState({})
-  const [exercises, setExercises] = useState({})
-  const [generatedPreview, setGeneratedPreview] = useState(null)
+  const [exercises, setExercises] = useState(savedExercises || {})
   // then, TODO: first set last, or 5 x 10.
   const [auxVersion, setAuxVersion] = useState("")
 
   useEffect(() => {
+    if (savedExercises) {
+      setLoading(false)
+      return
+    }
     const promises = [
       getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises),
       getAllEntries(objectStores.wendlerCycles),
@@ -83,13 +87,13 @@ const NewSchedule = () => {
     if (Object.keys(errors)?.length) {
       return setFormErrors(errors)
     }
+    const preview = generateProgram({
+      exercises,
+      auxVersion,
+    })
 
-    setGeneratedPreview(
-      generateProgram({
-        exercises,
-        auxVersion,
-      })
-    )
+    onSubmit({ exercises, preview })
+    route(routes.wendlerNewPreview)
   }
 
   return loading ? (
@@ -129,12 +133,7 @@ const NewSchedule = () => {
         <button class="primary" onClick={generatePreview}>
           Generate Preview
         </button>
-        {generatedPreview && (
-          <button onClick={() => setGeneratedPreview(null)}>Reset</button>
-        )}
       </div>
-      <hr />
-      <Preview preview={generatedPreview} exercises={exercises} />
     </div>
   )
 }

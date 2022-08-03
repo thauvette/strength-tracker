@@ -32,17 +32,3 @@ const ExercisesByGroup = props => {
 }
 
 export default ExercisesByGroup
-
-/**
- *
- *  <div>
-      {matches.map(exercise => (
-        <div key={exercise.id}>
-          <Link href={`${routes.exerciseBase}/${exercise.id}`}>
-            {exercise.name}
-          </Link>
-        </div>
-      ))}
-    </div>
- *
- */

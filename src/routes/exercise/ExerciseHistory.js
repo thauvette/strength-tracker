@@ -25,14 +25,17 @@ const ExerciseHistory = ({ exerciseHistory, openNoteModal }) => (
                         }
                         `}
                   >
-                    <button
-                      class={`border-2 border-blue-200 mr-2 ${
-                        item?.note?.length ? "" : "opacity-50"
-                      }`}
-                      onClick={() => openNoteModal(item)}
-                    >
-                      Note
-                    </button>
+                    {openNoteModal ? (
+                      <button
+                        class={`border-2 border-blue-200 mr-2 ${
+                          item?.note?.length ? "" : "opacity-50"
+                        }`}
+                        onClick={() => openNoteModal(item)}
+                      >
+                        Note
+                      </button>
+                    ) : null}
+
                     <p class="font-medium flex-grow">
                       {item.reps} @ {item.weight}
                     </p>
