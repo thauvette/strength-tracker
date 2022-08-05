@@ -3,16 +3,18 @@ import { useState } from "preact/hooks"
 
 import ExerciseHistory from "./ExerciseHistory"
 import MaxWeights from "./MaxWeights"
+import Volume from "./Volume"
 
-const tabs = ["history", "PRs"]
+const tabs = ["history", "PRs", "volume"]
 
 const ExerciseStats = ({ exerciseHistory, openNoteModal }) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
-
   const renderView = () => {
     switch (activeTab) {
       case "PRs":
         return <MaxWeights exerciseHistory={exerciseHistory} />
+      case "volume":
+        return <Volume exerciseHistory={exerciseHistory} />
       case "history":
       default:
         return (
