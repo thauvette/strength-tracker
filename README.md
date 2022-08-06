@@ -2,7 +2,7 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-TODO: multiple modals at once is broken
+TODO: multiple modals at once won't work in the current setup - the close on back function kills it.
 
 TODO: settings need to be added to backups
 
