@@ -12,17 +12,19 @@ const Volume = ({ exerciseHistory }) => {
       }, [])
     : []
 
-  return volumeByDay.map(day => (
-    <div
-      key={day.day}
-      class="flex items-center justify-between py-4 border-b-4"
-    >
-      <p>
-        {dayjs(day.day).format("DD MMM YYYY")} - {day.sets} sets
-      </p>
-      <p>{day.vol}</p>
-    </div>
-  ))
+  return volumeByDay
+    .sort((a, b) => (dayjs(a.day).isBefore(b.day) ? 1 : -1))
+    .map(day => (
+      <div
+        key={day.day}
+        class="flex items-center justify-between py-4 border-b-4"
+      >
+        <p>
+          {dayjs(day.day).format("DD MMM YYYY")} - {day.sets} sets
+        </p>
+        <p>{day.vol}</p>
+      </div>
+    ))
 }
 
 export default Volume
