@@ -2,7 +2,6 @@ import { weeks, firstSetLastWeeksMath } from "../config/weights"
 
 export default function generateProgram({ exercises, auxVersion }) {
   const lessBoring = auxVersion === "bbslb"
-
   const auxPairs = auxVersion
     ? {
         deadlift: lessBoring ? "barbell back squat" : "deadlift",
@@ -31,6 +30,7 @@ export default function generateProgram({ exercises, auxVersion }) {
           aux: [],
           exercise: info.name,
           primaryId: info.primaryId,
+          runningSets: [],
         }
       }
 
@@ -38,6 +38,18 @@ export default function generateProgram({ exercises, auxVersion }) {
         const target = info.weight * set.math
         const rounded = +target.toFixed(0)
         obj[objKey][id].main.push({
+          planned: {
+            weight: target,
+            reps: set.reps,
+          },
+          exercise: info.name,
+          reps: set.reps,
+          weight: rounded,
+          text: `${set.repText || set.reps} @ ${rounded}`,
+          completed: null,
+          primaryId: info.primaryId,
+        })
+        obj[objKey][id].runningSets.push({
           planned: {
             weight: target,
             reps: set.reps,
@@ -63,6 +75,18 @@ export default function generateProgram({ exercises, auxVersion }) {
           const target = auxWeight * [firstSetLastWeeksMath[index]]
           const rounded = +target.toFixed(0)
           obj[objKey][id].aux.push({
+            planned: {
+              weight: target,
+              reps: 5,
+            },
+            exercise: matchingAuxData.name,
+            reps: 5,
+            weight: rounded,
+            text: `5 @ ${rounded}`,
+            completed: null,
+            primaryId: matchingAuxData.primaryId,
+          })
+          obj[objKey][id].runningSets.push({
             planned: {
               weight: target,
               reps: 5,

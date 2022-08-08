@@ -2,7 +2,8 @@ import { h } from "preact"
 import { useState } from "preact/compat"
 import { route } from "preact-router"
 import set from "lodash.set"
-
+import cloneDeep from "lodash.clonedeep"
+import get from "lodash.get"
 import Accordion from "../../../../components/accordion/accordion"
 import Modal from "../../../../components/modal/Modal"
 
@@ -11,9 +12,17 @@ import useDB from "../../../../context/db"
 
 import { routes } from "../../../../config/routes"
 
-export default function Preview({ preview, exercises }) {
-  const { createCycle } = useDB()
+import ReorderForm from "./reorderForm"
 
+/**
+ * TODO:
+ *  - add remove, edit and ✔️reorder sets
+ *
+ */
+
+export default function Preview({ preview: initialPreviewValues, exercises }) {
+  const { createCycle } = useDB()
+  const [preview, setPreview] = useState({ ...initialPreviewValues })
   const [viewByLift, setViewByLift] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
@@ -24,6 +33,12 @@ export default function Preview({ preview, exercises }) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
   const [auxExerciseFormData, setAuxExerciseFormData] = useState(null)
+
+  const [editOrderModalState, setEditOrderModalState] = useState({
+    isOpen: false,
+    targetWeek: null,
+    mainLift: null,
+  })
 
   if (!preview || !Object.keys(preview).length) {
     return null
@@ -37,6 +52,23 @@ export default function Preview({ preview, exercises }) {
   const closeAuxExerciseModal = () => {
     setAuxExerciseFormData(null)
     setAuxExerciseModalIsOpen(false)
+  }
+
+  const openReorderModal = ({ targetWeek, mainLift, items }) => {
+    setEditOrderModalState({
+      isOpen: true,
+      targetWeek,
+      mainLift,
+      items,
+    })
+  }
+
+  const closeReorderModal = () => {
+    setEditOrderModalState({
+      isOpen: false,
+      targetWeek: null,
+      mainLift: null,
+    })
   }
 
   const previewByLift = Object.entries(preview).reduce((obj, [key, week]) => {
@@ -57,14 +89,13 @@ export default function Preview({ preview, exercises }) {
   }
 
   function saveToWorkouts() {
-    const mainLifts = { ...preview }
+    const mainLifts = cloneDeep(preview)
 
     Object.entries(additionalExercises).forEach(([week, lifts]) => {
       Object.entries(lifts).forEach(([liftName, sets]) => {
         if (!mainLifts?.[week]?.[liftName].additional) {
           set(mainLifts, [week, liftName, "additional"], [])
         }
-
         mainLifts?.[week]?.[liftName].additional?.push(...sets)
       })
     })
@@ -87,6 +118,29 @@ export default function Preview({ preview, exercises }) {
 
     const targetIndex = auxExerciseFormData?.initialValues?.index
     weeksToUpdate.forEach(weekNum => {
+      const currentRunningSets =
+        preview?.[weekNum]?.[targetLift]?.runningSets || []
+
+      sets.forEach(set =>
+        currentRunningSets.push({
+          ...set,
+          text: `${set.reps} @ ${set.weight}`,
+          completed: null,
+          exercise: exercise.name,
+          primaryId: exercise.id,
+          planned: {
+            ...set,
+          },
+        })
+      )
+
+      setPreview(
+        set(
+          { ...preview },
+          [weekNum, targetLift, "runningSets"],
+          currentRunningSets
+        )
+      )
       if (!currentAdditionalWorkSets[weekNum]) {
         currentAdditionalWorkSets[weekNum] = {}
       }
@@ -112,6 +166,48 @@ export default function Preview({ preview, exercises }) {
     setAuxExerciseModalIsOpen(false)
   }
 
+  const renderDay = ({ sets, title, week, mainLift }) => {
+    return (
+      <div>
+        <ul>
+          {sets.map((set, i) => (
+            <li key={i}>
+              {set.exercise}: {set.text}
+            </li>
+          ))}
+        </ul>
+        <div class="pt-6">
+          <button
+            class="bg-blue-100"
+            onClick={() =>
+              openAuxExerciseModal({
+                title,
+                week,
+                mainLift,
+              })
+            }
+          >
+            Add Aux Sets
+          </button>
+          <button
+            onClick={() =>
+              openReorderModal({
+                targetWeek: week,
+                mainLift,
+                items: sets.map(set => ({
+                  ...set,
+                  label: `${set.exercise}: ${set.text}`,
+                })),
+              })
+            }
+          >
+            Edit Order
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div class="flex justify-between align-center">
@@ -127,66 +223,18 @@ export default function Preview({ preview, exercises }) {
               <div class="divide-y">
                 {Object.entries(weeks).map(([key, sets]) => (
                   <div key={key} class="py-2 ">
-                    <Accordion title={`Week ${key}`} openByDefault>
+                    <Accordion
+                      title={`Week ${key}`}
+                      openByDefault
+                      titleClass="text-xl font-bold capitalize"
+                    >
                       <div>
-                        <p>{weeks?.[1]?.exercise}</p>
-                        {sets.main.map(set => (
-                          <p key={set.text}>{set.text}</p>
-                        ))}
-                        {!!sets?.aux?.length && (
-                          <div>
-                            <p>Aux: {sets.auxName}</p>
-                            {sets.aux.map((set, i) => (
-                              <p key={set.text + i}>{set.text}</p>
-                            ))}
-                          </div>
-                        )}
-                        <div>
-                          {additionalExercises?.[key]?.[id]?.length > 0 && (
-                            <div>
-                              <p>Aux Work: </p>
-                              {additionalExercises?.[key]?.[id]?.map(
-                                (additionalSets, index) => (
-                                  <div key={index} class="flex items-center">
-                                    <p class="m-0">
-                                      {additionalSets.sets?.length} sets of{" "}
-                                      {additionalSets.exercise?.name}
-                                    </p>
-                                    <button
-                                      onClick={() =>
-                                        openAuxExerciseModal({
-                                          week: key,
-                                          mainLift: id,
-                                          title: weeks?.[1]?.exercise,
-                                          initialValues: {
-                                            ...additionalSets,
-                                            index,
-                                          },
-                                        })
-                                      }
-                                    >
-                                      Edit Sets
-                                    </button>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          )}
-                          <div class="pt-6">
-                            <button
-                              class="bg-blue-100"
-                              onClick={() =>
-                                openAuxExerciseModal({
-                                  title: weeks?.[1]?.exercise,
-                                  week: key,
-                                  mainLift: id,
-                                })
-                              }
-                            >
-                              Add Aux Sets
-                            </button>
-                          </div>
-                        </div>
+                        {renderDay({
+                          sets: sets.runningSets,
+                          title: weeks?.[1]?.exercise,
+                          week: key,
+                          mainLift: id,
+                        })}
                       </div>
                     </Accordion>
                   </div>
@@ -206,64 +254,15 @@ export default function Preview({ preview, exercises }) {
                           <Accordion
                             title={`${sets.exercise} day`}
                             openByDefault
+                            titleClass="text-xl font-bold capitalize"
                           >
                             <div class="pb-10">
-                              <p>{sets.exercise}</p>
-                              {sets.main.map(set => (
-                                <p key={set.text}>{set.text}</p>
-                              ))}
-                              {sets.auxName}
-                              {sets.aux.map((set, i) => (
-                                <p key={set.text + i}>{set.text}</p>
-                              ))}
-                              {additionalExercises?.[key]?.[name]?.length >
-                                0 && (
-                                <div>
-                                  <p>Aux Work: </p>
-                                  {additionalExercises?.[key]?.[name]?.map(
-                                    (additionalSets, index) => (
-                                      <div
-                                        key={index}
-                                        class="flex items-center"
-                                      >
-                                        <p class="m-0">
-                                          {additionalSets.sets?.length} sets of{" "}
-                                          {additionalSets.exercise?.name}
-                                        </p>
-                                        <button
-                                          onClick={() =>
-                                            openAuxExerciseModal({
-                                              week: key,
-                                              mainLift: name,
-                                              title: sets.exercise,
-                                              initialValues: {
-                                                ...additionalSets,
-                                                index,
-                                              },
-                                            })
-                                          }
-                                        >
-                                          Edit Sets
-                                        </button>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              )}
-                              <div class="pt-6">
-                                <button
-                                  class="bg-blue-100"
-                                  onClick={() =>
-                                    openAuxExerciseModal({
-                                      title: sets.exercise,
-                                      week: key,
-                                      mainLift: name,
-                                    })
-                                  }
-                                >
-                                  Add Aux Sets
-                                </button>
-                              </div>
+                              {renderDay({
+                                sets: sets.runningSets,
+                                title: sets.exercise,
+                                week: key,
+                                mainLift: name,
+                              })}
                             </div>
                           </Accordion>
                         </div>
@@ -320,6 +319,56 @@ export default function Preview({ preview, exercises }) {
           </button>
         </div>
       </Modal>
+      <Modal
+        isOpen={editOrderModalState.isOpen}
+        onRequestClose={closeReorderModal}
+      >
+        {editOrderModalState.isOpen ? (
+          <>
+            <ReorderForm
+              items={editOrderModalState.items}
+              onSave={({ newOrder, updateAllWeeks }) => {
+                if (!newOrder) {
+                  return closeReorderModal()
+                }
+
+                const weeks = updateAllWeeks
+                  ? [1, 2, 3]
+                  : [editOrderModalState.targetWeek]
+                const clonedPreview = cloneDeep(preview)
+
+                weeks.forEach(week => {
+                  const currentSets = get(
+                    preview,
+                    [week, editOrderModalState.mainLift, "runningSets"],
+                    []
+                  )
+                  const newOrderSets = newOrder.map(num => currentSets[num])
+                  set(
+                    clonedPreview,
+                    [week, editOrderModalState.mainLift, "runningSets"],
+                    newOrderSets
+                  )
+                })
+
+                setPreview(clonedPreview)
+                closeReorderModal()
+              }}
+              allowEditAllWeeks={daysHaveSameSets(
+                Object.values(preview || {}),
+                editOrderModalState.mainLift
+              )}
+            />
+          </>
+        ) : null}
+      </Modal>
     </div>
   )
+}
+
+const daysHaveSameSets = (weeks, targetLift) => {
+  const strings = weeks.map(week =>
+    week?.[targetLift]?.runningSets?.map(set => set.primaryId)?.join()
+  )
+  return strings ? strings.every(string => string === strings[0]) : false
 }

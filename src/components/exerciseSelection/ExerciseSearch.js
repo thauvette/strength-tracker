@@ -26,7 +26,9 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
   useEffect(() => {
     getOptions()
   }, []) // eslint-disable-line
-
+  if (!exerciseOptions?.length) {
+    return null
+  }
   const renderComponents = () => {
     if (showNewExerciseForm) {
       return (
@@ -71,7 +73,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
         {showNewExerciseForm ? (
           <div>
             <button onClick={() => setShowNewExerciseForm(false)}>
-              ← Back
+              ← Return
             </button>
           </div>
         ) : (

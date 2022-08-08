@@ -7,8 +7,8 @@ const Set = ({
   isActive,
   makeActive,
   set,
-  setNumber,
   title,
+  handleViewHistory,
 }) => {
   const { reps, weight, completed } = set
   return (
@@ -19,7 +19,8 @@ const Set = ({
             reps={reps}
             weight={weight}
             isComplete={!!completed}
-            title={`${completed ? "✔️" : ""} Set ${setNumber}`}
+            title={`${completed ? "✔️" : ""}  ${title}`}
+            titleClass="capitalize text-xl font-bold"
             renderCtas={newValues => (
               <div class="flex py-4 px-2">
                 <button
@@ -38,15 +39,18 @@ const Set = ({
                 >
                   {completed ? "Update" : "Save"}
                 </button>
+                {handleViewHistory ? (
+                  <button onClick={handleViewHistory}>View History</button>
+                ) : null}
               </div>
             )}
           />
         </div>
       ) : (
         <button onClick={makeActive}>
-          <p class="capitalize">
+          <p class="capitalize text-xl font-bold">
             {completed && "✔️"}
-            {title} Set {setNumber}
+            {title}
           </p>
           {set.reps} @ {set.weight}
         </button>

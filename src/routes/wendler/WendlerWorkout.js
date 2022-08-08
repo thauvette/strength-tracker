@@ -6,6 +6,7 @@ import EditableSet from "../../components/editableSet/editableSet"
 
 import Set from "./components/Set"
 import SetGroup from "./components/SetGroup"
+import ExerciseHistoryModal from "../../components/exerciseHistoryModal/ExerciseHistoryModal"
 
 const liftGroups = ["main", "aux", "additional", "free"]
 
@@ -20,6 +21,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   const [activeLiftGroup, setActiveLiftGroup] = useState(0)
   const [activeSet, setActiveSet] = useState(0)
   const [activeAdditionalGroup, setActiveAdditionalGroup] = useState(0)
+  const [exerciseHistoryModalId, setExerciseHistoryModalId] = useState(null)
 
   useEffect(() => {
     getItemById(id).then(res => {
@@ -108,6 +110,21 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     return setId
   }
 
+  const updateRunningSet = async ({ setIndex, setData }) => {
+    const setId = await updateSetsDB(setData)
+    const data = { ...setData, setId: setId || null }
+    if (setId) {
+      data.setId = setId
+    }
+    updateWendlerItem({
+      id,
+      path: ["weeks", week, mainLift, "runningSets", setIndex],
+      value: data,
+    }).then(res => {
+      setWorkout(get(res, ["weeks", week, mainLift], null))
+    })
+  }
+
   const updateSet = async ({ exerciseKey, setIndex, setData }) => {
     const setId = await updateSetsDB(setData)
     const data = { ...setData, setId: setId || null }
@@ -146,7 +163,56 @@ export default function WendlerWorkout({ id, week, mainLift }) {
       setWorkout(get(res, ["weeks", week, mainLift], null))
     })
   }
-
+  if (workout?.runningSets?.length) {
+    return (
+      <div>
+        {workout?.runningSets.map((set, setIndex) => {
+          const isActive = activeSet === setIndex
+          return (
+            <div key={setIndex}>
+              <Set
+                set={set}
+                title={set.exercise}
+                isActive={isActive}
+                makeActive={() => setActiveSet(setIndex)}
+                handleSubmit={newValues => {
+                  updateRunningSet({
+                    setIndex,
+                    setData: {
+                      ...set,
+                      ...newValues,
+                      completed: new Date().getTime(),
+                    },
+                  })
+                  setActiveSet(setIndex + 1)
+                }}
+                handleUndo={() => {
+                  updateRunningSet({
+                    setIndex,
+                    setData: {
+                      ...set,
+                      completed: null,
+                    },
+                  })
+                }}
+                handleViewHistory={() =>
+                  setExerciseHistoryModalId(set.primaryId)
+                }
+              />
+            </div>
+          )
+        })}
+        {exerciseHistoryModalId && (
+          <ExerciseHistoryModal
+            exerciseId={exerciseHistoryModalId}
+            isOpen={!!exerciseHistoryModalId}
+            onRequestClose={() => setExerciseHistoryModalId(null)}
+          />
+        )}
+      </div>
+    )
+  }
+  //  TODO: this is from a legacy version. Hoping to delete soon
   return (
     <div class="">
       <SetGroup

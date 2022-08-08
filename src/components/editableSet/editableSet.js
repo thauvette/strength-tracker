@@ -11,6 +11,7 @@ const EditableSet = ({
   weight: initialWeight,
   handleRemove,
   title,
+  titleClass,
   onDuplicate,
   renderCtas,
   disablePlateModal,
@@ -26,7 +27,9 @@ const EditableSet = ({
     <>
       <div class="editable-set py-1">
         <div class="flex items-center justify-between">
-          {title && <p class="m-0 ml-4">{title}</p>}
+          {title && (
+            <p class={`m-0 ml-4 ${titleClass ? titleClass : ""}`}>{title}</p>
+          )}
 
           {handleRemove && <button onClick={handleRemove}>X</button>}
         </div>
