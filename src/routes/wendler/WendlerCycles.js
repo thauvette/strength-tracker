@@ -56,11 +56,6 @@ export default function WendlerCycles() {
               </div>
             ))}
       </div>
-      <div>
-        <p class="text-sm italic text-grey-400">
-          TODO: footer menu, with start workout, calendar view?
-        </p>
-      </div>
     </div>
   )
 }
