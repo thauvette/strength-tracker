@@ -38,6 +38,7 @@
     "preact": "^10.3.2",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
+    "react-animate-height": "^3.0.4",
     "sass-loader": "^10.2.0"
   },
   "jest": {

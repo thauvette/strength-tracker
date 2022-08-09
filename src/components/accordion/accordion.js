@@ -1,15 +1,15 @@
 import { h } from "preact"
 import { useState } from "preact/compat"
+import AnimateHeight from "react-animate-height"
 
 import style from "./accordion.scss"
+import chevDown from "../../assets/icons/chevron-down-outline.svg"
 
 export default function Accordion({
   openByDefault = false,
   title,
   children,
   titleClass = "",
-  toggleButtonOpenText = "Open",
-  toggleButtonClosedText = "Close",
 }) {
   const [isOpen, setIsOpen] = useState(openByDefault)
 
@@ -18,10 +18,18 @@ export default function Accordion({
       <button class="w-full" onClick={() => setIsOpen(!isOpen)}>
         <div class="flex justify-between">
           <p class={titleClass}>{title}</p>
-          <span>{isOpen ? toggleButtonClosedText : toggleButtonOpenText}</span>
+          <img
+            class={`w-6 h-6 transform transition-all duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            src={chevDown}
+            alt={isOpen ? "close" : "open"}
+          />
         </div>
       </button>
-      {isOpen && <div>{children}</div>}
+      <AnimateHeight duration={200} height={isOpen ? "auto" : 0}>
+        {children}
+      </AnimateHeight>
     </div>
   )
 }

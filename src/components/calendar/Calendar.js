@@ -1,7 +1,11 @@
 import dayjs from "dayjs"
 import { h } from "preact"
 import chunk from "lodash.chunk"
-import { useState, useRef } from "preact/hooks"
+import { useState } from "preact/hooks"
+
+import calIcon from "../../assets/icons/calendar-outline.svg"
+import forwardIcon from "../../assets/icons/arrow-forward-outline.svg"
+import backIcon from "../../assets/icons/arrow-back-outline.svg"
 
 const Calendar = ({ startDate, renderDay }) => {
   const [start, setStart] = useState(
@@ -33,14 +37,18 @@ const Calendar = ({ startDate, renderDay }) => {
   return (
     <div class="">
       <div class="flex items-center justify-between pb-2">
-        <button onClick={() => changeMonth(-1)}>{"← Prev"}</button>
+        <button onClick={() => changeMonth(-1)}>
+          <img src={backIcon} alt="previous month" class="w-6 h-6" />
+        </button>
         <div class="flex items-center justify-between">
-          <p class="font-bold">{start.format("MMMM YYYY")}</p>
+          <p class="font-bold">{start.format("MMM YYYY")}</p>
           <button onClick={() => setStart(dayjs().startOf("month"))}>
-            {"🗓"}
+            <img class="w-6 h-6" src={calIcon} alt="today" />
           </button>
         </div>
-        <button onClick={() => changeMonth(1)}>{"Next →"}</button>
+        <button onClick={() => changeMonth(1)}>
+          <img src={forwardIcon} alt="next month" class="w-6 h-6" />
+        </button>
       </div>
       <div class="grid grid-cols-7">
         {Array.from({ length: 7 }, (_, i) => dayjs().day(i)).map(day => (
@@ -48,7 +56,7 @@ const Calendar = ({ startDate, renderDay }) => {
             {day.format("dd")}
           </p>
         ))}
-        {weeks.map(week => week.map((day, dayIndex) => printDay(day)))}
+        {weeks.map(week => week.map(day => printDay(day)))}
       </div>
     </div>
   )

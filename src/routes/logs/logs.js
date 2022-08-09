@@ -7,6 +7,9 @@ import Calendar from "../../components/calendar/Calendar"
 import { Link } from "preact-router"
 import { routes } from "../../config/routes"
 
+import forwardIcon from "../../assets/icons/arrow-forward-outline.svg"
+import backIcon from "../../assets/icons/arrow-back-outline.svg"
+
 const Logs = () => {
   const { getAllSetsHistory } = useDB()
   const [logState, setLogState] = useState({
@@ -66,11 +69,15 @@ const Logs = () => {
   return (
     <div class="p-2">
       <div className="flex items-center justify-between">
-        <button onClick={() => stepByDate(-1)}>{"←"}</button>
+        <button onClick={() => stepByDate(-1)}>
+          <img src={backIcon} alt="previous day" class="w-6 h-6" />
+        </button>
         <button class="m-0" onClick={toggleCalendar}>
           {dayjs(activeDate).format("MMM DD, YYYY ")}
         </button>
-        <button onClick={() => stepByDate(1)}>{"→"}</button>
+        <button onClick={() => stepByDate(1)}>
+          <img src={forwardIcon} alt="next day" class="w-6 h-6" />
+        </button>
       </div>
 
       {Object.entries(sortedDayData).map(([name, sets]) => (
@@ -114,12 +121,14 @@ const Logs = () => {
 
             return (
               <div
-                class={`text-center ${hasData || isToday ? "bg-blue-100" : ""}`}
+                class={`text-center ${
+                  hasData && !isToday ? "bg-blue-100" : ""
+                } ${isToday ? "bg-gray-300 text-white" : ""}`}
               >
                 <button onClick={() => selectDate(day)}>
                   {day.format("D")}
                   {groupString && (
-                    <p class="text-xs m-0">{groupString.join(",")}</p>
+                    <p class={`text-xs m-0 `}>{groupString.join(",")}</p>
                   )}
                 </button>
               </div>

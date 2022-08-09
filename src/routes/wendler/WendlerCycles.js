@@ -5,6 +5,8 @@ import { routes } from "../../config/routes"
 
 import useDB, { objectStores } from "../../context/db"
 
+import deleteIcon from "../../assets/icons/close-circle-outline.svg"
+
 export default function WendlerCycles() {
   const { getAllEntries, deleteEntry } = useDB()
   const [workouts, setWorkouts] = useState(null)
@@ -47,10 +49,10 @@ export default function WendlerCycles() {
                 </Link>
                 <div>
                   <button
-                    class="border border-red-900 rounded-full w-8 h-8 p-0 leading-none color-red-900"
+                    class="p-0 leading-none color-red-900"
                     onClick={() => handleDelete(id)}
                   >
-                    X
+                    <img class="w-8 h-8" src={deleteIcon} alt="delete" />
                   </button>
                 </div>
               </div>
