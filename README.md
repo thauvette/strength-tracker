@@ -10,8 +10,6 @@ TODO: styles not loading when offline
 
 TODO: finish cleaning up WendlerWorkout
 
-TODO: back button when menu is open
-
 TODO: Screen always on? (currently only in chrome 84)
 
 TODO: Swipe on calendar view
@@ -26,13 +24,7 @@ TODO: non-wendler routines
 
 TODO: clean up useDB, that got out of hand 😬
 
-TODO: icons and styles.
-
-TODO: clean up wendler preview, the two renders (sort by) are very annoying
-
 TODO: aux exercise form errors.
-
-TODO: delete aux when making new cycle
 
 TODO: Super sets
 
