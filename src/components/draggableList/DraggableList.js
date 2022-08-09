@@ -1,14 +1,23 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
 
-// TODO: fix slight delay before re-order complete
+import reorderIcon from "../../assets/icons/reorder-two-outline.svg"
+import deleteIcon from "../../assets/icons/close-circle-outline.svg"
 
-const DraggableList = ({ items = [], onReorderEnd, renderItem }) => {
+// TODO: fix slight delay before re-order complete
+// TODO: clone element being dragged
+
+const DraggableList = ({
+  items = [],
+  onReorderEnd,
+  renderItem,
+  initialOrder,
+}) => {
   const [draggingIndex, setDraggingIndex] = useState(null)
   const [targetIndex, setTargetIndex] = useState(null)
 
   const [order, setOrder] = useState(
-    Array.from({ length: items.length }, (_, i) => i)
+    initialOrder || Array.from({ length: items.length }, (_, i) => i)
   )
 
   const handleDragEnd = () => {
@@ -22,6 +31,13 @@ const DraggableList = ({ items = [], onReorderEnd, renderItem }) => {
     onReorderEnd(newOrder)
   }
 
+  const deleteItem = target => {
+    const index = order.indexOf(target)
+    const cloned = [...order]
+    cloned.splice(index, 1)
+    setOrder(cloned)
+    onReorderEnd(cloned)
+  }
   return (
     <ul>
       {order.map(setIndex => {
@@ -34,6 +50,7 @@ const DraggableList = ({ items = [], onReorderEnd, renderItem }) => {
             handleDragOver={() => setTargetIndex(setIndex)}
             handleDragEnd={handleDragEnd}
             isTarget={targetIndex === setIndex}
+            handleRemove={() => deleteItem(setIndex)}
           >
             {renderItem({
               setIndex,
@@ -51,16 +68,26 @@ const Item = ({
   handleDragEnd,
   children,
   isTarget,
+  handleRemove,
 }) => {
   return (
-    <li
-      draggable="true"
-      onDragStart={handleDragging}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-      class={`py-2 border-b-4 ${isTarget ? "pt-10" : ""}`}
-    >
-      {children}
+    <li class={`py-2 border-b-4 ${isTarget ? "pt-10" : ""}`}>
+      <div class="flex justify-between" onDragOver={handleDragOver}>
+        <div class="flex">
+          <div
+            draggable="true"
+            onDragStart={handleDragging}
+            onDragEnd={handleDragEnd}
+            class="pr-2"
+          >
+            <img class="w-6 h-6" src={reorderIcon} alt="drag" />
+          </div>
+          {children}
+        </div>
+        <button onClick={handleRemove}>
+          <img class="w-6 h-6" src={deleteIcon} alt="remove" />
+        </button>
+      </div>
     </li>
   )
 }

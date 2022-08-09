@@ -186,15 +186,19 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                   })
                   setActiveSet(setIndex + 1)
                 }}
-                handleUndo={() => {
-                  updateRunningSet({
-                    setIndex,
-                    setData: {
-                      ...set,
-                      completed: null,
-                    },
-                  })
-                }}
+                handleUndo={
+                  set.completed
+                    ? () => {
+                        updateRunningSet({
+                          setIndex,
+                          setData: {
+                            ...set,
+                            completed: null,
+                          },
+                        })
+                      }
+                    : null
+                }
                 handleViewHistory={() =>
                   setExerciseHistoryModalId(set.primaryId)
                 }

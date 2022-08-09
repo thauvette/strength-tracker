@@ -8,10 +8,17 @@ import WendlerCycle from "./WendlerCycle"
 import WendlerCycles from "./WendlerCycles"
 import WendlerWorkout from "./WendlerWorkout"
 
+const scrollToTop = () => {
+  if (typeof window !== "undefined") {
+    window.scrollTo(0, 0)
+  }
+}
+
 const Wendler = () => {
   const [newWendlerData, setNewWendlerData] = useState(null)
+
   return (
-    <Router>
+    <Router onChange={scrollToTop}>
       <WendlerCycles path={routes.wendlerCycles} />
       <NewSchedule
         path={routes.wendlerNew}

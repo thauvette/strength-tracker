@@ -14,12 +14,6 @@ import { routes } from "../../../../config/routes"
 
 import ReorderForm from "./reorderForm"
 
-/**
- * TODO:
- *  - add remove, edit and ✔️reorder sets
- *
- */
-
 export default function Preview({ preview: initialPreviewValues, exercises }) {
   const { createCycle } = useDB()
   const [preview, setPreview] = useState({ ...initialPreviewValues })
@@ -171,7 +165,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
       <div>
         <ul>
           {sets.map((set, i) => (
-            <li key={i}>
+            <li key={i} class="py-1 px-2">
               {set.exercise}: {set.text}
             </li>
           ))}
@@ -201,7 +195,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
               })
             }
           >
-            Edit Order
+            Edit Sets
           </button>
         </div>
       </div>
@@ -209,7 +203,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
   }
 
   return (
-    <div>
+    <div class="px-2">
       <div class="flex justify-between align-center">
         <h2 class="text-lg">Preview</h2>
         <button onClick={() => setViewByLift(!viewByLift)}>
@@ -325,6 +319,9 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
       >
         {editOrderModalState.isOpen ? (
           <>
+            <div class="flex justify-end">
+              <button onClick={closeReorderModal}>Close x</button>
+            </div>
             <ReorderForm
               items={editOrderModalState.items}
               onSave={({ newOrder, updateAllWeeks }) => {
@@ -344,6 +341,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
                     []
                   )
                   const newOrderSets = newOrder.map(num => currentSets[num])
+
                   set(
                     clonedPreview,
                     [week, editOrderModalState.mainLift, "runningSets"],
