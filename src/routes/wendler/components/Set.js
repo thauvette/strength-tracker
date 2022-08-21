@@ -1,6 +1,8 @@
 import { h } from "preact"
 import EditableSet from "../../../components/editableSet/editableSet"
 
+import historyIcon from "../../../assets/icons/list-outline.svg"
+
 const Set = ({
   handleSubmit,
   handleUndo,
@@ -23,11 +25,13 @@ const Set = ({
           renderCtas={newValues => (
             <div class="flex py-4 px-2">
               {handleViewHistory ? (
-                <button onClick={handleViewHistory}>History</button>
+                <button onClick={handleViewHistory}>
+                  <img src={historyIcon} alt="view history" class="w-8" />
+                </button>
               ) : null}
               {handleUndo ? (
                 <button
-                  class="w-1/2 bg-gray-400 text-gray-900"
+                  class="w-1/2 secondary"
                   onClick={() =>
                     handleUndo({
                       ...newValues,
@@ -38,7 +42,7 @@ const Set = ({
                 </button>
               ) : null}
               <button
-                class="w-1/2 bg-blue-900 text-white text-bold px-4 py-2 ml-2"
+                class="w-1/2 primary px-4 py-2 ml-2"
                 onClick={() => handleSubmit({ ...newValues })}
               >
                 {completed ? "Update" : "Save"}
@@ -48,13 +52,15 @@ const Set = ({
         />
       ) : (
         <button onClick={makeActive} class="text-left w-full">
-          <p class="capitalize text-xl font-bold">
-            {completed && "✔️"}
-            {title}
-          </p>
-          <p>
-            {set.reps} @ {set.weight}
-          </p>
+          <div class="flex justify-between">
+            <p class="capitalize text-xl font-bold">
+              {completed && "✔️"}
+              {title}
+            </p>
+            <p>
+              {set.reps} @ {set.weight}
+            </p>
+          </div>
         </button>
       )}
     </div>
