@@ -4,13 +4,16 @@ import useExerciseHistory from "../../hooks/useExerciseHistory/useExerciseHistor
 import ExerciseStats from "../../routes/exercise/ExerciseStats"
 
 const ExerciseHistoryModal = ({ isOpen, exerciseId, onRequestClose }) => {
-  const [exerciseHistory] = useExerciseHistory(exerciseId)
+  const [exerciseHistory, getData] = useExerciseHistory(exerciseId)
 
   return (
     <Modal onRequestClose={onRequestClose} isOpen={isOpen}>
       <>
         <h1>{exerciseHistory?.name}</h1>
-        <ExerciseStats exerciseHistory={exerciseHistory} />
+        <ExerciseStats
+          exerciseHistory={exerciseHistory}
+          onChangeSet={getData}
+        />
       </>
     </Modal>
   )

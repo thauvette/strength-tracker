@@ -1,43 +1,21 @@
 import { h } from "preact"
-import { useState } from "preact/hooks"
-import useDB, { objectStores } from "../../context/db"
+import useDB from "../../context/db"
 import EditableSet from "../../components/editableSet/editableSet"
-import calculateOneRepMax from "../../utilities.js/calculateOneRepMax"
-import Modal from "../../components/modal/Modal"
+import SetRow from "../../components/setRow/setRow"
 
 const Track = ({
   todaysHistory,
   exerciseId,
   onAddSet,
   lastWorkoutFirstSet,
-  openNoteModal,
 }) => {
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
 
-  const { createOrUpdateLoggedSet, deleteEntry } = useDB()
-
-  const [activeSet, setActiveSet] = useState(null)
-  const [deleteConfirmIsOpen, setDeleteConfirmIsOpen] = useState(false)
+  const { createOrUpdateLoggedSet } = useDB()
 
   const submitNewSet = async ({ weight, reps }) => {
     await createOrUpdateLoggedSet(null, { weight, reps, exercise: +exerciseId })
     onAddSet()
-  }
-
-  const updateExistingSet = async ({ weight, reps }) => {
-    await createOrUpdateLoggedSet(activeSet.id, {
-      weight,
-      reps,
-    })
-    onAddSet()
-    setActiveSet(null)
-  }
-
-  const deleteSet = async () => {
-    await deleteEntry(objectStores.sets, activeSet.id)
-    onAddSet()
-    setActiveSet(null)
-    setDeleteConfirmIsOpen(false)
   }
 
   return (
@@ -65,79 +43,9 @@ const Track = ({
       {!!todaysHistory?.length &&
         todaysHistory.map(item => (
           <div key={item.id} class="px-1">
-            <div class="flex">
-              <button
-                class={`border-2 border-blue-200 mr-2 ${
-                  item?.note?.length ? "" : "opacity-50"
-                }`}
-                onClick={() => openNoteModal(item)}
-              >
-                Note
-              </button>
-              <div
-                class="flex flex-grow justify-between py-2 items-center"
-                role="button"
-                onClick={() => {
-                  setActiveSet(item?.id === activeSet?.id ? null : item)
-                }}
-              >
-                <p class="font-medium">
-                  {item.reps} @ {item.weight}
-                </p>
-                <p>{calculateOneRepMax({ ...item })}</p>
-              </div>
-            </div>
-            {item.id === activeSet?.id && (
-              <div>
-                <EditableSet
-                  reps={activeSet.reps}
-                  weight={activeSet.weight}
-                  renderCtas={({ weight, reps }) => (
-                    <div class="px-4 ">
-                      <button
-                        class="bg-gray-400 text-gray-900 w-full mb-4"
-                        onClick={() => updateExistingSet({ weight, reps })}
-                      >
-                        Update
-                      </button>
-                      <button
-                        class="bg-red-900 text-white w-full"
-                        onClick={() => setDeleteConfirmIsOpen(true)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                />
-              </div>
-            )}
+            <SetRow set={item} onChangeSet={onAddSet} />
           </div>
         ))}
-      {deleteConfirmIsOpen && (
-        <Modal
-          isOpen={deleteConfirmIsOpen}
-          onRequestClose={() => setDeleteConfirmIsOpen(false)}
-        >
-          <div>
-            <h1>Are you sure?</h1>
-            <p class="mb-2">This action cannot be undone.</p>
-            <div class="flex">
-              <button
-                class="bg-red-900 text-white w-full mr-2"
-                onClick={deleteSet}
-              >
-                Yup, ditch it.
-              </button>
-              <button
-                class="bg-gray-400 text-gray-900 w-full ml-2"
-                onClick={() => setDeleteConfirmIsOpen(false)}
-              >
-                Nope, keep it.
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
     </div>
   )
 }

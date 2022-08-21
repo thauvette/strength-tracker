@@ -7,7 +7,7 @@ import Volume from "./Volume"
 
 const tabs = ["history", "PRs", "volume"]
 
-const ExerciseStats = ({ exerciseHistory, openNoteModal }) => {
+const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
   const renderView = () => {
     switch (activeTab) {
@@ -20,7 +20,7 @@ const ExerciseStats = ({ exerciseHistory, openNoteModal }) => {
         return (
           <ExerciseHistory
             exerciseHistory={exerciseHistory}
-            openNoteModal={openNoteModal}
+            onChangeSet={onChangeSet}
           />
         )
     }

@@ -61,7 +61,13 @@
       border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
     &.primary {
-      @apply bg-primary-900 text-white;
+      @apply bg-blue-900 text-white;
+    }
+    &.secondary {
+      @apply bg-gray-300 text-gray-900;
+    }
+    &.warning {
+      @apply bg-red-900 text-white;
     }
   }
 

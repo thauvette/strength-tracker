@@ -1,8 +1,8 @@
 import dayjs from "dayjs"
 import { h } from "preact"
-import calculateOneRepMax from "../../utilities.js/calculateOneRepMax"
+import SetRow from "../../components/setRow/setRow"
 
-const ExerciseHistory = ({ exerciseHistory, openNoteModal }) => (
+const ExerciseHistory = ({ exerciseHistory, onChangeSet }) => (
   <>
     {exerciseHistory?.items &&
     Object.keys(exerciseHistory?.items)?.length > 0 ? (
@@ -17,7 +17,7 @@ const ExerciseHistory = ({ exerciseHistory, openNoteModal }) => (
               {items.map(item => (
                 <div key={item.created}>
                   <div
-                    class={`flex justify-between py-2 items-center
+                    class={`
                         ${
                           exerciseHistory?.eorm?.time === item.created
                             ? "bg-blue-200"
@@ -25,22 +25,7 @@ const ExerciseHistory = ({ exerciseHistory, openNoteModal }) => (
                         }
                         `}
                   >
-                    {openNoteModal ? (
-                      <button
-                        class={`border-2 border-blue-200 mr-2 ${
-                          item?.note?.length ? "" : "opacity-50"
-                        }`}
-                        onClick={() => openNoteModal(item)}
-                      >
-                        Note
-                      </button>
-                    ) : null}
-
-                    <p class="font-medium flex-grow">
-                      {item.reps} @ {item.weight}
-                    </p>
-
-                    <p>{calculateOneRepMax({ ...item })}</p>
+                    <SetRow set={item} onChangeSet={onChangeSet} />
                   </div>
                 </div>
               ))}
