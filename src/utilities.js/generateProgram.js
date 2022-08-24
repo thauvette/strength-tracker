@@ -80,21 +80,21 @@ export default function generateProgram({ exercises, auxVersion }) {
               reps: 10,
             },
             exercise: matchingAuxData.name,
-            reps: 5,
+            reps: 10,
             weight: rounded,
-            text: `5 @ ${rounded}`,
+            text: `10 @ ${rounded}`,
             completed: null,
             primaryId: matchingAuxData.primaryId,
           })
           obj[objKey][id].runningSets.push({
             planned: {
               weight: target,
-              reps: 5,
+              reps: 10,
             },
             exercise: matchingAuxData.name,
-            reps: 5,
+            reps: 10,
             weight: rounded,
-            text: `5 @ ${rounded}`,
+            text: `10 @ ${rounded}`,
             completed: null,
             primaryId: matchingAuxData.primaryId,
           })
