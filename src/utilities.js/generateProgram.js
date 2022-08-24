@@ -1,4 +1,4 @@
-import { weeks, firstSetLastWeeksMath } from "../config/weights"
+import { weeks, bigButBoringSetsByWeek } from "../config/weights"
 
 export default function generateProgram({ exercises, auxVersion }) {
   const lessBoring = auxVersion === "bbslb"
@@ -72,12 +72,12 @@ export default function generateProgram({ exercises, auxVersion }) {
 
         let j = 0
         while (j < 5) {
-          const target = auxWeight * [firstSetLastWeeksMath[index]]
+          const target = auxWeight * [bigButBoringSetsByWeek[index]]
           const rounded = +target.toFixed(0)
           obj[objKey][id].aux.push({
             planned: {
               weight: target,
-              reps: 5,
+              reps: 10,
             },
             exercise: matchingAuxData.name,
             reps: 5,
