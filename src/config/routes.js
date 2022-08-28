@@ -12,6 +12,7 @@ export const routes = {
   exerciseBase: "/exercise",
   newWorkout: "/workout",
   settings: "/settings",
+  bioMetrics: "/bio",
 }
 
 export const menuItems = [
@@ -26,5 +27,9 @@ export const menuItems = [
   {
     href: routes.settings,
     title: "Settings",
+  },
+  {
+    href: routes.bioMetrics,
+    title: "Bio Metrics",
   },
 ]

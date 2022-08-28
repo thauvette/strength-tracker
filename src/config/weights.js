@@ -75,7 +75,7 @@ export const weeks = [
   ],
 ]
 
-export const bigButBoringSetsByWeek = [0.9 * 0.55, 0.9 * 0.6, 0.9 * 0.65]
+export const bigButBoringSetsByWeek = [0.9 * 0.5, 0.9 * 0.55, 0.9 * 0.6]
 
 export const firstSetLastWeeksMath = [
   weeks[0][3].math,

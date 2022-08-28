@@ -15,6 +15,7 @@ import Logs from "../routes/logs/logs"
 import Wendler from "../routes/wendler/Wendler"
 import NewWorkout from "../routes/workout/newWorkout"
 import Settings from "../routes/settings/Settings"
+import BioMetrics from "../routes/bioMetrics/bioMetrics"
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -36,6 +37,7 @@ const DBWrapper = () => {
             <Logs path={routes.logs} />
             <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
             <Settings path={routes.settings} />
+            <BioMetrics path={`${routes.bioMetrics}/:remaining_path*`} />
           </Router>
         </div>
       ) : (
