@@ -3,13 +3,15 @@ import set from "lodash.set"
 import dayjs from "dayjs"
 const DBContext = createContext()
 
-const DB_VERSION = 2
+const DB_VERSION = 3
 const DB_NAME = "track_strength"
 
 export const objectStores = {
   wendlerCycles: "wendler_cycles",
   exercises: "exercises",
   sets: "sets",
+  bioMetrics: "bio_metrics",
+  bioEntries: "bio_metric_entries",
 }
 
 export const DBProvider = ({ children }) => {
@@ -24,7 +26,32 @@ export const DBProvider = ({ children }) => {
     }
     // initialize DB
     const dbRequest = window.indexedDB.open(DB_NAME, DB_VERSION)
+    let requiresExercises = false
+    let requiresBioMetrics = false
     dbRequest.onsuccess = () => {
+      const database = dbRequest.result
+      if (requiresExercises) {
+        const transaction = database
+          .transaction(objectStores.exercises, "readwrite")
+          .objectStore(objectStores.exercises)
+
+        transaction.add({ name: "deadlift", primaryGroup: "back" })
+        transaction.add({
+          name: "barbell bench press",
+          primaryGroup: "chest",
+        })
+        transaction.add({ name: "barbell back squat", primaryGroup: "quads" })
+        transaction.add({
+          name: "standing overhead press",
+          primaryGroup: "shoulders",
+        })
+      }
+      if (requiresBioMetrics) {
+        const transaction = database
+          .transaction(objectStores.bioMetrics, "readwrite")
+          .objectStore(objectStores.bioMetrics)
+        transaction.add({ name: "weight" })
+      }
       setDb(dbRequest.result)
     }
     dbRequest.onerror = e => {
@@ -34,8 +61,10 @@ export const DBProvider = ({ children }) => {
       const db = e.target.result
 
       if (e.oldVersion < 1) {
+        requiresExercises = true
         // this is the first time this db has been initialized
         // it's safe to initialize all object stores
+
         db.createObjectStore(objectStores.wendlerCycles, {
           autoIncrement: true,
         })
@@ -46,21 +75,6 @@ export const DBProvider = ({ children }) => {
         exerciseStore.createIndex("primaryGroup", "primaryGroup", {
           unique: false,
         })
-        exerciseStore.transaction.oncomplete = () => {
-          const transaction = db
-            .transaction(objectStores.exercises, "readwrite")
-            .objectStore(objectStores.exercises)
-          transaction.add({ name: "deadlift", primaryGroup: "back" })
-          transaction.add({
-            name: "barbell bench press",
-            primaryGroup: "chest",
-          })
-          transaction.add({ name: "barbell back squat", primaryGroup: "quads" })
-          transaction.add({
-            name: "standing overhead press",
-            primaryGroup: "shoulders",
-          })
-        }
 
         const setsStore = db.createObjectStore(objectStores.sets, {
           autoIncrement: true,
@@ -73,6 +87,22 @@ export const DBProvider = ({ children }) => {
           objectStores.sets
         )
         setStore.createIndex("created", "created", { unique: false })
+      }
+      if (e.oldVersion < 3) {
+        requiresBioMetrics = true
+        // adding bio metrics
+        // add a store for what you want to track
+        // and one for entries
+        const bioMetricStore = db.createObjectStore(objectStores.bioMetrics, {
+          autoIncrement: true,
+        })
+        bioMetricStore.createIndex("name", "name", { unique: true })
+        bioMetricStore.createIndex("created", "created", { unique: false })
+        const bioEntriesStore = db.createObjectStore(objectStores.bioEntries, {
+          autoIncrement: true,
+        })
+        bioEntriesStore.createIndex("bioMetric", "bioMetric", { unique: false })
+        bioEntriesStore.createIndex("date", "date", { unique: false })
       }
     }
   }, [])
@@ -453,6 +483,25 @@ export const DBProvider = ({ children }) => {
     }
   }
 
+  const createBioMetric = async name =>
+    new Promise((resolve, reject) => {
+      const { objectStore } = openObjectStoreTransaction(
+        objectStores.bioMetrics
+      )
+
+      const addRequest = objectStore.add({
+        name,
+        created: new Date().getTime(),
+      })
+      addRequest.onerror = e => console.log(e)
+      addRequest.onsuccess = event => {
+        resolve({
+          name,
+          id: event?.target?.result,
+        })
+      }
+    })
+
   return (
     <DBContext.Provider
       value={{
@@ -472,6 +521,7 @@ export const DBProvider = ({ children }) => {
         createBackup,
         restoreFromBackup,
         getAllSetsHistory,
+        createBioMetric,
       }}
     >
       {children}
