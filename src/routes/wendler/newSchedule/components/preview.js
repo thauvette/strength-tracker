@@ -23,7 +23,6 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
     description: "",
   })
 
-  const [additionalExercises, setAdditionalExercises] = useState({})
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
   const [auxExerciseFormData, setAuxExerciseFormData] = useState(null)
@@ -84,16 +83,6 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
 
   function saveToWorkouts() {
     const mainLifts = cloneDeep(preview)
-
-    Object.entries(additionalExercises).forEach(([week, lifts]) => {
-      Object.entries(lifts).forEach(([liftName, sets]) => {
-        if (!mainLifts?.[week]?.[liftName].additional) {
-          set(mainLifts, [week, liftName, "additional"], [])
-        }
-        mainLifts?.[week]?.[liftName].additional?.push(...sets)
-      })
-    })
-
     createCycle({
       title: formData?.title || "",
       description: formData?.description || "",
@@ -108,23 +97,16 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
     const { week: targetWeek, mainLift: targetLift } = auxExerciseFormData
     // either all weeks or just one week.
     const weeksToUpdate = addToAllWeeks ? [1, 2, 3] : [targetWeek]
-    const currentAdditionalWorkSets = { ...additionalExercises }
-
-    const targetIndex = auxExerciseFormData?.initialValues?.index
     weeksToUpdate.forEach(weekNum => {
       const currentRunningSets =
         preview?.[weekNum]?.[targetLift]?.runningSets || []
-
       sets.forEach(set =>
         currentRunningSets.push({
           ...set,
-          text: `${set.reps} @ ${set.weight}`,
           completed: null,
           exercise: exercise.name,
           primaryId: exercise.id,
-          planned: {
-            ...set,
-          },
+          wendlerGroup: "additional",
         })
       )
 
@@ -135,27 +117,8 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
           currentRunningSets
         )
       )
-      if (!currentAdditionalWorkSets[weekNum]) {
-        currentAdditionalWorkSets[weekNum] = {}
-      }
-      if (!currentAdditionalWorkSets[weekNum][targetLift]) {
-        currentAdditionalWorkSets[weekNum][targetLift] = []
-      }
-
-      if (targetIndex !== undefined) {
-        currentAdditionalWorkSets[weekNum][targetLift][targetIndex] = {
-          exercise,
-          sets,
-        }
-      } else {
-        currentAdditionalWorkSets[weekNum][targetLift].push({
-          exercise,
-          sets,
-        })
-      }
     })
 
-    setAdditionalExercises(currentAdditionalWorkSets)
     setAuxExerciseFormData(null)
     setAuxExerciseModalIsOpen(false)
   }
@@ -166,7 +129,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
         <ul>
           {sets.map((set, i) => (
             <li key={i} class="py-1 px-2">
-              {set.exercise}: {set.text}
+              {set.exercise}: {set.reps} @ {set.weight}
             </li>
           ))}
         </ul>
@@ -190,7 +153,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
                 mainLift,
                 items: sets.map(set => ({
                   ...set,
-                  label: `${set.exercise}: ${set.text}`,
+                  label: `${set.exercise}: ${set.reps} @ ${set.weight}`,
                 })),
               })
             }
