@@ -6,6 +6,8 @@ import get from "lodash.get"
 import Accordion from "../../components/accordion/accordion"
 import useDB from "../../context/db"
 
+// TODO: add view in running order options
+
 export default function WendlerCycle({ id }) {
   const { getItemById, updateWendlerItem } = useDB()
   const [workout, setWorkout] = useState(null)
@@ -53,6 +55,26 @@ export default function WendlerCycle({ id }) {
                 const dayIsComplete =
                   sets.isComplete ||
                   sets?.runningSets?.every(set => !!set.completed)
+
+                const mainSets =
+                  sets?.runningSets?.length > 0
+                    ? sets.runningSets.filter(
+                        set => set.wendlerGroup === "main"
+                      )
+                    : []
+
+                const auxSets =
+                  sets?.runningSets?.length > 0
+                    ? sets.runningSets.filter(set => set.wendlerGroup === "aux")
+                    : []
+
+                const additionalSets =
+                  sets?.runningSets?.length > 0
+                    ? sets.runningSets.filter(
+                        set => set.wendlerGroup === "additional"
+                      )
+                    : []
+
                 return (
                   <div key={exercise} className="px-2">
                     <div className="border-b-2">
@@ -63,9 +85,8 @@ export default function WendlerCycle({ id }) {
                         <div className="border-b-1 pl-2">
                           <div className="pt-2">
                             <p class="uppercase">Main set: {sets?.exercise}</p>
-
-                            {sets?.main?.length > 0 &&
-                              sets.main.map((set, i) => {
+                            {mainSets?.length > 0 &&
+                              mainSets.map((set, i) => {
                                 const { reps, weight, completed } = set
 
                                 return (
@@ -78,46 +99,38 @@ export default function WendlerCycle({ id }) {
                               })}
                           </div>
                           <div class="py-4">
-                            <p className="uppercase">Aux: {sets.auxName}</p>
-                            {sets?.aux?.length > 0 &&
-                              sets.aux.map((set, i) => {
-                                const { reps, weight, completed } = set
+                            {auxSets?.length > 0 && (
+                              <>
+                                <p className="uppercase">Aux: {sets.auxName}</p>
+                                {auxSets.map((set, i) => {
+                                  const { reps, weight, completed } = set
 
+                                  return (
+                                    <div key={i}>
+                                      <p>
+                                        {completed ? "✔️" : ""} {reps} @{" "}
+                                        {weight}
+                                      </p>
+                                    </div>
+                                  )
+                                })}
+                              </>
+                            )}
+                          </div>
+                          {!!additionalSets?.length && (
+                            <div>
+                              <p className="uppercase">Additional </p>
+                              {additionalSets.map((set, i) => {
+                                const { reps, weight, completed } = set
                                 return (
                                   <div key={i}>
                                     <p>
-                                      {completed ? "✔️" : ""} {reps} @ {weight}
+                                      {completed ? "✔️" : ""} {set.exercise}{" "}
+                                      {reps} @ {weight}
                                     </p>
                                   </div>
                                 )
                               })}
-                          </div>
-                          {!!sets?.additional?.length && (
-                            <div>
-                              <p className="uppercase">Additional </p>
-                              {sets.additional.map((group, i) => (
-                                <div key={group.exercise + i} class="">
-                                  <p class="capitalize">
-                                    {group.exercise?.name}
-                                  </p>
-                                  {!!group?.sets?.length &&
-                                    group.sets.map((groupSet, setIndex) => {
-                                      const reps = groupSet.reps || 0
-                                      const weight = groupSet.weight || 0
-
-                                      const completed = !!groupSet.completed
-
-                                      return (
-                                        <div key={setIndex}>
-                                          <p>
-                                            {completed ? "✔️" : ""} {reps} @{" "}
-                                            {weight}
-                                          </p>
-                                        </div>
-                                      )
-                                    })}
-                                </div>
-                              ))}
                             </div>
                           )}
                           <div class="py-4 ">

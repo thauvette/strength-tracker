@@ -25,9 +25,7 @@ export default function generateProgram({ exercises, auxVersion }) {
     Object.entries(exercises).forEach(([id, info]) => {
       if (!obj[objKey][id]) {
         obj[objKey][id] = {
-          main: [],
           auxName: auxPairs?.[info.name] || "",
-          aux: [],
           exercise: info.name,
           primaryId: info.primaryId,
           runningSets: [],
@@ -37,29 +35,13 @@ export default function generateProgram({ exercises, auxVersion }) {
       week.forEach(set => {
         const target = info.weight * set.math
         const rounded = +target.toFixed(0)
-        obj[objKey][id].main.push({
-          planned: {
-            weight: target,
-            reps: set.reps,
-          },
-          exercise: info.name,
-          reps: set.reps,
-          weight: rounded,
-          text: `${set.repText || set.reps} @ ${rounded}`,
-          completed: null,
-          primaryId: info.primaryId,
-        })
         obj[objKey][id].runningSets.push({
-          planned: {
-            weight: target,
-            reps: set.reps,
-          },
           exercise: info.name,
           reps: set.reps,
           weight: rounded,
-          text: `${set.repText || set.reps} @ ${rounded}`,
           completed: null,
           primaryId: info.primaryId,
+          wendlerGroup: "main",
         })
       })
 
@@ -74,29 +56,13 @@ export default function generateProgram({ exercises, auxVersion }) {
         while (j < 5) {
           const target = auxWeight * [bigButBoringSetsByWeek[index]]
           const rounded = +target.toFixed(0)
-          obj[objKey][id].aux.push({
-            planned: {
-              weight: target,
-              reps: 10,
-            },
-            exercise: matchingAuxData.name,
-            reps: 10,
-            weight: rounded,
-            text: `10 @ ${rounded}`,
-            completed: null,
-            primaryId: matchingAuxData.primaryId,
-          })
           obj[objKey][id].runningSets.push({
-            planned: {
-              weight: target,
-              reps: 10,
-            },
             exercise: matchingAuxData.name,
             reps: 10,
             weight: rounded,
-            text: `10 @ ${rounded}`,
             completed: null,
             primaryId: matchingAuxData.primaryId,
+            wendlerGroup: "aux",
           })
           j++
         }
