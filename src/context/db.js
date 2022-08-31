@@ -1,6 +1,7 @@
 import { useEffect, useState, createContext, useContext } from "preact/compat"
 import set from "lodash.set"
 import dayjs from "dayjs"
+
 const DBContext = createContext()
 
 const DB_VERSION = 3
@@ -431,7 +432,7 @@ export const DBProvider = ({ children }) => {
       const hiddenElement = document.createElement("a")
       hiddenElement.href = `data:text/csv;charset=utf-8, ${encodeURI(res)}`
       hiddenElement.target = "_blank"
-      hiddenElement.download = `backup-${new Date().getTime()}`
+      hiddenElement.download = `strength-track-${dayjs().format()}`
       hiddenElement.click()
     })
   }

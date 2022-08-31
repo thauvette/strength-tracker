@@ -73,25 +73,32 @@ export default function Backups() {
     <div class="px-2">
       {error && <p>{error}</p>}
       <div class="border-b-4 pb-4 mb-4">
-        <p>
-          To generate and download a backup of exercises and history click BACK
-          UP
-        </p>
-        <button onClick={createBackup}>BACK UP</button>
+        <h2>Back Up</h2>
+        <p class="mb-4">Automatically generate and download your backup</p>
+        <button class="w-full btn primary" onClick={createBackup}>
+          BACK UP
+        </button>
       </div>
+      <h2>Restore</h2>
       <p>Restore from a backup. </p>
       <form onSubmit={submit}>
         <label class="flex items-center">
           <input name="overwrite" type="checkbox" />
           <p class="ml-2">Overwrite any existing data</p>
         </label>
-        <input
-          type="file"
-          id="upload"
-          onInput={e => readFile(e?.target?.files?.[0])}
-          accept=".csv"
-        />
-        <button type="submit">Upload</button>
+        <label>
+          <p>Select your file</p>
+          <input
+            type="file"
+            id="upload"
+            onInput={e => readFile(e?.target?.files?.[0])}
+            accept=".csv"
+            class="py-2"
+          />
+        </label>
+        <button class="btn primary w-full mt-4" type="submit">
+          Upload
+        </button>
       </form>
       <Modal isOpen={isLoading}>
         <p>Loading</p>
