@@ -83,7 +83,11 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                   </div>
                 </div>
                 <div class="flex justify-end">
-                  <button onClick={() => setActiveBioId(item.id)}>
+                  <button
+                    onClick={() =>
+                      setActiveBioId(activeBioId === item.id ? null : item.id)
+                    }
+                  >
                     <img class="w-6" src={editIcon} alt="edit" />
                   </button>
                   <button
