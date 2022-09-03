@@ -9,7 +9,7 @@ import BioMetric from "./bioMetric"
 import NewBioMetric from "./newBioMetric"
 
 const BioMetrics = () => {
-  const { getAllEntries, createEntry } = useDB()
+  const { getAllEntries, createEntry, updateEntry, deleteEntry } = useDB()
   const [bioList, setBioList] = useState({})
   const [loading, setLoading] = useState(true)
   const fetchBioMetrics = () => {
@@ -40,7 +40,7 @@ const BioMetrics = () => {
     fetchBioMetrics()
   }, []) // eslint-disable-line
 
-  const addEntry = async ({ bioMetricId, data }) => {
+  const addEntry = ({ bioMetricId, data }) => {
     createEntry(objectStores.bioEntries, {
       bioMetric: +bioMetricId,
       ...data,
@@ -48,6 +48,14 @@ const BioMetrics = () => {
       fetchBioMetrics()
     })
   }
+
+  const editEntry = (id, data) => {
+    updateEntry(objectStores.bioEntries, id, data).then(() => fetchBioMetrics())
+  }
+
+  const removeEntry = id =>
+    deleteEntry(objectStores.bioEntries, id).then(() => fetchBioMetrics())
+
   if (loading) {
     return null
   }
@@ -61,7 +69,9 @@ const BioMetrics = () => {
       <BioMetric
         path={`${routes.bioMetrics}/:id`}
         addEntry={addEntry}
+        editEntry={editEntry}
         bioMetrics={bioList}
+        removeEntry={removeEntry}
       />
     </Router>
   )

@@ -1,28 +1,37 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
-
 import dayjs from "dayjs"
 import cloneDeep from "lodash.clonedeep"
+import AnimateHeight from "react-animate-height"
 
 import dateFormats from "../../config/dateFormats"
+import BioMetricForm from "./bioMetricForm"
 
-const BioMetric = ({ id, addEntry, bioMetrics }) => {
+import Modal from "../../components/modal/Modal"
+
+import editIcon from "../../assets/icons/create-outline.svg"
+import deleteIcon from "../../assets/icons/trash-outline.svg"
+
+const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   const currentBioMetric = bioMetrics[id]
-  const [value, setValue] = useState(
-    currentBioMetric?.items?.[currentBioMetric?.items.length - 1]?.value || ""
-  ) // get the last one
 
-  const [date, setDate] = useState(dayjs().format(dateFormats.day))
-  const [time, setTime] = useState(dayjs().format(dateFormats.time))
-
-  const handleAddEntry = e => {
-    e.preventDefault()
+  const [activeBioId, setActiveBioId] = useState(null)
+  const [deleteModalState, setDeleteModalState] = useState({
+    open: false,
+    id: null,
+  })
+  const deleteModalItem = currentBioMetric?.items?.find(
+    item => item.id === deleteModalState.id
+  )
+  const closeDeleteModal = () =>
+    setDeleteModalState({
+      open: false,
+      id: null,
+    })
+  const handleAddEntry = data => {
     addEntry({
       bioMetricId: id,
-      data: {
-        value,
-        date: dayjs(`${date}T${time}:00`).format(),
-      },
+      data,
     })
   }
 
@@ -33,45 +42,17 @@ const BioMetric = ({ id, addEntry, bioMetrics }) => {
   return (
     <div class="px-2">
       <h1 class="capitalize">{currentBioMetric?.name}</h1>
-      <form onSubmit={handleAddEntry} class="pb-4">
-        <label class="flex items-center py-1">
-          <p class="w-2/4 capitalize">{currentBioMetric?.name}</p>
-          <input
-            class="w-2/4"
-            value={value}
-            onInput={e => setValue(e.target.value)}
-            placeholder={currentBioMetric?.name || ""}
-          />
-        </label>
-        <label class="flex items-center py-1">
-          <p class="w-2/4">Date</p>
-          <input
-            class="w-2/4"
-            type="date"
-            value={date}
-            onInput={e => {
-              setDate(e.target.value)
-            }}
-            placeholder="date"
-          />
-        </label>
-        <label class="flex items-center py-1">
-          <p class="w-2/4">Time</p>
-          <input
-            class="w-2/4"
-            type="time"
-            onInput={e => {
-              setTime(e.target.value)
-            }}
-            value={time}
-            placeholder="time"
-          />
-        </label>
-
-        <button class="btn primary w-full" type="submit">
-          Add +
-        </button>
-      </form>
+      <BioMetricForm
+        initialValues={{
+          value:
+            currentBioMetric?.items?.[currentBioMetric?.items.length - 1]
+              ?.value || "",
+        }}
+        submit={data => {
+          handleAddEntry(data)
+        }}
+        name={currentBioMetric?.name}
+      />
       {sortedItems?.length > 0 && (
         <div class="py-4">
           <h2 class="mb-2">History</h2>
@@ -100,10 +81,66 @@ const BioMetric = ({ id, addEntry, bioMetrics }) => {
                     </p>
                   </div>
                 </div>
+                <div class="flex justify-end">
+                  <button onClick={() => setActiveBioId(item.id)}>
+                    <img class="w-6" src={editIcon} alt="edit" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      setDeleteModalState({
+                        id: item.id,
+                        open: true,
+                      })
+                    }
+                  >
+                    <img class="w-6" src={deleteIcon} alt="delete" />
+                  </button>
+                </div>
+                <AnimateHeight height={activeBioId === item.id ? "auto" : 0}>
+                  <BioMetricForm
+                    submit={data => {
+                      editEntry(item.id, data)
+                      setActiveBioId(null)
+                    }}
+                    initialValues={{
+                      value: item.value,
+                      date: dayjs(item.date).format(dateFormats.day),
+                      time: dayjs(item.date).format(dateFormats.time),
+                    }}
+                    name={currentBioMetric?.name}
+                  />
+                </AnimateHeight>
               </div>
             )
           })}
         </div>
+      )}
+      {deleteModalState.open && (
+        <Modal onRequestClose={closeDeleteModal} isOpen={deleteModalState.open}>
+          <h1 class="mb-4">Are you sure?</h1>
+          <p class="mb-4">Confirm you want to delete this entry</p>
+          <p class="mb-4">
+            {currentBioMetric?.name}, {deleteModalItem?.value},{" "}
+            {dayjs(deleteModalItem.date).format(dateFormats.displayShort)}
+          </p>
+          <div class="flex">
+            <button
+              class="btn warning flex-1 mr-1"
+              onClick={() => {
+                removeEntry(deleteModalState.id)
+                closeDeleteModal()
+              }}
+            >
+              Yup, ditch it
+            </button>
+            <button
+              class="btn secondary flex-1 ml-1"
+              onClick={closeDeleteModal}
+            >
+              Nope, keep it.
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   )

@@ -337,7 +337,29 @@ export const DBProvider = ({ children }) => {
         }
       }
     })
+  const updateEntry = (store, id, data) =>
+    new Promise((resolve, reject) => {
+      const { objectStore } = openObjectStoreTransaction(store)
 
+      const request = objectStore.get(+id)
+      request.onsuccess = () => {
+        if (!request.result) {
+          reject(new Error("unable to find entry"))
+        }
+        const newValue = {
+          ...request.result,
+          ...data,
+          updated: new Date().getTime(),
+        }
+        const requestUpdate = objectStore.put(newValue, +id)
+        requestUpdate.onerror = err =>
+          reject(err?.message || "unable to update entry")
+
+        // Success - the data is updated!
+        requestUpdate.onsuccess = e =>
+          resolve({ ...newValue, id: e?.target?.result })
+      }
+    })
   const getExerciseById = id =>
     new Promise((resolve, reject) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
@@ -514,6 +536,7 @@ export const DBProvider = ({ children }) => {
         updateWendlerItem,
         deleteEntry,
         createEntry,
+        updateEntry,
         createOrUpdateLoggedSet,
         deleteLoggedSet,
         getExerciseOptions,
