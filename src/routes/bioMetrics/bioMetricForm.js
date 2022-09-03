@@ -3,7 +3,12 @@ import { useState } from "preact/hooks"
 import dayjs from "dayjs"
 import dateFormats from "../../config/dateFormats"
 
-const BioMetricForm = ({ initialValues, submit, name }) => {
+const BioMetricForm = ({
+  initialValues,
+  submit,
+  name,
+  submitText = "Add +",
+}) => {
   const [date, setDate] = useState(
     initialValues?.date || dayjs().format(dateFormats.day)
   )
@@ -56,8 +61,8 @@ const BioMetricForm = ({ initialValues, submit, name }) => {
         />
       </label>
 
-      <button class="btn primary w-full" type="submit">
-        Add +
+      <button class="btn primary w-full mt-4" type="submit">
+        {submitText}
       </button>
     </form>
   )

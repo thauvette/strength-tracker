@@ -52,6 +52,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
           handleAddEntry(data)
         }}
         name={currentBioMetric?.name}
+        submitText="Add New +"
       />
       {sortedItems?.length > 0 && (
         <div class="py-4">
@@ -108,6 +109,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                       time: dayjs(item.date).format(dateFormats.time),
                     }}
                     name={currentBioMetric?.name}
+                    submitText="Update"
                   />
                 </AnimateHeight>
               </div>
