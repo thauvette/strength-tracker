@@ -5,9 +5,10 @@ import { routes } from "../../config/routes"
 
 import useDB, { objectStores } from "../../context/db"
 
-import deleteIcon from "../../assets/icons/close-circle-outline.svg"
+import deleteIcon from "../../assets/icons/trash-outline.svg"
+import editIcon from "../../assets/icons/create-outline.svg"
 
-export default function WendlerCycles() {
+const WendlerCycles = ({ navigateToEdit }) => {
   const { getAllEntries, deleteEntry } = useDB()
   const [workouts, setWorkouts] = useState(null)
   const [error, setError] = useState(null)
@@ -47,12 +48,24 @@ export default function WendlerCycles() {
                 <Link href={`${routes.wendlerBase}/${id}`}>
                   {data?.title} - {data.description}
                 </Link>
-                <div>
+                <div class="flex">
+                  {data?.version && (
+                    <button
+                      onClick={() =>
+                        navigateToEdit({
+                          ...data,
+                          id,
+                        })
+                      }
+                    >
+                      <img class="w-6" src={editIcon} alt="edit" />
+                    </button>
+                  )}
                   <button
                     class="p-0 leading-none color-red-900"
                     onClick={() => handleDelete(id)}
                   >
-                    <img class="w-8 h-8" src={deleteIcon} alt="delete" />
+                    <img class="w-6" src={deleteIcon} alt="delete" />
                   </button>
                 </div>
               </div>
@@ -61,3 +74,5 @@ export default function WendlerCycles() {
     </div>
   )
 }
+
+export default WendlerCycles

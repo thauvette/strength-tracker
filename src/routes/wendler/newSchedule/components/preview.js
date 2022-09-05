@@ -13,16 +13,16 @@ import useDB from "../../../../context/db"
 import { routes } from "../../../../config/routes"
 
 import ReorderForm from "./reorderForm"
+import generateRandomId from "../../../../utilities.js/generateRandomId"
 
-export default function Preview({ preview: initialPreviewValues, exercises }) {
+export default function Preview({ initialValues }) {
   const { createCycle } = useDB()
-  const [preview, setPreview] = useState({ ...initialPreviewValues })
+  const [preview, setPreview] = useState({ ...(initialValues?.preview || {}) })
   const [viewByLift, setViewByLift] = useState(false)
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    title: initialValues?.title || "",
+    description: initialValues?.description || "",
   })
-
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
   const [auxExerciseFormData, setAuxExerciseFormData] = useState(null)
@@ -87,7 +87,11 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
       title: formData?.title || "",
       description: formData?.description || "",
       weeks: mainLifts,
-      exerciseFormValues: exercises,
+      exerciseFormValues: initialValues?.exercises || {},
+      auxVersion: initialValues?.auxVersion,
+      id: initialValues?.id || null,
+      created: initialValues.created,
+      version: 2,
     }).then(() => {
       route(routes.wendlerCycles)
     })
@@ -100,15 +104,22 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
     weeksToUpdate.forEach(weekNum => {
       const currentRunningSets =
         preview?.[weekNum]?.[targetLift]?.runningSets || []
-      sets.forEach(set =>
-        currentRunningSets.push({
+      const currentAdditionalSets =
+        preview?.[weekNum]?.[targetLift]?.additional || {}
+
+      sets.forEach(set => {
+        const wendlerId = generateRandomId()
+        const pathKey = `${weekNum}.${targetLift}.additional.${wendlerId}`
+        currentRunningSets.push(pathKey)
+        currentAdditionalSets[wendlerId] = {
           ...set,
           completed: null,
           exercise: exercise.name,
           primaryId: exercise.id,
           wendlerGroup: "additional",
-        })
-      )
+          wendlerId,
+        }
+      })
 
       setPreview(
         set(
@@ -123,47 +134,51 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
     setAuxExerciseModalIsOpen(false)
   }
 
-  const renderDay = ({ sets, title, week, mainLift }) => {
-    return (
-      <div>
-        <ul>
-          {sets.map((set, i) => (
+  const renderDay = ({ sets, title, week, mainLift }) => (
+    <div>
+      <ul>
+        {sets.map((setPath, i) => {
+          const set = get(preview, setPath)
+          return (
             <li key={i} class="py-1 px-2">
               {set.exercise}: {set.reps} @ {set.weight}
             </li>
-          ))}
-        </ul>
-        <div class="pt-6">
-          <button
-            class="bg-blue-100"
-            onClick={() =>
-              openAuxExerciseModal({
-                title,
-                week,
-                mainLift,
-              })
-            }
-          >
-            Add Aux Sets
-          </button>
-          <button
-            onClick={() =>
-              openReorderModal({
-                targetWeek: week,
-                mainLift,
-                items: sets.map(set => ({
+          )
+        })}
+      </ul>
+      <div class="pt-6">
+        <button
+          class="bg-blue-100"
+          onClick={() =>
+            openAuxExerciseModal({
+              title,
+              week,
+              mainLift,
+            })
+          }
+        >
+          Add Aux Sets
+        </button>
+        <button
+          onClick={() =>
+            openReorderModal({
+              targetWeek: week,
+              mainLift,
+              items: sets.map(setPath => {
+                const set = get(preview, setPath)
+                return {
                   ...set,
                   label: `${set.exercise}: ${set.reps} @ ${set.weight}`,
-                })),
-              })
-            }
-          >
-            Edit Sets
-          </button>
-        </div>
+                }
+              }),
+            })
+          }
+        >
+          Edit Sets
+        </button>
       </div>
-    )
-  }
+    </div>
+  )
 
   return (
     <div class="px-2">
@@ -259,7 +274,7 @@ export default function Preview({ preview: initialPreviewValues, exercises }) {
             name="title"
             placeholder="title"
             type="text"
-            value={formData.name}
+            value={formData.title}
             onInput={handleInput}
           />
           <br />

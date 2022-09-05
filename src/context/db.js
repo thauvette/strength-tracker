@@ -297,7 +297,12 @@ export const DBProvider = ({ children }) => {
           console.log(event, "oops")
           reject()
         }
-        objectStore.add({ ...data, created: new Date().getTime() })
+
+        if (data.id) {
+          objectStore.put({ ...data, updated: new Date().getTime() }, +data.id)
+        } else {
+          objectStore.add({ ...data, created: new Date().getTime() })
+        }
       }
     })
 
