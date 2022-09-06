@@ -38,6 +38,9 @@ export default function generateProgram({
           aux: {},
           additional: {},
         }
+        if (initialValues?.weeks?.[weekKey]?.[id]?.isComplete) {
+          obj[weekKey][id].isComplete = true
+        }
       }
       const currentMainSets = initialValues?.weeks?.[weekKey]?.[id]?.main || {}
 

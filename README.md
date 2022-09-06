@@ -4,8 +4,6 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: change app name and logo, and favicon
 
-TODO: Add ability to edit/duplicate wendler cycle.
-
 TODO: Edit exercises - add exercise types, body weight, body weight + weight, time - allow multiple secondary muscle groups.
 
 TODO: home screen menu?? (maybe as a fixed footer)
