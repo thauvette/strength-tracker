@@ -1,18 +1,36 @@
 import { h } from "preact"
 import { Link, route } from "preact-router"
 import { useState, useEffect } from "preact/hooks"
-import { routes } from "../../config/routes"
 
+import { routes } from "../../config/routes"
 import useDB, { objectStores } from "../../context/db"
 
-import deleteIcon from "../../assets/icons/close-circle-outline.svg"
+import Modal from "../../components/modal/Modal"
 
-export default function WendlerCycles() {
-  const { getAllEntries, deleteEntry } = useDB()
+import deleteIcon from "../../assets/icons/trash-outline.svg"
+import editIcon from "../../assets/icons/create-outline.svg"
+import copyIcon from "../../assets/icons/copy-outline.svg"
+
+import formatCycleForDuplication from "./formatCycleToDuplicate"
+
+const WendlerCycles = ({ navigateToEdit }) => {
+  const { getAllEntries, deleteEntry, createCycle } = useDB()
   const [workouts, setWorkouts] = useState(null)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
+  const [confirmDeleteModalState, setConfirmDeleteModalState] = useState({
+    id: null,
+    open: false,
+  })
+
+  const [duplicateCycleModalState, setDuplicateCycleModalState] = useState({
+    workout: null,
+    open: false,
+    title: "",
+    description: "",
+  })
+
+  const getData = () =>
     getAllEntries(objectStores.wendlerCycles)
       .then(res => {
         setWorkouts(res)
@@ -20,10 +38,62 @@ export default function WendlerCycles() {
       .catch(err => {
         setError(err?.message || "something is wrong")
       })
-  }, [getAllEntries])
 
-  const handleDelete = id => {
-    deleteEntry(objectStores.wendlerCycles, id).then(res => setWorkouts(res))
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const handleOpenDuplicateModal = cycle =>
+    setDuplicateCycleModalState({
+      workout: cycle,
+      open: true,
+      title: `${cycle?.title} - copy`,
+      description: cycle?.description,
+    })
+
+  const handleCloseDuplicateModal = () =>
+    setDuplicateCycleModalState({
+      workout: null,
+      open: false,
+      title: "",
+      description: "",
+    })
+
+  const handleDuplicateModalInput = e =>
+    setDuplicateCycleModalState({
+      ...duplicateCycleModalState,
+      [e.target.name]: e.target.value,
+    })
+
+  const handleDuplicateSubmit = () =>
+    createCycle(
+      formatCycleForDuplication({
+        ...duplicateCycleModalState.workout,
+        title: duplicateCycleModalState.title,
+        description: duplicateCycleModalState.description,
+      })
+    ).then(() => {
+      getData()
+      handleCloseDuplicateModal()
+    })
+
+  const handleOpenConfirmDeleteModal = id =>
+    setConfirmDeleteModalState({
+      id,
+      open: true,
+    })
+
+  const handleCloseConfirmDeleteModal = () =>
+    setConfirmDeleteModalState({
+      id: null,
+      open: false,
+    })
+
+  const handleDelete = () => {
+    deleteEntry(objectStores.wendlerCycles, confirmDeleteModalState.id).then(
+      res => setWorkouts(res)
+    )
+    handleCloseConfirmDeleteModal()
   }
 
   return (
@@ -47,17 +117,112 @@ export default function WendlerCycles() {
                 <Link href={`${routes.wendlerBase}/${id}`}>
                   {data?.title} - {data.description}
                 </Link>
-                <div>
+                <div class="flex">
+                  {data?.version && (
+                    <>
+                      <button
+                        onClick={() =>
+                          navigateToEdit({
+                            ...data,
+                            id,
+                          })
+                        }
+                      >
+                        <img class="w-6" src={editIcon} alt="edit" />
+                      </button>
+                      <button onClick={() => handleOpenDuplicateModal(data)}>
+                        <img class="w-6" src={copyIcon} alt="duplicate" />
+                      </button>
+                    </>
+                  )}
                   <button
                     class="p-0 leading-none color-red-900"
-                    onClick={() => handleDelete(id)}
+                    onClick={() => handleOpenConfirmDeleteModal(id)}
                   >
-                    <img class="w-8 h-8" src={deleteIcon} alt="delete" />
+                    <img class="w-6" src={deleteIcon} alt="delete" />
                   </button>
                 </div>
               </div>
             ))}
       </div>
+      {confirmDeleteModalState?.open && (
+        <Modal
+          isOpen={confirmDeleteModalState?.open}
+          onRequestClose={handleCloseConfirmDeleteModal}
+        >
+          <div>
+            <h1>Really?</h1>
+            <p class="mb-4">Are you sure you want to delete this cycle?</p>
+            <div class="flex items-center">
+              <button onClick={handleDelete} class="btn warning flex-1 mr-2">
+                Yup, ditch it.
+              </button>
+              <button
+                class="btn secondary flex-1 ml-2"
+                onClick={handleCloseConfirmDeleteModal}
+              >
+                Naw, keep it
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+      {duplicateCycleModalState?.open && (
+        <Modal
+          isOpen={duplicateCycleModalState?.open}
+          onRequestClose={handleCloseDuplicateModal}
+        >
+          <div>
+            <h1 class="mb-2">Duplicate</h1>
+            <div class="pb-4">
+              <label>
+                <p>Name</p>
+                <input
+                  class="w-full"
+                  type="text"
+                  name="title"
+                  placeholder="title"
+                  defaultValue={duplicateCycleModalState.title}
+                  onInput={handleDuplicateModalInput}
+                />
+              </label>
+            </div>
+            <div class="pb-4">
+              <label>
+                <p>Description</p>
+                <input
+                  class="w-full"
+                  type="text"
+                  name="description"
+                  placeholder="description"
+                  defaultValue={duplicateCycleModalState.description}
+                  onInput={handleDuplicateModalInput}
+                />
+              </label>
+            </div>
+            <div class="pt-4 flex">
+              <div class="flex-1 pr-1">
+                <button
+                  class="btn secondary w-full"
+                  onClick={handleCloseDuplicateModal}
+                >
+                  Cancel
+                </button>
+              </div>
+              <div class="flex-1 pl-1">
+                <button
+                  class="btn primary w-full"
+                  onClick={handleDuplicateSubmit}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }
+
+export default WendlerCycles

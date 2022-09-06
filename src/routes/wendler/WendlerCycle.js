@@ -5,15 +5,37 @@ import { Link } from "preact-router"
 import get from "lodash.get"
 import Accordion from "../../components/accordion/accordion"
 import useDB from "../../context/db"
+import WendlerCycleDay from "./WendlerCycleDay"
 
-// TODO: add view in running order options
+const isWeekComplete = (week, isLegacyVersion, cycle) =>
+  Object.values(week).every(day => {
+    const dayIsComplete = day.isComplete
+    const runningSets = isLegacyVersion
+      ? day.runningSets
+      : day.runningSets.map(setKey => get(cycle, `weeks.${setKey}`))
+
+    return dayIsComplete || runningSets.every(set => !!set.completed)
+  })
+
+const formatResponse = res => {
+  let firstUnfinishedWeek = Object.entries(res?.weeks || {}).find(
+    ([weekKey, data]) => {
+      return !isWeekComplete(data, !res?.version, res)
+    }
+  )
+
+  return {
+    ...res,
+    weekToDo: firstUnfinishedWeek?.[0],
+  }
+}
 
 export default function WendlerCycle({ id }) {
   const { getItemById, updateWendlerItem } = useDB()
   const [workout, setWorkout] = useState(null)
 
   useEffect(() => {
-    getItemById(id).then(res => setWorkout(res))
+    getItemById(id).then(res => setWorkout(formatResponse(res)))
   }, [getItemById, id])
 
   if (!workout) {
@@ -31,7 +53,46 @@ export default function WendlerCycle({ id }) {
       id,
       path: ["weeks", weekKey, mainLift, "isComplete"],
       value: !isComplete,
-    }).then(res => setWorkout(res))
+    }).then(res => setWorkout(formatResponse(res)))
+  }
+
+  const isLegacyVersion = !workout?.version
+
+  const formatRunningSets = sets =>
+    isLegacyVersion ? sets : sets.map(setKey => get(workout, `weeks.${setKey}`))
+
+  const isDayComplete = sets =>
+    sets.isComplete ||
+    formatRunningSets(sets.runningSets).every(set => !!set.completed)
+
+  const getDaysSets = day => {
+    if (isLegacyVersion) {
+      const mainSets =
+        day?.runningSets?.length > 0
+          ? day.runningSets.filter(set => set.wendlerGroup === "main")
+          : []
+
+      const auxSets =
+        day?.runningSets?.length > 0
+          ? day.runningSets.filter(set => set.wendlerGroup === "aux")
+          : []
+
+      const additionalSets =
+        day?.runningSets?.length > 0
+          ? day.runningSets.filter(set => set.wendlerGroup === "additional")
+          : []
+      return {
+        mainSets,
+        auxSets,
+        additionalSets,
+      }
+    }
+
+    return {
+      mainSets: Object.values(day?.main || {}),
+      auxSets: Object.values(day?.aux || {}),
+      additionalSets: Object.values(day?.additional || {}),
+    }
   }
 
   return (
@@ -39,41 +100,21 @@ export default function WendlerCycle({ id }) {
       <p>{workout.title}</p>
       <p>{workout.description}</p>
       <hr />
+
       {Object.entries(workout?.weeks || {}).map(([num, week]) => {
-        const weekIsComplete = Object.values(week).every(
-          day =>
-            day.isComplete || day.runningSets?.every(set => !!set.completed)
-        )
+        const weekIsComplete = isWeekComplete(week, isLegacyVersion, workout)
 
         return (
           <div key={num}>
             <Accordion
               title={`${weekIsComplete ? "✔️ " : ""}Week ${num}`}
               titleClass="font-bold text-xl"
+              openByDefault={+workout?.weekToDo === +num}
             >
               {Object.entries(week || {}).map(([exercise, sets]) => {
-                const dayIsComplete =
-                  sets.isComplete ||
-                  sets?.runningSets?.every(set => !!set.completed)
+                const dayIsComplete = isDayComplete(sets)
 
-                const mainSets =
-                  sets?.runningSets?.length > 0
-                    ? sets.runningSets.filter(
-                        set => set.wendlerGroup === "main"
-                      )
-                    : []
-
-                const auxSets =
-                  sets?.runningSets?.length > 0
-                    ? sets.runningSets.filter(set => set.wendlerGroup === "aux")
-                    : []
-
-                const additionalSets =
-                  sets?.runningSets?.length > 0
-                    ? sets.runningSets.filter(
-                        set => set.wendlerGroup === "additional"
-                      )
-                    : []
+                const { mainSets, auxSets, additionalSets } = getDaysSets(sets)
 
                 return (
                   <div key={exercise} className="px-2">
@@ -83,56 +124,15 @@ export default function WendlerCycle({ id }) {
                         titleClass="uppercase font-bold text-sm"
                       >
                         <div className="border-b-1 pl-2">
-                          <div className="pt-2">
-                            <p class="uppercase">Main set: {sets?.exercise}</p>
-                            {mainSets?.length > 0 &&
-                              mainSets.map((set, i) => {
-                                const { reps, weight, completed } = set
+                          <WendlerCycleDay
+                            runningSets={formatRunningSets(sets.runningSets)}
+                            mainSets={mainSets}
+                            auxSets={auxSets}
+                            additionalSets={additionalSets}
+                            mainExercise={sets?.exercise}
+                            auxName={sets.auxName}
+                          />
 
-                                return (
-                                  <div key={i}>
-                                    <p>
-                                      {completed ? "✔️" : ""} {reps} @ {weight}
-                                    </p>
-                                  </div>
-                                )
-                              })}
-                          </div>
-                          <div class="py-4">
-                            {auxSets?.length > 0 && (
-                              <>
-                                <p className="uppercase">Aux: {sets.auxName}</p>
-                                {auxSets.map((set, i) => {
-                                  const { reps, weight, completed } = set
-
-                                  return (
-                                    <div key={i}>
-                                      <p>
-                                        {completed ? "✔️" : ""} {reps} @{" "}
-                                        {weight}
-                                      </p>
-                                    </div>
-                                  )
-                                })}
-                              </>
-                            )}
-                          </div>
-                          {!!additionalSets?.length && (
-                            <div>
-                              <p className="uppercase">Additional </p>
-                              {additionalSets.map((set, i) => {
-                                const { reps, weight, completed } = set
-                                return (
-                                  <div key={i}>
-                                    <p>
-                                      {completed ? "✔️" : ""} {set.exercise}{" "}
-                                      {reps} @ {weight}
-                                    </p>
-                                  </div>
-                                )
-                              })}
-                            </div>
-                          )}
                           <div class="py-4 ">
                             <div class="pb-4 flex">
                               <Link

@@ -16,16 +16,15 @@ const wendlerCycleExercises = [
   "standing overhead press",
 ]
 
-const NewSchedule = ({ onSubmit, savedExercises }) => {
+const NewSchedule = ({ onSubmit, initialValues }) => {
   const { getItemsByIndex, getAllEntries } = useDB()
   const [loading, setLoading] = useState(true)
   const [formErrors, setFormErrors] = useState({})
-  const [exercises, setExercises] = useState(savedExercises || {})
-  // then, TODO: first set last, or 5 x 10.
-  const [auxVersion, setAuxVersion] = useState("")
+  const [exercises, setExercises] = useState(initialValues?.exercises || {})
+  const [auxVersion, setAuxVersion] = useState(initialValues?.auxVersion || "")
 
   useEffect(() => {
-    if (savedExercises) {
+    if (initialValues) {
       setLoading(false)
       return
     }
@@ -90,9 +89,10 @@ const NewSchedule = ({ onSubmit, savedExercises }) => {
     const preview = generateProgram({
       exercises,
       auxVersion,
+      initialValues,
     })
 
-    onSubmit({ exercises, preview })
+    onSubmit({ exercises, preview, auxVersion })
     route(routes.wendlerNewPreview)
   }
 

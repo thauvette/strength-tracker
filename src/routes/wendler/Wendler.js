@@ -1,5 +1,5 @@
 import { h } from "preact"
-import { Router } from "preact-router"
+import { route, Router } from "preact-router"
 import { useState } from "preact/hooks"
 import { routes } from "../../config/routes"
 import NewSchedule from "./newSchedule/newSchedule"
@@ -17,19 +17,37 @@ const scrollToTop = () => {
 const Wendler = () => {
   const [newWendlerData, setNewWendlerData] = useState(null)
 
+  const navigateToEdit = workout => {
+    setNewWendlerData({
+      ...workout,
+      exercises: workout?.exerciseFormValues,
+    })
+    route(routes.wendlerNew)
+  }
+
   return (
     <Router onChange={scrollToTop}>
-      <WendlerCycles path={routes.wendlerCycles} />
+      <WendlerCycles
+        path={routes.wendlerCycles}
+        navigateToEdit={navigateToEdit}
+      />
       <NewSchedule
         path={routes.wendlerNew}
-        onSubmit={setNewWendlerData}
+        onSubmit={data => {
+          setNewWendlerData({
+            preview: data.preview,
+            title: newWendlerData?.title || "",
+            description: newWendlerData?.description || "",
+            created: newWendlerData?.created || null,
+            id: newWendlerData?.id || null,
+            exercises: data.exercises,
+            auxVersion: data.auxVersion,
+          })
+        }}
         savedExercises={newWendlerData?.exercises}
+        initialValues={newWendlerData}
       />
-      <Preview
-        path={routes.wendlerNewPreview}
-        preview={newWendlerData?.preview}
-        exercises={newWendlerData?.exercises}
-      />
+      <Preview path={routes.wendlerNewPreview} initialValues={newWendlerData} />
       <WendlerCycle path={routes.wendlerCycle} />
       <WendlerWorkout path={routes.wendlerDay} />
     </Router>
