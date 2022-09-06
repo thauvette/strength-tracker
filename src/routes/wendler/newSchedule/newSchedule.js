@@ -61,7 +61,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
       })
       .catch(e => console.log(e))
       .finally(() => setLoading(false))
-  }, [getItemsByIndex, getAllEntries])
+  }, [getItemsByIndex, getAllEntries, initialValues])
 
   function handleInput(e) {
     setExercises({

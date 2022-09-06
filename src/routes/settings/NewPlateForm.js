@@ -2,7 +2,7 @@ import { h } from "preact"
 import { useState } from "preact/hooks"
 import Counters from "../../components/counters/Counters"
 
-const NewPlateForm = ({ onSubmit, isOpen }) => {
+const NewPlateForm = ({ onSubmit }) => {
   const [weight, setWeight] = useState(0)
   const [count, setCount] = useState(10)
 

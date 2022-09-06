@@ -1,4 +1,3 @@
-import { h } from "preact"
 import { useState } from "preact/hooks"
 import set from "lodash.set"
 import get from "lodash.get"

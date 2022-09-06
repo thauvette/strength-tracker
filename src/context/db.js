@@ -175,10 +175,11 @@ export const DBProvider = ({ children }) => {
           resolve(results)
         }
       }
+      index.openCursor().onerror = () => reject()
     })
 
   const getExerciseOptions = () =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
       const { objectStore: store } = openObjectStoreTransaction(
         objectStores.exercises
       )
@@ -288,7 +289,7 @@ export const DBProvider = ({ children }) => {
           objectStores.wendlerCycles
         )
 
-        transaction.oncomplete = function (event) {
+        transaction.oncomplete = function () {
           resolve({ success: true })
         }
 
@@ -366,7 +367,7 @@ export const DBProvider = ({ children }) => {
       }
     })
   const getExerciseById = id =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
       const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
       const keyRange = IDBKeyRange.only(+id)
 
@@ -377,7 +378,7 @@ export const DBProvider = ({ children }) => {
     })
 
   const getExerciseHistoryById = id =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
       getExerciseById(id).then(exerciseResponse => {
         const { objectStore } = openObjectStoreTransaction(objectStores.sets)
         const index = objectStore.index("exercise")
@@ -400,7 +401,7 @@ export const DBProvider = ({ children }) => {
     })
 
   const getAllSetsHistory = () =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
       return Promise.all([
         getFromCursor(objectStores.exercises),
         getFromCursor(objectStores.sets),
@@ -512,7 +513,7 @@ export const DBProvider = ({ children }) => {
   }
 
   const createBioMetric = async name =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
       const { objectStore } = openObjectStoreTransaction(
         objectStores.bioMetrics
       )

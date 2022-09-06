@@ -1,5 +1,5 @@
 import { h } from "preact"
-import { Link, route } from "preact-router"
+import { Link } from "preact-router"
 import { useState, useEffect } from "preact/hooks"
 
 import { routes } from "../../config/routes"
@@ -41,7 +41,7 @@ const WendlerCycles = ({ navigateToEdit }) => {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, []) // eslint-disable-line
 
   const handleOpenDuplicateModal = cycle =>
     setDuplicateCycleModalState({
@@ -108,7 +108,7 @@ const WendlerCycles = ({ navigateToEdit }) => {
         {workouts &&
           Object.keys(workouts)?.length > 0 &&
           Object.entries(workouts)
-            .sort(([aKey, a], [bKey, b]) => (a.created > b.created ? -1 : 1))
+            .sort(([, a], [, b]) => (a.created > b.created ? -1 : 1))
             .map(([id, data]) => (
               <div
                 key={id}

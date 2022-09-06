@@ -18,8 +18,9 @@ const isWeekComplete = (week, isLegacyVersion, cycle) =>
   })
 
 const formatResponse = res => {
+  // eslint-disable-next-line
   let firstUnfinishedWeek = Object.entries(res?.weeks || {}).find(
-    ([weekKey, data]) => {
+    ([, data]) => {
       return !isWeekComplete(data, !res?.version, res)
     }
   )
