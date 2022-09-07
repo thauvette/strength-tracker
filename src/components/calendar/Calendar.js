@@ -13,11 +13,29 @@ const Calendar = ({ startDate, renderDay }) => {
   )
 
   const end = dayjs(start).endOf("month")
-  const padding = Array.from({ length: +start.format("d") })
+
+  const prevMonth = dayjs(start).subtract(1, "month")
+
+  const endOfPrevMonth = prevMonth.endOf("month").format("D")
+
+  const firstNeededDateOfPrevMonth = +endOfPrevMonth - +start.format("d") + 1
+
+  const firstDay = prevMonth.date(firstNeededDateOfPrevMonth)
+
+  const paddingStart = Array.from({ length: +start.format("d") }, (_, i) =>
+    firstDay.add(i, "days")
+  )
+
   const days = Array.from({ length: +end.format("DD") }, (_, i) =>
     start.add(i, "days")
   )
-  const weeks = chunk([...padding, ...days], 7)
+
+  const paddingEnd = Array.from(
+    { length: 6 - start.endOf("month").day() },
+    (_, i) => start.endOf("month").add(i + 1, "days")
+  )
+
+  const weeks = chunk([...paddingStart, ...days, ...paddingEnd], 7)
 
   const changeMonth = amount => {
     setStart(start.add(amount, "month").startOf("month"))
@@ -25,10 +43,11 @@ const Calendar = ({ startDate, renderDay }) => {
 
   const printDay = day => {
     if (!day) return <div />
+    const isCurrentMonth = day.isSame(start, "month")
     return renderDay ? (
-      renderDay(day)
+      renderDay(day, isCurrentMonth)
     ) : (
-      <div class="text-center py-2">
+      <div class={`text-center py-2 ${!isCurrentMonth ? "bg-gray-100" : ""}`}>
         <p>{day.format("D")}</p>
       </div>
     )

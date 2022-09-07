@@ -187,7 +187,7 @@ const Logs = () => {
       <Modal isOpen={calendarIsOpen} onRequestClose={toggleCalendar}>
         <Calendar
           startDate={activeDate}
-          renderDay={day => {
+          renderDay={(day, isCurrentMonth) => {
             const isToday = day.isSame(dayjs(), "day")
             const dayData = logState.data?.[day.format(dateFormats.day)]
             const hasData = !!dayData?.length
@@ -201,16 +201,22 @@ const Logs = () => {
                 )
               : null
 
+            let classNames = isCurrentMonth ? "" : "bg-gray-100"
+            if (isToday) {
+              classNames = "bg-green-200 "
+            } else if (hasData && isCurrentMonth) {
+              classNames = "bg-blue-100"
+            }
+
             return (
-              <div
-                class={`text-center ${
-                  hasData && !isToday ? "bg-blue-100" : ""
-                } ${isToday ? "bg-gray-300 text-white" : ""}`}
-              >
-                <button onClick={() => selectDate(day)}>
+              <div class={`text-center`}>
+                <button
+                  onClick={() => selectDate(day)}
+                  class={`w-full h-full ${classNames}`}
+                >
                   {day.format("D")}
                   {groupString && (
-                    <p class={`text-xs m-0 `}>{groupString.join(",")}</p>
+                    <p class={`text-xs m-0`}>{groupString.join(",")}</p>
                   )}
                 </button>
               </div>
