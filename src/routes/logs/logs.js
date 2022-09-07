@@ -7,10 +7,6 @@ import Calendar from "../../components/calendar/Calendar"
 import { Link } from "preact-router"
 import { routes } from "../../config/routes"
 
-import forwardIcon from "../../assets/icons/arrow-forward-outline.svg"
-import backIcon from "../../assets/icons/arrow-back-outline.svg"
-import calIcon from "../../assets/icons/calendar-outline.svg"
-
 import dateFormats from "../../config/dateFormats"
 
 const Logs = () => {
@@ -116,11 +112,19 @@ const Logs = () => {
   return (
     <div class="p-2">
       <div className="flex items-center justify-between">
-        <button onClick={() => stepByDate(-1)}>
-          <img src={backIcon} alt="previous day" class="w-6 h-6" />
+        <button
+          onClick={() => stepByDate(-1)}
+          class="text-2xl"
+          ariaLabel="previous date"
+        >
+          <ion-icon name="arrow-back-outline" />
         </button>
         <div>
-          <button class="m-0" onClick={toggleCalendar}>
+          <button
+            class="m-0"
+            onClick={toggleCalendar}
+            ariaLabel="open calendar"
+          >
             {isToday
               ? "Today"
               : dayjs(activeDate).format(dateFormats.dayDisplay)}
@@ -128,13 +132,19 @@ const Logs = () => {
           {isToday ? null : (
             <button
               onClick={() => setActiveDate(dayjs().format(dateFormats.day))}
+              ariaLabel="go to today"
+              class="text-2xl"
             >
-              <img class="w-6 h-6" src={calIcon} alt="jump to today" />
+              <ion-icon name="calendar-outline" />
             </button>
           )}
         </div>
-        <button onClick={() => stepByDate(1)}>
-          <img src={forwardIcon} alt="next day" class="w-6 h-6" />
+        <button
+          ariaLabel="next day"
+          class="text-2xl"
+          onClick={() => stepByDate(1)}
+        >
+          <ion-icon name="arrow-forward-outline" />
         </button>
       </div>
 

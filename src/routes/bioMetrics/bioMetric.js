@@ -9,9 +9,6 @@ import BioMetricForm from "./bioMetricForm"
 
 import Modal from "../../components/modal/Modal"
 
-import editIcon from "../../assets/icons/create-outline.svg"
-import deleteIcon from "../../assets/icons/trash-outline.svg"
-
 const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   const currentBioMetric = bioMetrics[id]
 
@@ -87,8 +84,10 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                     onClick={() =>
                       setActiveBioId(activeBioId === item.id ? null : item.id)
                     }
+                    ariaLabel="edit entry"
+                    class="text-2xl"
                   >
-                    <img class="w-6" src={editIcon} alt="edit" />
+                    <ion-icon name="create-outline" />
                   </button>
                   <button
                     onClick={() =>
@@ -97,8 +96,9 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                         open: true,
                       })
                     }
+                    class="text-2xl"
                   >
-                    <img class="w-6" src={deleteIcon} alt="delete" />
+                    <ion-icon name="trash-outline" />
                   </button>
                 </div>
                 <AnimateHeight height={activeBioId === item.id ? "auto" : 0}>

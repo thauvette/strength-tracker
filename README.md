@@ -12,25 +12,17 @@ TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
 
 TODO: stats view.
 
-TODO: change ux for super sets in wendler? Maybe add aux set, add super set?
-
-TODO: back up settings
+TODO: back up settings (move to indexedDb as well)
 
 TODO: styles not loading when offline - probably also want to remove code splitting
-
-TODO: finish cleaning up WendlerWorkout
 
 TODO: Screen always on? (currently only in chrome 84)
 
 TODO: Swipe on calendar view??
 
-TODO: Calendar should fill first and last week with prev/next month days
-
 TODO: clean up all naming conventions.
 
 TODO: more stats on exercise view (Charts)
-
-TODO: auto open next wendler day.
 
 TODO: non-wendler routines
 

@@ -2,10 +2,6 @@ import { h } from "preact"
 import { useState } from "preact/compat"
 import AnimateHeight from "react-animate-height"
 
-import noteIcon from "../../assets/icons/clipboard-outline.svg"
-import editIcon from "../../assets/icons/create-outline.svg"
-import deleteIcon from "../../assets/icons/trash-outline.svg"
-import statsIcon from "../../assets/icons/bar-chart-outline.svg"
 import SetRowDrawer from "./setRowDrawer"
 import useDB, { objectStores } from "../../context/db"
 
@@ -62,25 +58,42 @@ const SetRow = ({ set, onChangeSet }) => {
   return (
     <div class="py-2 border-b-2 border-blue-200">
       <div class="flex items-center justify-between ">
-        <button onClick={() => handleToggleDrawerContent("note")}>
-          <img src={noteIcon} alt="note" class="w-6" />
+        <button
+          onClick={() => handleToggleDrawerContent("note")}
+          ariaLabel="view notes"
+        >
+          <div class="flex items-center">
+            <ion-icon name="clipboard-outline" />
+          </div>
         </button>
 
         <p class="m-0 flex-1">
           {set.reps} @ {set.weight}
         </p>
         <div class="flex items-center">
-          <button onClick={() => handleToggleDrawerContent("stats")}>
-            <img src={statsIcon} alt="stats" class="w-6" />
-          </button>
-          <button onClick={() => handleToggleDrawerContent("delete")}>
-            <img src={deleteIcon} alt="delete" class="w-6" />
+          <button
+            ariaLabel="view stats"
+            onClick={() => handleToggleDrawerContent("stats")}
+          >
+            <div class="flex items-center">
+              <ion-icon name="bar-chart-outline" />
+            </div>
           </button>
           <button
-            data-drawerType="edit"
-            onClick={() => handleToggleDrawerContent("edit")}
+            ariaLabel="delete set"
+            onClick={() => handleToggleDrawerContent("delete")}
           >
-            <img src={editIcon} alt="edit" class="w-6" />
+            <div class="flex items-center">
+              <ion-icon name="trash-outline" />
+            </div>
+          </button>
+          <button
+            onClick={() => handleToggleDrawerContent("edit")}
+            ariaLabel="edit set"
+          >
+            <div class="flex items-center">
+              <ion-icon name="create-outline" />
+            </div>
           </button>
         </div>
       </div>

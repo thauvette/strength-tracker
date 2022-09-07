@@ -1,8 +1,6 @@
 import { h } from "preact"
 import EditableSet from "../../../components/editableSet/editableSet"
 
-import historyIcon from "../../../assets/icons/list-outline.svg"
-
 const Set = ({
   handleSubmit,
   handleUndo,
@@ -25,8 +23,14 @@ const Set = ({
           renderCtas={newValues => (
             <div class="flex py-4 px-2">
               {handleViewHistory ? (
-                <button onClick={handleViewHistory}>
-                  <img src={historyIcon} alt="view history" class="w-8" />
+                <button
+                  onClick={handleViewHistory}
+                  ariaLabel="view history"
+                  class="text-2xl"
+                >
+                  <div class="flex items-center">
+                    <ion-icon name="list-outline" />
+                  </div>
                 </button>
               ) : null}
               {handleUndo ? (

@@ -1,9 +1,6 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
 
-import reorderIcon from "../../assets/icons/reorder-two-outline.svg"
-import deleteIcon from "../../assets/icons/close-circle-outline.svg"
-
 // TODO: fix slight delay before re-order complete
 // TODO: clone element being dragged
 
@@ -73,19 +70,19 @@ const Item = ({
   return (
     <li class={`py-2 border-b-4 ${isTarget ? "pt-10" : ""}`}>
       <div class="flex justify-between" onDragOver={handleDragOver}>
-        <div class="flex">
+        <div class="flex items-center">
           <div
             draggable="true"
             onDragStart={handleDragging}
             onDragEnd={handleDragEnd}
-            class="pr-2"
+            class="pr-2 font-xl flex items-center"
           >
-            <img class="w-6 h-6" src={reorderIcon} alt="drag" />
+            <ion-icon name="reorder-two-outline" />
           </div>
           {children}
         </div>
-        <button onClick={handleRemove}>
-          <img class="w-6 h-6" src={deleteIcon} alt="remove" />
+        <button class="text-2xl" onClick={handleRemove} ariaLabel="remove set">
+          <ion-icon name="close-circle-outline" />
         </button>
       </div>
     </li>

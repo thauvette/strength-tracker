@@ -3,10 +3,6 @@ import { h } from "preact"
 import chunk from "lodash.chunk"
 import { useState } from "preact/hooks"
 
-import calIcon from "../../assets/icons/calendar-outline.svg"
-import forwardIcon from "../../assets/icons/arrow-forward-outline.svg"
-import backIcon from "../../assets/icons/arrow-back-outline.svg"
-
 const Calendar = ({ startDate, renderDay }) => {
   const [start, setStart] = useState(
     dayjs(startDate || new Date()).startOf("month")
@@ -56,17 +52,35 @@ const Calendar = ({ startDate, renderDay }) => {
   return (
     <div class="">
       <div class="flex items-center justify-between pb-2">
-        <button onClick={() => changeMonth(-1)}>
-          <img src={backIcon} alt="previous month" class="w-6 h-6" />
+        <button
+          class="text-xl"
+          onClick={() => changeMonth(-1)}
+          ariaLabel="previous month"
+        >
+          <div class="flex items-center">
+            <ion-icon name="arrow-back-outline" />
+          </div>
         </button>
         <div class="flex items-center justify-between">
           <p class="font-bold">{start.format("MMM YYYY")}</p>
-          <button onClick={() => setStart(dayjs().startOf("month"))}>
-            <img class="w-6 h-6" src={calIcon} alt="today" />
+          <button
+            class="text-xl"
+            onClick={() => setStart(dayjs().startOf("month"))}
+            ariaLabel="jump to today"
+          >
+            <div class="flex items-center">
+              <ion-icon name="calendar-outline" />
+            </div>
           </button>
         </div>
-        <button onClick={() => changeMonth(1)}>
-          <img src={forwardIcon} alt="next month" class="w-6 h-6" />
+        <button
+          class="text-xl"
+          onClick={() => changeMonth(1)}
+          ariaLabel="next month"
+        >
+          <div class="flex items-center">
+            <ion-icon name="arrow-forward-outline" />
+          </div>
         </button>
       </div>
       <div class="grid grid-cols-7">
