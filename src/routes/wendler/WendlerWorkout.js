@@ -5,6 +5,7 @@ import useDB from "../../context/db"
 
 import Set from "./components/Set"
 import ExerciseHistoryModal from "../../components/exerciseHistoryModal/ExerciseHistoryModal"
+import useExerciseHistory from "../../hooks/useExerciseHistory/useExerciseHistory"
 
 export default function WendlerWorkout({ id, week, mainLift }) {
   const {
@@ -15,7 +16,14 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   } = useDB()
   const [cycle, setCycle] = useState(null)
   const [activeSet, setActiveSet] = useState(0)
-  const [exerciseHistoryModalId, setExerciseHistoryModalId] = useState(null)
+  const [exerciseHistoryModalState, setExerciseHistoryModalState] = useState({
+    isOpen: false,
+    id: null,
+  })
+
+  const [exerciseHistory, getData] = useExerciseHistory(
+    exerciseHistoryModalState.id
+  )
 
   useEffect(() => {
     getItemById(id).then(res => {
@@ -24,11 +32,25 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   }, [getItemById, id])
 
   const workout = get(cycle, ["weeks", week, mainLift])
+  const isLegacy = !cycle?.version
+  const sets = isLegacy
+    ? workout?.runningSets
+    : workout?.runningSets.map(setKey => get(cycle, `weeks.${setKey}`))
+
+  useEffect(() => {
+    const currentSetId = sets?.[activeSet]?.primaryId
+    if (currentSetId && currentSetId !== exerciseHistoryModalState.id) {
+      setExerciseHistoryModalState({
+        ...exerciseHistoryModalState,
+        id: currentSetId,
+      })
+    }
+  }, [sets, activeSet, exerciseHistoryModalState])
 
   if (!workout) {
     return <p>Workout not found</p>
   }
-  const isLegacy = !cycle?.version
+
   const updateSetsDB = async setData => {
     let setId
     if (!setData?.completed && setData?.setId) {
@@ -67,12 +89,9 @@ export default function WendlerWorkout({ id, week, mainLift }) {
       value: data,
     }).then(res => {
       setCycle(res)
+      getData()
     })
   }
-
-  const sets = isLegacy
-    ? workout?.runningSets
-    : workout?.runningSets.map(setKey => get(cycle, `weeks.${setKey}`))
 
   return (
     <div>
@@ -109,16 +128,27 @@ export default function WendlerWorkout({ id, week, mainLift }) {
                     }
                   : null
               }
-              handleViewHistory={() => setExerciseHistoryModalId(set.primaryId)}
+              handleViewHistory={() =>
+                setExerciseHistoryModalState({
+                  isOpen: true,
+                  id: set.primaryId,
+                })
+              }
             />
           </div>
         )
       })}
-      {exerciseHistoryModalId && (
+      {exerciseHistoryModalState?.id && (
         <ExerciseHistoryModal
-          exerciseId={exerciseHistoryModalId}
-          isOpen={!!exerciseHistoryModalId}
-          onRequestClose={() => setExerciseHistoryModalId(null)}
+          isOpen={exerciseHistoryModalState.isOpen}
+          onRequestClose={() =>
+            setExerciseHistoryModalState({
+              ...exerciseHistoryModalState,
+              isOpen: false,
+            })
+          }
+          onUpdate={getData}
+          exerciseHistory={exerciseHistory}
         />
       )}
     </div>

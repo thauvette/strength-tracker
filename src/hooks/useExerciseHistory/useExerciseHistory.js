@@ -27,7 +27,7 @@ const useExerciseHistory = id => {
 
   useEffect(() => {
     getData()
-  }, []) // eslint-disable-line
+  }, [id]) // eslint-disable-line
   return [exerciseHistory, getData]
 }
 
