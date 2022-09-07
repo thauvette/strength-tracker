@@ -18,8 +18,15 @@ const Set = ({
           reps={reps}
           weight={weight}
           isComplete={!!completed}
-          title={`${completed ? "✔️" : ""}  ${title}`}
-          titleClass="capitalize text-xl font-bold"
+          title={
+            <>
+              {completed ? (
+                <ion-icon name="checkmark" class="text-2xl mr-2" />
+              ) : null}{" "}
+              {title}
+            </>
+          }
+          titleClass="capitalize font-bold flex items-center"
           renderCtas={newValues => (
             <div class="flex py-4 px-2">
               {handleViewHistory ? (
@@ -56,12 +63,12 @@ const Set = ({
         />
       ) : (
         <button onClick={makeActive} class="text-left w-full">
-          <div class="flex justify-between">
-            <p class="capitalize text-xl font-bold">
-              {completed && "✔️"}
+          <div class="flex justify-between flex-wrap">
+            <p class="capitalize font-bold flex items-center">
+              {completed && <ion-icon name="checkmark" class="text-2xl mr-2" />}
               {title}
             </p>
-            <p>
+            <p class="shrink-0">
               {set.reps} @ {set.weight}
             </p>
           </div>

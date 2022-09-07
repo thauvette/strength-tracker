@@ -1,16 +1,6 @@
 import { h } from "preact"
 import { useState } from "preact/hooks"
 
-/**
- *
-  runningSets={formatRunningSets(sets.runningSets)}
-                              mainSets={mainSets}
-                              auxSets={auxSets}
-                              additionalSets={additionalSets}
-                              mainExercise={sets?.exercise}
-                              auxName={sets.auxName}
- */
-
 const WendlerCycleDay = ({
   runningSets,
   mainSets,
