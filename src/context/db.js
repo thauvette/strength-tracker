@@ -1,29 +1,29 @@
-import { useEffect, useState, createContext, useContext } from "preact/compat"
-import set from "lodash.set"
-import dayjs from "dayjs"
+import { useEffect, useState, createContext, useContext } from 'preact/compat'
+import set from 'lodash.set'
+import dayjs from 'dayjs'
 
 const DBContext = createContext()
 
 const DB_VERSION = 3
-const DB_NAME = "track_strength"
+const DB_NAME = 'track_strength'
 
 export const objectStores = {
-  wendlerCycles: "wendler_cycles",
-  exercises: "exercises",
-  sets: "sets",
-  bioMetrics: "bio_metrics",
-  bioEntries: "bio_metric_entries",
+  wendlerCycles: 'wendler_cycles',
+  exercises: 'exercises',
+  sets: 'sets',
+  bioMetrics: 'bio_metrics',
+  bioEntries: 'bio_metric_entries',
 }
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState(null)
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return null
     }
     if (!window.indexedDB) {
-      alert("this app does not support your browser")
+      alert('this app does not support your browser')
     }
     // initialize DB
     const dbRequest = window.indexedDB.open(DB_NAME, DB_VERSION)
@@ -33,32 +33,32 @@ export const DBProvider = ({ children }) => {
       const database = dbRequest.result
       if (requiresExercises) {
         const transaction = database
-          .transaction(objectStores.exercises, "readwrite")
+          .transaction(objectStores.exercises, 'readwrite')
           .objectStore(objectStores.exercises)
 
-        transaction.add({ name: "deadlift", primaryGroup: "back" })
+        transaction.add({ name: 'deadlift', primaryGroup: 'back' })
         transaction.add({
-          name: "barbell bench press",
-          primaryGroup: "chest",
+          name: 'barbell bench press',
+          primaryGroup: 'chest',
         })
-        transaction.add({ name: "barbell back squat", primaryGroup: "quads" })
+        transaction.add({ name: 'barbell back squat', primaryGroup: 'quads' })
         transaction.add({
-          name: "standing overhead press",
-          primaryGroup: "shoulders",
+          name: 'standing overhead press',
+          primaryGroup: 'shoulders',
         })
       }
       if (requiresBioMetrics) {
         const transaction = database
-          .transaction(objectStores.bioMetrics, "readwrite")
+          .transaction(objectStores.bioMetrics, 'readwrite')
           .objectStore(objectStores.bioMetrics)
-        transaction.add({ name: "weight" })
+        transaction.add({ name: 'weight' })
       }
       setDb(dbRequest.result)
     }
-    dbRequest.onerror = e => {
+    dbRequest.onerror = (e) => {
       console.log(`error:`, e)
     }
-    dbRequest.onupgradeneeded = e => {
+    dbRequest.onupgradeneeded = (e) => {
       const db = e.target.result
 
       if (e.oldVersion < 1) {
@@ -72,22 +72,22 @@ export const DBProvider = ({ children }) => {
         const exerciseStore = db.createObjectStore(objectStores.exercises, {
           autoIncrement: true,
         })
-        exerciseStore.createIndex("name", "name", { unique: true })
-        exerciseStore.createIndex("primaryGroup", "primaryGroup", {
+        exerciseStore.createIndex('name', 'name', { unique: true })
+        exerciseStore.createIndex('primaryGroup', 'primaryGroup', {
           unique: false,
         })
 
         const setsStore = db.createObjectStore(objectStores.sets, {
           autoIncrement: true,
         })
-        setsStore.createIndex("exercise", "exercise", { unique: false })
+        setsStore.createIndex('exercise', 'exercise', { unique: false })
       }
       if (e.oldVersion < 2) {
         // get setsStore and createIndex
         const setStore = e.currentTarget.transaction.objectStore(
-          objectStores.sets
+          objectStores.sets,
         )
-        setStore.createIndex("created", "created", { unique: false })
+        setStore.createIndex('created', 'created', { unique: false })
       }
       if (e.oldVersion < 3) {
         requiresBioMetrics = true
@@ -97,19 +97,19 @@ export const DBProvider = ({ children }) => {
         const bioMetricStore = db.createObjectStore(objectStores.bioMetrics, {
           autoIncrement: true,
         })
-        bioMetricStore.createIndex("name", "name", { unique: true })
-        bioMetricStore.createIndex("created", "created", { unique: false })
+        bioMetricStore.createIndex('name', 'name', { unique: true })
+        bioMetricStore.createIndex('created', 'created', { unique: false })
         const bioEntriesStore = db.createObjectStore(objectStores.bioEntries, {
           autoIncrement: true,
         })
-        bioEntriesStore.createIndex("bioMetric", "bioMetric", { unique: false })
-        bioEntriesStore.createIndex("date", "date", { unique: false })
+        bioEntriesStore.createIndex('bioMetric', 'bioMetric', { unique: false })
+        bioEntriesStore.createIndex('date', 'date', { unique: false })
       }
     }
   }, [])
 
-  const openObjectStoreTransaction = store => {
-    const transaction = db.transaction([store], "readwrite")
+  const openObjectStoreTransaction = (store) => {
+    const transaction = db.transaction([store], 'readwrite')
     const objectStore = transaction.objectStore(store)
     return {
       transaction,
@@ -117,13 +117,13 @@ export const DBProvider = ({ children }) => {
     }
   }
 
-  const getFromCursor = store =>
+  const getFromCursor = (store) =>
     new Promise((resolve, reject) => {
       const { transaction, objectStore } = openObjectStoreTransaction(store)
 
       const results = {}
 
-      objectStore.openCursor().onsuccess = event => {
+      objectStore.openCursor().onsuccess = (event) => {
         const cursor = event.target.result
         if (cursor) {
           results[cursor.key] = cursor.value
@@ -132,39 +132,39 @@ export const DBProvider = ({ children }) => {
       }
       transaction.oncomplete = () => resolve(results)
 
-      transaction.onerror = err => {
+      transaction.onerror = (err) => {
         console.log(err)
-        reject(new Error(err?.message || "oops"))
+        reject(new Error(err?.message || 'oops'))
       }
     })
 
-  const getAllEntries = async store => await getFromCursor(store)
+  const getAllEntries = async (store) => await getFromCursor(store)
 
   // TODO: rename or rework
-  const getItemById = id =>
+  const getItemById = (id) =>
     new Promise((resolve, reject) => {
       const { objectStore } = openObjectStoreTransaction(
-        objectStores.wendlerCycles
+        objectStores.wendlerCycles,
       )
       const request = objectStore.get(+id)
       request.onerror = function (err) {
-        console.log("Err", err)
-        reject(err?.message || "unable to find item")
+        console.log('Err', err)
+        reject(err?.message || 'unable to find item')
       }
-      request.onsuccess = event => resolve(event.target.result)
+      request.onsuccess = (event) => resolve(event.target.result)
     })
 
   const getItemsByIndex = (storeKey, indexKey, items) =>
     new Promise((resolve, reject) => {
       const { objectStore: store } = openObjectStoreTransaction(
-        objectStores[storeKey]
+        objectStores[storeKey],
       )
       const index = store.index(indexKey)
       const results = []
-      index.openCursor().onsuccess = event => {
+      index.openCursor().onsuccess = (event) => {
         const cursor = event.target.result
         if (cursor) {
-          if (items.some(item => item === cursor.key)) {
+          if (items.some((item) => item === cursor.key)) {
             results.push({
               ...cursor.value,
               primaryId: cursor.primaryKey,
@@ -179,12 +179,12 @@ export const DBProvider = ({ children }) => {
     })
 
   const getExerciseOptions = () =>
-    new Promise(resolve => {
+    new Promise((resolve) => {
       const { objectStore: store } = openObjectStoreTransaction(
-        objectStores.exercises
+        objectStores.exercises,
       )
       const results = []
-      store.openCursor().onsuccess = event => {
+      store.openCursor().onsuccess = (event) => {
         const cursor = event.target.result
         if (cursor) {
           if (cursor.value?.name) {
@@ -205,15 +205,15 @@ export const DBProvider = ({ children }) => {
     new Promise((resolve, reject) => {
       // get the current item.
       const { objectStore } = openObjectStoreTransaction(
-        objectStores.wendlerCycles
+        objectStores.wendlerCycles,
       )
       const request = objectStore.get(+id)
 
-      request.onerror = err => reject(err?.message || "unable to find data")
+      request.onerror = (err) => reject(err?.message || 'unable to find data')
 
       request.onsuccess = () => {
         if (!request.result) {
-          reject(new Error("unable to find entry"))
+          reject(new Error('unable to find entry'))
         }
 
         const currentEntry = { ...request.result }
@@ -223,8 +223,8 @@ export const DBProvider = ({ children }) => {
         // Put this updated object back into the database.
         const requestUpdate = objectStore.put(currentEntry, +id)
 
-        requestUpdate.onerror = err =>
-          reject(err?.message || "unable to update entry")
+        requestUpdate.onerror = (err) =>
+          reject(err?.message || 'unable to update entry')
 
         // Success - the data is updated!
         requestUpdate.onsuccess = () => resolve(currentEntry)
@@ -240,8 +240,8 @@ export const DBProvider = ({ children }) => {
           ...data,
           created: new Date().getTime(),
         })
-        addRequest.onerror = e => console.log(e)
-        addRequest.onsuccess = event => {
+        addRequest.onerror = (e) => console.log(e)
+        addRequest.onsuccess = (event) => {
           return resolve({
             ...data,
             created: new Date().getTime(),
@@ -252,7 +252,7 @@ export const DBProvider = ({ children }) => {
         const request = objectStore.get(+id)
         request.onsuccess = () => {
           if (!request.result) {
-            reject(new Error("unable to find entry"))
+            reject(new Error('unable to find entry'))
           }
           const newValue = {
             ...request.result,
@@ -260,33 +260,33 @@ export const DBProvider = ({ children }) => {
             updated: new Date().getTime(),
           }
           const requestUpdate = objectStore.put(newValue, +id)
-          requestUpdate.onerror = err =>
-            reject(err?.message || "unable to update entry")
+          requestUpdate.onerror = (err) =>
+            reject(err?.message || 'unable to update entry')
 
           // Success - the data is updated!
-          requestUpdate.onsuccess = e =>
+          requestUpdate.onsuccess = (e) =>
             resolve({ ...newValue, id: e?.target?.result })
         }
       }
     })
 
-  const deleteLoggedSet = id =>
+  const deleteLoggedSet = (id) =>
     new Promise((resolve, reject) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.sets)
       const deleteRequest = objectStore.delete(id)
       deleteRequest.onsuccess = () => resolve(true)
-      deleteRequest.onerror = err =>
-        reject(err?.message || "unable to delete item")
+      deleteRequest.onerror = (err) =>
+        reject(err?.message || 'unable to delete item')
     })
 
-  const createCycle = data =>
+  const createCycle = (data) =>
     new Promise((resolve, reject) => {
       {
         if (!db) {
           return
         }
         const { objectStore, transaction } = openObjectStoreTransaction(
-          objectStores.wendlerCycles
+          objectStores.wendlerCycles,
         )
 
         transaction.oncomplete = function () {
@@ -295,7 +295,7 @@ export const DBProvider = ({ children }) => {
 
         transaction.onerror = function (event) {
           // todo: Don't forget to handle errors!
-          console.log(event, "oops")
+          console.log(event, 'oops')
           reject()
         }
 
@@ -314,7 +314,7 @@ export const DBProvider = ({ children }) => {
         ...data,
         created: new Date().getTime(),
       })
-      request.onsuccess = event =>
+      request.onsuccess = (event) =>
         resolve({
           ...data,
           id: event.target?.result,
@@ -323,15 +323,15 @@ export const DBProvider = ({ children }) => {
 
       transaction.onerror = function (err) {
         // todo: Don't forget to handle errors!
-        console.log(err, "oops")
-        reject(new Error(err?.message || "unable to create item"))
+        console.log(err, 'oops')
+        reject(new Error(err?.message || 'unable to create item'))
       }
     })
 
   const deleteEntry = (store, id) =>
     new Promise((resolve, reject) => {
       const request = db
-        .transaction([store], "readwrite")
+        .transaction([store], 'readwrite')
         .objectStore(store)
         .delete(+id)
       request.onsuccess = async function () {
@@ -339,7 +339,7 @@ export const DBProvider = ({ children }) => {
           const remainingData = await getFromCursor(store)
           resolve(remainingData)
         } catch (e) {
-          reject(new Error(e?.message || "something went wrong? "))
+          reject(new Error(e?.message || 'something went wrong? '))
         }
       }
     })
@@ -350,7 +350,7 @@ export const DBProvider = ({ children }) => {
       const request = objectStore.get(+id)
       request.onsuccess = () => {
         if (!request.result) {
-          reject(new Error("unable to find entry"))
+          reject(new Error('unable to find entry'))
         }
         const newValue = {
           ...request.result,
@@ -358,30 +358,30 @@ export const DBProvider = ({ children }) => {
           updated: new Date().getTime(),
         }
         const requestUpdate = objectStore.put(newValue, +id)
-        requestUpdate.onerror = err =>
-          reject(err?.message || "unable to update entry")
+        requestUpdate.onerror = (err) =>
+          reject(err?.message || 'unable to update entry')
 
         // Success - the data is updated!
-        requestUpdate.onsuccess = e =>
+        requestUpdate.onsuccess = (e) =>
           resolve({ ...newValue, id: e?.target?.result })
       }
     })
-  const getExerciseById = id =>
-    new Promise(resolve => {
+  const getExerciseById = (id) =>
+    new Promise((resolve) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
       const keyRange = IDBKeyRange.only(+id)
 
       const cursorRequest = objectStore.openCursor(keyRange)
-      cursorRequest.onsuccess = event => {
+      cursorRequest.onsuccess = (event) => {
         resolve(event?.target?.result?.value)
       }
     })
 
-  const getExerciseHistoryById = id =>
-    new Promise(resolve => {
-      getExerciseById(id).then(exerciseResponse => {
+  const getExerciseHistoryById = (id) =>
+    new Promise((resolve) => {
+      getExerciseById(id).then((exerciseResponse) => {
         const { objectStore } = openObjectStoreTransaction(objectStores.sets)
-        const index = objectStore.index("exercise")
+        const index = objectStore.index('exercise')
         const keyRange = IDBKeyRange.only(+id)
 
         const cursorRequest = index.openCursor(keyRange)
@@ -401,13 +401,13 @@ export const DBProvider = ({ children }) => {
     })
 
   const getAllSetsHistory = () =>
-    new Promise(resolve => {
+    new Promise((resolve) => {
       return Promise.all([
         getFromCursor(objectStores.exercises),
         getFromCursor(objectStores.sets),
       ]).then(([exercises, entries]) => {
         const results = Object.values(entries || {})?.reduce((obj, entry) => {
-          const dateKey = dayjs(entry.created).format("YYYY-MM-DD")
+          const dateKey = dayjs(entry.created).format('YYYY-MM-DD')
           const exercise = exercises[entry.exercise]
           const currentItems = obj[dateKey] || []
           currentItems.push({
@@ -425,10 +425,10 @@ export const DBProvider = ({ children }) => {
 
   async function generateBackupData() {
     const arr = []
-    const headerItems = ["store", "id"]
+    const headerItems = ['store', 'id']
 
     for (const storeName of Array.from(db?.objectStoreNames || []).filter(
-      name => name !== objectStores.wendlerCycles
+      (name) => name !== objectStores.wendlerCycles,
     )) {
       const entries = await getFromCursor(storeName)
       if (Object.keys(entries || {}).length) {
@@ -444,7 +444,7 @@ export const DBProvider = ({ children }) => {
                 headerItems.push(key)
               }
               rowData[position] =
-                typeof val === "string" ? val.replace(",", "__comma__") : val
+                typeof val === 'string' ? val.replace(',', '__comma__') : val
             })
           }
 
@@ -452,24 +452,24 @@ export const DBProvider = ({ children }) => {
         })
       }
     }
-    return `${headerItems.join()}\n${arr.join("\n")}`
+    return `${headerItems.join()}\n${arr.join('\n')}`
   }
 
   const createBackup = () => {
-    generateBackupData().then(res => {
-      const hiddenElement = document.createElement("a")
+    generateBackupData().then((res) => {
+      const hiddenElement = document.createElement('a')
       hiddenElement.href = `data:text/csv;charset=utf-8, ${encodeURI(res)}`
-      hiddenElement.target = "_blank"
+      hiddenElement.target = '_blank'
       hiddenElement.download = `strength-track-${dayjs().format()}`
       hiddenElement.click()
     })
   }
 
-  const clearStore = store =>
+  const clearStore = (store) =>
     new Promise((resolve, reject) => {
       try {
         const objectStoreRequest = db
-          .transaction([store], "readwrite")
+          .transaction([store], 'readwrite')
           .objectStore(store)
           .clear()
 
@@ -484,24 +484,24 @@ export const DBProvider = ({ children }) => {
       }
     })
 
-  const writeItemFromBackup = item =>
+  const writeItemFromBackup = (item) =>
     new Promise((resolve, reject) => {
       const { store, data, id } = item
 
       const objectStore = db
-        .transaction([store], "readwrite")
+        .transaction([store], 'readwrite')
         .objectStore(store)
         .put(data, id)
 
       objectStore.onsuccess = () => resolve(item)
 
-      objectStore.onerror = err => reject(err)
+      objectStore.onerror = (err) => reject(err)
     })
 
-  const restoreFromBackup = async entries => {
+  const restoreFromBackup = async (entries) => {
     // get list of stores to clear.
-    const storeClearPromises = entries.stores.map(store => clearStore(store))
-    const itemPromises = entries.items.map(item => writeItemFromBackup(item))
+    const storeClearPromises = entries.stores.map((store) => clearStore(store))
+    const itemPromises = entries.items.map((item) => writeItemFromBackup(item))
 
     const storesResponse = await Promise.all(storeClearPromises)
     const itemResponses = await Promise.all(itemPromises)
@@ -512,18 +512,18 @@ export const DBProvider = ({ children }) => {
     }
   }
 
-  const createBioMetric = async name =>
-    new Promise(resolve => {
+  const createBioMetric = async (name) =>
+    new Promise((resolve) => {
       const { objectStore } = openObjectStoreTransaction(
-        objectStores.bioMetrics
+        objectStores.bioMetrics,
       )
 
       const addRequest = objectStore.add({
         name,
         created: new Date().getTime(),
       })
-      addRequest.onerror = e => console.log(e)
-      addRequest.onsuccess = event => {
+      addRequest.onerror = (e) => console.log(e)
+      addRequest.onsuccess = (event) => {
         resolve({
           name,
           id: event?.target?.result,

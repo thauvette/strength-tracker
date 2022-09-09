@@ -1,7 +1,7 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import EditableSet from "../../../../components/editableSet/editableSet"
-import ExerciseSearch from "../../../../components/exerciseSelection/ExerciseSearch"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import EditableSet from '../../../../components/editableSet/editableSet'
+import ExerciseSearch from '../../../../components/exerciseSelection/ExerciseSearch'
 
 const AuxExerciseForm = ({
   week,
@@ -11,7 +11,7 @@ const AuxExerciseForm = ({
   onCancel,
 }) => {
   const [sets, setSets] = useState(
-    initialValues?.sets || [{ reps: "", weight: "" }]
+    initialValues?.sets || [{ reps: '', weight: '' }],
   )
   const [exercise, setExercise] = useState(initialValues?.exercise || null)
 
@@ -26,7 +26,7 @@ const AuxExerciseForm = ({
     setSets(currentSets)
   }
 
-  const handleRemoveSet = index => {
+  const handleRemoveSet = (index) => {
     const currentSets = [...sets]
 
     if (currentSets[index]) {
@@ -36,10 +36,10 @@ const AuxExerciseForm = ({
   }
 
   const addSet = () => {
-    setSets([...sets, { reps: "", weight: "" }])
+    setSets([...sets, { reps: '', weight: '' }])
   }
 
-  const duplicateSet = values => {
+  const duplicateSet = (values) => {
     setSets([...sets, { ...values }])
   }
 
@@ -51,7 +51,7 @@ const AuxExerciseForm = ({
     <div>
       <div class="flex items-center justify-between">
         <h2>
-          Adding to {title} {addToAllWeeks ? "" : `week ${week}`}
+          Adding to {title} {addToAllWeeks ? '' : `week ${week}`}
         </h2>
         <button onClick={onCancel}>X Cancel</button>
       </div>
@@ -60,7 +60,7 @@ const AuxExerciseForm = ({
           type="checkbox"
           class="mr-2"
           checked={addToAllWeeks}
-          onInput={e => setAddToAllWeeks(e.target.checked)}
+          onInput={(e) => setAddToAllWeeks(e.target.checked)}
         />
         <p class="m-0">Add to all {title} days</p>
       </label>
@@ -75,23 +75,23 @@ const AuxExerciseForm = ({
         return (
           <div key={index} class="border-b pb-6">
             <EditableSet
-              onChangeReps={value =>
+              onChangeReps={(value) =>
                 handleInput({
                   index,
-                  key: "reps",
+                  key: 'reps',
                   value,
                 })
               }
-              onChangeWeight={value =>
+              onChangeWeight={(value) =>
                 handleInput({
                   index,
-                  key: "weight",
+                  key: 'weight',
                   value,
                 })
               }
-              reps={setValues?.reps || ""}
-              weight={setValues?.weight || ""}
-              handleRemove={e => {
+              reps={setValues?.reps || ''}
+              weight={setValues?.weight || ''}
+              handleRemove={(e) => {
                 e.stopPropagation()
                 handleRemoveSet(index)
               }}

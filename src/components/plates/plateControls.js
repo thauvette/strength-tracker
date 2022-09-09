@@ -1,5 +1,5 @@
-import { h } from "preact"
-import Counters from "../counters/Counters"
+import { h } from 'preact'
+import Counters from '../counters/Counters'
 
 const PlateControls = ({ weight, setWeight, barWeight, setBarWeight }) => (
   <div class="flex pb-12">

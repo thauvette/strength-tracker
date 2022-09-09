@@ -1,50 +1,50 @@
-import dayjs from "dayjs"
-import { h } from "preact"
-import chunk from "lodash.chunk"
-import { useState } from "preact/hooks"
+import dayjs from 'dayjs'
+import { h } from 'preact'
+import chunk from 'lodash.chunk'
+import { useState } from 'preact/hooks'
 
 const Calendar = ({ startDate, renderDay }) => {
   const [start, setStart] = useState(
-    dayjs(startDate || new Date()).startOf("month")
+    dayjs(startDate || new Date()).startOf('month'),
   )
 
-  const end = dayjs(start).endOf("month")
+  const end = dayjs(start).endOf('month')
 
-  const prevMonth = dayjs(start).subtract(1, "month")
+  const prevMonth = dayjs(start).subtract(1, 'month')
 
-  const endOfPrevMonth = prevMonth.endOf("month").format("D")
+  const endOfPrevMonth = prevMonth.endOf('month').format('D')
 
-  const firstNeededDateOfPrevMonth = +endOfPrevMonth - +start.format("d") + 1
+  const firstNeededDateOfPrevMonth = +endOfPrevMonth - +start.format('d') + 1
 
   const firstDay = prevMonth.date(firstNeededDateOfPrevMonth)
 
-  const paddingStart = Array.from({ length: +start.format("d") }, (_, i) =>
-    firstDay.add(i, "days")
+  const paddingStart = Array.from({ length: +start.format('d') }, (_, i) =>
+    firstDay.add(i, 'days'),
   )
 
-  const days = Array.from({ length: +end.format("DD") }, (_, i) =>
-    start.add(i, "days")
+  const days = Array.from({ length: +end.format('DD') }, (_, i) =>
+    start.add(i, 'days'),
   )
 
   const paddingEnd = Array.from(
-    { length: 6 - start.endOf("month").day() },
-    (_, i) => start.endOf("month").add(i + 1, "days")
+    { length: 6 - start.endOf('month').day() },
+    (_, i) => start.endOf('month').add(i + 1, 'days'),
   )
 
   const weeks = chunk([...paddingStart, ...days, ...paddingEnd], 7)
 
-  const changeMonth = amount => {
-    setStart(start.add(amount, "month").startOf("month"))
+  const changeMonth = (amount) => {
+    setStart(start.add(amount, 'month').startOf('month'))
   }
 
-  const printDay = day => {
+  const printDay = (day) => {
     if (!day) return <div />
-    const isCurrentMonth = day.isSame(start, "month")
+    const isCurrentMonth = day.isSame(start, 'month')
     return renderDay ? (
       renderDay(day, isCurrentMonth)
     ) : (
-      <div class={`text-center py-2 ${!isCurrentMonth ? "bg-gray-100" : ""}`}>
-        <p>{day.format("D")}</p>
+      <div class={`text-center py-2 ${!isCurrentMonth ? 'bg-gray-100' : ''}`}>
+        <p>{day.format('D')}</p>
       </div>
     )
   }
@@ -62,10 +62,10 @@ const Calendar = ({ startDate, renderDay }) => {
           </div>
         </button>
         <div class="flex items-center justify-between">
-          <p class="font-bold">{start.format("MMM YYYY")}</p>
+          <p class="font-bold">{start.format('MMM YYYY')}</p>
           <button
             class="text-xl"
-            onClick={() => setStart(dayjs().startOf("month"))}
+            onClick={() => setStart(dayjs().startOf('month'))}
             ariaLabel="jump to today"
           >
             <div class="flex items-center">
@@ -84,12 +84,12 @@ const Calendar = ({ startDate, renderDay }) => {
         </button>
       </div>
       <div class="grid grid-cols-7">
-        {Array.from({ length: 7 }, (_, i) => dayjs().day(i)).map(day => (
-          <p key={day.format("dd")} class="text-center">
-            {day.format("dd")}
+        {Array.from({ length: 7 }, (_, i) => dayjs().day(i)).map((day) => (
+          <p key={day.format('dd')} class="text-center">
+            {day.format('dd')}
           </p>
         ))}
-        {weeks.map(week => week.map(day => printDay(day)))}
+        {weeks.map((week) => week.map((day) => printDay(day)))}
       </div>
     </div>
   )

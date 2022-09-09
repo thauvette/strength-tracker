@@ -1,9 +1,9 @@
-import { h } from "preact"
-import Counters from "../../components/counters/Counters"
-import useWeightSettings from "../../hooks/useWeightSettings"
-import Modal from "../../components/modal/Modal"
-import { useState } from "preact/hooks"
-import NewPlateForm from "./NewPlateForm"
+import { h } from 'preact'
+import Counters from '../../components/counters/Counters'
+import useWeightSettings from '../../hooks/useWeightSettings'
+import Modal from '../../components/modal/Modal'
+import { useState } from 'preact/hooks'
+import NewPlateForm from './NewPlateForm'
 
 const Settings = () => {
   const {
@@ -37,7 +37,7 @@ const Settings = () => {
         </div>
         {availablePlates?.map((plate, index) => {
           const id = `plate-${plate.weight}`
-          const handlePlateCount = count => {
+          const handlePlateCount = (count) => {
             updatePlateCount({
               index,
               count,
@@ -79,7 +79,7 @@ const Settings = () => {
         onRequestClose={() => setNewPlateModalIsOpen(false)}
       >
         <NewPlateForm
-          onSubmit={data => {
+          onSubmit={(data) => {
             addPlate(data)
             setNewPlateModalIsOpen(false)
           }}

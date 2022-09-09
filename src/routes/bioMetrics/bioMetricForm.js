@@ -1,23 +1,23 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import dayjs from "dayjs"
-import dateFormats from "../../config/dateFormats"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import dayjs from 'dayjs'
+import dateFormats from '../../config/dateFormats'
 
 const BioMetricForm = ({
   initialValues,
   submit,
   name,
-  submitText = "Add +",
+  submitText = 'Add +',
 }) => {
   const [date, setDate] = useState(
-    initialValues?.date || dayjs().format(dateFormats.day)
+    initialValues?.date || dayjs().format(dateFormats.day),
   )
   const [time, setTime] = useState(
-    initialValues?.time || dayjs().format(dateFormats.time)
+    initialValues?.time || dayjs().format(dateFormats.time),
   )
-  const [value, setValue] = useState(initialValues?.value || "")
+  const [value, setValue] = useState(initialValues?.value || '')
 
-  const handleAddEntry = e => {
+  const handleAddEntry = (e) => {
     e.preventDefault()
     submit({
       value,
@@ -32,8 +32,8 @@ const BioMetricForm = ({
         <input
           class="w-2/4"
           value={value}
-          onInput={e => setValue(e.target.value)}
-          placeholder={name || ""}
+          onInput={(e) => setValue(e.target.value)}
+          placeholder={name || ''}
         />
       </label>
       <label class="flex items-center py-1">
@@ -42,7 +42,7 @@ const BioMetricForm = ({
           class="w-2/4"
           type="date"
           value={date}
-          onInput={e => {
+          onInput={(e) => {
             setDate(e.target.value)
           }}
           placeholder="date"
@@ -53,7 +53,7 @@ const BioMetricForm = ({
         <input
           class="w-2/4"
           type="time"
-          onInput={e => {
+          onInput={(e) => {
             setTime(e.target.value)
           }}
           value={time}

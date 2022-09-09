@@ -1,13 +1,13 @@
-import { h } from "preact"
-import { Link } from "preact-router"
-import { useState, useEffect } from "preact/hooks"
+import { h } from 'preact'
+import { Link } from 'preact-router'
+import { useState, useEffect } from 'preact/hooks'
 
-import { routes } from "../../config/routes"
-import useDB, { objectStores } from "../../context/db"
+import { routes } from '../../config/routes'
+import useDB, { objectStores } from '../../context/db'
 
-import Modal from "../../components/modal/Modal"
+import Modal from '../../components/modal/Modal'
 
-import formatCycleForDuplication from "./formatCycleToDuplicate"
+import formatCycleForDuplication from './formatCycleToDuplicate'
 
 const WendlerCycles = ({ navigateToEdit }) => {
   const { getAllEntries, deleteEntry, createCycle } = useDB()
@@ -22,24 +22,24 @@ const WendlerCycles = ({ navigateToEdit }) => {
   const [duplicateCycleModalState, setDuplicateCycleModalState] = useState({
     workout: null,
     open: false,
-    title: "",
-    description: "",
+    title: '',
+    description: '',
   })
 
   const getData = () =>
     getAllEntries(objectStores.wendlerCycles)
-      .then(res => {
+      .then((res) => {
         setWorkouts(res)
       })
-      .catch(err => {
-        setError(err?.message || "something is wrong")
+      .catch((err) => {
+        setError(err?.message || 'something is wrong')
       })
 
   useEffect(() => {
     getData()
   }, []) // eslint-disable-line
 
-  const handleOpenDuplicateModal = cycle =>
+  const handleOpenDuplicateModal = (cycle) =>
     setDuplicateCycleModalState({
       workout: cycle,
       open: true,
@@ -51,11 +51,11 @@ const WendlerCycles = ({ navigateToEdit }) => {
     setDuplicateCycleModalState({
       workout: null,
       open: false,
-      title: "",
-      description: "",
+      title: '',
+      description: '',
     })
 
-  const handleDuplicateModalInput = e =>
+  const handleDuplicateModalInput = (e) =>
     setDuplicateCycleModalState({
       ...duplicateCycleModalState,
       [e.target.name]: e.target.value,
@@ -67,13 +67,13 @@ const WendlerCycles = ({ navigateToEdit }) => {
         ...duplicateCycleModalState.workout,
         title: duplicateCycleModalState.title,
         description: duplicateCycleModalState.description,
-      })
+      }),
     ).then(() => {
       getData()
       handleCloseDuplicateModal()
     })
 
-  const handleOpenConfirmDeleteModal = id =>
+  const handleOpenConfirmDeleteModal = (id) =>
     setConfirmDeleteModalState({
       id,
       open: true,
@@ -87,7 +87,7 @@ const WendlerCycles = ({ navigateToEdit }) => {
 
   const handleDelete = () => {
     deleteEntry(objectStores.wendlerCycles, confirmDeleteModalState.id).then(
-      res => setWorkouts(res)
+      (res) => setWorkouts(res),
     )
     handleCloseConfirmDeleteModal()
   }

@@ -1,9 +1,9 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import Modal from "../../../components/modal/Modal"
-import useExerciseHistory from "../../../hooks/useExerciseHistory/useExerciseHistory"
-import ExerciseStats from "../../exercise/ExerciseStats"
-import Set from "./Set"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import Modal from '../../../components/modal/Modal'
+import useExerciseHistory from '../../../hooks/useExerciseHistory/useExerciseHistory'
+import ExerciseStats from '../../exercise/ExerciseStats'
+import Set from './Set'
 
 const SetGroup = ({
   title,
@@ -55,7 +55,7 @@ const SetGroup = ({
               setNumber={setIndex + 1}
               isActive={isActiveGroup && activeSet === setIndex}
               makeActive={() => setActiveSet(setIndex)}
-              handleSubmit={newValues => {
+              handleSubmit={(newValues) => {
                 handleSubmitSet({
                   set,
                   setIndex,
@@ -63,7 +63,7 @@ const SetGroup = ({
                   reps: newValues.reps,
                 })
               }}
-              handleUndo={newValues => {
+              handleUndo={(newValues) => {
                 handleUndoSet({
                   set,
                   setIndex,

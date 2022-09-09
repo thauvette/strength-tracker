@@ -1,13 +1,13 @@
-import { h } from "preact"
+import { h } from 'preact'
 
-import { Router, Link } from "preact-router"
-import dayjs from "dayjs"
-import ExerciseStats from "./ExerciseStats"
-import Track from "./Track"
-import { routes } from "../../config/routes"
-import useExerciseHistory from "../../hooks/useExerciseHistory/useExerciseHistory"
+import { Router, Link } from 'preact-router'
+import dayjs from 'dayjs'
+import ExerciseStats from './ExerciseStats'
+import Track from './Track'
+import { routes } from '../../config/routes'
+import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
 
-const Exercise = props => {
+const Exercise = (props) => {
   const { id, remaining_path } = props
   const [exerciseHistory, getData] = useExerciseHistory(id)
 
@@ -22,7 +22,7 @@ const Exercise = props => {
 
   const lastWorkoutFirstSet =
     itemsArrays?.[lastIndex]?.sort((a, b) =>
-      a.create < b.create ? -1 : 1
+      a.create < b.create ? -1 : 1,
     )?.[0] || null
 
   return (
@@ -32,7 +32,7 @@ const Exercise = props => {
         <Link
           href={`${routes.exerciseBase}/${id}`}
           class={`px-4 py-2 bg-blue-100 text-gray-800 no-underline border-b-4 border-blue-900 ${
-            !remaining_path ? "" : "border-opacity-0"
+            !remaining_path ? '' : 'border-opacity-0'
           }`}
         >
           Track
@@ -40,7 +40,7 @@ const Exercise = props => {
         <Link
           href={`${routes.exerciseBase}/${id}/history`}
           class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
-            remaining_path === "history" ? "" : "border-opacity-0"
+            remaining_path === 'history' ? '' : 'border-opacity-0'
           }`}
         >
           History
@@ -51,7 +51,7 @@ const Exercise = props => {
         <Track
           path={`${routes.exerciseBase}/:id`}
           todaysHistory={
-            exerciseHistory?.items?.[dayjs().format("YYYY-MM-DD")] || []
+            exerciseHistory?.items?.[dayjs().format('YYYY-MM-DD')] || []
           }
           exerciseId={id}
           onAddSet={getData}

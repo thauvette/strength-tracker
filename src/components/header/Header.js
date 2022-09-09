@@ -1,8 +1,8 @@
-import { h } from "preact"
-import { Link } from "preact-router/match"
+import { h } from 'preact'
+import { Link } from 'preact-router/match'
 
-import { routes } from "../../config/routes"
-import style from "./style.css"
+import { routes } from '../../config/routes'
+import style from './style.css'
 
 const Header = ({ toggleMenu, menuIsOpen }) => (
   <header class="flex items-center justify-between px-4 h-14 bg-primary-600 z-10">
@@ -15,7 +15,7 @@ const Header = ({ toggleMenu, menuIsOpen }) => (
       <button
         onClick={toggleMenu}
         class={`${style.hamburger}
-      ${menuIsOpen ? style.hamburgerActive : ""}`}
+      ${menuIsOpen ? style.hamburgerActive : ''}`}
       >
         <div />
         <div />

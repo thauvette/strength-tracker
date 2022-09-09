@@ -1,5 +1,5 @@
-import { h } from "preact"
-import EditableSet from "../../../components/editableSet/editableSet"
+import { h } from 'preact'
+import EditableSet from '../../../components/editableSet/editableSet'
 
 const Set = ({
   handleSubmit,
@@ -22,12 +22,12 @@ const Set = ({
             <>
               {completed ? (
                 <ion-icon name="checkmark" class="text-2xl mr-2" />
-              ) : null}{" "}
+              ) : null}{' '}
               {title}
             </>
           }
           titleClass="capitalize font-bold flex items-center"
-          renderCtas={newValues => (
+          renderCtas={(newValues) => (
             <div class="flex py-4 px-2">
               {handleViewHistory ? (
                 <button
@@ -56,7 +56,7 @@ const Set = ({
                 class="w-1/2 primary px-4 py-2 ml-2"
                 onClick={() => handleSubmit({ ...newValues })}
               >
-                {completed ? "Update" : "Save"}
+                {completed ? 'Update' : 'Save'}
               </button>
             </div>
           )}

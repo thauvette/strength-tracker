@@ -1,9 +1,9 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
 
-import Modal from "../../../../components/modal/Modal"
-import useExerciseHistory from "../../../../hooks/useExerciseHistory/useExerciseHistory"
-import ExerciseStats from "../../../exercise/ExerciseStats"
+import Modal from '../../../../components/modal/Modal'
+import useExerciseHistory from '../../../../hooks/useExerciseHistory/useExerciseHistory'
+import ExerciseStats from '../../../exercise/ExerciseStats'
 
 const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
   const [exerciseHistory] = useExerciseHistory(id)
@@ -24,7 +24,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
         <input
           id={id}
           name={id}
-          value={info.weight || ""}
+          value={info.weight || ''}
           onInput={handleInput}
           class="py-3 px-2 text-base"
         />
@@ -58,7 +58,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
         <div>
           <p>Goal:</p>
           <input
-            onInput={e => setTargetWeight(+e.target.value)}
+            onInput={(e) => setTargetWeight(+e.target.value)}
             value={targetWeight}
           />
           <div class="pt-4">

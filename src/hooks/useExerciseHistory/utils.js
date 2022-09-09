@@ -1,10 +1,10 @@
-import dayjs from "dayjs"
+import dayjs from 'dayjs'
 
-export const formatHistory = items => {
+export const formatHistory = (items) => {
   let eorm
   const formattedHistory = items?.length
     ? items.reduce((obj, item) => {
-        const dayKey = dayjs(item.created).format("YYYY-MM-DD")
+        const dayKey = dayjs(item.created).format('YYYY-MM-DD')
         const items = obj?.[dayKey] || []
         const estOneRepMax = (
           +item.weight * +item.reps * 0.033 +
@@ -34,7 +34,7 @@ export const formatHistory = items => {
   }
 }
 
-export const formatPrs = items => {
+export const formatPrs = (items) => {
   const maxes = items?.length
     ? items.reduce((obj, item) => {
         if (!obj?.[item.reps] || obj[item.reps].weight < item.weight) {

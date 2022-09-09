@@ -1,22 +1,22 @@
-import { weeks, bigButBoringSetsByWeek } from "../config/weights"
-import generateRandomId from "./generateRandomId"
+import { weeks, bigButBoringSetsByWeek } from '../config/weights'
+import generateRandomId from './generateRandomId'
 
 export default function generateProgram({
   exercises,
   auxVersion,
   initialValues,
 }) {
-  const lessBoring = auxVersion === "bbslb"
+  const lessBoring = auxVersion === 'bbslb'
   const auxPairs = auxVersion
     ? {
-        deadlift: lessBoring ? "barbell back squat" : "deadlift",
-        "barbell bench press": lessBoring
-          ? "standing overhead press"
-          : "barbell bench press",
-        "barbell back squat": lessBoring ? "deadlift" : "barbell back squat",
-        "standing overhead press": lessBoring
-          ? "barbell bench press"
-          : "standing overhead press",
+        deadlift: lessBoring ? 'barbell back squat' : 'deadlift',
+        'barbell bench press': lessBoring
+          ? 'standing overhead press'
+          : 'barbell bench press',
+        'barbell back squat': lessBoring ? 'deadlift' : 'barbell back squat',
+        'standing overhead press': lessBoring
+          ? 'barbell bench press'
+          : 'standing overhead press',
       }
     : null
 
@@ -30,7 +30,7 @@ export default function generateProgram({
     Object.entries(exercises).forEach(([id, info]) => {
       if (!obj[weekKey][id]) {
         obj[weekKey][id] = {
-          auxName: auxPairs?.[info.name] || "",
+          auxName: auxPairs?.[info.name] || '',
           exercise: info.name,
           primaryId: info.primaryId,
           runningSets: [],
@@ -55,7 +55,7 @@ export default function generateProgram({
           weight: rounded,
           completed: matchingSet?.completed || null,
           primaryId: info.primaryId,
-          wendlerGroup: "main",
+          wendlerGroup: 'main',
           wendlerId,
         }
         obj[weekKey][id].runningSets.push(`${weekKey}.${id}.main.${wendlerId}`)
@@ -64,7 +64,7 @@ export default function generateProgram({
       if (auxPairs) {
         // get the id of the aux pair.
         const matchingAuxData = Object.values(exercises).find(
-          auxInfo => auxInfo.name === auxPairs[info.name]
+          (auxInfo) => auxInfo.name === auxPairs[info.name],
         )
         const auxWeight = exercises[matchingAuxData?.primaryId]?.weight
 
@@ -87,7 +87,7 @@ export default function generateProgram({
             weight: rounded,
             completed: existingSetData?.completed || null,
             primaryId: matchingAuxData.primaryId,
-            wendlerGroup: "aux",
+            wendlerGroup: 'aux',
             wendlerId,
           }
           obj[weekKey][id].runningSets.push(`${weekKey}.${id}.aux.${wendlerId}`)
@@ -105,10 +105,11 @@ export default function generateProgram({
         existingRunningSets?.length
       ) {
         obj[weekKey][id].additional = existingWeekAdditional
-        const initialAdditionalRunningSets = existingRunningSets.filter(setId =>
-          Object.keys(existingWeekAdditional).some(
-            key => `${weekKey}.${id}.additional.${key}` === setId
-          )
+        const initialAdditionalRunningSets = existingRunningSets.filter(
+          (setId) =>
+            Object.keys(existingWeekAdditional).some(
+              (key) => `${weekKey}.${id}.additional.${key}` === setId,
+            ),
         )
 
         obj[weekKey][id].runningSets = [

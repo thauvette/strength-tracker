@@ -1,13 +1,13 @@
-import { h } from "preact"
-import dayjs from "dayjs"
-import { useEffect, useState } from "preact/hooks"
-import useDB, { objectStores } from "../../context/db"
-import Modal from "../../components/modal/Modal"
-import Calendar from "../../components/calendar/Calendar"
-import { Link } from "preact-router"
-import { routes } from "../../config/routes"
+import { h } from 'preact'
+import dayjs from 'dayjs'
+import { useEffect, useState } from 'preact/hooks'
+import useDB, { objectStores } from '../../context/db'
+import Modal from '../../components/modal/Modal'
+import Calendar from '../../components/calendar/Calendar'
+import { Link } from 'preact-router'
+import { routes } from '../../config/routes'
 
-import dateFormats from "../../config/dateFormats"
+import dateFormats from '../../config/dateFormats'
 
 const Logs = () => {
   const { getAllSetsHistory, getAllEntries } = useDB()
@@ -54,7 +54,7 @@ const Logs = () => {
               },
             }
           },
-          {}
+          {},
         )
 
         setLogState({
@@ -63,7 +63,7 @@ const Logs = () => {
           data: logsRes,
           bioMetrics: bioData,
         })
-      }
+      },
     )
   }
 
@@ -97,17 +97,17 @@ const Logs = () => {
     }
   }, {})
 
-  const stepByDate = amount =>
-    setActiveDate(dayjs(activeDate).add(amount, "days").format(dateFormats.day))
+  const stepByDate = (amount) =>
+    setActiveDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day))
 
   const toggleCalendar = () => setCalendarIsOpen(!calendarIsOpen)
 
-  const selectDate = date => {
+  const selectDate = (date) => {
     setActiveDate(date.format(dateFormats.day))
     setCalendarIsOpen(false)
   }
 
-  const isToday = dayjs(activeDate).isSame(dayjs(), "day")
+  const isToday = dayjs(activeDate).isSame(dayjs(), 'day')
 
   return (
     <div class="p-2">
@@ -126,7 +126,7 @@ const Logs = () => {
             ariaLabel="open calendar"
           >
             {isToday
-              ? "Today"
+              ? 'Today'
               : dayjs(activeDate).format(dateFormats.dayDisplay)}
           </button>
           {isToday ? null : (
@@ -151,7 +151,7 @@ const Logs = () => {
       {Object.entries(sortedDayData).map(([name, sets]) => (
         <div key={name} class="mb-4 border-4 p-4">
           <p class="font-bold">{name}</p>
-          {sets.map(set => (
+          {sets.map((set) => (
             <div key={set.created}>
               <p>
                 {set.reps} @ {set.weight}
@@ -174,10 +174,10 @@ const Logs = () => {
               <div key={id} class="mb-4 border-4 p-4">
                 <p class="font-bold capitalize">{bioMetric.name}</p>
                 {bioMetric.items?.length
-                  ? bioMetric.items.map(item => (
+                  ? bioMetric.items.map((item) => (
                       <div key={item.created}>
                         <p>
-                          {dayjs(item.date).format(dateFormats.time)} -{" "}
+                          {dayjs(item.date).format(dateFormats.time)} -{' '}
                           {item.value}
                         </p>
                       </div>
@@ -189,7 +189,7 @@ const Logs = () => {
                   </Link>
                 </div>
               </div>
-            )
+            ),
           )}
         </div>
       ) : null}
@@ -198,24 +198,24 @@ const Logs = () => {
         <Calendar
           startDate={activeDate}
           renderDay={(day, isCurrentMonth) => {
-            const isToday = day.isSame(dayjs(), "day")
+            const isToday = day.isSame(dayjs(), 'day')
             const dayData = logState.data?.[day.format(dateFormats.day)]
             const hasData = !!dayData?.length
             const groupString = hasData
               ? Array.from(
                   new Set(
-                    dayData.map(exercise =>
-                      exercise.primaryGroup?.substring(0, 1)
-                    )
-                  )
+                    dayData.map((exercise) =>
+                      exercise.primaryGroup?.substring(0, 1),
+                    ),
+                  ),
                 )
               : null
 
-            let classNames = isCurrentMonth ? "" : "bg-gray-100"
+            let classNames = isCurrentMonth ? '' : 'bg-gray-100'
             if (isToday) {
-              classNames = "bg-green-200 "
+              classNames = 'bg-green-200 '
             } else if (hasData && isCurrentMonth) {
-              classNames = "bg-blue-100"
+              classNames = 'bg-blue-100'
             }
 
             return (
@@ -224,9 +224,9 @@ const Logs = () => {
                   onClick={() => selectDate(day)}
                   class={`w-full h-full ${classNames}`}
                 >
-                  {day.format("D")}
+                  {day.format('D')}
                   {groupString && (
-                    <p class={`text-xs m-0`}>{groupString.join(",")}</p>
+                    <p class={`text-xs m-0`}>{groupString.join(',')}</p>
                   )}
                 </button>
               </div>

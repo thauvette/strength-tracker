@@ -1,5 +1,5 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
 
 const WendlerCycleDay = ({
   runningSets,
@@ -17,12 +17,12 @@ const WendlerCycleDay = ({
         <input
           defaultChecked={viewInRunningOrder}
           type="checkbox"
-          onInput={e => setViewInRunningOrder(e.target.checked)}
+          onInput={(e) => setViewInRunningOrder(e.target.checked)}
         />
         <p class="ml-2">View in running order</p>
       </label>
       {viewInRunningOrder ? (
-        runningSets.map(set => (
+        runningSets.map((set) => (
           <p key={set.wendlerId}>
             {set.exercise} {set.reps} @ {set.weight}
           </p>
@@ -38,7 +38,7 @@ const WendlerCycleDay = ({
                 return (
                   <div key={i}>
                     <p>
-                      {completed ? "✔️" : ""} {reps} @ {weight}
+                      {completed ? '✔️' : ''} {reps} @ {weight}
                     </p>
                   </div>
                 )
@@ -54,7 +54,7 @@ const WendlerCycleDay = ({
                   return (
                     <div key={i}>
                       <p>
-                        {completed ? "✔️" : ""} {reps} @ {weight}
+                        {completed ? '✔️' : ''} {reps} @ {weight}
                       </p>
                     </div>
                   )
@@ -70,7 +70,7 @@ const WendlerCycleDay = ({
                 return (
                   <div key={i}>
                     <p>
-                      {completed ? "✔️" : ""} {set.exercise} {reps} @ {weight}
+                      {completed ? '✔️' : ''} {set.exercise} {reps} @ {weight}
                     </p>
                   </div>
                 )

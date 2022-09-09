@@ -9,15 +9,15 @@ export default function calculatePlates({
 
   const neededWeight = +targetWeight - +barWeight
   let weightPerSide = neededWeight / 2
-  const filteredPlateSet = plateSet.filter(plate => plate.available)
+  const filteredPlateSet = plateSet.filter((plate) => plate.available)
   const plates = []
   let remainder = 0
   while (weightPerSide > 0) {
-    const matchingPlate = filteredPlateSet.find(plate => {
+    const matchingPlate = filteredPlateSet.find((plate) => {
       return (
         plate.weight <= weightPerSide &&
         Math.floor(plate.count / 2) >
-          plates.filter(usedPlate => usedPlate === plate.weight).length
+          plates.filter((usedPlate) => usedPlate === plate.weight).length
       )
     })
     const weightToAdd = matchingPlate?.weight || weightPerSide

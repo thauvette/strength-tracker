@@ -1,14 +1,14 @@
-import { h } from "preact"
-import { route } from "preact-router"
-import { routes } from "../../config/routes"
-import useDB from "../../context/db"
+import { h } from 'preact'
+import { route } from 'preact-router'
+import { routes } from '../../config/routes'
+import useDB from '../../context/db'
 
 const NewBioMetric = ({ onSubmit }) => {
   const { createBioMetric } = useDB()
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    createBioMetric(formData.get("name")).then(res => {
+    createBioMetric(formData.get('name')).then((res) => {
       onSubmit()
       route(`${routes.bioMetrics}/${res.id}`)
     })

@@ -1,27 +1,27 @@
-import { h } from "preact"
-import { useState, useEffect } from "preact/hooks"
-import { Link } from "preact-router"
+import { h } from 'preact'
+import { useState, useEffect } from 'preact/hooks'
+import { Link } from 'preact-router'
 
-import get from "lodash.get"
-import Accordion from "../../components/accordion/accordion"
-import useDB from "../../context/db"
-import WendlerCycleDay from "./WendlerCycleDay"
+import get from 'lodash.get'
+import Accordion from '../../components/accordion/accordion'
+import useDB from '../../context/db'
+import WendlerCycleDay from './WendlerCycleDay'
 
 const isWeekComplete = (week, isLegacyVersion, cycle) =>
-  Object.values(week).every(day => {
+  Object.values(week).every((day) => {
     const dayIsComplete = day.isComplete
     const runningSets = isLegacyVersion
       ? day.runningSets
-      : day.runningSets.map(setKey => get(cycle, `weeks.${setKey}`))
+      : day.runningSets.map((setKey) => get(cycle, `weeks.${setKey}`))
 
-    return dayIsComplete || runningSets.every(set => !!set.completed)
+    return dayIsComplete || runningSets.every((set) => !!set.completed)
   })
 
-const formatResponse = res => {
+const formatResponse = (res) => {
   let firstUnfinishedWeek = Object.entries(res?.weeks || {}).find(
     ([, data]) => {
       return !isWeekComplete(data, !res?.version, res)
-    }
+    },
   )
 
   return {
@@ -35,7 +35,7 @@ export default function WendlerCycle({ id }) {
   const [workout, setWorkout] = useState(null)
 
   useEffect(() => {
-    getItemById(id).then(res => setWorkout(formatResponse(res)))
+    getItemById(id).then((res) => setWorkout(formatResponse(res)))
   }, [getItemById, id])
 
   if (!workout) {
@@ -45,41 +45,43 @@ export default function WendlerCycle({ id }) {
   const toggleDayComplete = ({ weekKey, mainLift }) => {
     const isComplete = get(
       workout,
-      ["weeks", weekKey, mainLift, "isComplete"],
-      false
+      ['weeks', weekKey, mainLift, 'isComplete'],
+      false,
     )
 
     updateWendlerItem({
       id,
-      path: ["weeks", weekKey, mainLift, "isComplete"],
+      path: ['weeks', weekKey, mainLift, 'isComplete'],
       value: !isComplete,
-    }).then(res => setWorkout(formatResponse(res)))
+    }).then((res) => setWorkout(formatResponse(res)))
   }
 
   const isLegacyVersion = !workout?.version
 
-  const formatRunningSets = sets =>
-    isLegacyVersion ? sets : sets.map(setKey => get(workout, `weeks.${setKey}`))
+  const formatRunningSets = (sets) =>
+    isLegacyVersion
+      ? sets
+      : sets.map((setKey) => get(workout, `weeks.${setKey}`))
 
-  const isDayComplete = sets =>
+  const isDayComplete = (sets) =>
     sets.isComplete ||
-    formatRunningSets(sets.runningSets).every(set => !!set.completed)
+    formatRunningSets(sets.runningSets).every((set) => !!set.completed)
 
-  const getDaysSets = day => {
+  const getDaysSets = (day) => {
     if (isLegacyVersion) {
       const mainSets =
         day?.runningSets?.length > 0
-          ? day.runningSets.filter(set => set.wendlerGroup === "main")
+          ? day.runningSets.filter((set) => set.wendlerGroup === 'main')
           : []
 
       const auxSets =
         day?.runningSets?.length > 0
-          ? day.runningSets.filter(set => set.wendlerGroup === "aux")
+          ? day.runningSets.filter((set) => set.wendlerGroup === 'aux')
           : []
 
       const additionalSets =
         day?.runningSets?.length > 0
-          ? day.runningSets.filter(set => set.wendlerGroup === "additional")
+          ? day.runningSets.filter((set) => set.wendlerGroup === 'additional')
           : []
       return {
         mainSets,
@@ -112,7 +114,7 @@ export default function WendlerCycle({ id }) {
               titleClass="font-bold text-xl"
               openByDefault={+workout?.weekToDo === +num}
               headerClassName="bg-blue-100"
-              headerIcon={weekIsComplete ? "checkmark" : null}
+              headerIcon={weekIsComplete ? 'checkmark' : null}
             >
               {Object.entries(week || {}).map(([exercise, sets], i) => {
                 const isLastChild = Object.keys(week || {})?.length - 1 === i
@@ -122,12 +124,12 @@ export default function WendlerCycle({ id }) {
 
                 return (
                   <div key={exercise} className="px-2 py-1">
-                    <div className={`${isLastChild ? "" : "border-b-2"}`}>
+                    <div className={`${isLastChild ? '' : 'border-b-2'}`}>
                       <Accordion
                         title={sets?.exercise}
                         titleClass="uppercase font-bold text-sm"
                         smallIcon
-                        headerIcon={dayIsComplete ? "checkmark" : null}
+                        headerIcon={dayIsComplete ? 'checkmark' : null}
                       >
                         <div className="border-b-1 pl-2">
                           <WendlerCycleDay
@@ -159,8 +161,8 @@ export default function WendlerCycle({ id }) {
                                 }
                               >
                                 {sets.isComplete
-                                  ? "Mark day incomplete"
-                                  : "Mark day complete"}
+                                  ? 'Mark day incomplete'
+                                  : 'Mark day complete'}
                               </button>
                             </div>
                           </div>

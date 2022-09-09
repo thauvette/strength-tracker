@@ -1,27 +1,27 @@
-import { h } from "preact"
-import { useState } from "preact/compat"
-import { route } from "preact-router"
-import set from "lodash.set"
-import cloneDeep from "lodash.clonedeep"
-import get from "lodash.get"
-import Accordion from "../../../../components/accordion/accordion"
-import Modal from "../../../../components/modal/Modal"
+import { h } from 'preact'
+import { useState } from 'preact/compat'
+import { route } from 'preact-router'
+import set from 'lodash.set'
+import cloneDeep from 'lodash.clonedeep'
+import get from 'lodash.get'
+import Accordion from '../../../../components/accordion/accordion'
+import Modal from '../../../../components/modal/Modal'
 
-import AuxExerciseForm from "./auxExerciseForm"
-import useDB from "../../../../context/db"
+import AuxExerciseForm from './auxExerciseForm'
+import useDB from '../../../../context/db'
 
-import { routes } from "../../../../config/routes"
+import { routes } from '../../../../config/routes'
 
-import ReorderForm from "./reorderForm"
-import generateRandomId from "../../../../utilities.js/generateRandomId"
+import ReorderForm from './reorderForm'
+import generateRandomId from '../../../../utilities.js/generateRandomId'
 
 export default function Preview({ initialValues }) {
   const { createCycle } = useDB()
   const [preview, setPreview] = useState({ ...(initialValues?.preview || {}) })
   const [viewByLift, setViewByLift] = useState(false)
   const [formData, setFormData] = useState({
-    title: initialValues?.title || "",
-    description: initialValues?.description || "",
+    title: initialValues?.title || '',
+    description: initialValues?.description || '',
   })
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
@@ -37,7 +37,7 @@ export default function Preview({ initialValues }) {
     return null
   }
 
-  const openAuxExerciseModal = exercise => {
+  const openAuxExerciseModal = (exercise) => {
     setAuxExerciseFormData(exercise)
     setAuxExerciseModalIsOpen(true)
   }
@@ -65,7 +65,7 @@ export default function Preview({ initialValues }) {
   }
 
   const previewByLift = Object.entries(preview).reduce((obj, [key, week]) => {
-    Object.values(week).forEach(data => {
+    Object.values(week).forEach((data) => {
       if (!obj[data.primaryId]) {
         obj[data.primaryId] = {}
       }
@@ -84,8 +84,8 @@ export default function Preview({ initialValues }) {
   function saveToWorkouts() {
     const mainLifts = cloneDeep(preview)
     createCycle({
-      title: formData?.title || "",
-      description: formData?.description || "",
+      title: formData?.title || '',
+      description: formData?.description || '',
       weeks: mainLifts,
       exerciseFormValues: initialValues?.exercises || {},
       auxVersion: initialValues?.auxVersion,
@@ -101,13 +101,13 @@ export default function Preview({ initialValues }) {
     const { week: targetWeek, mainLift: targetLift } = auxExerciseFormData
     // either all weeks or just one week.
     const weeksToUpdate = addToAllWeeks ? [1, 2, 3] : [targetWeek]
-    weeksToUpdate.forEach(weekNum => {
+    weeksToUpdate.forEach((weekNum) => {
       const currentRunningSets =
         preview?.[weekNum]?.[targetLift]?.runningSets || []
       const currentAdditionalSets =
         preview?.[weekNum]?.[targetLift]?.additional || {}
 
-      sets.forEach(set => {
+      sets.forEach((set) => {
         const wendlerId = generateRandomId()
         const pathKey = `${weekNum}.${targetLift}.additional.${wendlerId}`
         currentRunningSets.push(pathKey)
@@ -116,7 +116,7 @@ export default function Preview({ initialValues }) {
           completed: null,
           exercise: exercise.name,
           primaryId: exercise.id,
-          wendlerGroup: "additional",
+          wendlerGroup: 'additional',
           wendlerId,
         }
       })
@@ -124,9 +124,9 @@ export default function Preview({ initialValues }) {
       setPreview(
         set(
           { ...preview },
-          [weekNum, targetLift, "runningSets"],
-          currentRunningSets
-        )
+          [weekNum, targetLift, 'runningSets'],
+          currentRunningSets,
+        ),
       )
     })
 
@@ -164,7 +164,7 @@ export default function Preview({ initialValues }) {
             openReorderModal({
               targetWeek: week,
               mainLift,
-              items: sets.map(setPath => {
+              items: sets.map((setPath) => {
                 const set = get(preview, setPath)
                 return {
                   ...set,
@@ -185,13 +185,13 @@ export default function Preview({ initialValues }) {
       <div class="flex justify-between align-center">
         <h2 class="text-lg">Preview</h2>
         <button onClick={() => setViewByLift(!viewByLift)}>
-          {viewByLift ? "Sort by week" : "Sort by lift"}
+          {viewByLift ? 'Sort by week' : 'Sort by lift'}
         </button>
       </div>
       {viewByLift
         ? Object.entries(previewByLift).map(([id, weeks]) => (
             <div key={id} class="py-4">
-              <h4>{weeks?.[1]?.exercise || ""}</h4>
+              <h4>{weeks?.[1]?.exercise || ''}</h4>
               <div class="divide-y">
                 {Object.entries(weeks).map(([key, sets]) => (
                   <div key={key} class="py-2 ">
@@ -312,18 +312,18 @@ export default function Preview({ initialValues }) {
                   : [editOrderModalState.targetWeek]
                 const clonedPreview = cloneDeep(preview)
 
-                weeks.forEach(week => {
+                weeks.forEach((week) => {
                   const currentSets = get(
                     preview,
-                    [week, editOrderModalState.mainLift, "runningSets"],
-                    []
+                    [week, editOrderModalState.mainLift, 'runningSets'],
+                    [],
                   )
-                  const newOrderSets = newOrder.map(num => currentSets[num])
+                  const newOrderSets = newOrder.map((num) => currentSets[num])
 
                   set(
                     clonedPreview,
-                    [week, editOrderModalState.mainLift, "runningSets"],
-                    newOrderSets
+                    [week, editOrderModalState.mainLift, 'runningSets'],
+                    newOrderSets,
                   )
                 })
 
@@ -332,7 +332,7 @@ export default function Preview({ initialValues }) {
               }}
               allowEditAllWeeks={daysHaveSameSets(
                 Object.values(preview || {}),
-                editOrderModalState.mainLift
+                editOrderModalState.mainLift,
               )}
             />
           </>
@@ -343,8 +343,8 @@ export default function Preview({ initialValues }) {
 }
 
 const daysHaveSameSets = (weeks, targetLift) => {
-  const strings = weeks.map(week =>
-    week?.[targetLift]?.runningSets?.map(set => set.primaryId)?.join()
+  const strings = weeks.map((week) =>
+    week?.[targetLift]?.runningSets?.map((set) => set.primaryId)?.join(),
   )
-  return strings ? strings.every(string => string === strings[0]) : false
+  return strings ? strings.every((string) => string === strings[0]) : false
 }

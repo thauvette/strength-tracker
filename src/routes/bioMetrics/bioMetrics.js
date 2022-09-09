@@ -1,12 +1,12 @@
-import { h } from "preact"
-import { useEffect, useState } from "preact/hooks"
-import { Router } from "preact-router"
-import set from "lodash.set"
-import useDB, { objectStores } from "../../context/db"
-import { routes } from "../../config/routes"
-import BioMetricsList from "./bioMetricsList"
-import BioMetric from "./bioMetric"
-import NewBioMetric from "./newBioMetric"
+import { h } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
+import { Router } from 'preact-router'
+import set from 'lodash.set'
+import useDB, { objectStores } from '../../context/db'
+import { routes } from '../../config/routes'
+import BioMetricsList from './bioMetricsList'
+import BioMetric from './bioMetric'
+import NewBioMetric from './newBioMetric'
 
 const BioMetrics = () => {
   const { getAllEntries, createEntry, updateEntry, deleteEntry } = useDB()
@@ -23,7 +23,7 @@ const BioMetrics = () => {
         if (entries && Object.keys(entries).length) {
           Object.entries(entries).forEach(([id, entry]) => {
             if (!result?.[entry?.bioMetric]?.items) {
-              set(result, [entry?.bioMetric, "items"], [])
+              set(result, [entry?.bioMetric, 'items'], [])
             }
             result?.[entry?.bioMetric]?.items.push({
               id,
@@ -53,7 +53,7 @@ const BioMetrics = () => {
     updateEntry(objectStores.bioEntries, id, data).then(() => fetchBioMetrics())
   }
 
-  const removeEntry = id =>
+  const removeEntry = (id) =>
     deleteEntry(objectStores.bioEntries, id).then(() => fetchBioMetrics())
 
   if (loading) {

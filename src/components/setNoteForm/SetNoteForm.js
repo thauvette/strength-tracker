@@ -1,13 +1,13 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import useDB from "../../context/db"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import useDB from '../../context/db'
 
 const SetNoteForm = ({ text, onSave, id }) => {
   const { createOrUpdateLoggedSet } = useDB()
 
-  const [note, setNote] = useState(text || "")
+  const [note, setNote] = useState(text || '')
 
-  const save = async e => {
+  const save = async (e) => {
     e.preventDefault()
     await createOrUpdateLoggedSet(id, { note })
     if (onSave) {
@@ -21,7 +21,7 @@ const SetNoteForm = ({ text, onSave, id }) => {
         <input
           class="w-full"
           type="text"
-          onInput={e => setNote(e.target.value)}
+          onInput={(e) => setNote(e.target.value)}
           value={note}
           placeholder="Note"
         />

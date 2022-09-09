@@ -1,16 +1,16 @@
-import { useState, useEffect } from "preact/hooks"
-import useDB from "../../context/db"
+import { useState, useEffect } from 'preact/hooks'
+import useDB from '../../context/db'
 
-import { formatHistory, formatPrs } from "./utils"
+import { formatHistory, formatPrs } from './utils'
 
-const useExerciseHistory = id => {
+const useExerciseHistory = (id) => {
   const { getExerciseHistoryById } = useDB()
   const [exerciseHistory, setExerciseHistory] = useState(null)
 
   const getData = () =>
     id
       ? getExerciseHistoryById(id)
-          .then(res => {
+          .then((res) => {
             const formattedHistory = formatHistory(res?.items)
             setExerciseHistory({
               ...res,
@@ -20,7 +20,7 @@ const useExerciseHistory = id => {
               prs: formatPrs(res?.items),
             })
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err)
           })
       : null

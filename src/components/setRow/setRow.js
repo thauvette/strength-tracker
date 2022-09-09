@@ -1,9 +1,9 @@
-import { h } from "preact"
-import { useState } from "preact/compat"
-import AnimateHeight from "react-animate-height"
+import { h } from 'preact'
+import { useState } from 'preact/compat'
+import AnimateHeight from 'react-animate-height'
 
-import SetRowDrawer from "./setRowDrawer"
-import useDB, { objectStores } from "../../context/db"
+import SetRowDrawer from './setRowDrawer'
+import useDB, { objectStores } from '../../context/db'
 
 const SetRow = ({ set, onChangeSet }) => {
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()
@@ -34,7 +34,7 @@ const SetRow = ({ set, onChangeSet }) => {
       ...drawerState,
       open: false,
     })
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       window.setTimeout(() => {
         setDrawerState({
           open: false,
@@ -44,7 +44,7 @@ const SetRow = ({ set, onChangeSet }) => {
     }
   }
 
-  const handleToggleDrawerContent = contentType => {
+  const handleToggleDrawerContent = (contentType) => {
     if (drawerState.open && drawerState.content === contentType) {
       closeDrawer()
     } else {
@@ -59,7 +59,7 @@ const SetRow = ({ set, onChangeSet }) => {
     <div class="py-2 border-b-2 border-blue-200">
       <div class="flex items-center justify-between ">
         <button
-          onClick={() => handleToggleDrawerContent("note")}
+          onClick={() => handleToggleDrawerContent('note')}
           ariaLabel="view notes"
         >
           <div class="flex items-center">
@@ -73,7 +73,7 @@ const SetRow = ({ set, onChangeSet }) => {
         <div class="flex items-center">
           <button
             ariaLabel="view stats"
-            onClick={() => handleToggleDrawerContent("stats")}
+            onClick={() => handleToggleDrawerContent('stats')}
           >
             <div class="flex items-center">
               <ion-icon name="bar-chart-outline" />
@@ -81,14 +81,14 @@ const SetRow = ({ set, onChangeSet }) => {
           </button>
           <button
             ariaLabel="delete set"
-            onClick={() => handleToggleDrawerContent("delete")}
+            onClick={() => handleToggleDrawerContent('delete')}
           >
             <div class="flex items-center">
               <ion-icon name="trash-outline" />
             </div>
           </button>
           <button
-            onClick={() => handleToggleDrawerContent("edit")}
+            onClick={() => handleToggleDrawerContent('edit')}
             ariaLabel="edit set"
           >
             <div class="flex items-center">
@@ -97,7 +97,7 @@ const SetRow = ({ set, onChangeSet }) => {
           </button>
         </div>
       </div>
-      <AnimateHeight height={drawerState.open ? "auto" : 0} duration={250}>
+      <AnimateHeight height={drawerState.open ? 'auto' : 0} duration={250}>
         <div class="px-4">
           <SetRowDrawer
             set={set}

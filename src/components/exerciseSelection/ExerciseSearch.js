@@ -1,24 +1,26 @@
-import { h } from "preact"
-import { useState, useEffect } from "preact/hooks"
-import ExerciseForm from "../exerciseForm"
+import { h } from 'preact'
+import { useState, useEffect } from 'preact/hooks'
+import ExerciseForm from '../exerciseForm'
 
-import useDB from "../../context/db"
-import ExercisesByGroup from "./components/exercisesByGroup"
-import ExerciseSelection from "./components/exerciseSelection"
+import useDB from '../../context/db'
+import ExercisesByGroup from './components/exercisesByGroup'
+import ExerciseSelection from './components/exerciseSelection'
 
 const ExerciseSearch = ({ handleSelectExercise }) => {
   const { getExerciseOptions } = useDB()
   const [exerciseOptions, setExerciseOptions] = useState([])
   const [primaryGroups, setPrimaryGroups] = useState([])
   const [showNewExerciseForm, setShowNewExerciseForm] = useState(false)
-  const [searchText, setSearchText] = useState("")
+  const [searchText, setSearchText] = useState('')
 
-  const [activeGroup, setActiveGroup] = useState("")
+  const [activeGroup, setActiveGroup] = useState('')
 
   const getOptions = () => {
-    getExerciseOptions().then(res => {
+    getExerciseOptions().then((res) => {
       setExerciseOptions(res)
-      const groups = res.map(item => item.primaryGroup).filter(item => !!item)
+      const groups = res
+        .map((item) => item.primaryGroup)
+        .filter((item) => !!item)
       setPrimaryGroups(Array.from(new Set(groups)))
     })
   }
@@ -43,7 +45,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
     if (!activeGroup) {
       return (
         <ExerciseSelection
-          handleSelectGroup={group => setActiveGroup(group)}
+          handleSelectGroup={(group) => setActiveGroup(group)}
           handleSelectExercise={handleSelectExercise}
           groups={primaryGroups}
           allExercises={exerciseOptions}
@@ -55,7 +57,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
     return (
       <>
         <div>
-          <button onClick={() => setActiveGroup("")}>← Back</button>
+          <button onClick={() => setActiveGroup('')}>← Back</button>
         </div>
         <ExercisesByGroup
           name={activeGroup}
@@ -81,7 +83,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
             <label>
               <p>Search</p>
               <input
-                onInput={e => setSearchText(e.target.value)}
+                onInput={(e) => setSearchText(e.target.value)}
                 value={searchText}
               />
             </label>

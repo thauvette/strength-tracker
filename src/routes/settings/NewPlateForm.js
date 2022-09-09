@@ -1,6 +1,6 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import Counters from "../../components/counters/Counters"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import Counters from '../../components/counters/Counters'
 
 const NewPlateForm = ({ onSubmit }) => {
   const [weight, setWeight] = useState(0)

@@ -1,8 +1,8 @@
-import { defaultPlates } from "../../hooks/useWeightSettings"
-import calculatePlates from "./calculatePlates"
+import { defaultPlates } from '../../hooks/useWeightSettings'
+import calculatePlates from './calculatePlates'
 
-describe("Plate Calculation Tests", () => {
-  test("it should calculate the correct plates", () => {
+describe('Plate Calculation Tests', () => {
+  test('it should calculate the correct plates', () => {
     const result = calculatePlates({
       targetWeight: 270,
       plateSet: defaultPlates,
@@ -15,7 +15,7 @@ describe("Plate Calculation Tests", () => {
     })
   })
 
-  test("it should only use the available plate count", () => {
+  test('it should only use the available plate count', () => {
     const result = calculatePlates({
       targetWeight: 270,
       plateSet: [

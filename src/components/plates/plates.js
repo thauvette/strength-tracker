@@ -1,16 +1,16 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import useWeightSettings from "../../hooks/useWeightSettings"
-import calculatePlates from "./calculatePlates"
-import PlateControls from "./plateControls"
-import renderPlateClass from "./renderPlateClass"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import useWeightSettings from '../../hooks/useWeightSettings'
+import calculatePlates from './calculatePlates'
+import PlateControls from './plateControls'
+import renderPlateClass from './renderPlateClass'
 
 const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
   const { weightSettings } = useWeightSettings()
 
   const [weight, setWeight] = useState(initialWeight)
   const [barWeight, setBarWeight] = useState(
-    initialBarWeight || weightSettings?.barWeight || 45
+    initialBarWeight || weightSettings?.barWeight || 45,
   )
 
   const { plates: neededPlates, remainder } = calculatePlates({
@@ -33,14 +33,14 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
         ...obj,
         [plate]: 1,
       }
-    }, {})
+    }, {}),
   )
     .map(([plate, count]) => ({
       plate: +plate,
       count,
     }))
     .sort((a, b) => (a.plate > b.plate ? -1 : 1))
-    .map(plate => `${plate.count} x ${plate.plate}`)
+    .map((plate) => `${plate.count} x ${plate.plate}`)
 
   return (
     <div>
@@ -57,7 +57,7 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
             <div
               key={i}
               class={`${renderPlateClass(plate)} ${
-                i + 1 < neededPlates.length ? "border-r border-gray-100" : ""
+                i + 1 < neededPlates.length ? 'border-r border-gray-100' : ''
               } rounded-sm`}
             />
           ))}
@@ -69,7 +69,7 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
             <div
               key={i}
               class={`${renderPlateClass(plate)} ${
-                i + 1 < neededPlates.length ? "border-r border-gray-100" : ""
+                i + 1 < neededPlates.length ? 'border-r border-gray-100' : ''
               } rounded-sm`}
             />
           ))}
@@ -78,7 +78,7 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
       <div class="py-4">
         {showBar ? <p class="text-center">Bar + </p> : null}
         <p class="text-center text-lg">
-          {plateText?.length ? `${plateText.join(", ")} per side` : null}
+          {plateText?.length ? `${plateText.join(', ')} per side` : null}
         </p>
         {remainder > 0 && (
           <p class="text-center text-red">

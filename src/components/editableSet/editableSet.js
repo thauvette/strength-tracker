@@ -1,8 +1,8 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
 
-import Modal from "../modal/Modal"
-import Plates from "../plates/plates"
+import Modal from '../modal/Modal'
+import Plates from '../plates/plates'
 
 const EditableSet = ({
   onChangeReps,
@@ -28,14 +28,14 @@ const EditableSet = ({
       <div class="editable-set py-1">
         <div class="flex items-center justify-between">
           {title && (
-            <p class={`m-0 ml-4 ${titleClass ? titleClass : ""}`}>{title}</p>
+            <p class={`m-0 ml-4 ${titleClass ? titleClass : ''}`}>{title}</p>
           )}
 
           {handleRemove && <button onClick={handleRemove}>X</button>}
         </div>
         <div class="flex pb-3">
           <div class="w-1/2 px-2">
-            <p class="m-0 text-center">rep{reps > 1 ? "s" : ""}</p>
+            <p class="m-0 text-center">rep{reps > 1 ? 's' : ''}</p>
             <div class="flex items-center">
               <button
                 disabled={reps === 0}
@@ -52,7 +52,7 @@ const EditableSet = ({
               <input
                 class="flex-1 w-16 text-center"
                 value={reps}
-                onInput={e => {
+                onInput={(e) => {
                   setReps(e.target.value)
                   if (onChangeReps) {
                     onChangeReps(e.target.value)
@@ -92,7 +92,7 @@ const EditableSet = ({
               <input
                 class="flex-1 w-16 text-center"
                 value={weight}
-                onInput={e => {
+                onInput={(e) => {
                   setWeight(e.target.value)
                   if (onChangeWeight) {
                     onChangeWeight(e.target.value)

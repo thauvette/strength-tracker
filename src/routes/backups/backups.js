@@ -1,7 +1,7 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import Modal from "../../components/modal/Modal"
-import useDB from "../../context/db"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import Modal from '../../components/modal/Modal'
+import useDB from '../../context/db'
 
 export default function Backups() {
   const [isLoading, setIsLoading] = useState(false)
@@ -10,28 +10,28 @@ export default function Backups() {
 
   const { createBackup, restoreFromBackup } = useDB()
 
-  const readFile = file => {
+  const readFile = (file) => {
     const reader = new FileReader()
     reader.onload = function readSuccess(e) {
       try {
-        const rows = e.target.result.split("\n")
-        const headers = rows[0].split(",")
+        const rows = e.target.result.split('\n')
+        const headers = rows[0].split(',')
         const result = rows.reduce(
           (obj, row, i) => {
             if (i) {
-              const items = row.split(",")
+              const items = row.split(',')
               // items 0 and 1 are store and id, everything else goes under value
               const data = {}
               const values = items.slice(2)
               values.forEach((value, index) => {
                 if (value) {
-                  const formattedValue = value.replace("__comma__", ",")
+                  const formattedValue = value.replace('__comma__', ',')
                   data[headers[index + 2]] = isNaN(formattedValue)
                     ? formattedValue
                     : +formattedValue
                 }
               })
-              if (!obj.stores.some(storeName => storeName === items[0])) {
+              if (!obj.stores.some((storeName) => storeName === items[0])) {
                 obj.stores.push(items[0])
               }
               obj.items.push({
@@ -42,7 +42,7 @@ export default function Backups() {
             }
             return obj
           },
-          { stores: [], items: [] }
+          { stores: [], items: [] },
         )
         // pass this to DB to create entries.
         setUploadedData(result)
@@ -59,14 +59,14 @@ export default function Backups() {
 
     restoreFromBackup({
       ...uploadedData,
-      stores: formData.get("overwrite") === "on" ? uploadedData.stores : [],
+      stores: formData.get('overwrite') === 'on' ? uploadedData.stores : [],
     })
       .then(() => {
         setIsLoading(false)
-        alert("DATA RESTORED")
+        alert('DATA RESTORED')
       })
-      .catch(err => {
-        setError(err?.message || "Restore partially unsuccessful")
+      .catch((err) => {
+        setError(err?.message || 'Restore partially unsuccessful')
       })
   }
   return (
@@ -91,7 +91,7 @@ export default function Backups() {
           <input
             type="file"
             id="upload"
-            onInput={e => readFile(e?.target?.files?.[0])}
+            onInput={(e) => readFile(e?.target?.files?.[0])}
             accept=".csv"
             class="py-2"
           />

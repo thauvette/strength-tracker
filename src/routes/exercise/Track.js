@@ -1,7 +1,7 @@
-import { h } from "preact"
-import useDB from "../../context/db"
-import EditableSet from "../../components/editableSet/editableSet"
-import SetRow from "../../components/setRow/setRow"
+import { h } from 'preact'
+import useDB from '../../context/db'
+import EditableSet from '../../components/editableSet/editableSet'
+import SetRow from '../../components/setRow/setRow'
 
 const Track = ({
   todaysHistory,
@@ -41,7 +41,7 @@ const Track = ({
       </div>
       <p>Today</p>
       {!!todaysHistory?.length &&
-        todaysHistory.map(item => (
+        todaysHistory.map((item) => (
           <div key={item.id} class="px-1">
             <SetRow set={item} onChangeSet={onAddSet} />
           </div>

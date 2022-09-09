@@ -4,7 +4,17 @@ This is just a little personal project I started to try making a PWA using index
 
 TODO: change app name and logo, and favicon
 
-TODO: Edit exercises - add exercise types, body weight, body weight + weight, time - allow multiple secondary muscle groups.
+<!-- prettier-ignore -->
+TODO: Edit exercises
+    - add exercise types
+        - body weight,
+        - body weight + weight (auto add last body weight in bio metrics)
+        - time
+        - time + weight
+    - allow multiple secondary muscle groups.
+    - add descriptions
+
+TODO: wendler first set last vs BBB and SLBBB
 
 TODO: home screen menu?? (maybe as a fixed footer)
 

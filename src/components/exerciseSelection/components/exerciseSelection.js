@@ -1,6 +1,6 @@
-import { h } from "preact"
-import ButtonList from "../../buttonList/ButtonList"
-import GroupList from "./groupList"
+import { h } from 'preact'
+import ButtonList from '../../buttonList/ButtonList'
+import GroupList from './groupList'
 
 const ExerciseSelection = ({
   allExercises,
@@ -14,10 +14,10 @@ const ExerciseSelection = ({
       {searchText?.length ? (
         <ButtonList
           buttons={allExercises
-            .filter(exercise =>
-              exercise.name?.toLowerCase()?.includes(searchText?.toLowerCase())
+            .filter((exercise) =>
+              exercise.name?.toLowerCase()?.includes(searchText?.toLowerCase()),
             )
-            .map(exercise => ({
+            .map((exercise) => ({
               onClick: () => handleSelectExercise(exercise),
               text: exercise.name,
             }))}

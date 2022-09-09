@@ -1,7 +1,7 @@
-import dayjs from "dayjs"
-import { h } from "preact"
-import EditableSet from "../editableSet/editableSet"
-import SetNoteForm from "../setNoteForm/SetNoteForm"
+import dayjs from 'dayjs'
+import { h } from 'preact'
+import EditableSet from '../editableSet/editableSet'
+import SetNoteForm from '../setNoteForm/SetNoteForm'
 
 const SetRowDrawer = ({
   set,
@@ -15,12 +15,12 @@ const SetRowDrawer = ({
     return null
   }
 
-  if (drawerContent === "edit") {
+  if (drawerContent === 'edit') {
     return (
       <EditableSet
         reps={set.reps}
         weight={set.weight}
-        renderCtas={data => {
+        renderCtas={(data) => {
           return (
             <div class="flex">
               <div class="flex-1 text-center">
@@ -48,12 +48,12 @@ const SetRowDrawer = ({
       />
     )
   }
-  if (drawerContent === "note") {
+  if (drawerContent === 'note') {
     // text, onSave, id
     return <SetNoteForm id={set.id} text={set.note} onSave={onChangeSet} />
   }
 
-  if (drawerContent === "delete") {
+  if (drawerContent === 'delete') {
     return (
       <div class="py-4">
         <p>Are you sure you want to delete this set?</p>
@@ -74,12 +74,12 @@ const SetRowDrawer = ({
     )
   }
 
-  if (drawerContent === "stats") {
+  if (drawerContent === 'stats') {
     return (
       <div>
-        <p>Logged: {dayjs(set.created).format("MMM DD, YYYY h:mm a")}</p>
+        <p>Logged: {dayjs(set.created).format('MMM DD, YYYY h:mm a')}</p>
         {set.updated && (
-          <p>Updated: {dayjs(set.updated).format("MMM DD, YYYY h:mm a")}</p>
+          <p>Updated: {dayjs(set.updated).format('MMM DD, YYYY h:mm a')}</p>
         )}
         <p>Estimated one rep max: {set.estOneRepMax}</p>
         {set.note && <p>Note: {set.note}</p>}

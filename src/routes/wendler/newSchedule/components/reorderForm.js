@@ -1,10 +1,10 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import DraggableList from "../../../../components/draggableList/DraggableList"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import DraggableList from '../../../../components/draggableList/DraggableList'
 
 const ReorderForm = ({ items = [], onSave, allowEditAllWeeks }) => {
   const [order, setOrder] = useState(
-    Array.from({ length: items.length }, (_, i) => i)
+    Array.from({ length: items.length }, (_, i) => i),
   )
   const [updateAllWeeks, setUpdateAllWeeks] = useState(allowEditAllWeeks)
 
@@ -17,7 +17,7 @@ const ReorderForm = ({ items = [], onSave, allowEditAllWeeks }) => {
       <label class="flex items-center">
         <input
           type="checkbox"
-          onInput={e => setUpdateAllWeeks(e.target.checked)}
+          onInput={(e) => setUpdateAllWeeks(e.target.checked)}
           checked={updateAllWeeks}
           disabled={!allowEditAllWeeks}
         />
@@ -29,7 +29,7 @@ const ReorderForm = ({ items = [], onSave, allowEditAllWeeks }) => {
 
       <DraggableList
         items={items}
-        onReorderEnd={newOrder => {
+        onReorderEnd={(newOrder) => {
           setOrder(newOrder)
         }}
         renderItem={({ setIndex }) => <p>{items[setIndex]?.label}</p>}

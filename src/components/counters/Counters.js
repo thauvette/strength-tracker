@@ -1,4 +1,4 @@
-import { h } from "preact"
+import { h } from 'preact'
 
 const Counters = ({ value, setValue, roundToFive, jumpBy }) => (
   <div class="flex items-center">
@@ -15,7 +15,7 @@ const Counters = ({ value, setValue, roundToFive, jumpBy }) => (
     <input
       class="flex-1 w-20 text-center"
       value={+value}
-      onInput={e => setValue(+e.target.value)}
+      onInput={(e) => setValue(+e.target.value)}
     />
 
     <button

@@ -1,11 +1,11 @@
-import { h } from "preact"
-import { useState, useEffect } from "preact/hooks"
-import get from "lodash.get"
-import useDB from "../../context/db"
+import { h } from 'preact'
+import { useState, useEffect } from 'preact/hooks'
+import get from 'lodash.get'
+import useDB from '../../context/db'
 
-import Set from "./components/Set"
-import ExerciseHistoryModal from "../../components/exerciseHistoryModal/ExerciseHistoryModal"
-import useExerciseHistory from "../../hooks/useExerciseHistory/useExerciseHistory"
+import Set from './components/Set'
+import ExerciseHistoryModal from '../../components/exerciseHistoryModal/ExerciseHistoryModal'
+import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
 
 export default function WendlerWorkout({ id, week, mainLift }) {
   const {
@@ -22,20 +22,20 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   })
 
   const [exerciseHistory, getData] = useExerciseHistory(
-    exerciseHistoryModalState.id
+    exerciseHistoryModalState.id,
   )
 
   useEffect(() => {
-    getItemById(id).then(res => {
+    getItemById(id).then((res) => {
       setCycle(res)
     })
   }, [getItemById, id])
 
-  const workout = get(cycle, ["weeks", week, mainLift])
+  const workout = get(cycle, ['weeks', week, mainLift])
   const isLegacy = !cycle?.version
   const sets = isLegacy
     ? workout?.runningSets
-    : workout?.runningSets.map(setKey => get(cycle, `weeks.${setKey}`))
+    : workout?.runningSets.map((setKey) => get(cycle, `weeks.${setKey}`))
 
   useEffect(() => {
     const currentSetId = sets?.[activeSet]?.primaryId
@@ -51,7 +51,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     return <p>Workout not found</p>
   }
 
-  const updateSetsDB = async setData => {
+  const updateSetsDB = async (setData) => {
     let setId
     if (!setData?.completed && setData?.setId) {
       try {
@@ -81,13 +81,13 @@ export default function WendlerWorkout({ id, week, mainLift }) {
       data.setId = setId
     }
     const path = isLegacy
-      ? ["weeks", week, mainLift, "runningSets", setIndex]
-      : ["weeks", week, mainLift, setData?.wendlerGroup, setData.wendlerId]
+      ? ['weeks', week, mainLift, 'runningSets', setIndex]
+      : ['weeks', week, mainLift, setData?.wendlerGroup, setData.wendlerId]
     updateWendlerItem({
       id,
       path,
       value: data,
-    }).then(res => {
+    }).then((res) => {
       setCycle(res)
       getData()
     })
@@ -104,7 +104,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
               title={set.exercise}
               isActive={isActive}
               makeActive={() => setActiveSet(setIndex)}
-              handleSubmit={newValues => {
+              handleSubmit={(newValues) => {
                 updateRunningSet({
                   setIndex,
                   setData: {

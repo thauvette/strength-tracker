@@ -1,13 +1,13 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
-import dayjs from "dayjs"
-import cloneDeep from "lodash.clonedeep"
-import AnimateHeight from "react-animate-height"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import dayjs from 'dayjs'
+import cloneDeep from 'lodash.clonedeep'
+import AnimateHeight from 'react-animate-height'
 
-import dateFormats from "../../config/dateFormats"
-import BioMetricForm from "./bioMetricForm"
+import dateFormats from '../../config/dateFormats'
+import BioMetricForm from './bioMetricForm'
 
-import Modal from "../../components/modal/Modal"
+import Modal from '../../components/modal/Modal'
 
 const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   const currentBioMetric = bioMetrics[id]
@@ -18,14 +18,14 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
     id: null,
   })
   const deleteModalItem = currentBioMetric?.items?.find(
-    item => item.id === deleteModalState.id
+    (item) => item.id === deleteModalState.id,
   )
   const closeDeleteModal = () =>
     setDeleteModalState({
       open: false,
       id: null,
     })
-  const handleAddEntry = data => {
+  const handleAddEntry = (data) => {
     addEntry({
       bioMetricId: id,
       data,
@@ -33,7 +33,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   }
 
   const sortedItems = cloneDeep(currentBioMetric?.items || []).sort((a, b) =>
-    dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1
+    dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1,
   )
 
   return (
@@ -43,9 +43,9 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
         initialValues={{
           value:
             currentBioMetric?.items?.[currentBioMetric?.items.length - 1]
-              ?.value || "",
+              ?.value || '',
         }}
-        submit={data => {
+        submit={(data) => {
           handleAddEntry(data)
         }}
         name={currentBioMetric?.name}
@@ -74,8 +74,8 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                     <p>Change</p>
                     <p>
                       {diff !== undefined
-                        ? `${diff > 0 ? "+" : ""}${diff.toFixed(2)}`
-                        : ""}
+                        ? `${diff > 0 ? '+' : ''}${diff.toFixed(2)}`
+                        : ''}
                     </p>
                   </div>
                 </div>
@@ -101,9 +101,9 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                     <ion-icon name="trash-outline" />
                   </button>
                 </div>
-                <AnimateHeight height={activeBioId === item.id ? "auto" : 0}>
+                <AnimateHeight height={activeBioId === item.id ? 'auto' : 0}>
                   <BioMetricForm
-                    submit={data => {
+                    submit={(data) => {
                       editEntry(item.id, data)
                       setActiveBioId(null)
                     }}
@@ -126,7 +126,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
           <h1 class="mb-4">Are you sure?</h1>
           <p class="mb-4">Confirm you want to delete this entry</p>
           <p class="mb-4">
-            {currentBioMetric?.name}, {deleteModalItem?.value},{" "}
+            {currentBioMetric?.name}, {deleteModalItem?.value},{' '}
             {dayjs(deleteModalItem.date).format(dateFormats.displayShort)}
           </p>
           <div class="flex">

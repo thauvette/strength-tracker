@@ -1,6 +1,6 @@
-import { h } from "preact"
-import LinkList from "../../components/linkList/LinkList"
-import { routes } from "../../config/routes"
+import { h } from 'preact'
+import LinkList from '../../components/linkList/LinkList'
+import { routes } from '../../config/routes'
 
 const BioMetricsList = ({ bioMetrics }) => {
   const links = Object.entries({ ...bioMetrics }).map(([id, data]) => {
@@ -17,7 +17,7 @@ const BioMetricsList = ({ bioMetrics }) => {
           ...links,
           {
             href: `${routes.bioMetrics}/new`,
-            text: "Add New",
+            text: 'Add New',
           },
         ]}
       />

@@ -1,5 +1,5 @@
-import { h } from "preact"
-import { useState } from "preact/hooks"
+import { h } from 'preact'
+import { useState } from 'preact/hooks'
 
 // TODO: fix slight delay before re-order complete
 // TODO: clone element being dragged
@@ -14,21 +14,21 @@ const DraggableList = ({
   const [targetIndex, setTargetIndex] = useState(null)
 
   const [order, setOrder] = useState(
-    initialOrder || Array.from({ length: items.length }, (_, i) => i)
+    initialOrder || Array.from({ length: items.length }, (_, i) => i),
   )
 
   const handleDragEnd = () => {
     const currentOrder = [...order]
     currentOrder[currentOrder.indexOf(draggingIndex)] = undefined
     currentOrder.splice(currentOrder.indexOf(targetIndex), 0, draggingIndex)
-    const newOrder = currentOrder.filter(num => num !== undefined)
+    const newOrder = currentOrder.filter((num) => num !== undefined)
     setDraggingIndex(null)
     setTargetIndex(null)
     setOrder(newOrder)
     onReorderEnd(newOrder)
   }
 
-  const deleteItem = target => {
+  const deleteItem = (target) => {
     const index = order.indexOf(target)
     const cloned = [...order]
     cloned.splice(index, 1)
@@ -37,7 +37,7 @@ const DraggableList = ({
   }
   return (
     <ul>
-      {order.map(setIndex => {
+      {order.map((setIndex) => {
         const item = items[setIndex]
         return (
           <Item
@@ -68,7 +68,7 @@ const Item = ({
   handleRemove,
 }) => {
   return (
-    <li class={`py-2 border-b-4 ${isTarget ? "pt-10" : ""}`}>
+    <li class={`py-2 border-b-4 ${isTarget ? 'pt-10' : ''}`}>
       <div class="flex justify-between" onDragOver={handleDragOver}>
         <div class="flex items-center">
           <div

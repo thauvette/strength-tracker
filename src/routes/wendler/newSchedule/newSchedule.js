@@ -1,19 +1,19 @@
-import { h } from "preact"
-import { useState, useEffect } from "preact/compat"
+import { h } from 'preact'
+import { useState, useEffect } from 'preact/compat'
 
-import style from "./newSchedule.scss"
-import generateProgram from "../../../utilities.js/generateProgram"
-import useDB, { objectStores } from "../../../context/db"
+import style from './newSchedule.scss'
+import generateProgram from '../../../utilities.js/generateProgram'
+import useDB, { objectStores } from '../../../context/db'
 
-import OneRepMaxInput from "./components/oneRepMaxInput"
-import { route } from "preact-router"
-import { routes } from "../../../config/routes"
+import OneRepMaxInput from './components/oneRepMaxInput'
+import { route } from 'preact-router'
+import { routes } from '../../../config/routes'
 
 const wendlerCycleExercises = [
-  "deadlift",
-  "barbell bench press",
-  "barbell back squat",
-  "standing overhead press",
+  'deadlift',
+  'barbell bench press',
+  'barbell back squat',
+  'standing overhead press',
 ]
 
 const NewSchedule = ({ onSubmit, initialValues }) => {
@@ -21,7 +21,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
   const [loading, setLoading] = useState(true)
   const [formErrors, setFormErrors] = useState({})
   const [exercises, setExercises] = useState(initialValues?.exercises || {})
-  const [auxVersion, setAuxVersion] = useState(initialValues?.auxVersion || "")
+  const [auxVersion, setAuxVersion] = useState(initialValues?.auxVersion || '')
 
   useEffect(() => {
     if (initialValues) {
@@ -29,15 +29,15 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
       return
     }
     const promises = [
-      getItemsByIndex(objectStores.exercises, "name", wendlerCycleExercises),
+      getItemsByIndex(objectStores.exercises, 'name', wendlerCycleExercises),
       getAllEntries(objectStores.wendlerCycles),
     ]
     Promise.all(promises)
-      .then(responses => {
+      .then((responses) => {
         const formattedWendlerExercises = wendlerCycleExercises.reduce(
           (obj, exerciseName) => {
             const matchingDBData = responses[0].find(
-              item => item.name === exerciseName
+              (item) => item.name === exerciseName,
             )
             if (matchingDBData) {
               return {
@@ -46,7 +46,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
               }
             }
           },
-          {}
+          {},
         )
         let lastWeights = null
         if (responses[1] && Object.keys(responses[1])?.length) {
@@ -59,7 +59,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
           ...(lastWeights || {}),
         })
       })
-      .catch(e => console.log(e))
+      .catch((e) => console.log(e))
       .finally(() => setLoading(false))
   }, [getItemsByIndex, getAllEntries, initialValues])
 
@@ -68,7 +68,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
       ...exercises,
       [e.target.name]: {
         ...exercises[e.target.name],
-        weight: +e.target.value || "",
+        weight: +e.target.value || '',
       },
     })
   }
@@ -77,9 +77,9 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
     setFormErrors({})
     const errors = {}
 
-    Object.values(exercises).forEach(exercise => {
+    Object.values(exercises).forEach((exercise) => {
       if (exercise?.weight === undefined || exercise?.weight < 0) {
-        errors[exercise.primaryId] = "This is field required"
+        errors[exercise.primaryId] = 'This is field required'
       }
     })
 
@@ -121,7 +121,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
         <select
           id="aux-type-select"
           value={auxVersion}
-          onInput={e => setAuxVersion(e.target.value)}
+          onInput={(e) => setAuxVersion(e.target.value)}
           class="py-3 px-2 text-base"
         >
           <option value="">None</option>
