@@ -125,6 +125,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
           class="py-3 px-2 text-base"
         >
           <option value="">None</option>
+          <option value="fsl">First Set Last</option>
           <option value="bbb">Big But Boring</option>
           <option value="bbslb">Big But Slightly Less Boring</option>
         </select>

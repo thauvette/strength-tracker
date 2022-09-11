@@ -1,4 +1,8 @@
-import { weeks, bigButBoringSetsByWeek } from '../config/weights'
+import {
+  weeks,
+  bigButBoringSetsByWeek,
+  firstSetLastWeeksMath,
+} from '../config/weights'
 import generateRandomId from './generateRandomId'
 
 export default function generateProgram({
@@ -78,12 +82,16 @@ export default function generateProgram({
         while (j < 5) {
           const existingSetData =
             isSameAuxExercise && Object.values(existingAuxSets || {})?.[j]
-          const target = auxWeight * [bigButBoringSetsByWeek[index]]
+          const multiplier =
+            auxVersion === 'fsl'
+              ? firstSetLastWeeksMath[index]
+              : bigButBoringSetsByWeek[index]
+          const target = auxWeight * multiplier
           const rounded = +target.toFixed(0)
           const wendlerId = existingSetData?.wendlerId || generateRandomId()
           obj[weekKey][id].aux[wendlerId] = {
             exercise: matchingAuxData.name,
-            reps: 10,
+            reps: auxVersion === 'fsl' ? 5 : 10,
             weight: rounded,
             completed: existingSetData?.completed || null,
             primaryId: matchingAuxData.primaryId,
