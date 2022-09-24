@@ -2,14 +2,16 @@ import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import useDB, { objectStores } from '../context/db'
 
-const ExerciseForm = ({ onSubmit }) => {
+const ExerciseForm = ({ onSubmit, initialNameValue }) => {
   const { getExerciseOptions, createEntry } = useDB()
   const [loading, setLoading] = useState(true)
   const [primaryGroupOptions, setPrimaryGroupOptions] = useState([])
   const [formData, setFormData] = useState({
-    name: '',
+    name: initialNameValue || '',
     primaryGroup: '',
     altPrimary: '',
+    secondaryGroups: '', // array? or csv?
+    type: '',
   })
 
   useEffect(() => {
@@ -68,21 +70,23 @@ const ExerciseForm = ({ onSubmit }) => {
   return loading ? (
     <p>Loading</p>
   ) : (
-    <div>
-      <p>Add Exercise</p>
-      <label>
-        <p>Name</p>
-        <input
-          type="text"
-          value={formData.name}
-          onInput={(e) =>
-            setFormData({
-              ...formData,
-              name: e.target.value,
-            })
-          }
-        />
-      </label>
+    <div class="p-4">
+      <h2>Add Exercise</h2>
+      <div class="pb-2">
+        <label>
+          <p>Name</p>
+          <input
+            type="text"
+            value={formData.name}
+            onInput={(e) =>
+              setFormData({
+                ...formData,
+                name: e.target.value,
+              })
+            }
+          />
+        </label>
+      </div>
       <div>
         <p>Primary Muscle Group</p>
         {!!primaryGroupOptions?.length && (
