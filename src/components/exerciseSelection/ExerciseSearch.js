@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import ExerciseForm from '../exerciseForm'
+import ExerciseForm from '../ExerciseForm'
 
 import useDB from '../../context/db'
 import ExercisesByGroup from './components/exercisesByGroup'
@@ -39,6 +39,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
             getOptions()
             setShowNewExerciseForm(false)
           }}
+          initialNameValue={searchText}
         />
       )
     }
