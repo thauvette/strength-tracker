@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 
 const SetNoteForm = ({ text, onSave, id }) => {
   const { createOrUpdateLoggedSet } = useDB()

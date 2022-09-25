@@ -3,7 +3,7 @@ import { useState } from 'preact/compat'
 import AnimateHeight from 'react-animate-height'
 
 import SetRowDrawer from './setRowDrawer'
-import useDB, { objectStores } from '../../context/db'
+import useDB, { objectStores } from '../../context/db/db'
 
 const SetRow = ({ set, onChangeSet }) => {
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()

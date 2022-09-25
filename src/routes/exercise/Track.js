@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 import EditableSet from '../../components/editableSet/editableSet'
 import SetRow from '../../components/setRow/setRow'
 

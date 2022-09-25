@@ -4,7 +4,7 @@ import { Link } from 'preact-router'
 
 import get from 'lodash.get'
 import Accordion from '../../components/accordion/accordion'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 import WendlerCycleDay from './WendlerCycleDay'
 
 const isWeekComplete = (week, isLegacyVersion, cycle) =>

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'preact/compat'
 
 import style from './newSchedule.scss'
 import generateProgram from '../../../utilities.js/generateProgram'
-import useDB, { objectStores } from '../../../context/db'
+import useDB, { objectStores } from '../../../context/db/db'
 
 import OneRepMaxInput from './components/oneRepMaxInput'
 import { route } from 'preact-router'

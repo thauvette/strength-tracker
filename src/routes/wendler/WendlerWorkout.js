@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import get from 'lodash.get'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 
 import Set from './components/Set'
 import ExerciseHistoryModal from '../../components/exerciseHistoryModal/ExerciseHistoryModal'

@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import useDB, { objectStores } from '../context/db'
+import useDB, { objectStores } from '../context/db/db'
 
 const ExerciseForm = ({ onSubmit, initialNameValue }) => {
   const { getExerciseOptions, createEntry } = useDB()

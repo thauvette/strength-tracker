@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 
 import { formatHistory, formatPrs } from './utils'
 

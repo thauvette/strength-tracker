@@ -1,10 +1,10 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 // Code-splitting is automated for `routes` directory
 import { Router } from 'preact-router'
 
 import { routes } from '../config/routes'
-import useDB, { DBProvider } from '../context/db'
+import useDB, { DBProvider } from '../context/db/db'
 
 import Header from './header/Header'
 import Menu from './menu/Menu'
@@ -19,6 +19,7 @@ import BioMetrics from '../routes/bioMetrics/bioMetrics'
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
+
   const [menuIsOpen, setMenuIsOpen] = useState(false)
 
   const toggleMenu = () => setMenuIsOpen(!menuIsOpen)

@@ -1,7 +1,7 @@
 import { useEffect, useState, createContext, useContext } from 'preact/compat'
 import set from 'lodash.set'
 import dayjs from 'dayjs'
-import muscleGroups from '../config/muscleGroups'
+import muscleGroups from '../../config/muscleGroups'
 
 import {
   getFromCursor as getFromCursorUtil,
@@ -278,25 +278,36 @@ export const DBProvider = ({ children }) => {
 
   const getExerciseOptions = () =>
     new Promise((resolve) => {
-      const { objectStore: store } = openObjectStoreTransaction(
-        objectStores.exercises,
+      // need to get exercises and muscle groups and connect
+      // then together.
+      getFromCursor(objectStores.muscleGroups).then(
+        async (muscleGroupsObject) => {
+          const exercises = await getFromCursor(objectStores.exercises)
+
+          const data = Object.entries(exercises || {}).reduce(
+            (obj, [exerciseId, exercise]) => {
+              const muscleGroupData = muscleGroupsObject[exercise.primaryGroup]
+              const currentGroup = obj[exercise.primaryGroup] || {
+                ...muscleGroupData,
+                id: exercise.primaryGroup,
+                items: [],
+              }
+
+              currentGroup.items.push({
+                ...exercise,
+                id: exerciseId,
+              })
+
+              return {
+                ...obj,
+                [exercise.primaryGroup]: currentGroup,
+              }
+            },
+            {},
+          )
+          return resolve(data)
+        },
       )
-      const results = []
-      store.openCursor().onsuccess = (event) => {
-        const cursor = event.target.result
-        if (cursor) {
-          if (cursor.value?.name) {
-            results.push({
-              id: cursor.primaryKey,
-              name: cursor.value?.name,
-              primaryGroup: cursor.value?.primaryGroup,
-            })
-          }
-          cursor.continue()
-        } else {
-          resolve(results)
-        }
-      }
     })
 
   const updateWendlerItem = ({ id, path, value }) =>
@@ -634,12 +645,6 @@ export const DBProvider = ({ children }) => {
         })
       }
     })
-
-  const resolveMuscleGroups = async () => {
-    // get all exercises and primary groups
-    // get all muscle groups.
-    // for every exercises try to match to a muscle group and update the entry with the id.
-  }
 
   return (
     <DBContext.Provider

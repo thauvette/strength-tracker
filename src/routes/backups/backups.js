@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import Modal from '../../components/modal/Modal'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 
 export default function Backups() {
   const [isLoading, setIsLoading] = useState(false)
