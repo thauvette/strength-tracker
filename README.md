@@ -2,6 +2,14 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+Muscle Group Refactor TODO:
+
+<!-- prettier-ignore -->
+- get muscle groups (exercise search etc) now needs label + id
+- restore from backup needs to check for muscle groups (if not a number try to match or create new.)
+  - could maybe return an array of "conflicts"
+-
+
 TODO: change app name and logo, and favicon
 
 <!-- prettier-ignore -->

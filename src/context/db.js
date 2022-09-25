@@ -3,6 +3,11 @@ import set from 'lodash.set'
 import dayjs from 'dayjs'
 import muscleGroups from '../config/muscleGroups'
 
+import {
+  getFromCursor as getFromCursorUtil,
+  openObjectStoreTransaction as openObjectStoreTransactionUtil,
+} from './utils/dbUtils'
+
 const DBContext = createContext()
 
 const DB_VERSION = 4
@@ -19,11 +24,6 @@ export const objectStores = {
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [additionalResolutionsNeeded, setAdditionalResolutionsNeeded] =
-    useState({
-      muscleGroupResolution: false,
-    })
 
   // INITIALIZE OUR DB
   useEffect(() => {
@@ -71,11 +71,95 @@ export const DBProvider = ({ children }) => {
         transaction.add({ name: 'weight' })
       }
 
-      setAdditionalResolutionsNeeded({
-        ...additionalResolutionsNeeded,
-        muscleGroupResolution: requiresExerciseGroupRefactor,
-      })
+      if (requiresExerciseGroupRefactor) {
+        const muscleGroupTransaction = database.transaction(
+          objectStores.muscleGroups,
+          'readwrite',
+        )
 
+        const musclesStore = muscleGroupTransaction.objectStore(
+          objectStores.muscleGroups,
+        )
+        // need to create all our muscleGroups
+        await Promise.all(
+          Object.entries(muscleGroups).map(([primaryKey, subGroups]) => {
+            return new Promise((resolve) => {
+              // add primary key, use response to attach id to subGroups
+
+              const request = musclesStore.add({
+                name: primaryKey,
+                isPrimary: 1,
+                parentGroup: null,
+              })
+
+              request.onsuccess = (e) => {
+                return Promise.all(
+                  subGroups.map(
+                    (group) =>
+                      new Promise((resolve) => {
+                        const subRequest = musclesStore.add({
+                          name: group,
+                          isPrimary: 0,
+                          parentGroup: e.target.result,
+                        })
+                        subRequest.onsuccess = (event) => {
+                          resolve({
+                            name: group,
+                            isPrimary: 0,
+                            parentGroup: e.target.result,
+                            id: event.target.result,
+                          })
+                        }
+                      }),
+                  ),
+                ).then((subGroupResponses) => {
+                  // sub groups added
+                  resolve([
+                    {
+                      name: primaryKey,
+                      isPrimary: 1,
+                      parentGroup: null,
+                      id: e.target.result,
+                    },
+                    ...subGroupResponses,
+                  ])
+                })
+              }
+            }).then((res) => {
+              // primary group done
+              return res
+            })
+          }),
+        ).then(async (res) => {
+          // done adding muscle groups
+          const addedMuscleGroups = res.flat()
+          // get all exercises.
+          const currentExercises = await getFromCursorUtil(
+            database,
+            objectStores.exercises,
+          )
+
+          const exerciseStore = database
+            .transaction(objectStores.exercises, 'readwrite')
+            .objectStore(objectStores.exercises)
+
+          Object.entries(currentExercises || {}).forEach(([id, exercise]) => {
+            // match primary group to newly added muscle groups
+            const matchingGroup = addedMuscleGroups.find(
+              (group) => group.name === exercise?.primaryGroup?.toLowerCase(),
+            )
+            if (matchingGroup) {
+              exerciseStore.put(
+                {
+                  ...exercise,
+                  primaryGroup: matchingGroup.id,
+                },
+                +id,
+              )
+            }
+          })
+        })
+      }
       setDb(dbRequest.result)
     }
 
@@ -89,7 +173,6 @@ export const DBProvider = ({ children }) => {
         requiresExercises = true
         // this is the first time this db has been initialized
         // it's safe to initialize all object stores
-
         db.createObjectStore(objectStores.wendlerCycles, {
           autoIncrement: true,
         })
@@ -144,131 +227,14 @@ export const DBProvider = ({ children }) => {
     }
   }, []) // eslint-disable-line
 
-  // HANDLE ADDITIONAL UPGRADING
-  useEffect(() => {
-    if (
-      !db ||
-      !Object.values(additionalResolutionsNeeded).some((bool) => bool)
-    ) {
-      return
-    }
-    const muscleGroupTransaction = db.transaction(
-      objectStores.muscleGroups,
-      'readwrite',
-    )
-
-    const musclesStore = muscleGroupTransaction.objectStore(
-      objectStores.muscleGroups,
-    )
-    // need to create all our muscleGroups
-    Promise.all(
-      Object.entries(muscleGroups).map(([primaryKey, subGroups]) => {
-        return new Promise((resolve) => {
-          // add primary key, use response to attach id to subGroups
-
-          const request = musclesStore.add({
-            name: primaryKey,
-            isPrimary: 1,
-            parentGroup: null,
-          })
-
-          request.onsuccess = (e) => {
-            return Promise.all(
-              subGroups.map(
-                (group) =>
-                  new Promise((resolve) => {
-                    const subRequest = musclesStore.add({
-                      name: group,
-                      isPrimary: 0,
-                      parentGroup: e.target.result,
-                    })
-                    subRequest.onsuccess = (event) => {
-                      resolve({
-                        name: group,
-                        isPrimary: 0,
-                        parentGroup: e.target.result,
-                        id: event.target.result,
-                      })
-                    }
-                  }),
-              ),
-            ).then((subGroupResponses) => {
-              // sub groups added
-              resolve([
-                {
-                  name: primaryKey,
-                  isPrimary: 1,
-                  parentGroup: null,
-                  id: e.target.result,
-                },
-                ...subGroupResponses,
-              ])
-            })
-          }
-        }).then((res) => {
-          // primary group done
-          return res
-        })
-      }),
-    ).then(async (res) => {
-      // done adding muscle groups
-      const addedMuscleGroups = res.flat()
-      // get all exercises.
-      const currentExercises = await getFromCursor(objectStores.exercises)
-
-      const exerciseStore = db
-        .transaction(objectStores.exercises, 'readwrite')
-        .objectStore(objectStores.exercises)
-
-      Object.entries(currentExercises || {}).forEach(([id, exercise]) => {
-        // match primary group to newly added muscle groups
-        const matchingGroup = addedMuscleGroups.find(
-          (group) => group.name === exercise?.primaryGroup?.toLowerCase(),
-        )
-        if (matchingGroup) {
-          exerciseStore.put(
-            {
-              ...exercise,
-              primaryGroup: matchingGroup.id,
-            },
-            +id,
-          )
-        }
-      })
-
-      setIsLoading(false)
-    })
-  }, [db, additionalResolutionsNeeded]) // eslint-disable-line
-
-  const openObjectStoreTransaction = (store) => {
-    const transaction = db.transaction([store], 'readwrite')
-    const objectStore = transaction.objectStore(store)
-    return {
-      transaction,
-      objectStore,
-    }
+  if (!db) {
+    return null
   }
 
-  const getFromCursor = (store) =>
-    new Promise((resolve, reject) => {
-      const { transaction, objectStore } = openObjectStoreTransaction(store)
+  const getFromCursor = (store) => getFromCursorUtil(db, store)
 
-      const results = {}
-
-      objectStore.openCursor().onsuccess = (event) => {
-        const cursor = event.target.result
-        if (cursor) {
-          results[cursor.key] = cursor.value
-          cursor.continue()
-        }
-      }
-      transaction.oncomplete = () => resolve(results)
-
-      transaction.onerror = (err) => {
-        console.warn(err)
-        reject(new Error(err?.message || 'oops'))
-      }
-    })
+  const openObjectStoreTransaction = (store) =>
+    openObjectStoreTransactionUtil(db, store)
 
   const getAllEntries = async (store) => await getFromCursor(store)
 
@@ -682,7 +648,7 @@ export const DBProvider = ({ children }) => {
         getAllEntries,
         getItemsByIndex,
         createCycle,
-        isInitialized: !!db && !isLoading,
+        isInitialized: !!db,
         updateWendlerItem,
         deleteEntry,
         createEntry,
