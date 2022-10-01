@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import ButtonList from '../../buttonList/ButtonList'
-import GroupList from './groupList'
+import GroupList from './GroupList'
 
 const ExerciseSelection = ({
   allExercises,

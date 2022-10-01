@@ -149,13 +149,24 @@ export const DBProvider = ({ children }) => {
               (group) => group.name === exercise?.primaryGroup?.toLowerCase(),
             )
             if (matchingGroup) {
-              exerciseStore.put(
-                {
-                  ...exercise,
-                  primaryGroup: matchingGroup.id,
-                },
-                +id,
-              )
+              // Check if this is the primary or secondary group.
+              // if secondary we also need the primary.
+              const isPrimaryMatch = !!matchingGroup.isPrimary
+              const data = {
+                ...exercise,
+                primaryGroup: isPrimaryMatch
+                  ? matchingGroup.id
+                  : matchingGroup.parentGroup,
+              }
+              if (!isPrimaryMatch) {
+                data.musclesWorked = [+matchingGroup.id]
+              }
+              exerciseStore.put(data, +id)
+            } else if (exercise?.primaryGroup) {
+              musclesStore.add({
+                name: exercise.primaryGroup,
+                isPrimary: 0,
+              })
             }
           })
         })
@@ -309,6 +320,36 @@ export const DBProvider = ({ children }) => {
         },
       )
     })
+
+  const getMuscleGroups = async () => {
+    const groups = await getFromCursor(objectStores.muscleGroups)
+    return Promise.resolve(
+      Object.entries(groups || {}).reduce((obj, [id, group]) => {
+        const primaryGroupId = group.isPrimary ? id : group.parentGroup
+
+        let currentPrimaryData = obj[primaryGroupId] || {
+          secondaryGroups: [],
+        }
+
+        if (group.isPrimary) {
+          currentPrimaryData = {
+            ...currentPrimaryData,
+            ...group,
+            id,
+          }
+        } else {
+          const groupData = {
+            ...group,
+            id,
+          }
+          currentPrimaryData.secondaryGroups.push(groupData)
+          obj[id] = groupData
+        }
+        obj[primaryGroupId] = currentPrimaryData
+        return obj
+      }, {}),
+    )
+  }
 
   const updateWendlerItem = ({ id, path, value }) =>
     new Promise((resolve, reject) => {
@@ -667,6 +708,7 @@ export const DBProvider = ({ children }) => {
         restoreFromBackup,
         getAllSetsHistory,
         createBioMetric,
+        getMuscleGroups,
       }}
     >
       {children}
