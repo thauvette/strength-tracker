@@ -8,7 +8,7 @@ import Accordion from '../../../../components/accordion/accordion'
 import Modal from '../../../../components/modal/Modal'
 
 import AuxExerciseForm from './auxExerciseForm'
-import useDB from '../../../../context/db'
+import useDB from '../../../../context/db/db'
 
 import { routes } from '../../../../config/routes'
 

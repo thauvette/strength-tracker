@@ -1,17 +1,11 @@
 import { h } from 'preact'
 import ButtonList from '../../buttonList/ButtonList'
 
-const ExercisesByGroup = ({
-  allExerciseOptions,
-  name,
-  searchText,
-  handleSelectExercise,
-}) => {
-  const matches = allExerciseOptions.filter(
-    (option) =>
-      option.primaryGroup === name &&
-      (!searchText ||
-        option.name?.toLowerCase()?.includes(searchText?.toLowerCase())),
+const ExercisesByGroup = ({ searchText, handleSelectExercise, group }) => {
+  const matches = group.filter(
+    (exercise) =>
+      !searchText ||
+      exercise.name?.toLowerCase()?.includes(searchText?.toLowerCase()),
   )
 
   return (

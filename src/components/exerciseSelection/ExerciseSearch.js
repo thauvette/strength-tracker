@@ -1,34 +1,33 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import ExerciseForm from '../ExerciseForm'
+import ExerciseForm from '../exerciseForm/ExerciseForm'
 
-import useDB from '../../context/db'
-import ExercisesByGroup from './components/exercisesByGroup'
-import ExerciseSelection from './components/exerciseSelection'
+import useDB from '../../context/db/db'
+import ExercisesByGroup from './components/ExercisesByGroup'
+import ExerciseSelection from './components/ExerciseSelection'
 
 const ExerciseSearch = ({ handleSelectExercise }) => {
   const { getExerciseOptions } = useDB()
   const [exerciseOptions, setExerciseOptions] = useState([])
-  const [primaryGroups, setPrimaryGroups] = useState([])
   const [showNewExerciseForm, setShowNewExerciseForm] = useState(false)
   const [searchText, setSearchText] = useState('')
 
-  const [activeGroup, setActiveGroup] = useState('')
+  const [activeGroupId, setActiveGroupId] = useState('')
+
+  const activeGroup = activeGroupId
+    ? exerciseOptions[activeGroupId]?.items
+    : null
 
   const getOptions = () => {
     getExerciseOptions().then((res) => {
       setExerciseOptions(res)
-      const groups = res
-        .map((item) => item.primaryGroup)
-        .filter((item) => !!item)
-      setPrimaryGroups(Array.from(new Set(groups)))
     })
   }
 
   useEffect(() => {
     getOptions()
   }, []) // eslint-disable-line
-  if (!exerciseOptions?.length) {
+  if (!exerciseOptions) {
     return null
   }
   const renderComponents = () => {
@@ -46,23 +45,20 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
     if (!activeGroup) {
       return (
         <ExerciseSelection
-          handleSelectGroup={(group) => setActiveGroup(group)}
-          handleSelectExercise={handleSelectExercise}
-          groups={primaryGroups}
           allExercises={exerciseOptions}
+          handleSelectExercise={handleSelectExercise}
+          handleSelectGroup={(id) => setActiveGroupId(id)}
           searchText={searchText}
-          setSearchText={setSearchText}
         />
       )
     }
     return (
       <>
         <div>
-          <button onClick={() => setActiveGroup('')}>← Back</button>
+          <button onClick={() => setActiveGroupId('')}>← Back</button>
         </div>
         <ExercisesByGroup
-          name={activeGroup}
-          allExerciseOptions={exerciseOptions}
+          group={activeGroup}
           searchText={searchText}
           handleSelectExercise={handleSelectExercise}
         />

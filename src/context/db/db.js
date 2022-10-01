@@ -1,10 +1,16 @@
 import { useEffect, useState, createContext, useContext } from 'preact/compat'
 import set from 'lodash.set'
 import dayjs from 'dayjs'
+import muscleGroups from '../../config/muscleGroups'
+
+import {
+  getFromCursor as getFromCursorUtil,
+  openObjectStoreTransaction as openObjectStoreTransactionUtil,
+} from './utils/dbUtils'
 
 const DBContext = createContext()
 
-const DB_VERSION = 3
+const DB_VERSION = 4
 const DB_NAME = 'track_strength'
 
 export const objectStores = {
@@ -13,11 +19,13 @@ export const objectStores = {
   sets: 'sets',
   bioMetrics: 'bio_metrics',
   bioEntries: 'bio_metric_entries',
+  muscleGroups: 'muscle_groups',
 }
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState(null)
 
+  // INITIALIZE OUR DB
   useEffect(() => {
     if (typeof window === 'undefined') {
       return null
@@ -29,34 +37,145 @@ export const DBProvider = ({ children }) => {
     const dbRequest = window.indexedDB.open(DB_NAME, DB_VERSION)
     let requiresExercises = false
     let requiresBioMetrics = false
-    dbRequest.onsuccess = () => {
-      const database = dbRequest.result
-      if (requiresExercises) {
-        const transaction = database
-          .transaction(objectStores.exercises, 'readwrite')
-          .objectStore(objectStores.exercises)
+    let requiresExerciseGroupRefactor = false
 
-        transaction.add({ name: 'deadlift', primaryGroup: 'back' })
-        transaction.add({
+    dbRequest.onsuccess = async (e) => {
+      const database = e.target.result
+      const exerciseTransaction = database.transaction(
+        objectStores.exercises,
+        'readwrite',
+      )
+      if (requiresExercises) {
+        exerciseTransaction
+          .objectStore(objectStores.exercises)
+          .add({ name: 'deadlift', primaryGroup: 'back' })
+        exerciseTransaction.objectStore(objectStores.exercises).add({
           name: 'barbell bench press',
           primaryGroup: 'chest',
         })
-        transaction.add({ name: 'barbell back squat', primaryGroup: 'quads' })
-        transaction.add({
+        exerciseTransaction
+          .objectStore(objectStores.exercises)
+          .add({ name: 'barbell back squat', primaryGroup: 'legs' })
+        exerciseTransaction.objectStore(objectStores.exercises).add({
           name: 'standing overhead press',
           primaryGroup: 'shoulders',
         })
       }
       if (requiresBioMetrics) {
-        const transaction = database
-          .transaction(objectStores.bioMetrics, 'readwrite')
-          .objectStore(objectStores.bioMetrics)
+        const bioTransaction = database.transaction(
+          objectStores.bioMetrics,
+          'readwrite',
+        )
+
+        const transaction = bioTransaction.objectStore(objectStores.bioMetrics)
         transaction.add({ name: 'weight' })
+      }
+
+      if (requiresExerciseGroupRefactor) {
+        const muscleGroupTransaction = database.transaction(
+          objectStores.muscleGroups,
+          'readwrite',
+        )
+
+        const musclesStore = muscleGroupTransaction.objectStore(
+          objectStores.muscleGroups,
+        )
+        // need to create all our muscleGroups
+        await Promise.all(
+          Object.entries(muscleGroups).map(([primaryKey, subGroups]) => {
+            return new Promise((resolve) => {
+              // add primary key, use response to attach id to subGroups
+
+              const request = musclesStore.add({
+                name: primaryKey,
+                isPrimary: 1,
+                parentGroup: null,
+              })
+
+              request.onsuccess = (e) => {
+                return Promise.all(
+                  subGroups.map(
+                    (group) =>
+                      new Promise((resolve) => {
+                        const subRequest = musclesStore.add({
+                          name: group,
+                          isPrimary: 0,
+                          parentGroup: e.target.result,
+                        })
+                        subRequest.onsuccess = (event) => {
+                          resolve({
+                            name: group,
+                            isPrimary: 0,
+                            parentGroup: e.target.result,
+                            id: event.target.result,
+                          })
+                        }
+                      }),
+                  ),
+                ).then((subGroupResponses) => {
+                  // sub groups added
+                  resolve([
+                    {
+                      name: primaryKey,
+                      isPrimary: 1,
+                      parentGroup: null,
+                      id: e.target.result,
+                    },
+                    ...subGroupResponses,
+                  ])
+                })
+              }
+            }).then((res) => {
+              // primary group done
+              return res
+            })
+          }),
+        ).then(async (res) => {
+          // done adding muscle groups
+          const addedMuscleGroups = res.flat()
+          // get all exercises.
+          const currentExercises = await getFromCursorUtil(
+            database,
+            objectStores.exercises,
+          )
+
+          const exerciseStore = database
+            .transaction(objectStores.exercises, 'readwrite')
+            .objectStore(objectStores.exercises)
+
+          Object.entries(currentExercises || {}).forEach(([id, exercise]) => {
+            // match primary group to newly added muscle groups
+            const matchingGroup = addedMuscleGroups.find(
+              (group) => group.name === exercise?.primaryGroup?.toLowerCase(),
+            )
+            if (matchingGroup) {
+              // Check if this is the primary or secondary group.
+              // if secondary we also need the primary.
+              const isPrimaryMatch = !!matchingGroup.isPrimary
+              const data = {
+                ...exercise,
+                primaryGroup: isPrimaryMatch
+                  ? matchingGroup.id
+                  : matchingGroup.parentGroup,
+              }
+              if (!isPrimaryMatch) {
+                data.musclesWorked = [+matchingGroup.id]
+              }
+              exerciseStore.put(data, +id)
+            } else if (exercise?.primaryGroup) {
+              musclesStore.add({
+                name: exercise.primaryGroup,
+                isPrimary: 0,
+              })
+            }
+          })
+        })
       }
       setDb(dbRequest.result)
     }
+
     dbRequest.onerror = (e) => {
-      console.log(`error:`, e)
+      console.warn(`error:`, e)
     }
     dbRequest.onupgradeneeded = (e) => {
       const db = e.target.result
@@ -65,7 +184,6 @@ export const DBProvider = ({ children }) => {
         requiresExercises = true
         // this is the first time this db has been initialized
         // it's safe to initialize all object stores
-
         db.createObjectStore(objectStores.wendlerCycles, {
           autoIncrement: true,
         })
@@ -104,39 +222,30 @@ export const DBProvider = ({ children }) => {
         })
         bioEntriesStore.createIndex('bioMetric', 'bioMetric', { unique: false })
         bioEntriesStore.createIndex('date', 'date', { unique: false })
+        bioMetricStore.add({ name: 'weight', created: new Date().getTime() })
+      }
+      if (e.oldVersion < 4) {
+        requiresExerciseGroupRefactor = true
+        const musclesStore = db.createObjectStore(objectStores.muscleGroups, {
+          autoIncrement: true,
+        })
+        musclesStore.createIndex('name', 'name', { unique: true })
+        musclesStore.createIndex('isPrimary', 'isPrimary', { unique: false })
+        musclesStore.createIndex('parentGroup', 'parentGroup', {
+          unique: false,
+        })
       }
     }
-  }, [])
+  }, []) // eslint-disable-line
 
-  const openObjectStoreTransaction = (store) => {
-    const transaction = db.transaction([store], 'readwrite')
-    const objectStore = transaction.objectStore(store)
-    return {
-      transaction,
-      objectStore,
-    }
+  if (!db) {
+    return null
   }
 
-  const getFromCursor = (store) =>
-    new Promise((resolve, reject) => {
-      const { transaction, objectStore } = openObjectStoreTransaction(store)
+  const getFromCursor = (store) => getFromCursorUtil(db, store)
 
-      const results = {}
-
-      objectStore.openCursor().onsuccess = (event) => {
-        const cursor = event.target.result
-        if (cursor) {
-          results[cursor.key] = cursor.value
-          cursor.continue()
-        }
-      }
-      transaction.oncomplete = () => resolve(results)
-
-      transaction.onerror = (err) => {
-        console.log(err)
-        reject(new Error(err?.message || 'oops'))
-      }
-    })
+  const openObjectStoreTransaction = (store) =>
+    openObjectStoreTransactionUtil(db, store)
 
   const getAllEntries = async (store) => await getFromCursor(store)
 
@@ -148,7 +257,7 @@ export const DBProvider = ({ children }) => {
       )
       const request = objectStore.get(+id)
       request.onerror = function (err) {
-        console.log('Err', err)
+        console.warn('Err', err)
         reject(err?.message || 'unable to find item')
       }
       request.onsuccess = (event) => resolve(event.target.result)
@@ -180,26 +289,67 @@ export const DBProvider = ({ children }) => {
 
   const getExerciseOptions = () =>
     new Promise((resolve) => {
-      const { objectStore: store } = openObjectStoreTransaction(
-        objectStores.exercises,
+      // need to get exercises and muscle groups and connect
+      // then together.
+      getFromCursor(objectStores.muscleGroups).then(
+        async (muscleGroupsObject) => {
+          const exercises = await getFromCursor(objectStores.exercises)
+
+          const data = Object.entries(exercises || {}).reduce(
+            (obj, [exerciseId, exercise]) => {
+              const muscleGroupData = muscleGroupsObject[exercise.primaryGroup]
+              const currentGroup = obj[exercise.primaryGroup] || {
+                ...muscleGroupData,
+                id: exercise.primaryGroup,
+                items: [],
+              }
+
+              currentGroup.items.push({
+                ...exercise,
+                id: exerciseId,
+              })
+
+              return {
+                ...obj,
+                [exercise.primaryGroup]: currentGroup,
+              }
+            },
+            {},
+          )
+          return resolve(data)
+        },
       )
-      const results = []
-      store.openCursor().onsuccess = (event) => {
-        const cursor = event.target.result
-        if (cursor) {
-          if (cursor.value?.name) {
-            results.push({
-              id: cursor.primaryKey,
-              name: cursor.value?.name,
-              primaryGroup: cursor.value?.primaryGroup,
-            })
-          }
-          cursor.continue()
-        } else {
-          resolve(results)
-        }
-      }
     })
+
+  const getMuscleGroups = async () => {
+    const groups = await getFromCursor(objectStores.muscleGroups)
+    return Promise.resolve(
+      Object.entries(groups || {}).reduce((obj, [id, group]) => {
+        const primaryGroupId = group.isPrimary ? id : group.parentGroup
+
+        let currentPrimaryData = obj[primaryGroupId] || {
+          secondaryGroups: [],
+        }
+
+        if (group.isPrimary) {
+          currentPrimaryData = {
+            ...currentPrimaryData,
+            ...group,
+            id,
+          }
+        } else {
+          const groupData = {
+            ...group,
+            id,
+          }
+          currentPrimaryData.secondaryGroups.push(groupData)
+          obj[id] = groupData
+        }
+        obj[primaryGroupId] = currentPrimaryData
+        return obj
+      }, {}),
+    )
+  }
 
   const updateWendlerItem = ({ id, path, value }) =>
     new Promise((resolve, reject) => {
@@ -240,7 +390,7 @@ export const DBProvider = ({ children }) => {
           ...data,
           created: new Date().getTime(),
         })
-        addRequest.onerror = (e) => console.log(e)
+        addRequest.onerror = (e) => console.warn(e)
         addRequest.onsuccess = (event) => {
           return resolve({
             ...data,
@@ -295,7 +445,7 @@ export const DBProvider = ({ children }) => {
 
         transaction.onerror = function (event) {
           // todo: Don't forget to handle errors!
-          console.log(event, 'oops')
+          console.warn(event, 'oops')
           reject()
         }
 
@@ -323,7 +473,7 @@ export const DBProvider = ({ children }) => {
 
       transaction.onerror = function (err) {
         // todo: Don't forget to handle errors!
-        console.log(err, 'oops')
+        console.warn(err, 'oops')
         reject(new Error(err?.message || 'unable to create item'))
       }
     })
@@ -407,7 +557,13 @@ export const DBProvider = ({ children }) => {
         getFromCursor(objectStores.sets),
       ]).then(([exercises, entries]) => {
         const results = Object.values(entries || {})?.reduce((obj, entry) => {
-          const dateKey = dayjs(entry.created).format('YYYY-MM-DD')
+          if (!entry.created || !entry.exercise) {
+            return obj
+          }
+          const dateKey = entry.created
+            ? dayjs(entry.created).format('YYYY-MM-DD')
+            : 'lost'
+
           const exercise = exercises[entry.exercise]
           const currentItems = obj[dateKey] || []
           currentItems.push({
@@ -479,7 +635,7 @@ export const DBProvider = ({ children }) => {
         objectStoreRequest.onerror = () =>
           reject(`unable to clear data from ${store}`)
       } catch (err) {
-        console.log(err)
+        console.warn(err)
         return reject(err?.message || `unable to clear data from ${store}`)
       }
     })
@@ -522,7 +678,7 @@ export const DBProvider = ({ children }) => {
         name,
         created: new Date().getTime(),
       })
-      addRequest.onerror = (e) => console.log(e)
+      addRequest.onerror = (e) => console.warn(e)
       addRequest.onsuccess = (event) => {
         resolve({
           name,
@@ -552,6 +708,7 @@ export const DBProvider = ({ children }) => {
         restoreFromBackup,
         getAllSetsHistory,
         createBioMetric,
+        getMuscleGroups,
       }}
     >
       {children}

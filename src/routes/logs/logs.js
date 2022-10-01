@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'preact/hooks'
-import useDB, { objectStores } from '../../context/db'
+import useDB, { objectStores } from '../../context/db/db'
 import Modal from '../../components/modal/Modal'
 import Calendar from '../../components/calendar/Calendar'
 import { Link } from 'preact-router'

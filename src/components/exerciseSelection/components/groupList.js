@@ -1,12 +1,12 @@
 import { h } from 'preact'
 import ButtonList from '../../buttonList/ButtonList'
 
-const GroupList = ({ groups, handleSelectGroup }) => (
+const GroupList = ({ allExercises, handleSelectGroup }) => (
   <div>
     <ButtonList
-      buttons={groups.map((group) => ({
-        onClick: () => handleSelectGroup(group),
-        text: group,
+      buttons={Object.entries(allExercises || {}).map(([id, group]) => ({
+        onClick: () => handleSelectGroup(id),
+        text: group.name,
       }))}
     />
   </div>

@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { route } from 'preact-router'
 import { routes } from '../../config/routes'
-import useDB from '../../context/db'
+import useDB from '../../context/db/db'
 
 const NewBioMetric = ({ onSubmit }) => {
   const { createBioMetric } = useDB()
