@@ -1,5 +1,5 @@
-import dayjs from 'dayjs'
 import { h } from 'preact'
+import dayjs from 'dayjs'
 import EditableSet from '../editableSet/editableSet'
 import SetNoteForm from '../setNoteForm/SetNoteForm'
 

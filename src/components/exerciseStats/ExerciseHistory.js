@@ -1,6 +1,6 @@
-import dayjs from 'dayjs'
 import { h } from 'preact'
-import SetRow from '../../components/setRow/setRow'
+import dayjs from 'dayjs'
+import ExerciseHistoryDay from './ExerciseHistoryDay'
 
 const ExerciseHistory = ({ exerciseHistory, onChangeSet }) => (
   <>
@@ -9,28 +9,13 @@ const ExerciseHistory = ({ exerciseHistory, onChangeSet }) => (
       Object.entries(exerciseHistory.items)
         .sort(([aKey], [bKey]) => (dayjs(aKey).isAfter(bKey) ? -1 : 1))
         .map(([dayKey, items]) => (
-          <div key={dayKey} class="pb-4">
-            <div class="border-b-2 pb-1 ">
-              <p class="font-medium">{dayjs(dayKey).format('MMM DD, YYYY')}</p>
-            </div>
-            <div class="py-2">
-              {items.map((item) => (
-                <div key={item.created}>
-                  <div
-                    class={`
-                        ${
-                          exerciseHistory?.eorm?.time === item.created
-                            ? 'bg-blue-200'
-                            : ''
-                        }
-                        `}
-                  >
-                    <SetRow set={item} onChangeSet={onChangeSet} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ExerciseHistoryDay
+            key={dayKey}
+            items={items}
+            onChangeSet={onChangeSet}
+            dayKey={dayKey}
+            ormTime={exerciseHistory?.eorm?.time}
+          />
         ))
     ) : (
       <p>No history found</p>

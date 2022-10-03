@@ -43,7 +43,7 @@ const Track = ({
       {!!todaysHistory?.length &&
         todaysHistory.map((item) => (
           <div key={item.id} class="px-1">
-            <SetRow set={item} onChangeSet={onAddSet} />
+            <SetRow set={item} onChangeSet={onAddSet} isIntersecting={true} />
           </div>
         ))}
     </div>
