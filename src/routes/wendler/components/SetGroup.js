@@ -2,7 +2,7 @@ import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import Modal from '../../../components/modal/Modal'
 import useExerciseHistory from '../../../hooks/useExerciseHistory/useExerciseHistory'
-import ExerciseStats from '../../exercise/ExerciseStats'
+import ExerciseStats from '../../../components/exerciseStats/ExerciseStats'
 import Set from './Set'
 
 const SetGroup = ({

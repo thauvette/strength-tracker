@@ -1,5 +1,6 @@
 import { h } from 'preact'
 import EditableSet from '../../../components/editableSet/editableSet'
+import Icon from '../../../components/icon/Icon'
 
 const Set = ({
   handleSubmit,
@@ -21,7 +22,7 @@ const Set = ({
           title={
             <>
               {completed ? (
-                <ion-icon name="checkmark" class="text-2xl mr-2" />
+                <Icon name="checkmark" class="text-2xl mr-2" />
               ) : null}{' '}
               {title}
             </>
@@ -36,7 +37,7 @@ const Set = ({
                   class="text-2xl"
                 >
                   <div class="flex items-center">
-                    <ion-icon name="list-outline" />
+                    <Icon name="list-outline" />
                   </div>
                 </button>
               ) : null}
@@ -65,7 +66,7 @@ const Set = ({
         <button onClick={makeActive} class="text-left w-full">
           <div class="flex justify-between flex-wrap">
             <p class="capitalize font-bold flex items-center">
-              {completed && <ion-icon name="checkmark" class="text-2xl mr-2" />}
+              {completed && <Icon name="checkmark" class="text-2xl mr-2" />}
               {title}
             </p>
             <p class="shrink-0">

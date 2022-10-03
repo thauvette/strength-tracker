@@ -4,6 +4,7 @@ import AnimateHeight from 'react-animate-height'
 
 import SetRowDrawer from './setRowDrawer'
 import useDB, { objectStores } from '../../context/db/db'
+import Icon from '../icon/Icon'
 
 const SetRow = ({ set, onChangeSet }) => {
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()
@@ -63,7 +64,7 @@ const SetRow = ({ set, onChangeSet }) => {
           ariaLabel="view notes"
         >
           <div class="flex items-center">
-            <ion-icon name="clipboard-outline" />
+            <Icon name="clipboard-outline" />
           </div>
         </button>
 
@@ -76,7 +77,7 @@ const SetRow = ({ set, onChangeSet }) => {
             onClick={() => handleToggleDrawerContent('stats')}
           >
             <div class="flex items-center">
-              <ion-icon name="bar-chart-outline" />
+              <Icon name="bar-chart-outline" />
             </div>
           </button>
           <button
@@ -84,7 +85,7 @@ const SetRow = ({ set, onChangeSet }) => {
             onClick={() => handleToggleDrawerContent('delete')}
           >
             <div class="flex items-center">
-              <ion-icon name="trash-outline" />
+              <Icon name="trash-outline" />
             </div>
           </button>
           <button
@@ -92,7 +93,7 @@ const SetRow = ({ set, onChangeSet }) => {
             ariaLabel="edit set"
           >
             <div class="flex items-center">
-              <ion-icon name="create-outline" />
+              <Icon name="create-outline" />
             </div>
           </button>
         </div>

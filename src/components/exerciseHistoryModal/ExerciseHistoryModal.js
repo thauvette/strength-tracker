@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import Modal from '../modal/Modal'
-import ExerciseStats from '../../routes/exercise/ExerciseStats'
+import ExerciseStats from '../exerciseStats/ExerciseStats'
+import Icon from '../icon/Icon'
 
 const ExerciseHistoryModal = ({
   isOpen,
@@ -14,7 +15,7 @@ const ExerciseHistoryModal = ({
         <h1 class="capitalize">{exerciseHistory?.name}</h1>
         {onRequestClose && (
           <button onClick={onRequestClose} ariLabel="dismiss" class="text-3xl">
-            <ion-icon name="close-circle-outline" />
+            <Icon name="close-circle-outline" />
           </button>
         )}
       </div>

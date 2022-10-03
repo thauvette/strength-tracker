@@ -17,8 +17,6 @@ TODO: Edit exercises
         - body weight + weight (auto add last body weight in bio metrics)
         - time
         - time + weight
-    - allow multiple secondary muscle groups.
-    - add descriptions
 
 TODO: wendler first set last vs BBB and SLBBB
 

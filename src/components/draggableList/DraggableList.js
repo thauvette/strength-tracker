@@ -1,5 +1,6 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
+import Icon from '../icon/Icon'
 
 // TODO: fix slight delay before re-order complete
 // TODO: clone element being dragged
@@ -77,12 +78,12 @@ const Item = ({
             onDragEnd={handleDragEnd}
             class="pr-2 font-xl flex items-center"
           >
-            <ion-icon name="reorder-two-outline" />
+            <Icon name="reorder-two-outline" />
           </div>
           {children}
         </div>
         <button class="text-2xl" onClick={handleRemove} ariaLabel="remove set">
-          <ion-icon name="close-circle-outline" />
+          <Icon name="close-circle-outline" />
         </button>
       </div>
     </li>

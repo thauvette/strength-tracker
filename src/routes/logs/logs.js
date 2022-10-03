@@ -8,6 +8,7 @@ import { Link } from 'preact-router'
 import { routes } from '../../config/routes'
 
 import dateFormats from '../../config/dateFormats'
+import Icon from '../../components/icon/Icon'
 
 const Logs = () => {
   const { getAllSetsHistory, getAllEntries } = useDB()
@@ -117,7 +118,7 @@ const Logs = () => {
           class="text-2xl"
           ariaLabel="previous date"
         >
-          <ion-icon name="arrow-back-outline" />
+          <Icon name="arrow-back-outline" />
         </button>
         <div>
           <button
@@ -135,7 +136,7 @@ const Logs = () => {
               ariaLabel="go to today"
               class="text-2xl"
             >
-              <ion-icon name="calendar-outline" />
+              <Icon name="calendar-outline" />
             </button>
           )}
         </div>
@@ -144,7 +145,7 @@ const Logs = () => {
           class="text-2xl"
           onClick={() => stepByDate(1)}
         >
-          <ion-icon name="arrow-forward-outline" />
+          <Icon name="arrow-forward-outline" />
         </button>
       </div>
 
@@ -205,7 +206,7 @@ const Logs = () => {
               ? Array.from(
                   new Set(
                     dayData.map((exercise) =>
-                      exercise.primaryGroup?.substring(0, 1),
+                      exercise.primaryGroupName?.substring(0, 1),
                     ),
                   ),
                 )

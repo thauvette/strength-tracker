@@ -3,7 +3,7 @@ import { useState } from 'preact/hooks'
 
 import Modal from '../../../../components/modal/Modal'
 import useExerciseHistory from '../../../../hooks/useExerciseHistory/useExerciseHistory'
-import ExerciseStats from '../../../exercise/ExerciseStats'
+import ExerciseStats from '../../../../components/exerciseStats/ExerciseStats'
 
 const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
   const [exerciseHistory] = useExerciseHistory(id)

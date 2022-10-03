@@ -23,9 +23,9 @@ const SetRowDrawer = ({
         renderCtas={(data) => {
           return (
             <div class="flex">
-              <div class="flex-1 text-center">
+              <div class="flex-1 text-center pr-1">
                 <button
-                  class="primary"
+                  class="primary w-full"
                   onClick={() => {
                     handleUpdateSet({
                       weight: data.weight,
@@ -37,8 +37,8 @@ const SetRowDrawer = ({
                   Update
                 </button>
               </div>
-              <div class="flex-1  text-center">
-                <button class="secondary" onClick={closeDrawer}>
+              <div class="flex-1  text-center pl-1">
+                <button class="secondary w-full" onClick={closeDrawer}>
                   Cancel
                 </button>
               </div>
@@ -59,13 +59,13 @@ const SetRowDrawer = ({
         <p>Are you sure you want to delete this set?</p>
         <p>This action can not be undone</p>
         <div class="flex pt-4">
-          <div class="flex-1 text-center">
-            <button class="warning" onClick={handleDeleteSet}>
+          <div class="flex-1 text-center pr-1">
+            <button class="warning w-full" onClick={handleDeleteSet}>
               Yup, ditch it.
             </button>
           </div>
-          <div class="flex-1 text-center">
-            <button onClick={closeDrawer} class="secondary">
+          <div class="flex-1 text-center pl-1">
+            <button onClick={closeDrawer} class="secondary w-full">
               Nope, keep it.
             </button>
           </div>

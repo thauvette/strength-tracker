@@ -529,11 +529,32 @@ export const DBProvider = ({ children }) => {
 
   const getExerciseHistoryById = (id) =>
     new Promise((resolve) => {
-      getExerciseById(id).then((exerciseResponse) => {
+      getExerciseById(id).then(async (exerciseResponse) => {
+        const muscleGroupData = await getFromCursor(objectStores.muscleGroups)
+
+        const primaryMuscles = []
+        const secondaryMusclesWorked = []
+
+        if (exerciseResponse?.musclesWorked?.length) {
+          exerciseResponse.musclesWorked.forEach((muscleId) => {
+            primaryMuscles.push({
+              ...muscleGroupData[muscleId],
+              id: muscleId,
+            })
+          })
+        }
+        if (exerciseResponse?.secondaryMusclesWorked?.length) {
+          exerciseResponse.secondaryMusclesWorked.forEach((muscleId) => {
+            secondaryMusclesWorked.push({
+              ...muscleGroupData[muscleId],
+              id: muscleId,
+            })
+          })
+        }
         const { objectStore } = openObjectStoreTransaction(objectStores.sets)
+        // get all sets for this exercise
         const index = objectStore.index('exercise')
         const keyRange = IDBKeyRange.only(+id)
-
         const cursorRequest = index.openCursor(keyRange)
 
         const results = []
@@ -544,7 +565,14 @@ export const DBProvider = ({ children }) => {
             results.push({ ...data, id: event?.target?.result?.primaryKey })
             event?.target?.result.continue()
           } else {
-            resolve({ ...exerciseResponse, items: results })
+            resolve({
+              ...exerciseResponse,
+              primaryGroupData:
+                muscleGroupData?.[exerciseResponse?.primaryGroup],
+              musclesWorked: primaryMuscles,
+              secondaryMusclesWorked,
+              items: results,
+            })
           }
         }
       })
@@ -555,11 +583,13 @@ export const DBProvider = ({ children }) => {
       return Promise.all([
         getFromCursor(objectStores.exercises),
         getFromCursor(objectStores.sets),
-      ]).then(([exercises, entries]) => {
+        getFromCursor(objectStores.muscleGroups),
+      ]).then(([exercises, entries, muscleGroups]) => {
         const results = Object.values(entries || {})?.reduce((obj, entry) => {
           if (!entry.created || !entry.exercise) {
             return obj
           }
+
           const dateKey = entry.created
             ? dayjs(entry.created).format('YYYY-MM-DD')
             : 'lost'
@@ -569,6 +599,7 @@ export const DBProvider = ({ children }) => {
           currentItems.push({
             ...exercise,
             ...entry,
+            primaryGroupName: muscleGroups?.[exercise?.primaryGroup]?.name,
           })
           return {
             ...obj,

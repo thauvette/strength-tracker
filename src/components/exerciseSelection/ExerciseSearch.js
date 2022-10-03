@@ -38,7 +38,9 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
             getOptions()
             setShowNewExerciseForm(false)
           }}
-          initialNameValue={searchText}
+          initialValues={{
+            name: searchText,
+          }}
         />
       )
     }

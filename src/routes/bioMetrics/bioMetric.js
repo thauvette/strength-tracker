@@ -8,6 +8,7 @@ import dateFormats from '../../config/dateFormats'
 import BioMetricForm from './bioMetricForm'
 
 import Modal from '../../components/modal/Modal'
+import Icon from '../../components/icon/Icon'
 
 const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   const currentBioMetric = bioMetrics[id]
@@ -87,7 +88,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                     ariaLabel="edit entry"
                     class="text-2xl"
                   >
-                    <ion-icon name="create-outline" />
+                    <Icon name="create-outline" />
                   </button>
                   <button
                     onClick={() =>
@@ -98,7 +99,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
                     }
                     class="text-2xl"
                   >
-                    <ion-icon name="trash-outline" />
+                    <Icon name="trash-outline" />
                   </button>
                 </div>
                 <AnimateHeight height={activeBioId === item.id ? 'auto' : 0}>

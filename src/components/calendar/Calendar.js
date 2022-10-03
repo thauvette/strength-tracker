@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { h } from 'preact'
 import chunk from 'lodash.chunk'
 import { useState } from 'preact/hooks'
+import Icon from '../icon/Icon'
 
 const Calendar = ({ startDate, renderDay }) => {
   const [start, setStart] = useState(
@@ -58,7 +59,7 @@ const Calendar = ({ startDate, renderDay }) => {
           ariaLabel="previous month"
         >
           <div class="flex items-center">
-            <ion-icon name="arrow-back-outline" />
+            <Icon name="arrow-back-outline" />
           </div>
         </button>
         <div class="flex items-center justify-between">
@@ -69,7 +70,7 @@ const Calendar = ({ startDate, renderDay }) => {
             ariaLabel="jump to today"
           >
             <div class="flex items-center">
-              <ion-icon name="calendar-outline" />
+              <Icon name="calendar-outline" />
             </div>
           </button>
         </div>
@@ -79,7 +80,7 @@ const Calendar = ({ startDate, renderDay }) => {
           ariaLabel="next month"
         >
           <div class="flex items-center">
-            <ion-icon name="arrow-forward-outline" />
+            <Icon name="arrow-forward-outline" />
           </div>
         </button>
       </div>

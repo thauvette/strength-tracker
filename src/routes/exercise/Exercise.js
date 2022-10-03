@@ -2,15 +2,15 @@ import { h } from 'preact'
 
 import { Router, Link } from 'preact-router'
 import dayjs from 'dayjs'
-import ExerciseStats from './ExerciseStats'
+import ExerciseStats from '../../components/exerciseStats/ExerciseStats'
 import Track from './Track'
 import { routes } from '../../config/routes'
 import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
+import EditExercise from './EditExercise'
 
 const Exercise = (props) => {
   const { id, remaining_path } = props
   const [exerciseHistory, getData] = useExerciseHistory(id)
-
   if (!exerciseHistory) {
     return null
   }
@@ -27,7 +27,9 @@ const Exercise = (props) => {
 
   return (
     <div>
-      <h1 class="capitalize mb-2">{exerciseHistory?.name}</h1>
+      <div class="px-2">
+        <h1 class="capitalize mb-2">{exerciseHistory?.name}</h1>
+      </div>
       <div class="flex pb-4">
         <Link
           href={`${routes.exerciseBase}/${id}`}
@@ -45,6 +47,14 @@ const Exercise = (props) => {
         >
           History
         </Link>
+        <Link
+          href={`${routes.exerciseBase}/${id}/edit`}
+          class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
+            remaining_path === 'edit' ? '' : 'border-opacity-0'
+          }`}
+        >
+          Edit
+        </Link>
       </div>
 
       <Router>
@@ -61,6 +71,11 @@ const Exercise = (props) => {
           path={`${routes.exerciseBase}/:id/history`}
           exerciseHistory={exerciseHistory}
           onChangeSet={getData}
+        />
+        <EditExercise
+          path={`${routes.exerciseBase}/:id/edit`}
+          exerciseHistory={exerciseHistory}
+          onEdit={getData}
         />
       </Router>
     </div>

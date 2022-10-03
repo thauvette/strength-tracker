@@ -8,6 +8,7 @@ import useDB, { objectStores } from '../../context/db/db'
 import Modal from '../../components/modal/Modal'
 
 import formatCycleForDuplication from './formatCycleToDuplicate'
+import Icon from '../../components/icon/Icon'
 
 const WendlerCycles = ({ navigateToEdit }) => {
   const { getAllEntries, deleteEntry, createCycle } = useDB()
@@ -126,14 +127,14 @@ const WendlerCycles = ({ navigateToEdit }) => {
                         ariaLabel="edit"
                         class="text-2xl"
                       >
-                        <ion-icon name="create-outline" />
+                        <Icon name="create-outline" />
                       </button>
                       <button
                         onClick={() => handleOpenDuplicateModal(data)}
                         ariaLabel="duplicate"
                         class="text-2xl"
                       >
-                        <ion-icon name="copy-outline" />
+                        <Icon name="copy-outline" />
                       </button>
                     </>
                   )}
@@ -142,7 +143,7 @@ const WendlerCycles = ({ navigateToEdit }) => {
                     onClick={() => handleOpenConfirmDeleteModal(id)}
                     ariaLabel="delete"
                   >
-                    <ion-icon name="trash-outline" />
+                    <Icon name="trash-outline" />
                   </button>
                 </div>
               </div>

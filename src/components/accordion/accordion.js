@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { useState } from 'preact/compat'
 import AnimateHeight from 'react-animate-height'
+import Icon from '../icon/Icon'
 
 export default function Accordion({
   openByDefault = false,
@@ -21,9 +22,7 @@ export default function Accordion({
       >
         <div class="flex justify-between">
           <div class="flex items-center">
-            {headerIcon ? (
-              <ion-icon name={headerIcon} class="text-2xl" />
-            ) : null}
+            {headerIcon ? <Icon name={headerIcon} /> : null}
             <p class={titleClass}>{title}</p>
           </div>
           <div
@@ -31,7 +30,7 @@ export default function Accordion({
               isOpen ? 'rotate-180' : ''
             } ${smallIcon ? 'text-lg' : 'text-2xl'}`}
           >
-            <ion-icon name="chevron-down-outline" />
+            <Icon name="chevron-down-outline" />
           </div>
         </div>
       </button>

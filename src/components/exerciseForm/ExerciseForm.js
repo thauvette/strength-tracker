@@ -9,15 +9,15 @@ import Accordion from '../accordion/accordion'
 import Modal from '../../components/modal/Modal'
 import NewMuscleGroupForm from './NewMuscleGroupForm'
 
-const ExerciseForm = ({ onSubmit, initialNameValue }) => {
-  const { createEntry, getMuscleGroups } = useDB()
+const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
+  const { createEntry, getMuscleGroups, updateEntry } = useDB()
   const [primaryGroupOptions, setPrimaryGroupOptions] = useState([])
   const [formData, setFormData] = useState({
-    name: initialNameValue || '',
-    primaryGroup: '',
-    altPrimary: '',
-    musclesWorked: [],
-    secondaryMusclesWorked: [],
+    name: initialValues?.name || '',
+    primaryGroup: initialValues?.primaryGroup || '',
+    altPrimary: initialValues?.altPrimary || '',
+    musclesWorked: initialValues?.musclesWorked || [],
+    secondaryMusclesWorked: initialValues?.secondaryMusclesWorked || [],
     type: 'wr',
   })
   const [newMuscleGroupModalIsOpen, setNewMuscleGroupModalIsOpen] =
@@ -58,6 +58,7 @@ const ExerciseForm = ({ onSubmit, initialNameValue }) => {
         newPrimaryId = newPrimary?.id
       }
     }
+
     const data = {
       name,
       musclesWorked,
@@ -65,35 +66,27 @@ const ExerciseForm = ({ onSubmit, initialNameValue }) => {
       type,
       primaryGroup: newPrimaryId ? +newPrimaryId : +primaryGroup,
     }
-
-    createEntry(objectStores.exercises, data)
-      .then((res) => {
-        if (newPrimary) {
-          setPrimaryGroupOptions((currentOptions) => [
-            ...currentOptions,
-            newPrimary,
-          ])
-        }
-        if (onSubmit) {
-          e.stopPropagation()
-          onSubmit(res)
-        } else {
-          setFormData({
-            name: '',
-            primaryGroup: '',
-            altPrimary: '',
-            musclesWorked: [],
-            secondaryMusclesWorked: [],
-            type: 'wr',
-          })
-        }
-      })
-      .catch((err) => console.warn(err))
+    let res
+    if (id) {
+      res = await updateEntry(objectStores.exercises, id, data)
+    } else {
+      res = await createEntry(objectStores.exercises, data)
+      if (newPrimary) {
+        setPrimaryGroupOptions((currentOptions) => [
+          ...currentOptions,
+          newPrimary,
+        ])
+      }
+    }
+    if (onSubmit) {
+      e.stopPropagation()
+      onSubmit(res)
+    }
   }
 
   const formIsValid =
     formData.name.length &&
-    formData.primaryGroup.length &&
+    formData.primaryGroup &&
     (formData.primaryGroup !== 'other' || formData.altPrimary?.length)
 
   return !primaryGroupOptions ? (
