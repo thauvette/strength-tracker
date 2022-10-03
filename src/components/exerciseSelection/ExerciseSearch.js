@@ -3,8 +3,8 @@ import { useState, useEffect } from 'preact/hooks'
 import ExerciseForm from '../exerciseForm/ExerciseForm'
 
 import useDB from '../../context/db/db'
-import ExercisesByGroup from './components/ExercisesByGroup'
-import ExerciseSelection from './components/ExerciseSelection'
+import ExercisesByGroup from './ExercisesByGroup'
+import ExerciseSelection from './ExerciseSelection'
 
 const ExerciseSearch = ({ handleSelectExercise }) => {
   const { getExerciseOptions } = useDB()
