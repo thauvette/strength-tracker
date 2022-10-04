@@ -66,6 +66,7 @@ const Exercise = (props) => {
           exerciseId={id}
           onAddSet={getData}
           lastWorkoutFirstSet={lastWorkoutFirstSet}
+          exerciseName={exerciseHistory?.name}
         />
         <ExerciseStats
           path={`${routes.exerciseBase}/:id/history`}

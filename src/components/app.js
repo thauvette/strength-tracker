@@ -16,6 +16,7 @@ import Wendler from '../routes/wendler/Wendler'
 import NewWorkout from '../routes/workout/newWorkout'
 import Settings from '../routes/settings/Settings'
 import BioMetrics from '../routes/bioMetrics/bioMetrics'
+import { ToastProvider } from '../context/toasts/Toasts'
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -50,7 +51,9 @@ const DBWrapper = () => {
 
 const App = () => (
   <DBProvider>
-    <DBWrapper />
+    <ToastProvider>
+      <DBWrapper />
+    </ToastProvider>
   </DBProvider>
 )
 

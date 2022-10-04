@@ -1,0 +1,21 @@
+// @keyframes fades {
+//   from {
+//     opacity: 0;
+//   }
+//   50% {
+//     opacity: 1;
+//   }
+//   to {
+//     opacity: 0;
+//   }
+// }
+
+.toast {
+  //   animation-name: fades;
+  //   animation-duration: 2000ms;
+  //   animation-iteration-count: 1;
+  @apply flex items-center justify-between shadow-md mb-2;
+  &.success {
+    @apply bg-green-600 text-white p-2 rounded-md;
+  }
+}

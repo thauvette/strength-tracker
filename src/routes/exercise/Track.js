@@ -1,33 +1,24 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
 
 import useDB from '../../context/db/db'
 import EditableSet from '../../components/editableSet/editableSet'
 import SetRow from '../../components/setRow/setRow'
+import useToast from '../../context/toasts/Toasts'
 
 const Track = ({
   todaysHistory,
   exerciseId,
   onAddSet,
   lastWorkoutFirstSet,
+  exerciseName,
 }) => {
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
-  const [adding, setAdding] = useState(false)
   const { createOrUpdateLoggedSet } = useDB()
-
+  const { fireToast } = useToast()
   const submitNewSet = async ({ weight, reps }) => {
-    setAdding(true)
+    fireToast({ text: `${exerciseName?.toUpperCase() || ''} SET ADDED` })
     await createOrUpdateLoggedSet(null, { weight, reps, exercise: +exerciseId })
     onAddSet()
-
-    setTimeout(() => {
-      setAdding(false)
-      window.scrollTo({
-        left: 0,
-        top: window.innerHeight,
-        behavior: 'smooth',
-      })
-    }, 250)
   }
 
   return (
@@ -40,15 +31,12 @@ const Track = ({
           renderCtas={({ weight, reps }) => (
             <div class="px-2">
               <button
-                disabled={adding}
-                class={`${
-                  adding ? 'bg-gray-900 ' : 'bg-blue-900 '
-                } text-white w-full transition-all duration-200`}
+                class={`bg-blue-900 text-white w-full transition-all duration-200`}
                 onClick={() => {
                   submitNewSet({ weight, reps })
                 }}
               >
-                {adding ? 'Set Added' : 'Save'}
+                Save
               </button>
             </div>
           )}
