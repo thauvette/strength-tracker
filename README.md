@@ -20,8 +20,6 @@ TODO: Edit exercises
 
 TODO: wendler first set last vs BBB and SLBBB
 
-TODO: home screen menu?? (maybe as a fixed footer)
-
 TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
 
 TODO: stats view.
