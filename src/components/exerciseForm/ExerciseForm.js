@@ -8,9 +8,11 @@ import Accordion from '../accordion/accordion'
 
 import Modal from '../../components/modal/Modal'
 import NewMuscleGroupForm from './NewMuscleGroupForm'
+import useToast from '../../context/toasts/Toasts'
 
 const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
   const { createEntry, getMuscleGroups, updateEntry } = useDB()
+  const { fireToast } = useToast()
   const [primaryGroupOptions, setPrimaryGroupOptions] = useState([])
   const [formData, setFormData] = useState({
     name: initialValues?.name || '',
@@ -82,6 +84,9 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       e.stopPropagation()
       onSubmit(res)
     }
+    fireToast({
+      text: `${name} updated`,
+    })
   }
 
   const formIsValid =
