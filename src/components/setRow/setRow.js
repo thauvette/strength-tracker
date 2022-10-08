@@ -65,7 +65,9 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
             ariaLabel="view notes"
           >
             <div class="flex items-center">
-              <Icon name="clipboard-outline" />
+              <Icon
+                name={set?.note?.length ? 'clipboard' : 'clipboard-outline'}
+              />
             </div>
           </button>
         )}
