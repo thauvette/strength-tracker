@@ -13,14 +13,10 @@ export default function generateProgram({
   const lessBoring = auxVersion === 'bbslb'
   const auxPairs = auxVersion
     ? {
-        deadlift: lessBoring ? 'barbell back squat' : 'deadlift',
-        'barbell bench press': lessBoring
-          ? 'standing overhead press'
-          : 'barbell bench press',
-        'barbell back squat': lessBoring ? 'deadlift' : 'barbell back squat',
-        'standing overhead press': lessBoring
-          ? 'barbell bench press'
-          : 'standing overhead press',
+        1: lessBoring ? 3 : 1,
+        2: lessBoring ? 4 : 2,
+        3: lessBoring ? 1 : 3,
+        4: lessBoring ? 2 : 4,
       }
     : null
 
@@ -33,8 +29,10 @@ export default function generateProgram({
 
     Object.entries(exercises).forEach(([id, info]) => {
       if (!obj[weekKey][id]) {
+        const auxData = exercises?.[auxPairs?.[id]]
         obj[weekKey][id] = {
-          auxName: auxPairs?.[info.name] || '',
+          auxName: auxData?.name || '',
+          auxId: auxPairs?.[id],
           exercise: info.name,
           primaryId: info.primaryId,
           runningSets: [],
@@ -66,17 +64,15 @@ export default function generateProgram({
       })
 
       if (auxPairs) {
-        // get the id of the aux pair.
-        const matchingAuxData = Object.values(exercises).find(
-          (auxInfo) => auxInfo.name === auxPairs[info.name],
-        )
+        const auxId = auxPairs[id]
+
+        const matchingAuxData = exercises?.[auxId]
+
         const auxWeight = exercises[matchingAuxData?.primaryId]?.weight
-
         const existingAuxSets = initialValues?.weeks?.[weekKey]?.[id]?.aux || {}
-
         const isSameAuxExercise =
           Object.values(existingAuxSets || {})?.[0]?.primaryId ===
-          matchingAuxData.primaryId
+          matchingAuxData?.primaryId
 
         let j = 0
         while (j < 5) {

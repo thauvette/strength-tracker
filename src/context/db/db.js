@@ -263,28 +263,25 @@ export const DBProvider = ({ children }) => {
       request.onsuccess = (event) => resolve(event.target.result)
     })
 
-  const getItemsByIndex = (storeKey, indexKey, items) =>
-    new Promise((resolve, reject) => {
+  const getWendlerExercises = () =>
+    new Promise((resolve) => {
       const { objectStore: store } = openObjectStoreTransaction(
-        objectStores[storeKey],
+        objectStores.exercises,
       )
-      const index = store.index(indexKey)
+      const keyRangeValue = IDBKeyRange.bound(1, 4)
       const results = []
-      index.openCursor().onsuccess = (event) => {
-        const cursor = event.target.result
+      store.openCursor(keyRangeValue).onsuccess = (e) => {
+        const cursor = e.target.result
         if (cursor) {
-          if (items.some((item) => item === cursor.key)) {
-            results.push({
-              ...cursor.value,
-              primaryId: cursor.primaryKey,
-            })
-          }
+          results.push({
+            ...cursor.value,
+            primaryId: cursor.primaryKey,
+          })
           cursor.continue()
         } else {
           resolve(results)
         }
       }
-      index.openCursor().onerror = () => reject()
     })
 
   const getExerciseOptions = () =>
@@ -723,7 +720,7 @@ export const DBProvider = ({ children }) => {
       value={{
         getItemById,
         getAllEntries,
-        getItemsByIndex,
+        getWendlerExercises,
         createCycle,
         isInitialized: !!db,
         updateWendlerItem,

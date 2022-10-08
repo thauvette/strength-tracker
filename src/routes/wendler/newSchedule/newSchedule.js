@@ -17,7 +17,7 @@ const wendlerCycleExercises = [
 ]
 
 const NewSchedule = ({ onSubmit, initialValues }) => {
-  const { getItemsByIndex, getAllEntries } = useDB()
+  const { getWendlerExercises, getAllEntries } = useDB()
   const [loading, setLoading] = useState(true)
   const [formErrors, setFormErrors] = useState({})
   const [exercises, setExercises] = useState(initialValues?.exercises || {})
@@ -29,21 +29,16 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
       return
     }
     const promises = [
-      getItemsByIndex(objectStores.exercises, 'name', wendlerCycleExercises),
+      getWendlerExercises(),
       getAllEntries(objectStores.wendlerCycles),
     ]
     Promise.all(promises)
       .then((responses) => {
-        const formattedWendlerExercises = wendlerCycleExercises.reduce(
-          (obj, exerciseName) => {
-            const matchingDBData = responses[0].find(
-              (item) => item.name === exerciseName,
-            )
-            if (matchingDBData) {
-              return {
-                ...obj,
-                [matchingDBData.primaryId]: matchingDBData,
-              }
+        const formattedWendlerExercises = responses[0].reduce(
+          (obj, exercise) => {
+            return {
+              ...obj,
+              [exercise.primaryId]: exercise,
             }
           },
           {},
@@ -61,7 +56,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
       })
       .catch((e) => console.log(e))
       .finally(() => setLoading(false))
-  }, [getItemsByIndex, getAllEntries, initialValues])
+  }, [getWendlerExercises, getAllEntries, initialValues])
 
   function handleInput(e) {
     setExercises({

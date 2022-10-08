@@ -1,9 +1,32 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useReducer, useRef, useState } from 'preact/hooks'
 import Icon from '../icon/Icon'
 
-// TODO: fix slight delay before re-order complete
-// TODO: clone element being dragged
+const initialDragState = {
+  draggingIndex: null,
+  targetIndex: null,
+}
+
+const dragReducer = (state = { ...initialDragState }, action) => {
+  switch (action.type) {
+    case 'SET_DRAG_INDEX':
+      return {
+        ...state,
+        draggingIndex: action.payload,
+      }
+    case 'SET_TARGET_INDEX':
+      return {
+        ...state,
+        targetIndex: action.payload,
+      }
+    case 'END_DRAG':
+      return {
+        ...initialDragState,
+      }
+    default:
+      return state
+  }
+}
 
 const DraggableList = ({
   items = [],
@@ -11,22 +34,25 @@ const DraggableList = ({
   renderItem,
   initialOrder,
 }) => {
-  const [draggingIndex, setDraggingIndex] = useState(null)
-  const [targetIndex, setTargetIndex] = useState(null)
-
+  const ghostRef = useRef(null)
+  const [dragState, dispatchDragState] = useReducer(dragReducer, {
+    ...initialDragState,
+  })
+  const { draggingIndex, targetIndex } = dragState
   const [order, setOrder] = useState(
     initialOrder || Array.from({ length: items.length }, (_, i) => i),
   )
-
   const handleDragEnd = () => {
     const currentOrder = [...order]
     currentOrder[currentOrder.indexOf(draggingIndex)] = undefined
     currentOrder.splice(currentOrder.indexOf(targetIndex), 0, draggingIndex)
     const newOrder = currentOrder.filter((num) => num !== undefined)
-    setDraggingIndex(null)
-    setTargetIndex(null)
+    dispatchDragState({ type: 'END_DRAG' })
     setOrder(newOrder)
     onReorderEnd(newOrder)
+    ghostRef.current.innerHTML = ''
+    ghostRef.current.style.display = 'none'
+    ghostRef.current.style.opacity = '0'
   }
 
   const deleteItem = (target) => {
@@ -36,27 +62,55 @@ const DraggableList = ({
     setOrder(cloned)
     onReorderEnd(cloned)
   }
+
   return (
-    <ul>
-      {order.map((setIndex) => {
-        const item = items[setIndex]
-        return (
-          <Item
-            key={setIndex}
-            text={item?.label}
-            handleDragging={() => setDraggingIndex(setIndex)}
-            handleDragOver={() => setTargetIndex(setIndex)}
-            handleDragEnd={handleDragEnd}
-            isTarget={targetIndex === setIndex}
-            handleRemove={() => deleteItem(setIndex)}
-          >
-            {renderItem({
-              setIndex,
-            })}
-          </Item>
-        )
-      })}
-    </ul>
+    <>
+      <ul>
+        {order.map((setIndex) => {
+          const item = items[setIndex]
+          return (
+            <Item
+              key={setIndex}
+              text={item?.label}
+              handleDragging={(e, content) => {
+                if (ghostRef?.current) {
+                  ghostRef.current.style.display = 'block'
+                  ghostRef.current.style.opacity = '1'
+                  ghostRef.current.innerHTML = content
+                  e.dataTransfer.setDragImage(ghostRef.current, 0, 0)
+                }
+                dispatchDragState({
+                  type: 'SET_DRAG_INDEX',
+                  payload: setIndex,
+                })
+              }}
+              handleDragOver={() => {
+                dispatchDragState({
+                  type: 'SET_TARGET_INDEX',
+                  payload: setIndex,
+                })
+              }}
+              handleDragEnd={handleDragEnd}
+              isTarget={targetIndex === setIndex}
+              handleRemove={() => deleteItem(setIndex)}
+              isDragging={draggingIndex === setIndex}
+            >
+              {renderItem({
+                setIndex,
+              })}
+            </Item>
+          )
+        })}
+      </ul>
+      <div
+        ref={ghostRef}
+        class="fixed w-full bg-blue-100 px-4 py-2 shadow-lg"
+        style={{
+          display: 'none',
+          top: '2000px',
+        }}
+      />
+    </>
   )
 }
 
@@ -67,14 +121,22 @@ const Item = ({
   children,
   isTarget,
   handleRemove,
+  isDragging,
 }) => {
+  const ref = useRef(null)
   return (
-    <li class={`py-2 border-b-4 ${isTarget ? 'pt-10' : ''}`}>
-      <div class="flex justify-between" onDragOver={handleDragOver}>
-        <div class="flex items-center">
+    <li
+      ref={ref}
+      class={`py-2 border-b-4 ${isDragging ? 'opacity-50' : ''} `}
+      onDragOver={handleDragOver}
+    >
+      <div class={`flex justify-between `}>
+        <div class={`flex items-center ${isTarget ? 'pt-10' : ''}`}>
           <div
             draggable="true"
-            onDragStart={handleDragging}
+            onDragStart={(e) => {
+              handleDragging(e, ref.current.innerHTML)
+            }}
             onDragEnd={handleDragEnd}
             class="pr-2 font-xl flex items-center"
           >
