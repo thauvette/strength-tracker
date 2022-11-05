@@ -68,7 +68,7 @@ const Toasts = ({ toasts, removeToast }) => {
   }
 
   return createPortal(
-    <div class="fixed top-0 pt-4 left-2 right-2 z-20">
+    <div class="fixed bottom-0 pt-4 left-2 right-2 z-20">
       {toasts.map((toast) => {
         return (
           <div
