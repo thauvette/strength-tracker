@@ -1,5 +1,5 @@
 import { h } from 'preact'
-
+import { useState } from 'preact/hooks'
 import { Router, Link } from 'preact-router'
 import dayjs from 'dayjs'
 import ExerciseStats from '../../components/exerciseStats/ExerciseStats'
@@ -24,6 +24,13 @@ const Exercise = (props) => {
     itemsArrays?.[lastIndex]?.sort((a, b) =>
       a.create < b.create ? -1 : 1,
     )?.[0] || null
+
+  // using this to prevent making a change
+  // then looking at another tab and losing that change
+  const [savedSet, setSavedSet] = useState({
+    weight: null,
+    reps: null,
+  })
 
   return (
     <div>
@@ -67,6 +74,8 @@ const Exercise = (props) => {
           onAddSet={getData}
           lastWorkoutFirstSet={lastWorkoutFirstSet}
           exerciseName={exerciseHistory?.name}
+          savedSet={savedSet}
+          setSavedSet={setSavedSet}
         />
         <ExerciseStats
           path={`${routes.exerciseBase}/:id/history`}

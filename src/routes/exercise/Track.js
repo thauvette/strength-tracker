@@ -11,6 +11,8 @@ const Track = ({
   onAddSet,
   lastWorkoutFirstSet,
   exerciseName,
+  savedSet,
+  setSavedSet,
 }) => {
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
   const { createOrUpdateLoggedSet } = useDB()
@@ -26,8 +28,15 @@ const Track = ({
       <div className="border-b-4 pb-4">
         <p>New Set</p>
         <EditableSet
-          reps={lastSet?.reps || lastWorkoutFirstSet?.reps || 0}
-          weight={lastSet?.weight || lastWorkoutFirstSet?.weight || 0}
+          reps={
+            savedSet?.reps || lastSet?.reps || lastWorkoutFirstSet?.reps || 0
+          }
+          weight={
+            savedSet?.weight ||
+            lastSet?.weight ||
+            lastWorkoutFirstSet?.weight ||
+            0
+          }
           renderCtas={({ weight, reps }) => (
             <div class="px-2">
               <button
@@ -40,6 +49,18 @@ const Track = ({
               </button>
             </div>
           )}
+          onChangeReps={(reps) =>
+            setSavedSet({
+              ...savedSet,
+              reps,
+            })
+          }
+          onChangeWeight={(weight) =>
+            setSavedSet({
+              ...savedSet,
+              weight,
+            })
+          }
         />
       </div>
       <p>Today</p>
