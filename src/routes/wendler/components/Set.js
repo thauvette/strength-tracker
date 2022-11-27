@@ -12,6 +12,7 @@ const Set = ({
   handleViewHistory,
 }) => {
   const { reps, weight, completed } = set
+
   return (
     <div class="border-b py-4">
       {isActive ? (
@@ -22,7 +23,11 @@ const Set = ({
           title={
             <>
               {completed ? (
-                <Icon name="checkmark" class="text-2xl mr-2" />
+                <Icon
+                  name="checkmark-outline"
+                  width="28"
+                  class="text-2xl mr-2"
+                />
               ) : null}{' '}
               {title}
             </>
@@ -66,7 +71,13 @@ const Set = ({
         <button onClick={makeActive} class="text-left w-full">
           <div class="flex justify-between flex-wrap">
             <p class="capitalize font-bold flex items-center">
-              {completed && <Icon name="checkmark" class="text-2xl mr-2" />}
+              {completed && (
+                <Icon
+                  name="checkmark-outline"
+                  width="28"
+                  class="text-2xl mr-2"
+                />
+              )}
               {title}
             </p>
             <p class="shrink-0">
