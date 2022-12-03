@@ -24,9 +24,9 @@ const Track = ({
   }
 
   return (
-    <div class="relative">
+    <div class="relative px-2">
       <div className="border-b-4 pb-4">
-        <p>New Set</p>
+        <p class="text-xl">New Set</p>
         <EditableSet
           reps={
             savedSet?.reps || lastSet?.reps || lastWorkoutFirstSet?.reps || 0
@@ -63,7 +63,10 @@ const Track = ({
           }
         />
       </div>
-      <p>Today</p>
+      <div class="mx-2 pt-4">
+        <p class="text-xl">Today</p>
+      </div>
+
       {!!todaysHistory?.length &&
         todaysHistory.map((item) => (
           <div key={item.id} class="px-1">
