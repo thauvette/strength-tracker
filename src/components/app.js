@@ -17,6 +17,7 @@ import NewWorkout from '../routes/workout/newWorkout'
 import Settings from '../routes/settings/Settings'
 import BioMetrics from '../routes/bioMetrics/bioMetrics'
 import { ToastProvider } from '../context/toasts/Toasts'
+import { SessionDataProvider } from '../context/sessionData/sessionData'
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -32,15 +33,17 @@ const DBWrapper = () => {
       <Menu isOpen={menuIsOpen} />
       {isInitialized ? (
         <div class={`pt-4 flex-1 filter ${menuIsOpen ? 'blur-sm' : ''}`}>
-          <Router onChange={closeMenu}>
-            <Wendler path={`${routes.wendlerBase}/:remaining_path*`} />
-            <Exercise path={routes.exercise} />
-            <Backups path={routes.backups} />
-            <Logs path={routes.logs} />
-            <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
-            <Settings path={routes.settings} />
-            <BioMetrics path={`${routes.bioMetrics}/:remaining_path*`} />
-          </Router>
+          <SessionDataProvider>
+            <Router onChange={closeMenu}>
+              <Wendler path={`${routes.wendlerBase}/:remaining_path*`} />
+              <Exercise path={routes.exercise} />
+              <Backups path={routes.backups} />
+              <Logs path={routes.logs} />
+              <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
+              <Settings path={routes.settings} />
+              <BioMetrics path={`${routes.bioMetrics}/:remaining_path*`} />
+            </Router>
+          </SessionDataProvider>
         </div>
       ) : (
         <p>Loading</p>

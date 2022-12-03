@@ -7,6 +7,7 @@ import Track from './Track'
 import { routes } from '../../config/routes'
 import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
 import EditExercise from './EditExercise'
+import PlannedSets from './PlannedSets'
 
 const Exercise = (props) => {
   const { id, remaining_path } = props
@@ -20,10 +21,13 @@ const Exercise = (props) => {
     ? Object.values(exerciseHistory?.items || {})?.length - 1
     : 0
 
-  const lastWorkoutFirstSet =
-    itemsArrays?.[lastIndex]?.sort((a, b) =>
-      a.create < b.create ? -1 : 1,
-    )?.[0] || null
+  const lastWorkOutSorted = itemsArrays?.[lastIndex]?.sort((a, b) =>
+    a.create < b.create ? -1 : 1,
+  )
+
+  const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
+  const lastWorkoutLastSet =
+    lastWorkOutSorted?.[lastWorkOutSorted?.length - 1] || null
 
   // using this to prevent making a change
   // then looking at another tab and losing that change
@@ -62,6 +66,14 @@ const Exercise = (props) => {
         >
           Edit
         </Link>
+        <Link
+          href={`${routes.exerciseBase}/${id}/planned`}
+          class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
+            remaining_path === 'planned' ? '' : 'border-opacity-0'
+          }`}
+        >
+          Plan
+        </Link>
       </div>
 
       <Router>
@@ -86,6 +98,10 @@ const Exercise = (props) => {
           path={`${routes.exerciseBase}/:id/edit`}
           exerciseHistory={exerciseHistory}
           onEdit={getData}
+        />
+        <PlannedSets
+          path={`${routes.exerciseBase}/:id/planned`}
+          initialWeight={lastWorkoutLastSet?.weight || null}
         />
       </Router>
     </div>
