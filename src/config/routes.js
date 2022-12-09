@@ -13,6 +13,7 @@ export const routes = {
   newWorkout: '/workout',
   settings: '/settings',
   bioMetrics: '/bio',
+  fasting: '/fasting',
 }
 
 export const menuItems = [
@@ -31,5 +32,9 @@ export const menuItems = [
   {
     href: routes.bioMetrics,
     title: 'Bio Metrics',
+  },
+  {
+    href: routes.fasting,
+    title: 'Fasting Timer',
   },
 ]

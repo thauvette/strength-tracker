@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 // Code-splitting is automated for `routes` directory
 import { Router } from 'preact-router'
 
@@ -18,6 +18,7 @@ import Settings from '../routes/settings/Settings'
 import BioMetrics from '../routes/bioMetrics/bioMetrics'
 import { ToastProvider } from '../context/toasts/Toasts'
 import { SessionDataProvider } from '../context/sessionData/sessionData'
+import Fasting from '../routes/fasting/Fasting'
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -28,7 +29,7 @@ const DBWrapper = () => {
   const closeMenu = () => setMenuIsOpen(false)
 
   return (
-    <div id="app" class="flex flex-col w-full max-w-lg mx-auto relative">
+    <div id="app" class="flex flex-col w-full h-full max-w-lg mx-auto relative">
       <Header toggleMenu={toggleMenu} menuIsOpen={menuIsOpen} />
       <Menu isOpen={menuIsOpen} />
       {isInitialized ? (
@@ -42,6 +43,7 @@ const DBWrapper = () => {
               <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
               <Settings path={routes.settings} />
               <BioMetrics path={`${routes.bioMetrics}/:remaining_path*`} />
+              <Fasting path={routes.fasting} />
             </Router>
           </SessionDataProvider>
         </div>
@@ -51,7 +53,6 @@ const DBWrapper = () => {
     </div>
   )
 }
-
 const App = () => (
   <DBProvider>
     <ToastProvider>

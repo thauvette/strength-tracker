@@ -3,7 +3,8 @@ import { Link } from 'preact-router'
 import { useState, useEffect } from 'preact/hooks'
 
 import { routes } from '../../config/routes'
-import useDB, { objectStores } from '../../context/db/db'
+import useDB from '../../context/db/db'
+import { objectStores } from '../../context/db/config'
 
 import Modal from '../../components/modal/Modal'
 

@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import useDB, { objectStores } from '../../context/db/db'
+import useDB from '../../context/db/db'
+import { objectStores } from '../../context/db/config'
 
 import exerciseTypes from '../../config/exerciseTypes'
 import MuscleGroupsCheckList from './MuscleGroupsCheckList'

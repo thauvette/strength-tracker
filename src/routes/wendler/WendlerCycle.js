@@ -31,12 +31,12 @@ const formatResponse = (res) => {
 }
 
 export default function WendlerCycle({ id }) {
-  const { getItemById, updateWendlerItem } = useDB()
+  const { getWendlerCycle, updateWendlerItem } = useDB()
   const [workout, setWorkout] = useState(null)
 
   useEffect(() => {
-    getItemById(id).then((res) => setWorkout(formatResponse(res)))
-  }, [getItemById, id])
+    getWendlerCycle(id).then((res) => setWorkout(formatResponse(res)))
+  }, [getWendlerCycle, id])
 
   if (!workout) {
     return <p>Workout not found</p>

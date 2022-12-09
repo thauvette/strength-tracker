@@ -9,7 +9,7 @@ import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistor
 
 export default function WendlerWorkout({ id, week, mainLift }) {
   const {
-    getItemById,
+    getWendlerCycle,
     updateWendlerItem,
     createOrUpdateLoggedSet,
     deleteLoggedSet,
@@ -26,10 +26,10 @@ export default function WendlerWorkout({ id, week, mainLift }) {
   )
 
   useEffect(() => {
-    getItemById(id).then((res) => {
+    getWendlerCycle(id).then((res) => {
       setCycle(res)
     })
-  }, [getItemById, id])
+  }, [getWendlerCycle, id])
 
   const workout = get(cycle, ['weeks', week, mainLift])
   const isLegacy = !cycle?.version
