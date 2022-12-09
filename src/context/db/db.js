@@ -13,6 +13,8 @@ import {
   getWendlerCycle,
   createCycle,
 } from './wendler'
+import { createBioMetric } from './bioMetrics'
+import { createEntry, deleteEntry, getAllEntries, updateEntry } from './entries'
 
 const DBContext = createContext()
 
@@ -32,8 +34,6 @@ export const DBProvider = ({ children }) => {
 
   const openObjectStoreTransaction = (store) =>
     openObjectStoreTransactionUtil(db, store)
-
-  const getAllEntries = async (store) => await getFromCursor(store)
 
   const getExerciseOptions = () =>
     new Promise((resolve) => {
@@ -147,65 +147,6 @@ export const DBProvider = ({ children }) => {
         reject(err?.message || 'unable to delete item')
     })
 
-  const createEntry = (store, data) =>
-    new Promise((resolve, reject) => {
-      const { transaction, objectStore } = openObjectStoreTransaction(store)
-      const request = objectStore.add({
-        ...data,
-        created: new Date().getTime(),
-      })
-      request.onsuccess = (event) =>
-        resolve({
-          ...data,
-          id: event.target?.result,
-          created: new Date().getTime(),
-        })
-
-      transaction.onerror = function (err) {
-        // todo: Don't forget to handle errors!
-        console.warn(err, 'oops')
-        reject(new Error(err?.message || 'unable to create item'))
-      }
-    })
-
-  const deleteEntry = (store, id) =>
-    new Promise((resolve, reject) => {
-      const request = db
-        .transaction([store], 'readwrite')
-        .objectStore(store)
-        .delete(+id)
-      request.onsuccess = async function () {
-        try {
-          const remainingData = await getFromCursor(store)
-          resolve(remainingData)
-        } catch (e) {
-          reject(new Error(e?.message || 'something went wrong? '))
-        }
-      }
-    })
-  const updateEntry = (store, id, data) =>
-    new Promise((resolve, reject) => {
-      const { objectStore } = openObjectStoreTransaction(store)
-
-      const request = objectStore.get(+id)
-      request.onsuccess = () => {
-        if (!request.result) {
-          reject(new Error('unable to find entry'))
-        }
-        const newValue = {
-          ...request.result,
-          ...data,
-          updated: new Date().getTime(),
-        }
-        const requestUpdate = objectStore.put(newValue, +id)
-        requestUpdate.onerror = (err) =>
-          reject(err?.message || 'unable to update entry')
-
-        // Success - the data is updated!
-        requestUpdate.onsuccess = (e) =>
-          resolve({ ...newValue, id: e?.target?.result })
-      }
-    })
   const getExerciseById = (id) =>
     new Promise((resolve) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
@@ -389,39 +330,19 @@ export const DBProvider = ({ children }) => {
     }
   }
 
-  const createBioMetric = async (name) =>
-    new Promise((resolve) => {
-      const { objectStore } = openObjectStoreTransaction(
-        objectStores.bioMetrics,
-      )
-
-      const addRequest = objectStore.add({
-        name,
-        created: new Date().getTime(),
-      })
-      addRequest.onerror = (e) => console.warn(e)
-      addRequest.onsuccess = (event) => {
-        resolve({
-          name,
-          id: event?.target?.result,
-        })
-      }
-    })
-
   return (
     <DBContext.Provider
       value={{
         isInitialized: !!db,
         getWendlerCycle: (id) => getWendlerCycle(db, id),
-
         getWendlerExercises: () => getWendlerExercises(db),
         createCycle: (data) => createCycle(db, data),
         updateWendlerItem: ({ id, path, value }) =>
           updateWendlerItem(db, { id, path, value }),
-        getAllEntries,
-        deleteEntry,
-        createEntry,
-        updateEntry,
+        getAllEntries: (store) => getAllEntries(db, store),
+        deleteEntry: (store, id) => deleteEntry(db, store, id),
+        createEntry: (store, data) => createEntry(db, store, data),
+        updateEntry: (store, id, data) => updateEntry(db, store, id, data),
         createOrUpdateLoggedSet,
         deleteLoggedSet,
         getExerciseOptions,
@@ -430,7 +351,7 @@ export const DBProvider = ({ children }) => {
         createBackup,
         restoreFromBackup,
         getAllSetsHistory,
-        createBioMetric,
+        createBioMetric: (name) => createBioMetric(db, name),
         getMuscleGroups,
       }}
     >

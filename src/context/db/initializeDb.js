@@ -212,6 +212,13 @@ const initializeDb = (callback) => {
         unique: false,
       })
     }
+    if (e.oldVersion < 5) {
+      // adding fasting timer
+      const fastingStore = db.createObjectStore(objectStores.fasting, {
+        autoIncrement: true,
+      })
+      fastingStore.createIndex('created', 'created', { unique: true })
+    }
   }
 }
 
