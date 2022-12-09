@@ -3,7 +3,9 @@ import { useState } from 'preact/compat'
 import AnimateHeight from 'react-animate-height'
 
 import SetRowDrawer from './setRowDrawer'
-import useDB, { objectStores } from '../../context/db/db'
+import useDB from '../../context/db/db'
+import { objectStores } from '../../context/db/config'
+
 import Icon from '../icon/Icon'
 
 const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
