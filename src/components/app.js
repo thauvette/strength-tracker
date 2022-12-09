@@ -28,7 +28,7 @@ const DBWrapper = () => {
   const closeMenu = () => setMenuIsOpen(false)
 
   return (
-    <div id="app" class="flex flex-col w-full max-w-lg mx-auto relative">
+    <div id="app" class="flex flex-col w-full h-full max-w-lg mx-auto relative">
       <Header toggleMenu={toggleMenu} menuIsOpen={menuIsOpen} />
       <Menu isOpen={menuIsOpen} />
       {isInitialized ? (
@@ -51,7 +51,6 @@ const DBWrapper = () => {
     </div>
   )
 }
-
 const App = () => (
   <DBProvider>
     <ToastProvider>

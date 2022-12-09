@@ -644,7 +644,7 @@ export const DBProvider = ({ children }) => {
       const hiddenElement = document.createElement('a')
       hiddenElement.href = `data:text/csv;charset=utf-8, ${encodeURI(res)}`
       hiddenElement.target = '_blank'
-      hiddenElement.download = `strength-track-${dayjs().format()}`
+      hiddenElement.download = `strength-track-${dayjs().format('YYYY-MM-DD')}`
       hiddenElement.click()
     })
   }
