@@ -1,5 +1,4 @@
 import { useEffect, useState, createContext, useContext } from 'preact/compat'
-import set from 'lodash.set'
 import dayjs from 'dayjs'
 
 import {
@@ -8,6 +7,12 @@ import {
 } from './utils/dbUtils'
 import initializeDb from './initializeDb'
 import { objectStores } from './config'
+import {
+  getWendlerExercises,
+  updateWendlerItem,
+  getWendlerCycle,
+  createCycle,
+} from './wendler'
 
 const DBContext = createContext()
 
@@ -29,41 +34,6 @@ export const DBProvider = ({ children }) => {
     openObjectStoreTransactionUtil(db, store)
 
   const getAllEntries = async (store) => await getFromCursor(store)
-
-  // TODO: rename or rework
-  const getItemById = (id) =>
-    new Promise((resolve, reject) => {
-      const { objectStore } = openObjectStoreTransaction(
-        objectStores.wendlerCycles,
-      )
-      const request = objectStore.get(+id)
-      request.onerror = function (err) {
-        console.warn('Err', err)
-        reject(err?.message || 'unable to find item')
-      }
-      request.onsuccess = (event) => resolve(event.target.result)
-    })
-
-  const getWendlerExercises = () =>
-    new Promise((resolve) => {
-      const { objectStore: store } = openObjectStoreTransaction(
-        objectStores.exercises,
-      )
-      const keyRangeValue = IDBKeyRange.bound(1, 4)
-      const results = []
-      store.openCursor(keyRangeValue).onsuccess = (e) => {
-        const cursor = e.target.result
-        if (cursor) {
-          results.push({
-            ...cursor.value,
-            primaryId: cursor.primaryKey,
-          })
-          cursor.continue()
-        } else {
-          resolve(results)
-        }
-      }
-    })
 
   const getExerciseOptions = () =>
     new Promise((resolve) => {
@@ -129,36 +99,6 @@ export const DBProvider = ({ children }) => {
     )
   }
 
-  const updateWendlerItem = ({ id, path, value }) =>
-    new Promise((resolve, reject) => {
-      // get the current item.
-      const { objectStore } = openObjectStoreTransaction(
-        objectStores.wendlerCycles,
-      )
-      const request = objectStore.get(+id)
-
-      request.onerror = (err) => reject(err?.message || 'unable to find data')
-
-      request.onsuccess = () => {
-        if (!request.result) {
-          reject(new Error('unable to find entry'))
-        }
-
-        const currentEntry = { ...request.result }
-
-        set(currentEntry, path, value)
-
-        // Put this updated object back into the database.
-        const requestUpdate = objectStore.put(currentEntry, +id)
-
-        requestUpdate.onerror = (err) =>
-          reject(err?.message || 'unable to update entry')
-
-        // Success - the data is updated!
-        requestUpdate.onsuccess = () => resolve(currentEntry)
-      }
-    })
-
   const createOrUpdateLoggedSet = (id, data) =>
     new Promise((resolve, reject) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.sets)
@@ -205,34 +145,6 @@ export const DBProvider = ({ children }) => {
       deleteRequest.onsuccess = () => resolve(true)
       deleteRequest.onerror = (err) =>
         reject(err?.message || 'unable to delete item')
-    })
-
-  const createCycle = (data) =>
-    new Promise((resolve, reject) => {
-      {
-        if (!db) {
-          return
-        }
-        const { objectStore, transaction } = openObjectStoreTransaction(
-          objectStores.wendlerCycles,
-        )
-
-        transaction.oncomplete = function () {
-          resolve({ success: true })
-        }
-
-        transaction.onerror = function (event) {
-          // todo: Don't forget to handle errors!
-          console.warn(event, 'oops')
-          reject()
-        }
-
-        if (data.id) {
-          objectStore.put({ ...data, updated: new Date().getTime() }, +data.id)
-        } else {
-          objectStore.add({ ...data, created: new Date().getTime() })
-        }
-      }
     })
 
   const createEntry = (store, data) =>
@@ -499,12 +411,14 @@ export const DBProvider = ({ children }) => {
   return (
     <DBContext.Provider
       value={{
-        getItemById,
-        getAllEntries,
-        getWendlerExercises,
-        createCycle,
         isInitialized: !!db,
-        updateWendlerItem,
+        getWendlerCycle: (id) => getWendlerCycle(db, id),
+
+        getWendlerExercises: () => getWendlerExercises(db),
+        createCycle: (data) => createCycle(db, data),
+        updateWendlerItem: ({ id, path, value }) =>
+          updateWendlerItem(db, { id, path, value }),
+        getAllEntries,
         deleteEntry,
         createEntry,
         updateEntry,
