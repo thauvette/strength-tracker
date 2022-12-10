@@ -19,34 +19,19 @@ import BioMetrics from '../routes/bioMetrics/bioMetrics'
 import { ToastProvider } from '../context/toasts/Toasts'
 import { SessionDataProvider } from '../context/sessionData/sessionData'
 import Fasting from '../routes/fasting/Fasting'
-import ExerciseSearchMenu from './ExerciseSearchMenu'
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
 
   const [menuIsOpen, setMenuIsOpen] = useState(false)
-  const [exerciseSearchOpen, setExerciseSearchOpen] = useState(false)
+
   const toggleMenu = () => setMenuIsOpen(!menuIsOpen)
   const closeMenu = () => setMenuIsOpen(false)
 
-  const toggleExerciseSearch = () => setExerciseSearchOpen(!exerciseSearchOpen)
-  const closeExerciseSearch = () => setExerciseSearchOpen(false)
-
   return (
     <div id="app" class="flex flex-col w-full h-full max-w-lg mx-auto relative">
-      <Header
-        toggleMenu={toggleMenu}
-        menuIsOpen={menuIsOpen}
-        toggleExerciseSearch={toggleExerciseSearch}
-        closeMenu={closeMenu}
-        closeExerciseSearch={closeExerciseSearch}
-        exerciseSearchOpen={exerciseSearchOpen}
-      />
+      <Header toggleMenu={toggleMenu} menuIsOpen={menuIsOpen} />
       <Menu isOpen={menuIsOpen} />
-      <ExerciseSearchMenu
-        isOpen={exerciseSearchOpen}
-        closeExerciseSearch={closeExerciseSearch}
-      />
       {isInitialized ? (
         <div class={`pt-4 flex-1 filter ${menuIsOpen ? 'blur-sm' : ''}`}>
           <SessionDataProvider>
