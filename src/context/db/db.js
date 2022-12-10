@@ -15,6 +15,11 @@ import {
 } from './wendler'
 import { createBioMetric } from './bioMetrics'
 import { createEntry, deleteEntry, getAllEntries, updateEntry } from './entries'
+import {
+  createOrUpdateLoggedSet,
+  deleteLoggedSet,
+  getAllSetsHistory,
+} from './sets'
 
 const DBContext = createContext()
 
@@ -99,54 +104,6 @@ export const DBProvider = ({ children }) => {
     )
   }
 
-  const createOrUpdateLoggedSet = (id, data) =>
-    new Promise((resolve, reject) => {
-      const { objectStore } = openObjectStoreTransaction(objectStores.sets)
-
-      if (!id) {
-        const addRequest = objectStore.add({
-          ...data,
-          created: new Date().getTime(),
-        })
-        addRequest.onerror = (e) => console.warn(e)
-        addRequest.onsuccess = (event) => {
-          return resolve({
-            ...data,
-            created: new Date().getTime(),
-            id: event?.target?.result,
-          })
-        }
-      } else {
-        const request = objectStore.get(+id)
-        request.onsuccess = () => {
-          if (!request.result) {
-            reject(new Error('unable to find entry'))
-          }
-          const newValue = {
-            ...request.result,
-            ...data,
-            updated: new Date().getTime(),
-          }
-          const requestUpdate = objectStore.put(newValue, +id)
-          requestUpdate.onerror = (err) =>
-            reject(err?.message || 'unable to update entry')
-
-          // Success - the data is updated!
-          requestUpdate.onsuccess = (e) =>
-            resolve({ ...newValue, id: e?.target?.result })
-        }
-      }
-    })
-
-  const deleteLoggedSet = (id) =>
-    new Promise((resolve, reject) => {
-      const { objectStore } = openObjectStoreTransaction(objectStores.sets)
-      const deleteRequest = objectStore.delete(id)
-      deleteRequest.onsuccess = () => resolve(true)
-      deleteRequest.onerror = (err) =>
-        reject(err?.message || 'unable to delete item')
-    })
-
   const getExerciseById = (id) =>
     new Promise((resolve) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
@@ -206,38 +163,6 @@ export const DBProvider = ({ children }) => {
             })
           }
         }
-      })
-    })
-
-  const getAllSetsHistory = () =>
-    new Promise((resolve) => {
-      return Promise.all([
-        getFromCursor(objectStores.exercises),
-        getFromCursor(objectStores.sets),
-        getFromCursor(objectStores.muscleGroups),
-      ]).then(([exercises, entries, muscleGroups]) => {
-        const results = Object.values(entries || {})?.reduce((obj, entry) => {
-          if (!entry.created || !entry.exercise) {
-            return obj
-          }
-
-          const dateKey = entry.created
-            ? dayjs(entry.created).format('YYYY-MM-DD')
-            : 'lost'
-
-          const exercise = exercises[entry.exercise]
-          const currentItems = obj[dateKey] || []
-          currentItems.push({
-            ...exercise,
-            ...entry,
-            primaryGroupName: muscleGroups?.[exercise?.primaryGroup]?.name,
-          })
-          return {
-            ...obj,
-            [dateKey]: currentItems,
-          }
-        }, {})
-        resolve(results)
       })
     })
 
@@ -334,23 +259,27 @@ export const DBProvider = ({ children }) => {
     <DBContext.Provider
       value={{
         isInitialized: !!db,
+        // WENDLER
         getWendlerCycle: (id) => getWendlerCycle(db, id),
         getWendlerExercises: () => getWendlerExercises(db),
         createCycle: (data) => createCycle(db, data),
         updateWendlerItem: ({ id, path, value }) =>
           updateWendlerItem(db, { id, path, value }),
+        // ENTRIES
         getAllEntries: (store) => getAllEntries(db, store),
         deleteEntry: (store, id) => deleteEntry(db, store, id),
         createEntry: (store, data) => createEntry(db, store, data),
         updateEntry: (store, id, data) => updateEntry(db, store, id, data),
-        createOrUpdateLoggedSet,
-        deleteLoggedSet,
+        // SETS
+        createOrUpdateLoggedSet: (id, data) =>
+          createOrUpdateLoggedSet(db, id, data),
+        deleteLoggedSet: (id) => deleteLoggedSet(db, id),
+        getAllSetsHistory: () => getAllSetsHistory(db),
         getExerciseOptions,
         getExerciseHistoryById,
         getExerciseById,
         createBackup,
         restoreFromBackup,
-        getAllSetsHistory,
         createBioMetric: (name) => createBioMetric(db, name),
         getMuscleGroups,
       }}
