@@ -2,6 +2,7 @@ import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import dayjs from 'dayjs'
 import dateFormats from '../../config/dateFormats'
+import useToast from '../../context/toasts/Toasts'
 
 const BioMetricForm = ({
   initialValues,
@@ -16,12 +17,15 @@ const BioMetricForm = ({
     initialValues?.time || dayjs().format(dateFormats.time),
   )
   const [value, setValue] = useState(initialValues?.value || '')
-
+  const { fireToast } = useToast()
   const handleAddEntry = (e) => {
     e.preventDefault()
     submit({
       value,
       date: dayjs(`${date}T${time}:00`).format(),
+    })
+    fireToast({
+      text: `${name} added`,
     })
   }
 
