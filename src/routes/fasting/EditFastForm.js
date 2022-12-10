@@ -4,13 +4,19 @@ import { useState } from 'preact/hooks'
 const EditFastForm = ({ initialValues, handleSubmit }) => {
   const [formValues, setFormValues] = useState({ ...initialValues })
 
-  const submit = () =>
+  const submit = () => {
+    const endDateTime =
+      formValues.endDate && formValues.endTime
+        ? new Date(`${formValues.endDate}T${formValues.endTime}:00`).getTime()
+        : null
     handleSubmit({
       start: new Date(
         `${formValues.startDate}T${formValues.startTime}:00`,
       ).getTime(),
-      end: new Date(`${formValues.endDate}T${formValues.endTime}:00`).getTime(),
+      end: endDateTime,
     })
+  }
+
   const handleInput = (e) => {
     setFormValues({
       ...formValues,
@@ -20,9 +26,9 @@ const EditFastForm = ({ initialValues, handleSubmit }) => {
 
   return (
     <div>
-      <p class="text-lg">Start</p>
+      <p class="text-lg text-center font-bold my-2">Start</p>
       <label class="flex items-center py-1">
-        <p class="w-2/4">Date</p>
+        <p class="w-2/4 ">Date *</p>
         <input
           class="w-2/4"
           type="date"
@@ -33,7 +39,7 @@ const EditFastForm = ({ initialValues, handleSubmit }) => {
         />
       </label>
       <label class="flex items-center py-1">
-        <p class="w-2/4">Time</p>
+        <p class="w-2/4">Time *</p>
         <input
           class="w-2/4"
           type="time"
@@ -43,7 +49,7 @@ const EditFastForm = ({ initialValues, handleSubmit }) => {
           placeholder="time"
         />
       </label>
-      <p class="text-lg">End</p>
+      <p class="text-lg text-center font-bold my-2">End</p>
       <label class="flex items-center py-1">
         <p class="w-2/4">Date</p>
         <input
@@ -66,7 +72,11 @@ const EditFastForm = ({ initialValues, handleSubmit }) => {
           placeholder="time"
         />
       </label>
-      <button onClick={submit} class="bg-blue-900 text-white">
+      <button
+        disabled={!formValues.startDate || !formValues.startTime}
+        onClick={submit}
+        class="bg-blue-900 text-white"
+      >
         Save
       </button>
     </div>
