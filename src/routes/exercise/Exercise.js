@@ -12,6 +12,13 @@ import PlannedSets from './PlannedSets'
 const Exercise = (props) => {
   const { id, remaining_path } = props
   const [exerciseHistory, getData] = useExerciseHistory(id)
+  // using this to prevent making a change
+  // then looking at another tab and losing that change
+  const [savedSet, setSavedSet] = useState({
+    weight: null,
+    reps: null,
+  })
+
   if (!exerciseHistory) {
     return null
   }
@@ -26,15 +33,9 @@ const Exercise = (props) => {
   )
 
   const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
-  const lastWorkoutLastSet =
-    lastWorkOutSorted?.[lastWorkOutSorted?.length - 1] || null
 
-  // using this to prevent making a change
-  // then looking at another tab and losing that change
-  const [savedSet, setSavedSet] = useState({
-    weight: null,
-    reps: null,
-  })
+  const lastSetWeights = lastWorkOutSorted?.map((set) => set.weight)
+  const maxWeight = lastSetWeights?.length ? Math.max(...lastSetWeights) : null
 
   return (
     <div>
@@ -101,7 +102,7 @@ const Exercise = (props) => {
         />
         <PlannedSets
           path={`${routes.exerciseBase}/:id/planned`}
-          initialWeight={lastWorkoutLastSet?.weight || null}
+          initialWeight={maxWeight || null}
         />
       </Router>
     </div>
