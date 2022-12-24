@@ -1,6 +1,6 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import { Router, Link } from 'preact-router'
+import { useState, useEffect } from 'preact/hooks'
+import { Router, Link, route } from 'preact-router'
 import dayjs from 'dayjs'
 import ExerciseStats from '../../components/exerciseStats/ExerciseStats'
 import Track from './Track'
@@ -8,6 +8,7 @@ import { routes } from '../../config/routes'
 import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
 import EditExercise from './EditExercise'
 import PlannedSets from './PlannedSets'
+import useSessionContext from '../../context/sessionData/sessionData'
 
 const Exercise = (props) => {
   const { id, remaining_path } = props
@@ -18,6 +19,15 @@ const Exercise = (props) => {
     weight: null,
     reps: null,
   })
+
+  const { updatePlanedSet, getPlannedSets } = useSessionContext()
+  const plannedSet = getPlannedSets(id)
+
+  useEffect(() => {
+    if (plannedSet) {
+      route(`/exercise/${id}/planned`)
+    }
+  }, []) // eslint-disable-line
 
   if (!exerciseHistory) {
     return null
@@ -103,6 +113,9 @@ const Exercise = (props) => {
         <PlannedSets
           path={`${routes.exerciseBase}/:id/planned`}
           initialWeight={maxWeight || null}
+          onChangeCompleteSet={getData}
+          plannedSet={plannedSet}
+          updatePlanedSet={updatePlanedSet}
         />
       </Router>
     </div>
