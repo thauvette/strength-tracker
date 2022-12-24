@@ -52,8 +52,7 @@ export const formatPrs = (items) => {
 
     const actualWeight = maxes[targetKey]?.weight
     const lastWeight = maxes[lastRepsWithData]?.weight
-
-    const shouldUseLastSet = !!(!actualWeight || lastWeight > actualWeight)
+    const shouldUseLastSet = !!(!actualWeight || lastWeight >= actualWeight)
     const isActualSet = hasActualData && !shouldUseLastSet
     if (isActualSet) {
       lastRepsWithData = targetKey
