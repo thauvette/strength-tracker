@@ -66,5 +66,15 @@ export const formatPrs = (items) => {
         ? maxes[targetKey]?.created
         : maxes[lastRepsWithData]?.created,
     }
-  }).reverse()
+  })
+    .reverse()
+    .map((set) => {
+      const daysHistory = items.filter((item) =>
+        dayjs(item.created).isSame(dayjs(set.date), 'day'),
+      )
+      return {
+        ...set,
+        daysHistory,
+      }
+    })
 }
