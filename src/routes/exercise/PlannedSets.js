@@ -3,26 +3,37 @@ import { h } from 'preact'
 import Plan from './Plan'
 import PlannedWorkout from './PlannedWorkout'
 import useDB from '../../context/db/db'
+import dayjs from 'dayjs'
 
 const PlannedSets = ({
   id,
-  initialWeight,
   onChangeCompleteSet,
   updatePlanedSet,
   plannedSet,
+  lastHeavySet,
 }) => {
   const { createOrUpdateLoggedSet } = useDB()
   if (!plannedSet) {
     return (
-      <Plan
-        initialWeight={initialWeight}
-        updatePlanedSet={(sets) =>
-          updatePlanedSet({
-            id,
-            sets,
-          })
-        }
-      />
+      <>
+        {lastHeavySet ? (
+          <div class="px-4">
+            <p class="font-bold mb-4">
+              * Last heavy set: {lastHeavySet.reps} @ {lastHeavySet.weight} on{' '}
+              {dayjs(lastHeavySet.created).format('MMM DD YYYY')}
+            </p>
+          </div>
+        ) : null}
+        <Plan
+          initialWeight={lastHeavySet?.weight}
+          updatePlanedSet={(sets) =>
+            updatePlanedSet({
+              id,
+              sets,
+            })
+          }
+        />
+      </>
     )
   }
   return (

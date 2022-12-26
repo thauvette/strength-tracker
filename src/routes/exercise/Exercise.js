@@ -43,10 +43,16 @@ const Exercise = (props) => {
   )
 
   const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
+  const heaviestSet = lastWorkOutSorted.reduce((obj, set) => {
+    if (!obj || +obj.weight < +set.weight) {
+      return set
+    }
+    return obj
+  }, null)
 
   const lastSetWeights = lastWorkOutSorted?.map((set) => set.weight)
   const maxWeight = lastSetWeights?.length ? Math.max(...lastSetWeights) : null
-
+  // const maxWeightSet =
   return (
     <div>
       <div class="px-2">
@@ -112,7 +118,7 @@ const Exercise = (props) => {
         />
         <PlannedSets
           path={`${routes.exerciseBase}/:id/planned`}
-          initialWeight={maxWeight || null}
+          lastHeavySet={heaviestSet}
           onChangeCompleteSet={getData}
           plannedSet={plannedSet}
           updatePlanedSet={updatePlanedSet}
