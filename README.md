@@ -2,12 +2,6 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-Muscle Group Refactor TODO:
-
-<!-- prettier-ignore -->
-- restore from backup needs to check for muscle groups (if not a number try to match or create new.)
-  - could maybe return an array of "conflicts"
-
 TODO: change app name and logo, and favicon
 
 <!-- prettier-ignore -->
@@ -22,8 +16,6 @@ TODO: wendler first set last vs BBB and SLBBB
 
 TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
 
-TODO: stats view.
-
 TODO: back up settings (move to indexedDb as well)
 
 TODO: styles not loading when offline - probably also want to remove code splitting
@@ -37,8 +29,6 @@ TODO: clean up all naming conventions.
 TODO: more stats on exercise view (Charts)
 
 TODO: non-wendler routines
-
-TODO: clean up useDB, that got out of hand 😬
 
 TODO: wendler form errors
 

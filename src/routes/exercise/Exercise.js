@@ -50,9 +50,6 @@ const Exercise = (props) => {
     return obj
   }, null)
 
-  const lastSetWeights = lastWorkOutSorted?.map((set) => set.weight)
-  const maxWeight = lastSetWeights?.length ? Math.max(...lastSetWeights) : null
-  // const maxWeightSet =
   return (
     <div>
       <div class="px-2">
