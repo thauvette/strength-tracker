@@ -14,6 +14,9 @@ export const routes = {
   settings: '/settings',
   bioMetrics: '/bio',
   fasting: '/fasting',
+  routines: '/routines/:remaining_path*',
+  routinesBase: '/routines',
+  routinesNew: '/routines/new',
 }
 
 export const menuItems = [
@@ -36,5 +39,9 @@ export const menuItems = [
   {
     href: routes.fasting,
     title: 'Fasting Timer',
+  },
+  {
+    href: routes.routines,
+    title: 'Routines',
   },
 ]

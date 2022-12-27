@@ -19,6 +19,7 @@ import BioMetrics from '../routes/bioMetrics/bioMetrics'
 import { ToastProvider } from '../context/toasts/Toasts'
 import { SessionDataProvider } from '../context/sessionData/sessionData'
 import Fasting from '../routes/fasting/Fasting'
+import Routines from '../routes/routines/Routines'
 
 const DBWrapper = () => {
   const { isInitialized } = useDB()
@@ -44,6 +45,7 @@ const DBWrapper = () => {
               <Settings path={routes.settings} />
               <BioMetrics path={`${routes.bioMetrics}/:remaining_path*`} />
               <Fasting path={routes.fasting} />
+              <Routines path={routes.routines} />
             </Router>
           </SessionDataProvider>
         </div>
