@@ -19,6 +19,24 @@ const maths = {
     weeks[0][weeks[0].length - 3],
   ]),
   fiveThreeOne: convertWeekMath(weeks[2]),
+  fiveByFiveFlat: convertWeekMath([
+    weeks[0][2],
+    weeks[0][3],
+    weeks[0][4],
+    weeks[0][5],
+    weeks[0][5],
+    weeks[0][5],
+    weeks[0][5],
+    weeks[0][5],
+  ]),
+  threeByFiveFlat: convertWeekMath([
+    weeks[0][2],
+    weeks[0][3],
+    weeks[0][4],
+    weeks[0][5],
+    weeks[0][5],
+    weeks[0][5],
+  ]),
 }
 
 const Plan = ({ initialWeight, updatePlanedSet }) => {
@@ -42,6 +60,8 @@ const Plan = ({ initialWeight, updatePlanedSet }) => {
           <option value="threeByFiveAscending">3 x 5 Ascending</option>
           <option value="threeByFivePyramid">5 x 5 Pyramid</option>
           <option value="fiveThreeOne">5 3 1</option>
+          <option value="fiveByFiveFlat">5 x 5 flat</option>
+          <option value="threeByFiveFlat">3 x 5 flat</option>
         </select>
       </div>
       <div class="max-w-xs py-6">
