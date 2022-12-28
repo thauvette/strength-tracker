@@ -10,7 +10,7 @@ const convertWeekMath = (week) => {
     math: day.math / maxPercent,
   }))
 }
-console.log(weeks[0])
+
 const maths = {
   threeByFiveAscending: convertWeekMath(weeks[0]),
   threeByFivePyramid: convertWeekMath([
@@ -38,7 +38,7 @@ const maths = {
     weeks[0][5],
   ]),
 }
-console.log(maths.fiveByFiveFlat)
+
 const Plan = ({ initialWeight, updatePlanedSet }) => {
   const [goal, setGoal] = useState(initialWeight || 100)
   const [type, setType] = useState('threeByFiveAscending')
