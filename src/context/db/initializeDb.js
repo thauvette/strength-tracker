@@ -219,6 +219,14 @@ const initializeDb = (callback) => {
       })
       fastingStore.createIndex('created', 'created', { unique: true })
     }
+    if (e.oldVersion < 6) {
+      // adding routines
+      const routineStore = db.createObjectStore(objectStores.routines, {
+        autoIncrement: true,
+      })
+      routineStore.createIndex('name', 'name', { unique: false })
+      routineStore.createIndex('id', 'id', { unique: true })
+    }
   }
 }
 

@@ -41,7 +41,7 @@ export const menuItems = [
     title: 'Fasting Timer',
   },
   {
-    href: routes.routines,
+    href: routes.routinesBase,
     title: 'Routines',
   },
 ]
