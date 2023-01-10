@@ -43,12 +43,13 @@ const Exercise = (props) => {
   )
 
   const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
-  const heaviestSet = lastWorkOutSorted.reduce((obj, set) => {
-    if (!obj || +obj.weight < +set.weight) {
-      return set
-    }
-    return obj
-  }, null)
+  const heaviestSet =
+    lastWorkOutSorted?.reduce((obj, set) => {
+      if (!obj || +obj.weight < +set.weight) {
+        return set
+      }
+      return obj
+    }, null) || null
 
   return (
     <div>
