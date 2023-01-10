@@ -50,6 +50,17 @@ const AddExerciseTabs = ({ selectedExercise, submit }) => {
   }
 
   const handleSubmit = () => {
+    if (!addedSets?.length) {
+      submit([
+        {
+          exerciseId: selectedExercise.id,
+          exerciseName: selectedExercise.name,
+          freeForm: true,
+        },
+      ])
+      return
+    }
+
     submit(
       addedSets.map((set) => ({
         ...set,

@@ -403,7 +403,120 @@ const Icon = ({ name, width = '16' }) => {
           />
         </svg>
       )
-
+    case 'stopwatch-outline':
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          width={width}
+        >
+          <title>Stopwatch</title>
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+            d="M256 232v-80"
+          />
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="48"
+            d="M256 88V72M132 132l-12-12"
+          />
+          <circle
+            cx="256"
+            cy="272"
+            r="32"
+            fill="none"
+            stroke="currentColor"
+            stroke-miterlimit="10"
+            stroke-width="32"
+          />
+          <path
+            d="M256 96a176 176 0 10176 176A176 176 0 00256 96z"
+            fill="none"
+            stroke="currentColor"
+            stroke-miterlimit="10"
+            stroke-width="32"
+          />
+        </svg>
+      )
+    case 'barbell-outline':
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          width={width}
+        >
+          <title>Barbell</title>
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+            d="M48 256h416"
+          />
+          <rect
+            x="384"
+            y="128"
+            width="32"
+            height="256"
+            rx="16"
+            ry="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+          />
+          <rect
+            x="96"
+            y="128"
+            width="32"
+            height="256"
+            rx="16"
+            ry="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+          />
+          <rect
+            x="32"
+            y="192"
+            width="16"
+            height="128"
+            rx="8"
+            ry="8"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+          />
+          <rect
+            x="464"
+            y="192"
+            width="16"
+            height="128"
+            rx="8"
+            ry="8"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+          />
+        </svg>
+      )
     default:
       return null
   }

@@ -25,17 +25,17 @@ const initializeDb = (callback) => {
     if (requiresExercises) {
       exerciseTransaction
         .objectStore(objectStores.exercises)
-        .add({ name: 'deadlift', primaryGroup: 'back' })
+        .add({ name: 'deadlift', primaryGroup: 1 })
       exerciseTransaction.objectStore(objectStores.exercises).add({
         name: 'barbell bench press',
-        primaryGroup: 'chest',
+        primaryGroup: 2,
       })
       exerciseTransaction
         .objectStore(objectStores.exercises)
-        .add({ name: 'barbell back squat', primaryGroup: 'legs' })
+        .add({ name: 'barbell back squat', primaryGroup: 3 })
       exerciseTransaction.objectStore(objectStores.exercises).add({
         name: 'standing overhead press',
-        primaryGroup: 'shoulders',
+        primaryGroup: 4,
       })
     }
     if (requiresBioMetrics) {

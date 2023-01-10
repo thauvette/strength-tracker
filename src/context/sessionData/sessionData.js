@@ -16,9 +16,22 @@ export const SessionDataProvider = ({ children }) => {
 
   const getPlannedSets = (id) => sessionState?.plannedSet?.[id] || null
 
+  const startRoutine = (sets) => {
+    setSessionState({
+      ...sessionState,
+      routine: sets,
+    })
+  }
+
   return (
     <SessionDataContext.Provider
-      value={{ sessionState, updatePlanedSet, getPlannedSets }}
+      value={{
+        sessionState,
+        updatePlanedSet,
+        getPlannedSets,
+        startRoutine,
+        activeRoutine: sessionState?.routine,
+      }}
     >
       {children}
     </SessionDataContext.Provider>

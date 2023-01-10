@@ -1,10 +1,14 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
+import { route } from 'preact-router'
+
 import generateRandomId from '../../utilities.js/generateRandomId'
 import Modal from '../../components/modal/Modal'
 import AddExerciseForm from './AddExerciseForm'
 import ReorderForm from '../wendler/newSchedule/components/reorderForm'
 import useDB from '../../context/db/db'
+
+import { routes } from '../../config/routes'
 
 const CreateRoutine = () => {
   const { createRoutine } = useDB()
@@ -80,9 +84,18 @@ const CreateRoutine = () => {
   const submit = () => {
     createRoutine({
       name: routineName,
-      days,
+      days: days.map((day) => ({
+        name: day.name,
+        sets:
+          day.sets?.map((set) => ({
+            weight: set.weight,
+            reps: set.reps,
+            exercise: set.exerciseId,
+            exerciseName: set.exerciseName,
+          })) || [],
+      })),
     }).then((res) => {
-      console.log(res)
+      route(`${routes.routinesBase}/${res?.id}`)
     })
   }
 
@@ -115,11 +128,14 @@ const CreateRoutine = () => {
               </div>
               {day.sets.length ? (
                 <div>
-                  {day.sets.map(({ exerciseName, id, reps, weight }) => (
-                    <p key={id}>
-                      {exerciseName} - {reps} @ {weight}
-                    </p>
-                  ))}
+                  {day.sets.map(
+                    ({ exerciseName, id, reps, weight, freeForm }) => (
+                      <p key={id}>
+                        {exerciseName} -{' '}
+                        {freeForm ? 'unknown sets' : `${reps} @ ${weight}`}
+                      </p>
+                    ),
+                  )}
                   <button
                     onClick={() =>
                       setExerciseModalState({
@@ -168,11 +184,14 @@ const CreateRoutine = () => {
           {exerciseModalState.formType === 'edit' ? (
             <div>
               <ReorderForm
+                hideAllWeeksCheckbox
                 items={
                   days
                     .find((day) => day.id === exerciseModalState.dayId)
-                    ?.sets?.map(({ exerciseName, reps, weight }) => ({
-                      label: `${exerciseName} - ${reps} @ ${weight}`,
+                    ?.sets?.map(({ exerciseName, reps, weight, freeForm }) => ({
+                      label: freeForm
+                        ? `${exerciseName} - unknown sets`
+                        : `${exerciseName} - ${reps} @ ${weight}`,
                     })) || []
                 }
                 onSave={({ newOrder }) => {

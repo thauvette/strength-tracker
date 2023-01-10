@@ -1,35 +1,19 @@
 import { h } from 'preact'
 import Router from 'preact-router'
 import { routes } from '../../config/routes'
+import ActiveRoutine from './ActiveRoutine'
 import CreateRoutine from './CreateRoutine'
-
-/**
- * routines array
- *      - days array
- *          - sets - running order. (use "plan" style?)
- *  routine : {
- *      id,
- *      days: [{
- *          name: '',
- *          sets: [{
- *              exercise, // id of exercise
- *              reps
- *              sets
- *              completed? // time stamp
- *              id? // if completed id of set
- *           }]
- *      }]
- *  }
- *
- *  need to be repeatable,
- */
+import Routine from './Routine'
+import RoutineList from './RoutineList'
 
 const Routines = () => {
   return (
-    <div>
-      <h1>Routines</h1>
+    <div class="px-4">
       <Router>
         <CreateRoutine path={routes.routinesNew} />
+        <RoutineList path={routes.routinesBase} />
+        <Routine path={`${routes.routinesBase}/:id`} />
+        <ActiveRoutine path={routes.activeRoutine} />
       </Router>
     </div>
   )

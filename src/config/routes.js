@@ -17,6 +17,7 @@ export const routes = {
   routines: '/routines/:remaining_path*',
   routinesBase: '/routines',
   routinesNew: '/routines/new',
+  activeRoutine: '/routines/active',
 }
 
 export const menuItems = [

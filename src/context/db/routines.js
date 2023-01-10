@@ -9,8 +9,8 @@ export const createRoutine = (db, data) =>
       objectStores.routines,
     )
     const addRequest = objectStore.add({
-      data,
       created: new Date().getTime(),
+      ...data,
     })
     addRequest.onerror = (e) => console.warn(e)
     addRequest.onsuccess = (event) => {
