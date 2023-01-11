@@ -38,7 +38,7 @@ export const formatHistory = (items) => {
   )
 
   const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
-  const heaviestSet = lastWorkOutSorted.reduce((obj, set) => {
+  const heaviestSet = lastWorkOutSorted?.reduce((obj, set) => {
     if (!obj || +obj.weight < +set.weight) {
       return set
     }
