@@ -11,11 +11,12 @@ export default function Accordion({
   smallIcon,
   headerClassName,
   headerIcon,
+  containerClass = '',
 }) {
   const [isOpen, setIsOpen] = useState(openByDefault)
 
   return (
-    <div class="">
+    <div class={containerClass}>
       <button
         class={`w-full ${headerClassName || ''}`}
         onClick={() => setIsOpen(!isOpen)}

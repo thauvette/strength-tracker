@@ -5,11 +5,35 @@ import ExerciseStats from '../../components/exerciseStats/ExerciseStats'
 import Plan from '../exercise/Plan'
 import EditableSet from '../../components/editableSet/editableSet'
 import generateRandomId from '../../utilities.js/generateRandomId'
+import Accordion from '../../components/accordion/accordion'
 
-const AddExerciseTabs = ({ selectedExercise, submit }) => {
-  const [view, setView] = useState('templates')
-  const [addedSets, setAddedSets] = useState([])
+const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
+  const [view, setView] = useState('add')
+
   const views = {
+    add: (
+      <div>
+        <EditableSet
+          reps={addedSets?.[addedSets?.length - 1]?.reps || 0}
+          weight={addedSets?.[addedSets?.length - 1]?.weight || 0}
+          renderCtas={({ weight, reps }) => {
+            return (
+              <button
+                class="bg-blue-900 text-white w-full"
+                onClick={() =>
+                  setAddedSets([
+                    ...addedSets,
+                    { weight, reps, id: generateRandomId() },
+                  ])
+                }
+              >
+                + Add Set
+              </button>
+            )
+          }}
+        />
+      </div>
+    ),
     templates: (
       <div>
         {selectedExercise?.lastWorkoutHeaviestSet && (
@@ -49,101 +73,65 @@ const AddExerciseTabs = ({ selectedExercise, submit }) => {
     setAddedSets(addedSets.filter((set) => set.id !== id))
   }
 
-  const handleSubmit = () => {
-    if (!addedSets?.length) {
-      submit([
-        {
-          exerciseId: selectedExercise.id,
-          exerciseName: selectedExercise.name,
-          freeForm: true,
-        },
-      ])
-      return
-    }
-
-    submit(
-      addedSets.map((set) => ({
-        ...set,
-        exerciseId: selectedExercise.id,
-        exerciseName: selectedExercise.name,
-      })),
-    )
-  }
-
   return (
-    <div>
-      <div class="w-full overflow-y-hidden py-4">
-        <div class="pt-4 pb-8">
-          <p class="mb-4">Added Sets</p>
-          {addedSets?.length
-            ? addedSets.map((set, i) => (
-                <EditableSet
-                  key={set.id}
-                  title={`Set ${i + 1}`}
-                  weight={set.weight || 0}
-                  reps={set.reps || 0}
-                  handleRemove={() => removeSet(set.id)}
-                  onChangeReps={(reps) => {
-                    setAddedSets(
-                      addedSets.map((addedSet, setIndex) =>
-                        setIndex === i
-                          ? {
-                              ...addedSet,
-                              reps,
-                            }
-                          : addedSet,
-                      ),
-                    )
-                  }}
-                  onChangeWeight={(weight) => {
-                    setAddedSets(
-                      addedSets.map((addedSet, setIndex) =>
-                        setIndex === i
-                          ? {
-                              ...addedSet,
-                              weight,
-                            }
-                          : addedSet,
-                      ),
-                    )
-                  }}
-                  onDuplicate={() =>
-                    setAddedSets([
-                      ...addedSets,
-                      { ...set, id: generateRandomId() },
-                    ])
-                  }
-                />
-              ))
-            : null}
-          <div>
-            <button
-              onClick={() =>
-                setAddedSets([
-                  ...addedSets,
-                  { weight: '', reps: '', id: generateRandomId() },
-                ])
-              }
-            >
-              Add Set
-            </button>
+    <>
+      <div class="w-full overflow-y-hidden py-4 ">
+        {addedSets?.length ? (
+          <div class="pt-4 pb-2 border-b mb-4">
+            {addedSets.map((set, i) => (
+              <div key={set.id} class="border mb-2">
+                <Accordion title={`Set ${i + 1} - ${set.reps} @ ${set.weight}`}>
+                  <EditableSet
+                    title={null}
+                    weight={set.weight || 0}
+                    reps={set.reps || 0}
+                    handleRemove={() => removeSet(set.id)}
+                    onChangeReps={(reps) => {
+                      setAddedSets(
+                        addedSets.map((addedSet, setIndex) =>
+                          setIndex === i
+                            ? {
+                                ...addedSet,
+                                reps,
+                              }
+                            : addedSet,
+                        ),
+                      )
+                    }}
+                    onChangeWeight={(weight) => {
+                      setAddedSets(
+                        addedSets.map((addedSet, setIndex) =>
+                          setIndex === i
+                            ? {
+                                ...addedSet,
+                                weight,
+                              }
+                            : addedSet,
+                        ),
+                      )
+                    }}
+                    onDuplicate={() =>
+                      setAddedSets([
+                        ...addedSets,
+                        { ...set, id: generateRandomId() },
+                      ])
+                    }
+                  />
+                </Accordion>
+              </div>
+            ))}
           </div>
-          <div class="pt-4 flex">
-            <button
-              class="bg-gray-200 flex-1 mr-2"
-              onClick={() => setAddedSets([])}
-            >
-              Reset
-            </button>
-            <button
-              class="bg-blue-900 text-white flex-1 ml-2"
-              onClick={handleSubmit}
-            >
-              {addedSets?.length ? 'Save' : 'Save without sets'}
-            </button>
-          </div>
-        </div>
+        ) : null}
+
         <div class="flex overscroll-x-auto">
+          <button
+            class={`px-2 py-1 text-xs bg-blue-100 text-gray-800 border-0 border-b-2 border-blue-900 rounded-none ${
+              view === 'add' ? ' border-opacity-1' : 'border-opacity-0 '
+            }`}
+            onClick={() => setView('add')}
+          >
+            Custom
+          </button>
           <button
             class={`px-2 py-1 text-xs bg-blue-100 text-gray-800 border-0 border-b-2 border-blue-900 rounded-none ${
               view === 'templates' ? ' border-opacity-1' : 'border-opacity-0 '
@@ -163,8 +151,8 @@ const AddExerciseTabs = ({ selectedExercise, submit }) => {
           </button>
         </div>
       </div>
-      {views[view]}
-    </div>
+      <div class="pb-4">{views[view]}</div>
+    </>
   )
 }
 

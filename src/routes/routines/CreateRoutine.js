@@ -9,6 +9,8 @@ import ReorderForm from '../wendler/newSchedule/components/reorderForm'
 import useDB from '../../context/db/db'
 
 import { routes } from '../../config/routes'
+import Accordion from '../../components/accordion/accordion'
+import EditableSet from '../../components/editableSet/editableSet'
 
 const CreateRoutine = () => {
   const { createRoutine } = useDB()
@@ -64,6 +66,22 @@ const CreateRoutine = () => {
       formType: '',
     })
   }
+  // pass null for set to remove it
+  const editSet = ({ dayId, setId, set }) => {
+    setDays(
+      days.map((day) => {
+        if (day.id === dayId) {
+          return {
+            ...day,
+            sets: day.sets
+              .map((currentSet) => (currentSet.id === setId ? set : currentSet))
+              ?.filter((currentSet) => !!currentSet),
+          }
+        }
+        return day
+      }),
+    )
+  }
 
   const reorderSets = (dayId, order) => {
     setDays(
@@ -100,7 +118,7 @@ const CreateRoutine = () => {
   }
 
   return (
-    <div class="px-4">
+    <div class="p-4">
       <h1>New Routine</h1>
       <div>
         <div class="mb-4">
@@ -127,16 +145,58 @@ const CreateRoutine = () => {
                 <button onClick={() => removeDay(day.id)}>x</button>
               </div>
               {day.sets.length ? (
-                <div>
-                  {day.sets.map(
-                    ({ exerciseName, id, reps, weight, freeForm }) => (
-                      <p key={id}>
-                        {exerciseName} -{' '}
-                        {freeForm ? 'unknown sets' : `${reps} @ ${weight}`}
-                      </p>
-                    ),
-                  )}
+                <div class="py-4">
+                  {day.sets.map((set) => {
+                    const { exerciseName, id, reps, weight, freeForm } = set
+                    return (
+                      <Accordion
+                        key={id}
+                        title={`${exerciseName} - ${
+                          freeForm ? 'unknown sets' : `${reps} @ ${weight}`
+                        }`}
+                        titleClass="capitalize"
+                        containerClass="border-b border-primary-600 mb-2"
+                      >
+                        <EditableSet
+                          reps={set.reps}
+                          weight={set.weight}
+                          onChangeReps={(value) => {
+                            editSet({
+                              set: {
+                                ...set,
+                                reps: value,
+                              },
+                              dayId: day.id,
+                              setId: set.id,
+                            })
+                          }}
+                          onChangeWeight={(value) => {
+                            editSet({
+                              set: {
+                                ...set,
+                                weight: value,
+                              },
+                              dayId: day.id,
+                              setId: set.id,
+                            })
+                          }}
+                          handleRemove={() => {
+                            editSet({
+                              dayId: day.id,
+                              set: null,
+                              setId: set.id,
+                            })
+                          }}
+                        />
+                      </Accordion>
+                    )
+                  })}
+                </div>
+              ) : null}
+              <div class="flex pt-4 gap-4">
+                {day?.sets?.length ? (
                   <button
+                    class="border border-primary-600 text-primary-600 flex-1"
                     onClick={() =>
                       setExerciseModalState({
                         isOpen: true,
@@ -145,27 +205,28 @@ const CreateRoutine = () => {
                       })
                     }
                   >
-                    Edit sets
+                    Order / Remove sets
                   </button>
-                </div>
-              ) : null}
-              <button
-                onClick={() =>
-                  setExerciseModalState({
-                    isOpen: true,
-                    dayId: day.id,
-                    formType: 'add',
-                  })
-                }
-              >
-                + Add Exercise
-              </button>
+                ) : null}
+                <button
+                  class="bg-primary-600 text-white ml-auto flex-1"
+                  onClick={() =>
+                    setExerciseModalState({
+                      isOpen: true,
+                      dayId: day.id,
+                      formType: 'add',
+                    })
+                  }
+                >
+                  + Add Exercise
+                </button>
+              </div>
             </div>
           )
         })}
         <button onClick={addDay}>+ Add a day</button>
         <div class="pt-8">
-          <button onClick={submit} class="w-full bg-blue-900 text-white">
+          <button onClick={submit} class="w-full bg-primary-900 text-white">
             Save Routine
           </button>
         </div>

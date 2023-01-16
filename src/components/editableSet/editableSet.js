@@ -31,7 +31,11 @@ const EditableSet = ({
             <p class={`m-0 ml-4 ${titleClass ? titleClass : ''}`}>{title}</p>
           )}
 
-          {handleRemove && <button onClick={handleRemove}>X</button>}
+          {handleRemove && (
+            <button class="ml-auto" onClick={handleRemove}>
+              X
+            </button>
+          )}
         </div>
         <div class="flex pb-3">
           <div class="w-1/2 px-2">
