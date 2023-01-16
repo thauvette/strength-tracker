@@ -11,21 +11,22 @@ const PlannedWorkout = ({ sets, onUpdateSet }) => {
     firstIncompleteSet >= 0 ? firstIncompleteSet : 0,
   )
 
-  const saveSet = ({ reps, weight }, index) => {
+  const saveSet = (set, index) => {
     setActiveSet(index + 1)
-    onUpdateSet({ reps, weight }, index)
+    onUpdateSet(set, index)
   }
 
   return (
     <div>
-      {sets.map(({ reps, weight, created }, i) => {
+      {sets.map((set, i) => {
+        const { reps, weight, created, exerciseName } = set
         return (
-          <div key={i}>
+          <div key={i} class="border-b-4 pb-2 mb-4">
             <button onClick={() => setActiveSet(i)}>
               <div class="flex">
                 {created && <Icon name="checkmark-outline" width={32} />}
-                <p>
-                  {reps} @ {weight}
+                <p class="capitalize">
+                  {exerciseName} - {reps} @ {weight}
                 </p>
               </div>
             </button>
@@ -36,10 +37,10 @@ const PlannedWorkout = ({ sets, onUpdateSet }) => {
                 renderCtas={({ reps, weight }) => {
                   return (
                     <button
-                      onClick={() => saveSet({ reps, weight }, i)}
+                      onClick={() => saveSet({ ...set, reps, weight }, i)}
                       class="w-full bg-blue-900 text-white"
                     >
-                      Save
+                      {created ? 'Update' : 'Save'}
                     </button>
                   )
                 }}

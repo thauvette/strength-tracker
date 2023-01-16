@@ -39,7 +39,7 @@ const maths = {
   ]),
 }
 
-const Plan = ({ initialWeight, updatePlanedSet }) => {
+const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
   const [goal, setGoal] = useState(initialWeight || 100)
   const [type, setType] = useState('threeByFiveAscending')
   const sets = maths[type].map((day) => ({
@@ -84,7 +84,7 @@ const Plan = ({ initialWeight, updatePlanedSet }) => {
           updatePlanedSet(sets)
         }}
       >
-        Save
+        {submitText}
       </button>
     </div>
   )

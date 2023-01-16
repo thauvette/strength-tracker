@@ -27,3 +27,28 @@ export const getFromCursor = (db, store) =>
       reject(new Error(err?.message || 'oops'))
     }
   })
+
+export const getItem = (db, store, id) =>
+  new Promise((resolve, reject) => {
+    if (!store) {
+      reject('store is required')
+      return
+    }
+    if (!id) {
+      reject('an id is required')
+      return
+    }
+    const { objectStore } = openObjectStoreTransaction(db, store)
+    const request = objectStore.get(+id)
+    request.onerror = function (err) {
+      console.warn('Err', err)
+      reject(err.message || 'unable to find item')
+    }
+    request.onsuccess = (event) => {
+      if (event.target.result) {
+        resolve(event.target.result)
+      } else {
+        reject('not found')
+      }
+    }
+  })

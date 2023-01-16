@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import {
   getFromCursor as getFromCursorUtil,
   openObjectStoreTransaction as openObjectStoreTransactionUtil,
+  getItem,
 } from './utils/dbUtils'
 import initializeDb from './initializeDb'
 import { objectStores } from './config'
@@ -20,6 +21,7 @@ import {
   deleteLoggedSet,
   getAllSetsHistory,
 } from './sets'
+import { createRoutine } from './routines'
 
 const DBContext = createContext()
 
@@ -282,6 +284,8 @@ export const DBProvider = ({ children }) => {
         restoreFromBackup,
         createBioMetric: (name) => createBioMetric(db, name),
         getMuscleGroups,
+        createRoutine: (data) => createRoutine(db, data),
+        getItem: (store, id) => getItem(db, store, id),
       }}
     >
       {children}

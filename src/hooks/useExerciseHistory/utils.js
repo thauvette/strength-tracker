@@ -28,9 +28,29 @@ export const formatHistory = (items) => {
       }, {})
     : {}
 
+  const itemsArrays = Object.values(formattedHistory || {})
+  const lastIndex = Object.values(formattedHistory || {})?.length
+    ? Object.values(formattedHistory || {})?.length - 1
+    : 0
+
+  const lastWorkOutSorted = itemsArrays?.[lastIndex]?.sort((a, b) =>
+    a.create < b.create ? -1 : 1,
+  )
+
+  const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
+  const heaviestSet = lastWorkOutSorted?.reduce((obj, set) => {
+    if (!obj || +obj.weight < +set.weight) {
+      return set
+    }
+    return obj
+  }, null)
+
   return {
     items: formattedHistory,
     eorm,
+    lastWorkoutFirstSet,
+    lastWorkoutHeaviestSet: heaviestSet,
+    prs: formatPrs(items),
   }
 }
 
