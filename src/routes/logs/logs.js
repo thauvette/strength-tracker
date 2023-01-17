@@ -166,6 +166,16 @@ const Logs = () => {
           <Icon name="arrow-forward-outline" />
         </button>
       </div>
+      {!isToday && activeDayData?.length > 0 ? (
+        <div class="text-right py-4">
+          <button
+            class="border border-primary-900 text-primary-900"
+            onClick={useDayAsRoutine}
+          >
+            Do workout
+          </button>
+        </div>
+      ) : null}
       {Object.entries(sortedDayData).map(([name, sets]) => (
         <div key={name} class="mb-4 border-4 p-4">
           <div class="flex justify-between">
@@ -186,16 +196,7 @@ const Logs = () => {
           ))}
         </div>
       ))}
-      {!isToday && activeDayData?.length > 0 ? (
-        <div class="text-right">
-          <button
-            class="border border-primary-900 text-primary-900"
-            onClick={useDayAsRoutine}
-          >
-            Do workout
-          </button>
-        </div>
-      ) : null}
+
       {logState?.bioMetrics?.[activeDate] ? (
         <div>
           {Object.entries(logState?.bioMetrics?.[activeDate]).map(
