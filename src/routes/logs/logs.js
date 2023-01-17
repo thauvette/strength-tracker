@@ -1,19 +1,23 @@
 import { h } from 'preact'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'preact/hooks'
+import { Link, route } from 'preact-router'
 import useDB from '../../context/db/db'
 import { objectStores } from '../../context/db/config'
 
 import Modal from '../../components/modal/Modal'
 import Calendar from '../../components/calendar/Calendar'
-import { Link } from 'preact-router'
 import { routes } from '../../config/routes'
 
 import dateFormats from '../../config/dateFormats'
 import Icon from '../../components/icon/Icon'
+import useSessionContext from '../../context/sessionData/sessionData'
 
 const Logs = () => {
   const { getAllSetsHistory, getAllEntries } = useDB()
+
+  const { startRoutine } = useSessionContext()
+
   const [logState, setLogState] = useState({
     loading: true,
     data: null,
@@ -112,6 +116,18 @@ const Logs = () => {
 
   const isToday = dayjs(activeDate).isSame(dayjs(), 'day')
 
+  const useDayAsRoutine = () => {
+    const sets =
+      activeDayData?.map(({ exercise, name, reps, weight }) => ({
+        exercise,
+        exerciseName: name,
+        reps,
+        weight,
+      })) || []
+    startRoutine(sets)
+    route(routes.activeRoutine)
+  }
+
   return (
     <div class="p-2">
       <div className="flex items-center justify-between">
@@ -150,7 +166,6 @@ const Logs = () => {
           <Icon name="arrow-forward-outline" />
         </button>
       </div>
-
       {Object.entries(sortedDayData).map(([name, sets]) => (
         <div key={name} class="mb-4 border-4 p-4">
           <p class="font-bold">{name}</p>
@@ -170,6 +185,16 @@ const Logs = () => {
           </div>
         </div>
       ))}
+      {!isToday && activeDayData?.length > 0 ? (
+        <div class="text-right">
+          <button
+            class="border border-primary-900 text-primary-900"
+            onClick={useDayAsRoutine}
+          >
+            Do workout
+          </button>
+        </div>
+      ) : null}
       {logState?.bioMetrics?.[activeDate] ? (
         <div>
           {Object.entries(logState?.bioMetrics?.[activeDate]).map(
@@ -196,7 +221,6 @@ const Logs = () => {
           )}
         </div>
       ) : null}
-
       <Modal isOpen={calendarIsOpen} onRequestClose={toggleCalendar}>
         <Calendar
           startDate={activeDate}
