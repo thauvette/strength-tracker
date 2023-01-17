@@ -168,7 +168,15 @@ const Logs = () => {
       </div>
       {Object.entries(sortedDayData).map(([name, sets]) => (
         <div key={name} class="mb-4 border-4 p-4">
-          <p class="font-bold">{name}</p>
+          <div class="flex justify-between">
+            <p class="font-bold capitalize">{name}</p>
+            {sets?.[0]?.exercise && (
+              <Link href={`${routes.exerciseBase}/${sets[0].exercise}`}>
+                View
+              </Link>
+            )}
+          </div>
+
           {sets.map((set) => (
             <div key={set.created}>
               <p>
@@ -176,13 +184,6 @@ const Logs = () => {
               </p>
             </div>
           ))}
-          <div class="flex justify-end">
-            {sets?.[0]?.exercise && (
-              <Link href={`${routes.exerciseBase}/${sets[0].exercise}`}>
-                View
-              </Link>
-            )}
-          </div>
         </div>
       ))}
       {!isToday && activeDayData?.length > 0 ? (
@@ -200,7 +201,14 @@ const Logs = () => {
           {Object.entries(logState?.bioMetrics?.[activeDate]).map(
             ([id, bioMetric]) => (
               <div key={id} class="mb-4 border-4 p-4">
-                <p class="font-bold capitalize">{bioMetric.name}</p>
+                <div class="flex items-center justify-between">
+                  <p class="font-bold capitalize">{bioMetric.name}</p>
+                  <div class="flex justify-end">
+                    <Link href={`${routes.bioMetrics}/${bioMetric.bioId}`}>
+                      View
+                    </Link>
+                  </div>
+                </div>
                 {bioMetric.items?.length
                   ? bioMetric.items.map((item) => (
                       <div key={item.created}>
@@ -211,11 +219,6 @@ const Logs = () => {
                       </div>
                     ))
                   : null}
-                <div class="flex justify-end">
-                  <Link href={`${routes.bioMetrics}/${bioMetric.bioId}`}>
-                    View
-                  </Link>
-                </div>
               </div>
             ),
           )}
