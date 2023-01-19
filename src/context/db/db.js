@@ -219,7 +219,7 @@ export const DBProvider = ({ children }) => {
           .clear()
 
         objectStoreRequest.onsuccess = () => {
-          return resolve({ success: true })
+          return resolve({ success: true, store })
         }
         objectStoreRequest.onerror = () =>
           reject(`unable to clear data from ${store}`)
@@ -245,8 +245,27 @@ export const DBProvider = ({ children }) => {
 
   const restoreFromBackup = async (entries) => {
     // get list of stores to clear.
-    const storeClearPromises = entries.stores.map((store) => clearStore(store))
-    const itemPromises = entries.items.map((item) => writeItemFromBackup(item))
+    const storeClearPromises = entries.stores.map((store) =>
+      clearStore(store)
+        .then((res) => res)
+        .catch((err) => {
+          return {
+            store,
+            error: err,
+          }
+        }),
+    )
+
+    const itemPromises = entries.items.map((item) =>
+      writeItemFromBackup(item)
+        .then((res) => res)
+        .catch((err) => {
+          return {
+            ...item,
+            error: err,
+          }
+        }),
+    )
 
     const storesResponse = await Promise.all(storeClearPromises)
     const itemResponses = await Promise.all(itemPromises)

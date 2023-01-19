@@ -119,11 +119,10 @@ const initializeDb = (callback) => {
         const exerciseStore = database
           .transaction(objectStores.exercises, 'readwrite')
           .objectStore(objectStores.exercises)
-
         Object.entries(currentExercises || {}).forEach(([id, exercise]) => {
           // match primary group to newly added muscle groups
           const matchingGroup = addedMuscleGroups.find(
-            (group) => group.name === exercise?.primaryGroup?.toLowerCase(),
+            (group) => group.id === exercise?.primaryGroup,
           )
           if (matchingGroup) {
             // Check if this is the primary or secondary group.

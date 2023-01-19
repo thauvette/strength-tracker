@@ -28,8 +28,6 @@ TODO: clean up all naming conventions.
 
 TODO: more stats on exercise view (Charts)
 
-TODO: non-wendler routines
-
 TODO: wendler form errors
 
 TODO: Super sets
