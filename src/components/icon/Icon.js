@@ -536,6 +536,44 @@ const Icon = ({ name, width = '16' }) => {
           />
         </svg>
       )
+    case 'arrow-up-outline':
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          width={width}
+        >
+          <title>Arrow Up</title>
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="48"
+            d="M112 244l144-144 144 144M256 120v292"
+          />
+        </svg>
+      )
+    case 'arrow-down-outline':
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          width={width}
+        >
+          <title>Arrow Down</title>
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="48"
+            d="M112 268l144 144 144-144M256 392V100"
+          />
+        </svg>
+      )
     default:
       return null
   }

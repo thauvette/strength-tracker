@@ -2,7 +2,6 @@ import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import dayjs from 'dayjs'
 import cloneDeep from 'lodash.clonedeep'
-import AnimateHeight from 'react-animate-height'
 
 import dateFormats from '../../config/dateFormats'
 import BioMetricForm from './bioMetricForm'
@@ -13,11 +12,20 @@ import Icon from '../../components/icon/Icon'
 const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   const currentBioMetric = bioMetrics[id]
 
-  const [activeBioId, setActiveBioId] = useState(null)
   const [deleteModalState, setDeleteModalState] = useState({
     open: false,
     id: null,
   })
+  const [editModalState, setEditModalState] = useState({
+    isOpen: false,
+    item: null,
+  })
+  const closeEditModal = () => {
+    setEditModalState({
+      isOpen: false,
+      item: null,
+    })
+  }
   const deleteModalItem = currentBioMetric?.items?.find(
     (item) => item.id === deleteModalState.id,
   )
@@ -26,6 +34,7 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
       open: false,
       id: null,
     })
+
   const handleAddEntry = (data) => {
     addEntry({
       bioMetricId: id,
@@ -33,8 +42,33 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
     })
   }
 
-  const sortedItems = cloneDeep(currentBioMetric?.items || []).sort((a, b) =>
-    dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1,
+  const groupedItems = cloneDeep(currentBioMetric?.items || [])?.reduce(
+    (obj, item) => {
+      const dayKey = dayjs(item.date).format('YYYY-MM-DD')
+
+      const currentDayItems = obj[dayKey]?.items || []
+      currentDayItems.push(item)
+      const total = currentDayItems
+        .map((item) => +item.value)
+        ?.reduce((num, value) => num + value, 0)
+
+      let dayAverage
+      try {
+        dayAverage = total / currentDayItems.length
+      } catch (err) {}
+      return {
+        ...obj,
+        [dayKey]: {
+          items: currentDayItems,
+          average: dayAverage,
+        },
+      }
+    },
+    {},
+  )
+
+  const orderedKeys = Object.keys(groupedItems).sort((a, b) =>
+    dayjs(a).isBefore(dayjs(b)) ? 1 : -1,
   )
 
   return (
@@ -52,71 +86,71 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
         name={currentBioMetric?.name}
         submitText="Add New +"
       />
-      {sortedItems?.length > 0 && (
+      {orderedKeys?.length > 0 && (
         <div class="py-4">
           <h2 class="mb-2">History</h2>
-          {sortedItems.map((item, i) => {
-            const diff = sortedItems[i + 1]?.value
-              ? +item.value - sortedItems[i + 1]?.value
+
+          {orderedKeys?.map((dayKey, i) => {
+            const { items, average } = groupedItems[dayKey]
+            const previousDayKey = orderedKeys[i + 1]
+
+            const previousData = previousDayKey
+              ? groupedItems[previousDayKey]
+              : null
+
+            const change = previousData?.average
+              ? average - previousData?.average
               : undefined
 
             return (
-              <div key={item.id} class="border-blue-400 border-b-2 py-2">
-                <p class="font-bold text-lg">
-                  {dayjs(item.date).format(dateFormats.displayShort)}
-                </p>
+              <div key={dayKey} className="border mb-3 rounded-sm">
+                <div className="flex items-center justify-between bg-primary-100 p-2 text-lg font-bold">
+                  <p>{dayjs(dayKey).format('ddd MMM DD YYYY')}</p>
+                  <p>{average.toFixed(2)}</p>
+                </div>
+                <div className="flex justify between p-2 bg-white">
+                  <div className="flex-1 ">
+                    {items.map((item) => {
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex items-center mb-2 text-lg"
+                        >
+                          <button
+                            onClick={() =>
+                              setEditModalState({
+                                isOpen: true,
+                                item,
+                              })
+                            }
+                            ariaLabel="edit entry"
+                          >
+                            <Icon name="create-outline" width="20" />
+                          </button>
 
-                <div>
-                  <div class="grid-cols-2 grid py-2">
-                    <p class="capitalize">{currentBioMetric?.name}</p>
-                    <p>{item.value}</p>
+                          <p className="font-bold mr-2">{item.value}</p>
+                          <p>{dayjs(item.date).format('h:mm a')}</p>
+                        </div>
+                      )
+                    })}
                   </div>
-                  <div class="grid-cols-2 grid py-2">
-                    <p>Change</p>
-                    <p>
-                      {diff !== undefined
-                        ? `${diff > 0 ? '+' : ''}${diff.toFixed(2)}`
-                        : ''}
-                    </p>
-                  </div>
+                  {change !== undefined && (
+                    <div>
+                      <div className="flex" items-start>
+                        {change !== 0 && (
+                          <Icon
+                            name={
+                              change > 0
+                                ? 'arrow-up-outline'
+                                : 'arrow-down-outline'
+                            }
+                          />
+                        )}
+                        <p className="ml-2">{change.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div class="flex justify-end">
-                  <button
-                    onClick={() =>
-                      setActiveBioId(activeBioId === item.id ? null : item.id)
-                    }
-                    ariaLabel="edit entry"
-                    class="text-2xl"
-                  >
-                    <Icon name="create-outline" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setDeleteModalState({
-                        id: item.id,
-                        open: true,
-                      })
-                    }
-                    class="text-2xl"
-                  >
-                    <Icon name="trash-outline" />
-                  </button>
-                </div>
-                <AnimateHeight height={activeBioId === item.id ? 'auto' : 0}>
-                  <BioMetricForm
-                    submit={(data) => {
-                      editEntry(item.id, data)
-                      setActiveBioId(null)
-                    }}
-                    initialValues={{
-                      value: item.value,
-                      date: dayjs(item.date).format(dateFormats.day),
-                      time: dayjs(item.date).format(dateFormats.time),
-                    }}
-                    name={currentBioMetric?.name}
-                    submitText="Update"
-                  />
-                </AnimateHeight>
               </div>
             )
           })}
@@ -146,6 +180,54 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
             >
               Nope, keep it.
             </button>
+          </div>
+        </Modal>
+      )}
+      {editModalState.isOpen && (
+        <Modal isOpen={editModalState.isOpen} onRequestClose={closeEditModal}>
+          <div>
+            <BioMetricForm
+              submit={(data) => {
+                editEntry(editModalState.item.id, data)
+                closeEditModal()
+              }}
+              initialValues={{
+                value: editModalState.item.value,
+                date: dayjs(editModalState.item.date).format(dateFormats.day),
+                time: dayjs(editModalState.item.date).format(dateFormats.time),
+              }}
+              name={currentBioMetric?.name}
+              submitText="Update"
+              renderCtas={({ submit }) => (
+                <div class="flex gap-2 mt-8 pt-8 border-t-2 border-primary-100">
+                  <button
+                    className="flex-1 bg-primary-900 text-white"
+                    onClick={submit}
+                  >
+                    <div className="flex items-center justify-center">
+                      <Icon name="save-outline" />
+                      <p class="ml-2">Update</p>
+                    </div>
+                  </button>
+                  <button
+                    className="flex-1 bg-red-900 text-white "
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setDeleteModalState({
+                        id: editModalState.item.id,
+                        open: true,
+                      })
+                      closeEditModal()
+                    }}
+                  >
+                    <div className="flex items-center justify-center">
+                      <Icon name="trash-outline" />
+                      <p class="ml-2">Delete</p>
+                    </div>
+                  </button>
+                </div>
+              )}
+            />
           </div>
         </Modal>
       )}

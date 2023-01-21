@@ -9,6 +9,7 @@ const BioMetricForm = ({
   submit,
   name,
   submitText = 'Add +',
+  renderCtas = null,
 }) => {
   const [date, setDate] = useState(
     initialValues?.date || dayjs().format(dateFormats.day),
@@ -64,10 +65,15 @@ const BioMetricForm = ({
           placeholder="time"
         />
       </label>
-
-      <button class="btn primary w-full mt-4" type="submit">
-        {submitText}
-      </button>
+      {renderCtas ? (
+        renderCtas({
+          submit: handleAddEntry,
+        })
+      ) : (
+        <button class="btn primary w-full mt-4" type="submit">
+          {submitText}
+        </button>
+      )}
     </form>
   )
 }
