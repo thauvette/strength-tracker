@@ -12,7 +12,9 @@ export const routes = {
   exerciseBase: '/exercise',
   newWorkout: '/workout',
   settings: '/settings',
-  bioMetrics: '/bio',
+  bioMetrics: '/bio/:id/:remaining_path*',
+  bioCatchAll: '/bio/:remaining_path*',
+  bioMetricsBase: '/bio',
   fasting: '/fasting',
   routines: '/routines/:remaining_path*',
   routinesBase: '/routines',
@@ -34,7 +36,7 @@ export const menuItems = [
     title: 'Settings',
   },
   {
-    href: routes.bioMetrics,
+    href: routes.bioMetricsBase,
     title: 'Bio Metrics',
   },
   {

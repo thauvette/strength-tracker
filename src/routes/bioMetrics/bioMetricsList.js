@@ -5,7 +5,7 @@ import { routes } from '../../config/routes'
 const BioMetricsList = ({ bioMetrics }) => {
   const links = Object.entries({ ...bioMetrics }).map(([id, data]) => {
     return {
-      href: `${routes.bioMetrics}/${id}`,
+      href: `${routes.bioMetricsBase}/${id}`,
       text: data.name,
     }
   })
@@ -16,7 +16,7 @@ const BioMetricsList = ({ bioMetrics }) => {
         links={[
           ...links,
           {
-            href: `${routes.bioMetrics}/new`,
+            href: `${routes.bioMetricsBase}/new`,
             text: 'Add New',
           },
         ]}

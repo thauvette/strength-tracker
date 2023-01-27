@@ -1,0 +1,19 @@
+.lineChart {
+  svg {
+    g {
+      .line {
+        fill: none;
+        stroke: #000;
+      }
+      .axis {
+        color: #ccc;
+        :global(text) {
+          color: #000;
+        }
+      }
+    }
+    .text {
+      color: #000;
+    }
+  }
+}

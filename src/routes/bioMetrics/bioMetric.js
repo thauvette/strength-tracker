@@ -2,12 +2,18 @@ import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import dayjs from 'dayjs'
 import cloneDeep from 'lodash.clonedeep'
+import Router from 'preact-router'
+import { Link } from 'preact-router/match'
 
 import dateFormats from '../../config/dateFormats'
 import BioMetricForm from './bioMetricForm'
 
 import Modal from '../../components/modal/Modal'
 import Icon from '../../components/icon/Icon'
+import { routes } from '../../config/routes'
+import Days from './Days'
+import Weeks from './Weeks'
+import Charts from './Charts'
 
 const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
   const currentBioMetric = bioMetrics[id]
@@ -71,9 +77,28 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
     dayjs(a).isBefore(dayjs(b)) ? 1 : -1,
   )
 
+  const days = orderedKeys?.map((dayKey, i) => {
+    const { items, average } = groupedItems[dayKey]
+    const previousDayKey = orderedKeys[i + 1]
+
+    const previousData = previousDayKey ? groupedItems[previousDayKey] : null
+
+    const change = previousData?.average
+      ? average - previousData?.average
+      : undefined
+
+    return {
+      dayKey,
+      items,
+      average,
+      change,
+    }
+  })
+
   return (
     <div class="px-2">
       <h1 class="capitalize">{currentBioMetric?.name}</h1>
+
       <BioMetricForm
         initialValues={{
           value:
@@ -86,76 +111,39 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
         name={currentBioMetric?.name}
         submitText="Add New +"
       />
-      {orderedKeys?.length > 0 && (
-        <div class="py-4">
-          <h2 class="mb-2">History</h2>
+      <div class="flex py-2">
+        <Link
+          class="py-2 px-4 bg-primary-100"
+          activeClassName="bg-primary-900 text-white"
+          href={`${routes.bioMetricsBase}/${id}`}
+        >
+          Days
+        </Link>
+        <Link
+          class="py-2 px-4 bg-primary-100"
+          activeClassName="bg-primary-900 text-white"
+          href={`${routes.bioMetricsBase}/${id}/weeks`}
+        >
+          Weeks
+        </Link>
+        <Link
+          class="py-2 px-4 bg-primary-100"
+          activeClassName="bg-primary-900 text-white"
+          href={`${routes.bioMetricsBase}/${id}/charts`}
+        >
+          Charts
+        </Link>
+      </div>
+      <Router>
+        <Days
+          path={`${routes.bioMetricsBase}/:id`}
+          days={days}
+          setEditModalState={setEditModalState}
+        />
+        <Weeks path={`${routes.bioMetricsBase}/:id/weeks`} days={days} />
+        <Charts path={`${routes.bioMetricsBase}/:id/charts`} days={days} />
+      </Router>
 
-          {orderedKeys?.map((dayKey, i) => {
-            const { items, average } = groupedItems[dayKey]
-            const previousDayKey = orderedKeys[i + 1]
-
-            const previousData = previousDayKey
-              ? groupedItems[previousDayKey]
-              : null
-
-            const change = previousData?.average
-              ? average - previousData?.average
-              : undefined
-
-            return (
-              <div key={dayKey} className="border mb-3 rounded-sm">
-                <div className="flex items-center justify-between bg-primary-100 p-2 text-lg font-bold">
-                  <p>{dayjs(dayKey).format('ddd MMM DD YYYY')}</p>
-                  <p>{average.toFixed(2)}</p>
-                </div>
-                <div className="flex justify between p-2 bg-white">
-                  <div className="flex-1 ">
-                    {items.map((item) => {
-                      return (
-                        <div
-                          key={item.id}
-                          className="flex items-center mb-2 text-lg"
-                        >
-                          <button
-                            onClick={() =>
-                              setEditModalState({
-                                isOpen: true,
-                                item,
-                              })
-                            }
-                            ariaLabel="edit entry"
-                          >
-                            <Icon name="create-outline" width="20" />
-                          </button>
-
-                          <p className="font-bold mr-2">{item.value}</p>
-                          <p>{dayjs(item.date).format('h:mm a')}</p>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  {change !== undefined && (
-                    <div>
-                      <div className="flex" items-start>
-                        {change !== 0 && (
-                          <Icon
-                            name={
-                              change > 0
-                                ? 'arrow-up-outline'
-                                : 'arrow-down-outline'
-                            }
-                          />
-                        )}
-                        <p className="ml-2">{change.toFixed(2)}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
       {deleteModalState.open && (
         <Modal onRequestClose={closeDeleteModal} isOpen={deleteModalState.open}>
           <h1 class="mb-4">Are you sure?</h1>

@@ -50,7 +50,7 @@ const AppWrapper = () => {
             <Logs path={routes.logs} />
             <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
             <Settings path={routes.settings} />
-            <BioMetrics path={`${routes.bioMetrics}/:remaining_path*`} />
+            <BioMetrics path={`${routes.bioCatchAll}`} />
             <Fasting path={routes.fasting} />
             <Routines path={routes.routines} />
           </Router>

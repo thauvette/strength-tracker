@@ -60,15 +60,16 @@ const BioMetrics = () => {
   if (loading) {
     return null
   }
+
   return (
     <Router>
-      <BioMetricsList path={`${routes.bioMetrics}/`} bioMetrics={bioList} />
+      <BioMetricsList path={`${routes.bioMetricsBase}`} bioMetrics={bioList} />
       <NewBioMetric
-        path={`${routes.bioMetrics}/new`}
+        path={`${routes.bioMetricsBase}/new`}
         onSubmit={fetchBioMetrics}
       />
       <BioMetric
-        path={`${routes.bioMetrics}/:id`}
+        path={`${routes.bioMetricsBase}/:id/:remaining_path*`}
         addEntry={addEntry}
         editEntry={editEntry}
         bioMetrics={bioList}
