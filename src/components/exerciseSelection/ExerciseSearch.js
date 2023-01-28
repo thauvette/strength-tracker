@@ -8,7 +8,7 @@ import ExerciseSelection from './ExerciseSelection'
 
 const ExerciseSearch = ({ handleSelectExercise }) => {
   const { getExerciseOptions } = useDB()
-  const [exerciseOptions, setExerciseOptions] = useState([])
+  const [exerciseOptions, setExerciseOptions] = useState({})
   const [showNewExerciseForm, setShowNewExerciseForm] = useState(false)
   const [searchText, setSearchText] = useState('')
 
@@ -20,7 +20,25 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
 
   const getOptions = () => {
     getExerciseOptions().then((res) => {
-      setExerciseOptions(res)
+      const startedExercises = Object.values(res || {}).reduce((arr, group) => {
+        group?.items?.forEach((item) => {
+          if (item.isFavorite) {
+            arr.push(item)
+          }
+        })
+        return arr
+      }, [])
+      const result = {
+        ...res,
+      }
+      if (startedExercises?.length) {
+        result.starred = {
+          name: 'Favorites',
+          items: startedExercises,
+          id: 'starred',
+        }
+      }
+      setExerciseOptions(result)
     })
   }
 

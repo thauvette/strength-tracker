@@ -1,4 +1,5 @@
 import { h } from 'preact'
+import { uniqBy } from 'lodash'
 import ButtonList from '../buttonList/ButtonList'
 import GroupList from './GroupList'
 
@@ -18,9 +19,10 @@ const ExerciseSelection = ({
         return arr
       }, [])
     : []
+
   return searchText?.length ? (
     <ButtonList
-      buttons={searchMatches.map((exercise) => ({
+      buttons={uniqBy(searchMatches, 'id').map((exercise) => ({
         onClick: () => handleSelectExercise(exercise),
         text: exercise.name,
       }))}

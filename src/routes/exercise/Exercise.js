@@ -9,10 +9,15 @@ import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistor
 import EditExercise from './EditExercise'
 import PlannedSets from './PlannedSets'
 import useSessionContext from '../../context/sessionData/sessionData'
+import useDB from '../../context/db/db'
+import { objectStores } from '../../context/db/config'
+import Icon from '../../components/icon/Icon'
 
 const Exercise = (props) => {
   const { id, remaining_path } = props
   const [exerciseHistory, getData] = useExerciseHistory(id)
+  const { updateEntry } = useDB()
+
   // using this to prevent making a change
   // then looking at another tab and losing that change
   const [savedSet, setSavedSet] = useState({
@@ -51,10 +56,24 @@ const Exercise = (props) => {
       return obj
     }, null) || null
 
+  const toggleExerciseFavorite = () => {
+    updateEntry(objectStores.exercises, id, {
+      isFavorite: !exerciseHistory?.isFavorite,
+    }).finally(() => {
+      getData()
+    })
+  }
+
   return (
     <div>
-      <div class="px-2">
-        <h1 class="capitalize mb-2">{exerciseHistory?.name}</h1>
+      <div class="px-2 py-2 flex items-center justify-between">
+        <h1 class="capitalize ">{exerciseHistory?.name}</h1>
+        <button onClick={toggleExerciseFavorite} class="text-blue-900">
+          <Icon
+            width="28"
+            name={exerciseHistory?.isFavorite ? 'star' : 'star-outline'}
+          />
+        </button>
       </div>
       <div class="flex pb-4">
         <Link
