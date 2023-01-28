@@ -34,11 +34,11 @@
   },
   "dependencies": {
     "d3": "^7.8.2",
-    "lodash": "^4.17.21",
     "lodash.chunk": "^4.2.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
+    "lodash.uniqby": "^4.7.0",
     "node-sass": "^5.0.0",
     "preact": "^10.3.2",
     "preact-render-to-string": "^5.1.4",
