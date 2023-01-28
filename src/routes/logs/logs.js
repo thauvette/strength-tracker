@@ -28,6 +28,8 @@ const Logs = () => {
   const [activeDate, setActiveDate] = useState(dayjs().format(dateFormats.day))
   const [calendarIsOpen, setCalendarIsOpen] = useState(false)
 
+  const [view, setView] = useState('groups')
+
   const getData = () => {
     const promises = [
       getAllSetsHistory(),
@@ -166,42 +168,77 @@ const Logs = () => {
           <Icon name="arrow-forward-outline" />
         </button>
       </div>
-      {!isToday && activeDayData?.length > 0 ? (
-        <div class="text-right py-4">
+      {activeDayData?.length > 0 ? (
+        <div class="flex justify-between py-4">
           <button
-            class="border border-primary-900 text-primary-900"
-            onClick={useDayAsRoutine}
+            class="underline text-blue-600"
+            onClick={() => setView(view === 'groups' ? 'order' : 'groups')}
           >
-            Do workout
+            {view === 'groups' ? 'View in Order' : 'View in Groups'}
           </button>
+          {!isToday && (
+            <button
+              class="border border-primary-900 text-primary-900"
+              onClick={useDayAsRoutine}
+            >
+              Do workout
+            </button>
+          )}
         </div>
       ) : null}
-      {Object.entries(sortedDayData).map(([name, sets]) => (
-        <div key={name} class="mb-4 border-4 p-4">
-          <div class="flex justify-between">
-            <p class="font-bold capitalize">{name}</p>
-            {sets?.[0]?.exercise && (
-              <Link href={`${routes.exerciseBase}/${sets[0].exercise}`}>
-                View
-              </Link>
-            )}
-          </div>
 
-          {sets.map((set) => (
-            <div key={set.created}>
-              <p>
-                {set.reps} @ {set.weight}
-              </p>
+      {view === 'groups'
+        ? Object.entries(sortedDayData).map(([name, sets]) => (
+            <div key={name} class="mb-4 border-2 rounded-md p-4 bg-white">
+              <div class="flex justify-between pb-2">
+                <p class="font-bold capitalize">{name}</p>
+                {sets?.[0]?.exercise && (
+                  <Link href={`${routes.exerciseBase}/${sets[0].exercise}`}>
+                    View
+                  </Link>
+                )}
+              </div>
+
+              {sets.map((set) => (
+                <div key={set.created}>
+                  <p>
+                    {set.reps} @ {set.weight}
+                    {set.note && ` - ${set.note}`}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ))
+        : activeDayData?.map((set) => (
+            <div
+              class="mb-4 border-2 rounded-md p-4 bg-white"
+              key={set.created}
+            >
+              <div class="flex items-center gap-2 ">
+                <p class="font-bold capitalize">{set.name}</p>
+                <p class="whitespace-nowrap">
+                  {set.reps} @ {set.weight}
+                </p>
+                <Link
+                  href={`${routes.exerciseBase}/${set.exercise}`}
+                  class="ml-auto"
+                >
+                  View
+                </Link>
+              </div>
+              {set.note && (
+                <div class="pt-2">
+                  <p>{set.note}</p>
+                </div>
+              )}
             </div>
           ))}
-        </div>
-      ))}
 
       {logState?.bioMetrics?.[activeDate] ? (
         <div>
           {Object.entries(logState?.bioMetrics?.[activeDate]).map(
             ([id, bioMetric]) => (
-              <div key={id} class="mb-4 border-4 p-4">
+              <div key={id} class="mb-4 border-2 p-4 rounded-md bg-white">
                 <div class="flex items-center justify-between">
                   <p class="font-bold capitalize">{bioMetric.name}</p>
                   <div class="flex justify-end">
