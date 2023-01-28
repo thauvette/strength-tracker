@@ -242,7 +242,7 @@ const Logs = () => {
                 <div class="flex items-center justify-between">
                   <p class="font-bold capitalize">{bioMetric.name}</p>
                   <div class="flex justify-end">
-                    <Link href={`${routes.bioMetrics}/${bioMetric.bioId}`}>
+                    <Link href={`${routes.bioMetricsBase}/${bioMetric.bioId}`}>
                       View
                     </Link>
                   </div>
