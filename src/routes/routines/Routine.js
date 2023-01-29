@@ -37,7 +37,7 @@ const Routine = ({ id }) => {
     return <p>{error}</p>
   }
   return (
-    <div>
+    <div class="px-2">
       <h1 class="capitalize mb-4">{routine.name}</h1>
       {routine.days?.length
         ? routine.days.map((day, i) => {

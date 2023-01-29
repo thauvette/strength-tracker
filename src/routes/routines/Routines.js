@@ -8,14 +8,12 @@ import RoutineList from './RoutineList'
 
 const Routines = () => {
   return (
-    <div class="px-4">
-      <Router>
-        <CreateRoutine path={routes.routinesNew} />
-        <RoutineList path={routes.routinesBase} />
-        <Routine path={`${routes.routinesBase}/:id`} />
-        <ActiveRoutine path={routes.activeRoutine} />
-      </Router>
-    </div>
+    <Router>
+      <CreateRoutine path={routes.routinesNew} />
+      <RoutineList path={routes.routinesBase} />
+      <Routine path={`${routes.routinesBase}/:id`} />
+      <ActiveRoutine path={routes.activeRoutine} />
+    </Router>
   )
 }
 

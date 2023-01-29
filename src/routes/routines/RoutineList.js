@@ -28,7 +28,7 @@ const RoutineList = () => {
   }, []) // eslint-disable-line
 
   return (
-    <div>
+    <div class="px-2">
       <div class="flex items-center justify-between">
         <h1>Routines</h1>
         <Link href={`${routes.routinesBase}/new`} class="">

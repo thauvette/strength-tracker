@@ -118,7 +118,7 @@ const CreateRoutine = () => {
   }
 
   return (
-    <div class="p-4">
+    <div class="px-2 py-4">
       <h1>New Routine</h1>
       <div>
         <div class="mb-4">

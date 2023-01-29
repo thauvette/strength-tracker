@@ -1,9 +1,12 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import EditableSet from '../../components/editableSet/editableSet'
+import ExerciseHistoryModal from '../../components/exerciseHistoryModal/ExerciseHistoryModal'
 import Icon from '../../components/icon/Icon'
 
-const PlannedWorkout = ({ sets, onUpdateSet }) => {
+import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
+
+const PlannedWorkout = ({ sets, onUpdateSet, showHistoryInSets }) => {
   const firstIncompleteSet = sets
     .map(({ created }) => created)
     .indexOf(undefined)
@@ -11,10 +14,30 @@ const PlannedWorkout = ({ sets, onUpdateSet }) => {
     firstIncompleteSet >= 0 ? firstIncompleteSet : 0,
   )
 
+  const [exerciseModalState, setExerciseModalState] = useState({
+    id: null,
+    isOpen: false,
+  })
+
+  const [exerciseHistory, getData] = useExerciseHistory(exerciseModalState.id)
+
   const saveSet = (set, index) => {
     setActiveSet(index + 1)
     onUpdateSet(set, index)
   }
+
+  const openExerciseModal = (id) => {
+    setExerciseModalState({
+      id,
+      isOpen: true,
+    })
+  }
+
+  const closeExerciseModal = () =>
+    setExerciseModalState({
+      id: null,
+      isOpen: false,
+    })
 
   return (
     <div>
@@ -31,25 +54,49 @@ const PlannedWorkout = ({ sets, onUpdateSet }) => {
                 </p>
               </div>
             </button>
+
             {i === activeSet && (
-              <EditableSet
-                reps={reps}
-                weight={weight}
-                renderCtas={({ reps, weight }) => {
-                  return (
-                    <button
-                      onClick={() => saveSet({ ...set, reps, weight }, i)}
-                      class="w-full bg-blue-900 text-white"
-                    >
-                      {created ? 'Update' : 'Save'}
-                    </button>
-                  )
-                }}
-              />
+              <div class="pb-2">
+                <EditableSet
+                  reps={reps}
+                  weight={weight}
+                  renderCtas={({ reps, weight }) => {
+                    return (
+                      <div class="flex">
+                        {showHistoryInSets && (
+                          <button
+                            onClick={() => openExerciseModal(set.exercise)}
+                          >
+                            <div class="flex flex-1 items-center gap-2">
+                              <Icon name="list-outline" />
+                              <p>History</p>
+                            </div>
+                          </button>
+                        )}
+                        <button
+                          onClick={() => saveSet({ ...set, reps, weight }, i)}
+                          class="flex-1 bg-blue-900 text-white"
+                        >
+                          {created ? 'Update' : 'Save'}
+                        </button>
+                      </div>
+                    )
+                  }}
+                />
+              </div>
             )}
           </div>
         )
       })}
+      {exerciseModalState.isOpen &&
+        exerciseHistory?.id === exerciseModalState?.id && (
+          <ExerciseHistoryModal
+            isOpen={exerciseModalState.isOpen}
+            onRequestClose={closeExerciseModal}
+            onUpdate={getData}
+            exerciseHistory={exerciseHistory}
+          />
+        )}
     </div>
   )
 }

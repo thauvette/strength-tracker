@@ -18,6 +18,7 @@ const useExerciseHistory = (id) => {
               eorm: formattedHistory.eorm,
               raw: res.items,
               prs: formatPrs(res?.items),
+              id,
             })
           })
           .catch((err) => {

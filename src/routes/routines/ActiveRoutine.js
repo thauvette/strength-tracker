@@ -29,7 +29,15 @@ const ActiveRoutine = () => {
   if (!activeRoutine?.length) {
     return <p>No active routine</p>
   }
-  return <PlannedWorkout sets={activeRoutine} onUpdateSet={onUpdateSet} />
+  return (
+    <div class="px-2">
+      <PlannedWorkout
+        sets={activeRoutine}
+        onUpdateSet={onUpdateSet}
+        showHistoryInSets
+      />
+    </div>
+  )
 }
 
 export default ActiveRoutine
