@@ -138,7 +138,15 @@ const Exercise = (props) => {
           lastHeavySet={heaviestSet}
           onChangeCompleteSet={getData}
           plannedSet={plannedSet}
-          updatePlanedSet={updatePlanedSet}
+          updatePlanedSet={({ id, sets }) => {
+            updatePlanedSet({
+              id,
+              sets: sets?.map((set) => ({
+                ...set,
+                exerciseName: exerciseHistory?.name,
+              })),
+            })
+          }}
         />
       </Router>
     </div>

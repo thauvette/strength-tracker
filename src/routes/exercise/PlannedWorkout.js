@@ -22,11 +22,12 @@ const PlannedWorkout = ({ sets, onUpdateSet }) => {
         const { reps, weight, created, exerciseName } = set
         return (
           <div key={i} class="border-b-4 pb-2 mb-4">
-            <button onClick={() => setActiveSet(i)}>
-              <div class="flex">
+            <button class="w-full" onClick={() => setActiveSet(i)}>
+              <div class="flex flex-wrap ">
                 {created && <Icon name="checkmark-outline" width={32} />}
-                <p class="capitalize">
-                  {exerciseName} - {reps} @ {weight}
+                <p class="capitalize  text-left">{exerciseName}</p>
+                <p class="ml-auto">
+                  {reps} @ {weight}
                 </p>
               </div>
             </button>
