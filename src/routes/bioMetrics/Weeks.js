@@ -1,46 +1,27 @@
 import { h } from 'preact'
 import dayjs from 'dayjs'
 import Icon from '../../components/icon/Icon'
+import { convertDaysToWeeks } from './utils'
 
 const Weeks = ({ days = [] }) => {
   if (!days?.length) {
     return null
   }
-  const weeks =
-    days?.reduce((obj, day) => {
-      const weekKey = dayjs(day.dayKey).startOf('week').format('YYYY-MM-DD')
-
-      const currentDays = obj[weekKey]?.days || []
-      currentDays.push(day)
-      const currentWeightInCount = obj[weekKey]?.count || 0
-
-      const weeklyAverage =
-        currentDays.reduce((num, { average }) => num + average, 0) /
-        currentDays?.length
-
-      return {
-        ...obj,
-        [weekKey]: {
-          average: weeklyAverage,
-          days: currentDays,
-          count: currentWeightInCount + (day?.items?.length || 0),
-        },
-      }
-    }, {}) || {}
+  const weeks = convertDaysToWeeks(days)
 
   return (
     <div class="py-4">
       <h2>Weeks</h2>
-      {Object.entries(weeks || {}).map(([weekKey, week], i) => {
+      {weeks.map((week, i) => {
         const previousWeekAverage = Object.values(weeks)?.[i + 1]?.average
 
         const change = previousWeekAverage
           ? week.average - previousWeekAverage
           : undefined
         return (
-          <div key={weekKey} className="border mb-3 rounded-sm">
+          <div key={week.key} className="border mb-3 rounded-sm">
             <div className="flex items-center justify-between bg-primary-100 p-2 text-lg font-bold">
-              <p>Week of {dayjs(weekKey).format('MMM DD YYYY')}</p>
+              <p>Week of {dayjs(week.key).format('MMM DD YYYY')}</p>
               <p>{week.average.toFixed(2)}</p>
             </div>
             <div className="flex justify between p-2 bg-white">

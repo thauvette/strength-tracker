@@ -7,7 +7,7 @@ import styles from './line-chart.scss'
 
 const margins = {
   top: 8,
-  right: 16,
+  right: 24,
   bottom: 42,
   left: 16,
 }
@@ -15,7 +15,7 @@ const margins = {
 const LineChart = ({ data, dateFormat }) => {
   const containerRef = useRef(null)
   const chartCanvasRef = useRef(null)
-
+  const [range, setRange] = useState([])
   const [containerWidth, setContainerWidth] = useState(null)
 
   const drawLine = () => {
@@ -39,7 +39,7 @@ const LineChart = ({ data, dateFormat }) => {
     const yMin = d3.min(data, (d) => d.y)
     const yMax = d3.max(data, (d) => d.y)
     x.domain([d3.min(data, (d) => d.x), d3.max(data, (d) => d.x)])
-    y.domain([yMin - yMin * 0.1, yMax + yMax * 0.1])
+    y.domain([yMin - yMin * 0.05, yMax + yMax * 0.05])
 
     const valueLine = d3
       .line()
@@ -94,6 +94,8 @@ const LineChart = ({ data, dateFormat }) => {
       .attr('class', styles.line)
       .attr('d', valueLine)
       .attr('transform', `translate(${margins.left}, 0)`)
+
+    setRange([yMin, yMax])
   }
 
   useLayoutEffect(() => {
@@ -120,6 +122,11 @@ const LineChart = ({ data, dateFormat }) => {
 
   return (
     <div class={styles.lineChart}>
+      {range?.length ? (
+        <p>
+          min: {range[0]?.toFixed(2)} - max: {range[1]?.toFixed(2)}
+        </p>
+      ) : null}
       <div ref={containerRef}>
         <svg
           ref={chartCanvasRef}
