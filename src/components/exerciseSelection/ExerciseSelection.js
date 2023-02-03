@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import uniqBy from 'lodash.uniqBy'
+import uniqBy from 'lodash.uniqby'
 import ButtonList from '../buttonList/ButtonList'
 import GroupList from './GroupList'
 
