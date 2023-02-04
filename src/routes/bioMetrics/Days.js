@@ -1,9 +1,24 @@
 import { h } from 'preact'
 import dayjs from 'dayjs'
 import Icon from '../../components/icon/Icon'
+import BioMetricForm from './bioMetricForm'
 
-const Days = ({ days, setEditModalState }) => (
+const Days = ({
+  days,
+  setEditModalState,
+  initialFormValues,
+  handleAddEntry,
+  name,
+}) => (
   <div class="py-4">
+    <BioMetricForm
+      initialValues={initialFormValues}
+      submit={(data) => {
+        handleAddEntry(data)
+      }}
+      name={name}
+      submitText="Add New +"
+    />
     <h2 class="mb-2">History</h2>
     {days?.map((day) => {
       const { items, average, change, dayKey } = day

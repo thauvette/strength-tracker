@@ -95,6 +95,57 @@ const LineChart = ({ data, dateFormat }) => {
       .attr('d', valueLine)
       .attr('transform', `translate(${margins.left}, 0)`)
 
+    const tooltip = d3
+      .select(containerRef.current)
+      .append('div')
+      .attr('id', 'bar-tooltip')
+      .style('position', 'absolute')
+      .style('z-index', '10')
+      .style('visibility', 'hidden')
+      .style('padding', '4px')
+      .style('background', 'rgba(0,0,0,0.6)')
+      .style('border-radius', '4px')
+      .style('color', '#fff')
+      .on('click', () => {
+        tooltip.style('visibility', 'hidden')
+      })
+
+    // Dots
+    const dotGroup = svg.append('g')
+    dotGroup
+      .selectAll('dots')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', (d) => x(d.x))
+      .attr('cy', (d) => y(d.y))
+      .attr('r', 6)
+      .attr('fill', 'transparent')
+      .attr('transform', `translate(${margins.left}, 0)`)
+      .on('click', (e, d) => {
+        tooltip
+          .html(`<div>${d.y ? d.y.toFixed(2) : null}</div>`)
+          .style('visibility', 'visible')
+          .style('top', `${y(d.y) - margins.top - 20}px`)
+          .style('left', `${x(d.x)}px`)
+      })
+    dotGroup
+      .selectAll('innerDots')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', (d) => x(d.x))
+      .attr('cy', (d) => y(d.y))
+      .attr('r', 2)
+      .attr('transform', `translate(${margins.left}, 0)`)
+      .on('click', (e, d) => {
+        tooltip
+          .html(`<div>${d.y ? d.y.toFixed(2) : null}</div>`)
+          .style('visibility', 'visible')
+          .style('top', `${y(d.y) - margins.top - 20}px`)
+          .style('left', `${x(d.x)}px`)
+      })
+
     setRange([yMin, yMax])
   }
 
@@ -123,11 +174,11 @@ const LineChart = ({ data, dateFormat }) => {
   return (
     <div class={styles.lineChart}>
       {range?.length ? (
-        <p>
+        <p class="text-center">
           min: {range[0]?.toFixed(2)} - max: {range[1]?.toFixed(2)}
         </p>
       ) : null}
-      <div ref={containerRef}>
+      <div ref={containerRef} class="relative">
         <svg
           ref={chartCanvasRef}
           width={containerWidth}

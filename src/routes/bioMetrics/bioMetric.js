@@ -97,48 +97,46 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
 
   return (
     <div class="px-2">
-      <h1 class="capitalize">{currentBioMetric?.name}</h1>
-
-      <BioMetricForm
-        initialValues={{
-          value:
-            currentBioMetric?.items?.[currentBioMetric?.items.length - 1]
-              ?.value || '',
-        }}
-        submit={(data) => {
-          handleAddEntry(data)
-        }}
-        name={currentBioMetric?.name}
-        submitText="Add New +"
-      />
-      <div class="flex py-2">
-        <Link
-          class="py-2 px-4 bg-primary-100"
-          activeClassName="bg-primary-900 text-white"
-          href={`${routes.bioMetricsBase}/${id}`}
-        >
-          Days
-        </Link>
-        <Link
-          class="py-2 px-4 bg-primary-100"
-          activeClassName="bg-primary-900 text-white"
-          href={`${routes.bioMetricsBase}/${id}/weeks`}
-        >
-          Weeks
-        </Link>
-        <Link
-          class="py-2 px-4 bg-primary-100"
-          activeClassName="bg-primary-900 text-white"
-          href={`${routes.bioMetricsBase}/${id}/charts`}
-        >
-          Charts
-        </Link>
+      <div class="flex items-center justify-between">
+        <h1 class="capitalize">{currentBioMetric?.name}</h1>
+        <div class="flex py-2">
+          <Link
+            class="py-2 px-4 bg-primary-100"
+            activeClassName="bg-primary-900 text-white"
+            href={`${routes.bioMetricsBase}/${id}`}
+          >
+            Days
+          </Link>
+          <Link
+            class="py-2 px-4 bg-primary-100"
+            activeClassName="bg-primary-900 text-white"
+            href={`${routes.bioMetricsBase}/${id}/weeks`}
+          >
+            Weeks
+          </Link>
+          <Link
+            class="py-2 px-4 bg-primary-100"
+            activeClassName="bg-primary-900 text-white"
+            href={`${routes.bioMetricsBase}/${id}/charts`}
+          >
+            Charts
+          </Link>
+        </div>
       </div>
       <Router>
         <Days
           path={`${routes.bioMetricsBase}/:id`}
           days={days}
           setEditModalState={setEditModalState}
+          initialFormValues={{
+            value:
+              currentBioMetric?.items?.[currentBioMetric?.items.length - 1]
+                ?.value || '',
+          }}
+          handleAddEntry={(data) => {
+            handleAddEntry(data)
+          }}
+          name={currentBioMetric?.name}
         />
         <Weeks path={`${routes.bioMetricsBase}/:id/weeks`} days={days} />
         <Charts path={`${routes.bioMetricsBase}/:id/charts`} days={days} />
