@@ -20,22 +20,22 @@ const MaxWeightRow = ({ set }) => {
   const { daysHistory } = set
   return (
     <div class="border-b-4">
-      <div
-        class={`flex items-center justify-between py-4  ${
-          set.isActualSet ? 'font-bold' : 'opacity-90'
-        }`}
+      <button
+        disabled={!daysHistory?.length}
+        class="p-0 w-full"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <p>
-          {set.reps} @ {set.displayWeight}
-        </p>
-        <button
-          disabled={!daysHistory?.length}
-          class="p-0"
-          onClick={() => setIsOpen(!isOpen)}
+        <div
+          class={`flex items-center justify-between py-4  ${
+            set.isActualSet ? 'font-bold' : 'opacity-90'
+          }`}
         >
+          <p>
+            {set.reps} @ {set.displayWeight}
+          </p>
           <p>{dayjs(set.date).format('DD MMM YYYY')}</p>
-        </button>
-      </div>
+        </div>
+      </button>
       <AnimateHeight height={isOpen ? 'auto' : 0}>
         <div class="pb-4">
           {daysHistory?.length > 0
