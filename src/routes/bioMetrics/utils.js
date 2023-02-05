@@ -34,6 +34,7 @@ const chunkWeeks = (days) => {
     title: `Week of ${dayjs(week.key).format('MMM DD')}`,
     dateFormat: 'ddd',
     items: week.days.map((day) => ({
+      ...day,
       x: dayjs(day.dayKey).toDate().getTime(),
       y: day.average,
     })),
@@ -45,6 +46,7 @@ const chunkMonths = (days) => {
     title: `${dayjs(month.key).format('MMMM YYYY')}`,
     dateFormat: 'ddd DD',
     items: month.days.map((day) => ({
+      ...day,
       x: dayjs(day.dayKey).toDate().getTime(),
       y: day.average,
     })),
@@ -60,6 +62,7 @@ export const renderData = ({ days, displayGroup }) => {
           title: 'All Time',
           dateFormat: 'MM/YY',
           items: days.map((day) => ({
+            ...day,
             x: dayjs(day.dayKey).toDate().getTime(),
             y: day.average,
           })),

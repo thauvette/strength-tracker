@@ -4,8 +4,9 @@ import { useState } from 'preact/hooks'
 import ExerciseHistory from './ExerciseHistory'
 import MaxWeights from './MaxWeights'
 import Volume from './Volume'
+import Charts from './Charts'
 
-const tabs = ['history', 'PRs', 'volume']
+const tabs = ['charts', 'history', 'PRs', 'volume']
 
 const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
@@ -15,6 +16,8 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
         return <MaxWeights exerciseHistory={exerciseHistory} />
       case 'volume':
         return <Volume exerciseHistory={exerciseHistory} />
+      case 'charts':
+        return <Charts exerciseHistory={exerciseHistory} />
       case 'history':
       default:
         return (

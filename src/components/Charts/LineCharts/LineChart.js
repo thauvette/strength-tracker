@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import dayjs from 'dayjs'
 
 import styles from './line-chart.scss'
+import { formatToFixed } from '../../../utilities.js/formatNumbers'
 
 const margins = {
   top: 8,
@@ -12,11 +13,14 @@ const margins = {
   left: 16,
 }
 
-const LineChart = ({ data, dateFormat }) => {
+const LineChart = ({ data, dateFormat, renderTooltip }) => {
   const containerRef = useRef(null)
   const chartCanvasRef = useRef(null)
   const [range, setRange] = useState([])
   const [containerWidth, setContainerWidth] = useState(null)
+  const tooltipRef = useRef(null)
+
+  const [selectedData, setSelectedData] = useState(null)
 
   const drawLine = () => {
     const { width, height } = containerRef.current.getBoundingClientRect()
@@ -30,6 +34,7 @@ const LineChart = ({ data, dateFormat }) => {
       .attr('height', height)
 
     root.selectAll('*').remove()
+    setSelectedData(null)
     const svg = root
       .append('g')
       .attr('transform', `translate(${margins.left}, ${margins.top})`)
@@ -58,7 +63,8 @@ const LineChart = ({ data, dateFormat }) => {
       .call(
         d3
           .axisBottom(x)
-          .tickFormat((d) => dayjs(d).format(dateFormat || 'DD/MM')),
+          .tickFormat((d) => dayjs(d).format(dateFormat || 'DD/MM'))
+          .ticks(data?.length < 10 ? data?.length : 10),
       )
       .selectAll('text')
       .attr('y', 0)
@@ -95,23 +101,19 @@ const LineChart = ({ data, dateFormat }) => {
       .attr('d', valueLine)
       .attr('transform', `translate(${margins.left}, 0)`)
 
-    const tooltip = d3
-      .select(containerRef.current)
-      .append('div')
-      .attr('id', 'bar-tooltip')
-      .style('position', 'absolute')
-      .style('z-index', '10')
-      .style('visibility', 'hidden')
-      .style('padding', '4px')
-      .style('background', 'rgba(0,0,0,0.6)')
-      .style('border-radius', '4px')
-      .style('color', '#fff')
-      .on('click', () => {
-        tooltip.style('visibility', 'hidden')
-      })
-
     // Dots
     const dotGroup = svg.append('g')
+
+    dotGroup
+      .selectAll('innerDots')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', (d) => x(d.x))
+      .attr('cy', (d) => y(d.y))
+      .attr('r', 2)
+      .attr('transform', `translate(${margins.left}, 0)`)
+
     dotGroup
       .selectAll('dots')
       .data(data)
@@ -123,29 +125,10 @@ const LineChart = ({ data, dateFormat }) => {
       .attr('fill', 'transparent')
       .attr('transform', `translate(${margins.left}, 0)`)
       .on('click', (e, d) => {
-        tooltip
-          .html(`<div>${d.y ? d.y.toFixed(2) : null}</div>`)
-          .style('visibility', 'visible')
-          .style('top', `${y(d.y) - margins.top - 20}px`)
-          .style('left', `${x(d.x)}px`)
+        setSelectedData(d)
+        tooltipRef.current.style.top = `${y(d.y) - margins.top - 20}px`
+        tooltipRef.current.style.left = `${x(d.x)}px`
       })
-    dotGroup
-      .selectAll('innerDots')
-      .data(data)
-      .enter()
-      .append('circle')
-      .attr('cx', (d) => x(d.x))
-      .attr('cy', (d) => y(d.y))
-      .attr('r', 2)
-      .attr('transform', `translate(${margins.left}, 0)`)
-      .on('click', (e, d) => {
-        tooltip
-          .html(`<div>${d.y ? d.y.toFixed(2) : null}</div>`)
-          .style('visibility', 'visible')
-          .style('top', `${y(d.y) - margins.top - 20}px`)
-          .style('left', `${x(d.x)}px`)
-      })
-
     setRange([yMin, yMax])
   }
 
@@ -175,7 +158,7 @@ const LineChart = ({ data, dateFormat }) => {
     <div class={styles.lineChart}>
       {range?.length ? (
         <p class="text-center">
-          min: {range[0]?.toFixed(2)} - max: {range[1]?.toFixed(2)}
+          min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
         </p>
       ) : null}
       <div ref={containerRef} class="relative">
@@ -184,6 +167,29 @@ const LineChart = ({ data, dateFormat }) => {
           width={containerWidth}
           height={containerWidth * 0.6}
         />
+        <div
+          onClick={() => {
+            setSelectedData(null)
+          }}
+          ref={tooltipRef}
+          class={`absolute bg-black bg-opacity-50 p-2
+            transform -translate-y-1/2 rounded-md
+          ${selectedData ? '' : 'hidden'}`}
+        >
+          {selectedData && (
+            <>
+              {renderTooltip ? (
+                renderTooltip(selectedData)
+              ) : (
+                <>
+                  <p class="text-white text-center">
+                    {formatToFixed(selectedData?.y)}
+                  </p>
+                </>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

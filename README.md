@@ -2,6 +2,11 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+<!-- prettier-ignore -->
+TODO: more stats on exercise view (Charts)
+    - add a render tool tip option
+    -
+
 TODO: change app name and logo, and favicon
 
 <!-- prettier-ignore -->
@@ -25,8 +30,6 @@ TODO: Screen always on? (currently only in chrome 84)
 TODO: Swipe on calendar view??
 
 TODO: clean up all naming conventions.
-
-TODO: more stats on exercise view (Charts)
 
 TODO: wendler form errors
 

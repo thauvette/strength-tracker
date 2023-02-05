@@ -15,7 +15,7 @@ const VolumeRow = ({ day }) => {
       >
         <div class={`flex items-center justify-between py-4`}>
           <p>
-            {dayjs(day.day).format('DD MMM YYYY')} {day.sets} sets
+            {dayjs(day.day).format('DD MMM YYYY')} - {day.sets} sets
           </p>
           <p>{day.vol}</p>
         </div>
