@@ -6,7 +6,7 @@ import MaxWeights from './MaxWeights'
 import Volume from './Volume'
 import Charts from './Charts'
 
-const tabs = ['charts', 'history', 'PRs', 'volume']
+const tabs = ['history', 'PRs', 'volume', 'charts']
 
 const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
