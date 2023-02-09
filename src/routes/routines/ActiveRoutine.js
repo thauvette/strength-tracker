@@ -35,6 +35,7 @@ const ActiveRoutine = () => {
         sets={activeRoutine}
         onUpdateSet={onUpdateSet}
         showHistoryInSets
+        showLinkToExercise
       />
     </div>
   )
