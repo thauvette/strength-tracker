@@ -17,7 +17,15 @@ const VolumeRow = ({ day }) => {
           <p>
             {dayjs(day.day).format('DD MMM YYYY')} - {day.sets} sets
           </p>
-          <p>{day.vol}</p>
+          <p>
+            {day.diff && (
+              <span class="text-sm">
+                ({day.diff > 0 ? '+' : ''}
+                {day.diff})
+              </span>
+            )}{' '}
+            <span class="font-bold">{day.vol}</span>
+          </p>
         </div>
       </button>
 
@@ -49,7 +57,13 @@ const Volume = ({ exerciseHistory }) => {
 
   return volumeByDay
     .sort((a, b) => (dayjs(a.day).isBefore(b.day) ? 1 : -1))
-    .map((day) => <VolumeRow key={day.day} day={day} />)
+    .map((day, i) => {
+      const diff = volumeByDay[i + 1]?.vol
+        ? day.vol - volumeByDay[i + 1]?.vol
+        : null
+
+      return <VolumeRow key={day.day} day={{ ...day, diff }} />
+    })
 }
 
 export default Volume
