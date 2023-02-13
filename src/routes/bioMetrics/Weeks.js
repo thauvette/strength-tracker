@@ -19,12 +19,12 @@ const Weeks = ({ days = [] }) => {
           ? week.average - previousWeekAverage
           : undefined
         return (
-          <div key={week.key} className="card mb-3">
-            <div className="flex items-center justify-between bg-gray-1 p-2 text-lg font-bold">
+          <div key={week.key} className="mb-3">
+            <div className="flex items-center justify-between p-2 text-lg font-bold card-header">
               <p>Week of {dayjs(week.key).format('MMM DD YYYY')}</p>
               <p>{week.average.toFixed(2)}</p>
             </div>
-            <div className="flex justify between p-2 bg-gray-2">
+            <div className="flex justify between p-2 card-body">
               <p className="flex-1 ">
                 {week?.count} {week?.count > 1 ? 'entries' : 'entry'}
               </p>
