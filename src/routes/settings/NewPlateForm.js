@@ -23,7 +23,7 @@ const NewPlateForm = ({ onSubmit }) => {
         <p>Count:</p>
         <Counters value={count} setValue={setCount} jumpBy={1} />
       </div>
-      <button class="bg-blue-900 text-white" onClick={submit}>
+      <button class="bg-primary-900 text-white" onClick={submit}>
         Add
       </button>
     </div>

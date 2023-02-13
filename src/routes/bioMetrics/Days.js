@@ -23,12 +23,12 @@ const Days = ({
     {days?.map((day) => {
       const { items, average, change, dayKey } = day
       return (
-        <div key={dayKey} className="border mb-3 rounded-sm">
-          <div className="flex items-center justify-between bg-primary-100 p-2 text-lg font-bold">
+        <div key={dayKey} className=" mb-3">
+          <div className="flex items-center justify-between bg-gray-1 p-2 text-lg font-bold">
             <p>{dayjs(dayKey).format('ddd MMM DD YYYY')}</p>
             <p>{average.toFixed(2)}</p>
           </div>
-          <div className="flex justify between p-2 bg-white">
+          <div className="flex justify between p-2 bg-gray-2">
             <div className="flex-1 ">
               {items.map((item) => {
                 return (

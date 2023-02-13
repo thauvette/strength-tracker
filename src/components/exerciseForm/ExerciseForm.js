@@ -229,7 +229,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       </div>
       <div class="pt-4">
         <button
-          class={`text-white ${formIsValid ? 'bg-blue-900' : 'bg-gray-500'}`}
+          class={`text-white ${formIsValid ? 'bg-primary-900' : 'bg-gray-500'}`}
           disabled={!formIsValid}
           onClick={submit}
         >

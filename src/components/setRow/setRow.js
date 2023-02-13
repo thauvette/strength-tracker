@@ -59,14 +59,14 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
   }
 
   return (
-    <div class="py-2 border-b-2 border-blue-200">
+    <div class="py-2 border-b-2 border-gray-200 dark:border-gray-600">
       <div class="flex items-center justify-between ">
         {isIntersecting && (
           <button
             onClick={() => handleToggleDrawerContent('note')}
             ariaLabel="view notes"
           >
-            <div class="flex items-center">
+            <div class="flex items-center text-highlight-900 dark:text-highlight-100">
               <Icon
                 name={set?.note?.length ? 'clipboard' : 'clipboard-outline'}
               />

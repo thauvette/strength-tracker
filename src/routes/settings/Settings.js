@@ -67,7 +67,7 @@ const Settings = () => {
         })}
         <div class="pt-4">
           <button
-            class="bg-blue-900 text-white"
+            class="bg-primary-900 text-white"
             onClick={() => setNewPlateModalIsOpen(true)}
           >
             Add Plate

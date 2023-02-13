@@ -6,6 +6,8 @@ import dayjs from 'dayjs'
 import styles from './line-chart.scss'
 import { formatToFixed } from '../../../utilities.js/formatNumbers'
 
+import useTheme from '../../../context/theme'
+
 const margins = {
   top: 8,
   right: 24,
@@ -14,6 +16,8 @@ const margins = {
 }
 
 const LineChart = ({ data, dateFormat, renderTooltip }) => {
+  const { theme } = useTheme()
+
   const containerRef = useRef(null)
   const chartCanvasRef = useRef(null)
   const [range, setRange] = useState([])
@@ -111,6 +115,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .append('circle')
       .attr('cx', (d) => x(d.x))
       .attr('cy', (d) => y(d.y))
+      .attr('fill', theme === 'dark' ? '#fff' : '#000')
       .attr('r', 2)
       .attr('transform', `translate(${margins.left}, 0)`)
 
@@ -152,10 +157,12 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
     window.addEventListener('resize', checkWidth)
 
     return () => window.removeEventListener('resize', checkWidth)
-  }, [containerWidth])
+  }, [containerWidth, theme])
 
   return (
-    <div class={styles.lineChart}>
+    <div
+      class={`${styles.lineChart} ${theme === 'dark' ? styles.darkChart : ''}`}
+    >
       {range?.length ? (
         <p class="text-center">
           min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}

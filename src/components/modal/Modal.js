@@ -66,12 +66,12 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
 
   return (
     <div
-      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-75 p-4 z-50 max-h-screen"
+      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-75 dark:bg-gray-400 dark:bg-opacity-75 p-4 z-50 max-h-screen"
       aria-hidden="false"
     >
       <div class="h-full relative">
         <div
-          class="modal-content bg-white w-full px-2 py-4 absolute top-1/2 left-1/2 overflow-scroll max-w-lg"
+          class="modal-content bg-1 w-full px-2 py-4 absolute top-1/2 left-1/2 overflow-scroll max-w-lg"
           ref={contentRef}
           style={{
             transform: 'translate(-50%, -50%)',

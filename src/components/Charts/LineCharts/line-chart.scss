@@ -1,4 +1,22 @@
 .lineChart {
+  &.darkChart {
+    svg {
+      g {
+        .line {
+          stroke: #fff;
+        }
+        .axis {
+          color: #ccc;
+          :global(text) {
+            color: #fff;
+          }
+        }
+      }
+      .text {
+        color: #fff;
+      }
+    }
+  }
   svg {
     g {
       .line {

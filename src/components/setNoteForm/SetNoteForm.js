@@ -26,7 +26,7 @@ const SetNoteForm = ({ text, onSave, id }) => {
           placeholder="Note"
         />
       </div>
-      <button class="bg-blue-900 text-white" type="submit">
+      <button class="bg-primary-900 text-white" type="submit">
         Save
       </button>
     </form>

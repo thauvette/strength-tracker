@@ -79,7 +79,7 @@ const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
         </p>
       ))}
       <button
-        class="bg-blue-900 text-white mt-4 w-full"
+        class="bg-primary-900 text-white mt-4 w-full"
         onClick={() => {
           updatePlanedSet(sets)
         }}
