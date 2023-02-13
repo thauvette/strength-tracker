@@ -171,16 +171,13 @@ const Logs = () => {
       {activeDayData?.length > 0 ? (
         <div class="flex justify-between py-4">
           <button
-            class="underline text-blue-600"
+            class="link underline"
             onClick={() => setView(view === 'groups' ? 'order' : 'groups')}
           >
             {view === 'groups' ? 'View in Order' : 'View in Groups'}
           </button>
           {!isToday && (
-            <button
-              class="border border-primary-900 text-primary-900"
-              onClick={useDayAsRoutine}
-            >
+            <button class="hollow" onClick={useDayAsRoutine}>
               Do workout
             </button>
           )}
@@ -189,7 +186,7 @@ const Logs = () => {
 
       {view === 'groups'
         ? Object.entries(sortedDayData).map(([name, sets]) => (
-            <div key={name} class="mb-4 border-2 rounded-md p-4 bg-white">
+            <div key={name} class="mb-4 card p-4 ">
               <div class="flex justify-between pb-2">
                 <p class="font-bold capitalize">{name}</p>
                 {sets?.[0]?.exercise && (
@@ -210,10 +207,7 @@ const Logs = () => {
             </div>
           ))
         : activeDayData?.map((set) => (
-            <div
-              class="mb-4 border-2 rounded-md p-4 bg-white"
-              key={set.created}
-            >
+            <div class="mb-4 card p-4" key={set.created}>
               <div class="flex items-center gap-2 ">
                 <p class="font-bold capitalize">{set.name}</p>
                 <p class="whitespace-nowrap">
@@ -238,7 +232,7 @@ const Logs = () => {
         <div>
           {Object.entries(logState?.bioMetrics?.[activeDate]).map(
             ([id, bioMetric]) => (
-              <div key={id} class="mb-4 border-2 p-4 rounded-md bg-white">
+              <div key={id} class="mb-4 card p-4">
                 <div class="flex items-center justify-between">
                   <p class="font-bold capitalize">{bioMetric.name}</p>
                   <div class="flex justify-end">
@@ -279,11 +273,13 @@ const Logs = () => {
                 )
               : null
 
-            let classNames = isCurrentMonth ? '' : 'bg-gray-100'
+            let classNames = isCurrentMonth
+              ? ''
+              : 'bg-gray-100 dark:bg-gray-900'
             if (isToday) {
-              classNames = 'bg-green-200 '
+              classNames = 'bg-highlight-200 dark:text-black'
             } else if (hasData && isCurrentMonth) {
-              classNames = 'bg-blue-100'
+              classNames = 'bg-blue-100 dark:bg-blue-900'
             }
 
             return (

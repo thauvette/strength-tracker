@@ -60,7 +60,7 @@ const Routine = ({ id }) => {
                         ))
                       : null}
                     <button
-                      class="bg-blue-900 text-white mt-8"
+                      class="bg-primary-900 text-white mt-8"
                       onClick={() => setActiveRoutine(day.sets)}
                     >
                       Start Workout

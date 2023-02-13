@@ -75,7 +75,7 @@ const EditFastForm = ({ initialValues, handleSubmit }) => {
       <button
         disabled={!formValues.startDate || !formValues.startTime}
         onClick={submit}
-        class="bg-blue-900 text-white"
+        class="bg-primary-900 text-white"
       >
         Save
       </button>

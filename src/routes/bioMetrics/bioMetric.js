@@ -101,22 +101,22 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
         <h1 class="capitalize">{currentBioMetric?.name}</h1>
         <div class="flex py-2">
           <Link
-            class="py-2 px-4 bg-primary-100"
-            activeClassName="bg-primary-900 text-white"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-transparent"
+            activeClassName="border-highlight-900 dark:border-highlight-200"
             href={`${routes.bioMetricsBase}/${id}`}
           >
             Days
           </Link>
           <Link
-            class="py-2 px-4 bg-primary-100"
-            activeClassName="bg-primary-900 text-white"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-transparent"
+            activeClassName="border-highlight-900 dark:border-highlight-200"
             href={`${routes.bioMetricsBase}/${id}/weeks`}
           >
             Weeks
           </Link>
           <Link
-            class="py-2 px-4 bg-primary-100"
-            activeClassName="bg-primary-900 text-white"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-transparent"
+            activeClassName="border-highlight-900 dark:border-highlight-200"
             href={`${routes.bioMetricsBase}/${id}/charts`}
           >
             Charts

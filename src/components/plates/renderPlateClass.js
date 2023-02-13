@@ -1,6 +1,6 @@
 export default function renderPlateClass(weight) {
   if (weight > 35) {
-    return `w-6 h-24 bg-blue-900`
+    return `w-6 h-24 bg-primary-900`
   }
   if (weight > 25) {
     return `w-5 h-20 bg-blue-800`

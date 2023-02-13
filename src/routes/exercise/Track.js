@@ -25,7 +25,7 @@ const Track = ({
 
   return (
     <div class="relative px-2">
-      <div className="border-b-4 pb-4">
+      <div className="border-b-4 border-gray-200 dark:border-gray-600 pb-4">
         <p class="text-xl">New Set</p>
         <EditableSet
           reps={
@@ -40,7 +40,7 @@ const Track = ({
           renderCtas={({ weight, reps }) => (
             <div class="px-2">
               <button
-                class={`bg-blue-900 text-white w-full transition-all duration-200`}
+                class={`primary w-full`}
                 onClick={() => {
                   submitNewSet({ weight, reps })
                 }}

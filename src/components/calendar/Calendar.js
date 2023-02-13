@@ -44,14 +44,18 @@ const Calendar = ({ startDate, renderDay }) => {
     return renderDay ? (
       renderDay(day, isCurrentMonth)
     ) : (
-      <div class={`text-center py-2 ${!isCurrentMonth ? 'bg-gray-100' : ''}`}>
+      <div
+        class={`text-center py-2 ${
+          !isCurrentMonth ? 'bg-gray-100 dark:bg-gray-800' : ''
+        }`}
+      >
         <p>{day.format('D')}</p>
       </div>
     )
   }
 
   return (
-    <div class="">
+    <div class="bg-1">
       <div class="flex items-center justify-between pb-2">
         <button
           class="text-xl"

@@ -3,17 +3,17 @@ import { Link } from 'preact-router/match'
 
 import { routes } from '../../config/routes'
 import Icon from '../icon/Icon'
-import style from './style.css'
+import style from './style.scss'
 
 const Header = ({ toggleMenu, menuIsOpen, activeRoutine }) => (
-  <header class="flex items-center justify-between px-4 h-14 bg-primary-600 z-10">
+  <header class="flex items-center justify-between px-4 h-14 bg-2 z-20">
     <div class="flex items-center">
-      <Link class="text-white text-3xl" href="/">
+      <Link class="text-primary-900 dark:text-gray-50 text-3xl" href="/">
         <Icon name="calendar-outline" width="32" />
       </Link>
       {activeRoutine && (
         <Link
-          class="text-white ml-4"
+          class="text-primary-900 dark:text-gray-50 ml-4"
           href={routes.activeRoutine}
           aria-label="today's routine"
         >
@@ -21,16 +21,16 @@ const Header = ({ toggleMenu, menuIsOpen, activeRoutine }) => (
         </Link>
       )}
     </div>
-    <nav>
+    <nav class="text-primary-900 dark:text-gray-50">
       <Link href={routes.newWorkout}>+</Link>
       <button
         onClick={toggleMenu}
-        class={`${style.hamburger}
+        class={`ml-4 ${style.hamburger}
       ${menuIsOpen ? style.hamburgerActive : ''}`}
       >
-        <div />
-        <div />
-        <div />
+        <div class="bg-primary-900 dark:bg-white" />
+        <div class="bg-primary-900 dark:bg-white" />
+        <div class="bg-primary-900 dark:bg-white" />
       </button>
     </nav>
   </header>

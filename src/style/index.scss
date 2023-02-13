@@ -5,14 +5,12 @@
 @layer base {
   html,
   body {
-    @apply text-primary-900 bg-primary-50;
     height: 100%;
     width: 100%;
     padding: 0;
     margin: 0;
     font-family: 'Helvetica Neue', arial, sans-serif;
     font-weight: 400;
-
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -25,9 +23,9 @@
     box-sizing: border-box;
   }
 
-  #app,
   #preact_root {
-    height: 100%;
+    min-height: 100%;
+    position: relative;
   }
 
   h1,
@@ -48,8 +46,7 @@
     @apply text-lg;
   }
   button {
-    @apply py-1 px-2 text-lg text-primary-900;
-
+    @apply py-1 px-2 text-lg;
     font-weight: 400;
     text-align: center;
     white-space: nowrap;
@@ -62,25 +59,46 @@
       border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
     &.primary {
-      @apply bg-blue-900 text-white;
+      @apply bg-highlight-600 text-white font-bold;
     }
     &.secondary {
-      @apply bg-gray-300 text-gray-900;
+      @apply bg-gray-600 text-white;
+    }
+    &.hollow {
+      @apply bg-transparent border-primary-700 text-primary-700 dark:border-primary-200 dark:text-primary-200;
+    }
+    &.link {
+      @apply bg-transparent border-none text-primary-700  dark:text-primary-200;
     }
     &.warning {
       @apply bg-red-900 text-white;
     }
   }
 
+  .card {
+    @apply bg-gray-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100 rounded-md border border-gray-400 dark:border-gray-700;
+  }
+
   input,
   select {
-    border: 1px solid #ccc;
+    @apply bg-transparent border border-primary-700 dark:border-primary-200;
     border-radius: 4px;
     padding: 4px 8px;
     min-height: 48px;
-    background-color: #fff;
   }
-  a {
-    @apply text-primary-600 underline;
+
+  .bg-1 {
+    @apply bg-white text-primary-900 dark:bg-black dark:text-white;
+  }
+
+  .bg-2 {
+    @apply bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-100;
+  }
+
+  .bg-gray-1 {
+    @apply bg-gray-300 dark:bg-gray-900 text-gray-900 dark:text-gray-200;
+  }
+  .bg-gray-2 {
+    @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100;
   }
 }

@@ -44,7 +44,7 @@ const ReorderForm = ({
       />
 
       <div class="flex pt-4">
-        <button class="w-full bg-blue-900 text-white" onClick={submit}>
+        <button class="w-full bg-primary-900 text-white" onClick={submit}>
           Save
         </button>
       </div>

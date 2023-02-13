@@ -74,14 +74,14 @@ const PlannedWorkout = ({
                       <div>
                         <button
                           onClick={() => saveSet({ ...set, reps, weight }, i)}
-                          class="flex-1 w-full bg-primary-900 text-white"
+                          class="primary w-full"
                         >
                           {created ? 'Update' : 'Save'}
                         </button>
                         <div class="flex items-center justify-between gap-2 pt-4 ">
                           {showHistoryInSets && (
                             <button
-                              class="bg-primary-200 flex-1"
+                              class="secondary flex-1"
                               onClick={() => openExerciseModal(set.exercise)}
                             >
                               <div class="flex items-center justify-center gap-2">

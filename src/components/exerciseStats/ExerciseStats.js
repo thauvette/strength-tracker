@@ -36,7 +36,9 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
           <button
             key={tab}
             class={`capitalize border-0 border-b-4 rounded-none ${
-              activeTab === tab ? ' border-blue-900' : ''
+              activeTab === tab
+                ? 'border-highlight-900 dark:border-highlight-200'
+                : ''
             }`}
             onClick={() => setActiveTab(tab)}
           >

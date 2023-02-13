@@ -66,9 +66,12 @@ const Exercise = (props) => {
 
   return (
     <div>
-      <div class="px-2 py-2 flex items-center justify-between">
-        <h1 class="capitalize ">{exerciseHistory?.name}</h1>
-        <button onClick={toggleExerciseFavorite} class="text-blue-900">
+      <div class="px-3 py-3 flex items-center justify-between">
+        <h1 class="capitalize">{exerciseHistory?.name}</h1>
+        <button
+          onClick={toggleExerciseFavorite}
+          class="text-highlight-900 dark:text-highlight-100"
+        >
           <Icon
             width="28"
             name={exerciseHistory?.isFavorite ? 'star' : 'star-outline'}
@@ -78,32 +81,38 @@ const Exercise = (props) => {
       <div class="flex pb-4">
         <Link
           href={`${routes.exerciseBase}/${id}`}
-          class={`px-4 py-2 bg-blue-100 text-gray-800 no-underline border-b-4 border-blue-900 ${
-            !remaining_path ? '' : 'border-opacity-0'
+          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
+            !remaining_path ? '' : 'border-opacity-0 dark:border-opacity-0'
           }`}
         >
           Track
         </Link>
         <Link
           href={`${routes.exerciseBase}/${id}/history`}
-          class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
-            remaining_path === 'history' ? '' : 'border-opacity-0'
+          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
+            remaining_path === 'history'
+              ? ''
+              : 'border-opacity-0 dark:border-opacity-0'
           }`}
         >
           History
         </Link>
         <Link
           href={`${routes.exerciseBase}/${id}/edit`}
-          class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
-            remaining_path === 'edit' ? '' : 'border-opacity-0'
+          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
+            remaining_path === 'edit'
+              ? ''
+              : 'border-opacity-0 dark:border-opacity-0'
           }`}
         >
           Edit
         </Link>
         <Link
           href={`${routes.exerciseBase}/${id}/planned`}
-          class={`px-4 py-2 bg-blue-100  text-gray-800 no-underline border-b-4 border-blue-900 ${
-            remaining_path === 'planned' ? '' : 'border-opacity-0'
+          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
+            remaining_path === 'planned'
+              ? ''
+              : 'border-opacity-0 dark:border-opacity-0'
           }`}
         >
           Plan

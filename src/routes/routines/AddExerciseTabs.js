@@ -19,7 +19,7 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
           renderCtas={({ weight, reps }) => {
             return (
               <button
-                class="bg-blue-900 text-white w-full"
+                class="bg-primary-900 text-white w-full"
                 onClick={() =>
                   setAddedSets([
                     ...addedSets,
