@@ -42,7 +42,7 @@ const Routine = ({ id }) => {
       {routine.days?.length
         ? routine.days.map((day, i) => {
             return (
-              <div key={i} class="bg-white border rounded-md mb-4">
+              <div key={i} class="bg-1 border rounded-md mb-4">
                 <Accordion title={day.name} titleClass="font-bold">
                   <div class="px-4 pt-2 pb-4">
                     {day.sets?.length

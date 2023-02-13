@@ -41,7 +41,7 @@ const RoutineList = () => {
           ? routines.map((routine) => (
               <div
                 key={routine.id}
-                class="flex items-center justify-between bg-white border rounded-md p-4 mb-2"
+                class="flex items-center justify-between bg-1 border rounded-md p-4 mb-2"
               >
                 <Link
                   class="block capitalize"

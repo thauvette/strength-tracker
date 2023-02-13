@@ -80,7 +80,7 @@ const Fast = ({ id, data, onEdit }) => {
     })
   }
   return (
-    <div key={id} class={`p-2 mx-2 mb-4 rounded-md bg-white`}>
+    <div key={id} class={`p-2 mx-2 mb-4 card`}>
       <div>
         <div class="flex justify-between items-center">
           <p class="text-sm">

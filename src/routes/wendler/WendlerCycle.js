@@ -108,7 +108,7 @@ export default function WendlerCycle({ id }) {
         const weekIsComplete = isWeekComplete(week, isLegacyVersion, workout)
 
         return (
-          <div key={num} class="bg-white mb-4 rounded-md">
+          <div key={num} class="bg-1 mb-4 rounded-md">
             <Accordion
               title={`Week ${num}`}
               titleClass="font-bold text-xl"
