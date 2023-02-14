@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import * as d3 from 'd3'
 
 export const convertDays = (days, startOf = 'week') => {
   const result =

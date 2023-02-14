@@ -7,7 +7,6 @@ import styles from './line-chart.scss'
 import { formatToFixed } from '../../../utilities.js/formatNumbers'
 
 import useTheme from '../../../context/theme'
-import { min } from 'lodash'
 
 const margins = {
   top: 8,
