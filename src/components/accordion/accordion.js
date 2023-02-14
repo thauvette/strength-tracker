@@ -22,8 +22,8 @@ export default function Accordion({
         onClick={() => setIsOpen(!isOpen)}
       >
         <div class="flex justify-between">
-          <div class="flex items-center">
-            {headerIcon ? <Icon name={headerIcon} /> : null}
+          <div class="flex items-center gap-2">
+            {headerIcon ? <Icon name={headerIcon} width="28" /> : null}
             <p class={titleClass}>{title}</p>
           </div>
           <div

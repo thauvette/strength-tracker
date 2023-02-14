@@ -131,8 +131,8 @@ const Logs = () => {
   }
 
   return (
-    <div class="p-2">
-      <div className="flex items-center justify-between">
+    <div class="px-2">
+      <div className="flex items-center justify-between pb-6">
         <button
           onClick={() => stepByDate(-1)}
           class="text-2xl"
@@ -169,7 +169,7 @@ const Logs = () => {
         </button>
       </div>
       {activeDayData?.length > 0 ? (
-        <div class="flex justify-between py-4">
+        <div class="flex justify-between pb-6">
           <button
             class="link underline"
             onClick={() => setView(view === 'groups' ? 'order' : 'groups')}

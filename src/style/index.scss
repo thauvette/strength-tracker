@@ -68,10 +68,19 @@
       @apply bg-transparent border-primary-700 text-primary-700 dark:border-primary-200 dark:text-primary-200;
     }
     &.link {
-      @apply bg-transparent border-none text-primary-700  dark:text-primary-200;
+      @apply bg-transparent border-none text-primary-700  dark:text-primary-200 underline;
     }
     &.warning {
       @apply bg-red-900 text-white;
+    }
+    &.blue {
+      @apply bg-blue-400 text-primary-700 dark:bg-blue-900 dark:text-primary-100;
+    }
+  }
+
+  a {
+    &.primary {
+      @apply bg-highlight-600 text-white font-bold;
     }
   }
 

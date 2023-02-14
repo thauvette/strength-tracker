@@ -47,7 +47,7 @@ const AppWrapper = () => {
           activeRoutine={activeRoutine}
         />
         {isInitialized ? (
-          <div class={`filter bg-1 flex-1 ${menuIsOpen ? 'blur-sm' : ''}`}>
+          <div class={`filter bg-1 flex-1 py-4 ${menuIsOpen ? 'blur-sm' : ''}`}>
             <Router onChange={closeMenu}>
               <Wendler path={`${routes.wendlerBase}/:remaining_path*`} />
               <Exercise path={routes.exercise} />

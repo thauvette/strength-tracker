@@ -113,7 +113,7 @@ export default function WendlerCycle({ id }) {
               title={`Week ${num}`}
               titleClass="font-bold text-xl"
               openByDefault={+workout?.weekToDo === +num}
-              headerClassName="bg-blue-100"
+              headerClassName="bg-2"
               headerIcon={weekIsComplete ? 'checkmark' : null}
             >
               {Object.entries(week || {}).map(([exercise, sets], i) => {
@@ -121,15 +121,14 @@ export default function WendlerCycle({ id }) {
                 const dayIsComplete = isDayComplete(sets)
 
                 const { mainSets, auxSets, additionalSets } = getDaysSets(sets)
-
+                console.log(dayIsComplete)
                 return (
                   <div key={exercise} className="px-2 py-1">
                     <div className={`${isLastChild ? '' : 'border-b-2'}`}>
                       <Accordion
                         title={sets?.exercise}
                         titleClass="uppercase font-bold text-sm"
-                        smallIcon
-                        headerIcon={dayIsComplete ? 'checkmark' : null}
+                        headerIcon={dayIsComplete ? 'checkmark-outline' : null}
                       >
                         <div className="border-b-1 pl-2">
                           <WendlerCycleDay
@@ -144,7 +143,7 @@ export default function WendlerCycle({ id }) {
                           <div class="py-4 ">
                             <div class="pb-4 flex">
                               <Link
-                                class="uppercase bg-yellow-100 px-2 py-3 text-base no-underline w-full text-center"
+                                class="uppercase primary px-2 py-3 text-base no-underline w-full text-center"
                                 href={`/wendler/${id}/${num}/${exercise}`}
                               >
                                 Do workout
@@ -152,7 +151,7 @@ export default function WendlerCycle({ id }) {
                             </div>
                             <div class="pb-4">
                               <button
-                                class="uppercase bg-blue-100 px-2 py-3 text-base w-full"
+                                class="uppercase blue px-2 py-3 text-base w-full"
                                 onClick={() =>
                                   toggleDayComplete({
                                     weekKey: num,

@@ -104,13 +104,13 @@ const AuxExerciseForm = ({
         )
       })}
       <div class="border-b py-2">
-        <button class="bg-blue-200" onClick={addSet}>
+        <button class="blue" onClick={addSet}>
           + add set
         </button>
       </div>
       <div class="py-2">
         <button
-          class="bg-yellow-200  w-full"
+          class="primary w-full"
           onClick={save}
           disabled={!exercise || !sets.length}
         >

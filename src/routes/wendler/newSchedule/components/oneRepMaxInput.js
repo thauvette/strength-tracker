@@ -15,55 +15,64 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
   return (
     <div key={id} class="py-4 border-b-2">
       <div class="flex align-center justify-between">
-        <label class="text-lg capitalize" htmlFor={id}>
+        <label class="text-xl font-bold capitalize" htmlFor={id}>
           {info.name}
         </label>
         <button onClick={() => setHistoryModalIsOpen(true)}>Stats</button>
       </div>
-      <div>
-        <input
-          id={id}
-          name={id}
-          value={info.weight || ''}
-          onInput={handleInput}
-          class="py-3 px-2 text-base"
-        />
-      </div>
+
+      <input
+        id={id}
+        name={id}
+        value={info.weight || ''}
+        onInput={handleInput}
+        class="py-3 px-2 text-base mb-2 w-full"
+      />
+
       {formErrors?.[id] && <p>{formErrors[id]}</p>}
-      {oneRepMax && (
+      <div class="flex flex-wrap gap-2 pt-4">
+        {oneRepMax && (
+          <button
+            class="secondary"
+            onClick={() => {
+              handleInput({
+                target: {
+                  name: id,
+                  value: Math.ceil(oneRepMax),
+                },
+              })
+            }}
+          >
+            Set to EORM: {Math.ceil(oneRepMax)}
+          </button>
+        )}
         <button
-          class="my-2 bg-blue-200"
+          class="link"
           onClick={() => {
-            handleInput({
-              target: {
-                name: id,
-                value: Math.ceil(oneRepMax),
-              },
-            })
+            setModalIsOpen(true)
+            setTargetWeight(oneRepMax || info.weight)
           }}
         >
-          Set to EORM: {Math.ceil(oneRepMax)}
+          Calculate from end goal
         </button>
-      )}
-      <button
-        class="bg-red-200"
-        onClick={() => {
-          setModalIsOpen(true)
-          setTargetWeight(oneRepMax || info.weight)
-        }}
-      >
-        Calculate from end goal
-      </button>
+      </div>
       <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
         <div>
-          <p>Goal:</p>
-          <input
-            onInput={(e) => setTargetWeight(+e.target.value)}
-            value={targetWeight}
-          />
+          <p class="text-xl mb-4">Goal:</p>
+          <label>
+            <p>Weight of the heaviest set</p>
+            <input
+              class="w-full mb-2"
+              onInput={(e) => setTargetWeight(+e.target.value)}
+              value={targetWeight}
+            />
+          </label>
           <div class="pt-4">
+            <p class="mb-2">
+              Estimated one rep max of {Math.ceil(targetWeight / 0.9 / 0.95)}
+            </p>
             <button
-              class="bg-blue-200"
+              class="primary w-full"
               onClick={() => {
                 handleInput({
                   target: {
@@ -74,7 +83,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
                 setModalIsOpen(false)
               }}
             >
-              Set max to: {Math.ceil(targetWeight / 0.9 / 0.95)}
+              Set max to {Math.ceil(targetWeight / 0.9 / 0.95)}
             </button>
           </div>
         </div>

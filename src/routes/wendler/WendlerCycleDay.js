@@ -1,5 +1,6 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
+import Icon from '../../components/icon/Icon'
 
 const WendlerCycleDay = ({
   runningSets,
@@ -23,9 +24,14 @@ const WendlerCycleDay = ({
       </label>
       {viewInRunningOrder ? (
         runningSets.map((set) => (
-          <p key={set.wendlerId}>
-            {set.exercise} {set.reps} @ {set.weight}
-          </p>
+          <div key={set.wendlerId} class="flex gap-2 items-center pb-2">
+            {set?.completed ? (
+              <Icon name="checkmark-outline" width="24" />
+            ) : null}
+            <p>
+              {set.exercise} {set.reps} @ {set.weight}
+            </p>
+          </div>
         ))
       ) : (
         <>
@@ -36,9 +42,12 @@ const WendlerCycleDay = ({
                 const { reps, weight, completed } = set
 
                 return (
-                  <div key={i}>
+                  <div key={i} class="flex gap-2 items-center">
+                    {completed ? (
+                      <Icon name="checkmark-outline" width="24" />
+                    ) : null}
                     <p>
-                      {completed ? '✔️' : ''} {reps} @ {weight}
+                      {reps} @ {weight}
                     </p>
                   </div>
                 )

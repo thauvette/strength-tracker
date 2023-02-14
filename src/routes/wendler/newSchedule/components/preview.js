@@ -148,7 +148,7 @@ export default function Preview({ initialValues }) {
       </ul>
       <div class="pt-6">
         <button
-          class="bg-blue-100"
+          class="secondary"
           onClick={() =>
             openAuxExerciseModal({
               title,
@@ -272,6 +272,7 @@ export default function Preview({ initialValues }) {
           <h1 class="text-lg my-4">Save to my workouts</h1>
           <input
             name="title"
+            class="w-full mb-4"
             placeholder="title"
             type="text"
             value={formData.title}
@@ -280,13 +281,14 @@ export default function Preview({ initialValues }) {
           <br />
           <input
             name="description"
+            class="w-full mb-4"
             placeholder="description"
             type="text"
             value={formData.description}
             onInput={handleInput}
           />
           <br />
-          <button class="primary" onClick={saveToWorkouts}>
+          <button class="primary w-full" onClick={saveToWorkouts}>
             Save
           </button>
         </div>

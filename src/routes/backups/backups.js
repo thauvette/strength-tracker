@@ -72,15 +72,15 @@ export default function Backups() {
   return (
     <div class="px-2">
       {error && <p>{error}</p>}
-      <div class="border-b-4 pb-4 mb-4">
-        <h2>Back Up</h2>
-        <p class="mb-4">Automatically generate and download your backup</p>
+      <div class="border-b-2 pb-8 mb-8">
+        <h2 class="my-2">Back Up</h2>
+        <p class="my-4">Automatically generate and download your backup</p>
         <button class="w-full btn primary" onClick={createBackup}>
           BACK UP
         </button>
       </div>
-      <h2>Restore</h2>
-      <p>Restore from a backup. </p>
+      <h2 class="my-2">Restore</h2>
+      <p class="my-2">Restore from a backup. </p>
       <form onSubmit={submit}>
         <label class="flex items-center">
           <input name="overwrite" type="checkbox" />
@@ -96,7 +96,7 @@ export default function Backups() {
             class="py-2"
           />
         </label>
-        <button class="btn primary w-full mt-4" type="submit">
+        <button class="btn primary w-full mt-8" type="submit">
           Upload
         </button>
       </form>

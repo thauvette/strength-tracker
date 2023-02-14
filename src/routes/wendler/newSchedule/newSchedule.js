@@ -10,13 +10,6 @@ import OneRepMaxInput from './components/oneRepMaxInput'
 import { route } from 'preact-router'
 import { routes } from '../../../config/routes'
 
-const wendlerCycleExercises = [
-  'deadlift',
-  'barbell bench press',
-  'barbell back squat',
-  'standing overhead press',
-]
-
 const NewSchedule = ({ onSubmit, initialValues }) => {
   const { getWendlerExercises, getAllEntries } = useDB()
   const [loading, setLoading] = useState(true)
@@ -110,7 +103,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
           />
         ))}
       </div>
-      <div>
+      <div class="py-4">
         <label htmlFor="aux-type-select">
           <p>Aux style</p>
         </label>
@@ -118,7 +111,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
           id="aux-type-select"
           value={auxVersion}
           onInput={(e) => setAuxVersion(e.target.value)}
-          class="py-3 px-2 text-base"
+          class="py-3 px-2 w-full"
         >
           <option value="">None</option>
           <option value="fsl">First Set Last</option>
@@ -127,7 +120,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
         </select>
       </div>
       <div class="py-4">
-        <button class="primary" onClick={generatePreview}>
+        <button class="primary w-full" onClick={generatePreview}>
           Generate Preview
         </button>
       </div>

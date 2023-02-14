@@ -105,10 +105,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
               />
             </label>
             <div class="pb-1">
-              <button
-                class="bg-blue-200"
-                onClick={() => setShowNewExerciseForm(true)}
-              >
+              <button class="blue" onClick={() => setShowNewExerciseForm(true)}>
                 New +
               </button>
             </div>
