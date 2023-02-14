@@ -15,6 +15,12 @@
       .text {
         color: #fff;
       }
+      .meanLine {
+        stroke: #fdba74;
+      }
+      .timeLine {
+        stroke: #fdba74;
+      }
     }
   }
   svg {
@@ -32,6 +38,12 @@
     }
     .text {
       color: #000;
+    }
+    .meanLine {
+      stroke: #7c2d12;
+    }
+    .timeLine {
+      stroke: #7c2d12;
     }
   }
 }

@@ -7,6 +7,7 @@ import styles from './line-chart.scss'
 import { formatToFixed } from '../../../utilities.js/formatNumbers'
 
 import useTheme from '../../../context/theme'
+import { min } from 'lodash'
 
 const margins = {
   top: 8,
@@ -21,6 +22,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
   const containerRef = useRef(null)
   const chartCanvasRef = useRef(null)
   const [range, setRange] = useState([])
+  const [mean, setMean] = useState(null)
   const [containerWidth, setContainerWidth] = useState(null)
   const tooltipRef = useRef(null)
 
@@ -47,7 +49,9 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
 
     const yMin = d3.min(data, (d) => d.y)
     const yMax = d3.max(data, (d) => d.y)
-    x.domain([d3.min(data, (d) => d.x), d3.max(data, (d) => d.x)])
+    const xMin = d3.min(data, (d) => d.x)
+    const xMax = d3.max(data, (d) => d.x)
+    x.domain([xMin, xMax])
     y.domain([yMin - yMin * 0.05, yMax + yMax * 0.05])
 
     const valueLine = d3
@@ -97,6 +101,33 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('transform', `translate(${16}, 0)`)
       .text('value')
 
+    // THE MEAN
+    const average = d3.mean(data, (d) => d.y)
+    // svg
+    //   .append('line')
+    //   .attr('class', styles.meanLine)
+    //   .attr('x1', 0)
+    //   .attr('y1', y(average)) // y position of the first end of the line
+    //   .attr('x2', innerWidth)
+    //   .attr('y2', y(average))
+    //   .attr('transform', `translate(${margins.left}, 0)`)
+    //   .style('stroke-dasharray', '3, 3')
+
+    const firstEntry = data.find((entry) => entry.x === xMin)
+    const lastEntry = data.find((entry) => entry.x === xMax)
+
+    if (firstEntry?.y && lastEntry?.y) {
+      svg
+        .append('line')
+        .attr('class', styles.timeLine)
+        .attr('x1', x(xMin))
+        .attr('x2', x(xMax))
+        .attr('y1', y(firstEntry?.y))
+        .attr('y2', y(lastEntry?.y))
+        .attr('transform', `translate(${margins.left}, 0)`)
+        .style('stroke-dasharray', '3, 3')
+    }
+
     //  THE LINE
     svg
       .append('path')
@@ -135,6 +166,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
         tooltipRef.current.style.left = `${x(d.x)}px`
       })
     setRange([yMin, yMax])
+    setMean(average)
   }
 
   useLayoutEffect(() => {
@@ -168,6 +200,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
           min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
         </p>
       ) : null}
+      <p class="text-center">Average {formatToFixed(mean)}</p>
       <div ref={containerRef} class="relative">
         <svg
           ref={chartCanvasRef}
