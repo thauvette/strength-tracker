@@ -31,6 +31,7 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
               </button>
             )
           }}
+          disablePlateModal
         />
       </div>
     ),
@@ -116,6 +117,7 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
                         { ...set, id: generateRandomId() },
                       ])
                     }
+                    disablePlateModal
                   />
                 </Accordion>
               </div>
