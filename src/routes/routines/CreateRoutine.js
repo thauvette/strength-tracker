@@ -106,12 +106,14 @@ const CreateRoutine = ({ initialValues }) => {
       name: routineName,
       days: days.map((day) => ({
         name: day.name,
+        id: day.id,
         sets:
           day.sets?.map((set) => ({
             weight: set.weight,
             reps: set.reps,
             exercise: set.exerciseId,
             exerciseName: set.exerciseName,
+            id: set.id,
           })) || [],
       })),
     }
