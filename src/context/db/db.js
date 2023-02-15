@@ -21,7 +21,7 @@ import {
   deleteLoggedSet,
   getAllSetsHistory,
 } from './sets'
-import { createRoutine } from './routines'
+import { createRoutine, updateRoutine } from './routines'
 
 const DBContext = createContext()
 
@@ -304,6 +304,7 @@ export const DBProvider = ({ children }) => {
         createBioMetric: (name) => createBioMetric(db, name),
         getMuscleGroups,
         createRoutine: (data) => createRoutine(db, data),
+        updateRoutine: (id, data) => updateRoutine(db, id, data),
         getItem: (store, id) => getItem(db, store, id),
       }}
     >

@@ -12,16 +12,18 @@ import { routes } from '../../config/routes'
 import Accordion from '../../components/accordion/accordion'
 import EditableSet from '../../components/editableSet/editableSet'
 
-const CreateRoutine = () => {
-  const { createRoutine } = useDB()
-  const [routineName, setRoutineName] = useState('')
-  const [days, setDays] = useState([
-    {
-      name: 'Day 1',
-      id: generateRandomId(),
-      sets: [],
-    },
-  ])
+const CreateRoutine = ({ initialValues }) => {
+  const { createRoutine, updateRoutine } = useDB()
+  const [routineName, setRoutineName] = useState(initialValues?.name || '')
+  const [days, setDays] = useState(
+    initialValues?.days || [
+      {
+        name: 'Day 1',
+        id: generateRandomId(),
+        sets: [],
+      },
+    ],
+  )
 
   const [exerciseModalState, setExerciseModalState] = useState({
     isOpen: false,
@@ -99,8 +101,8 @@ const CreateRoutine = () => {
     )
   }
 
-  const submit = () => {
-    createRoutine({
+  const submit = async () => {
+    const data = {
       name: routineName,
       days: days.map((day) => ({
         name: day.name,
@@ -112,9 +114,16 @@ const CreateRoutine = () => {
             exerciseName: set.exerciseName,
           })) || [],
       })),
-    }).then((res) => {
-      route(`${routes.routinesBase}/${res?.id}`)
-    })
+    }
+    let res
+    try {
+      if (initialValues?.id) {
+        res = await updateRoutine(initialValues.id, data)
+      } else {
+        res = await createRoutine(data)
+      }
+    } catch (e) {}
+    route(`${routes.routinesBase}/${res?.id}`)
   }
 
   return (

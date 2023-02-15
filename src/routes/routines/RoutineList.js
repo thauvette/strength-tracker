@@ -6,7 +6,7 @@ import { routes } from '../../config/routes'
 import { objectStores } from '../../context/db/config'
 import useDB from '../../context/db/db'
 
-const RoutineList = () => {
+const RoutineList = ({ navigateToEdit }) => {
   const { getAllEntries, deleteEntry } = useDB()
   const [routines, setRoutines] = useState([])
   const deleteRoutine = (id) =>
@@ -49,9 +49,14 @@ const RoutineList = () => {
                 >
                   {routine.name || 'ROUTINE'}
                 </Link>
-                <button onClick={() => deleteRoutine(+routine.id)}>
-                  <Icon name="trash-outline" />
-                </button>
+                <div class="flex items-center gap-2">
+                  <button onClick={() => navigateToEdit(routine)}>
+                    <Icon name="create-outline" />
+                  </button>
+                  <button onClick={() => deleteRoutine(+routine.id)}>
+                    <Icon name="trash-outline" />
+                  </button>
+                </div>
               </div>
             ))
           : null}

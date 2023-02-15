@@ -20,3 +20,29 @@ export const createRoutine = (db, data) =>
       })
     }
   })
+
+export const updateRoutine = (db, id, data) =>
+  new Promise((resolve, reject) => {
+    const { objectStore } = openObjectStoreTransaction(
+      db,
+      objectStores.routines,
+    )
+    const request = objectStore.get(+id)
+    request.onsuccess = () => {
+      if (!request.result) {
+        reject(new Error('unable to find entry'))
+      }
+      const newValue = {
+        ...request.result,
+        ...data,
+        updated: new Date().getTime(),
+      }
+      const requestUpdate = objectStore.put(newValue, +id)
+      requestUpdate.onerror = (err) =>
+        reject(err?.message || 'unable to update entry')
+
+      // Success - the data is updated!
+      requestUpdate.onsuccess = (e) =>
+        resolve({ ...newValue, id: e?.target?.result })
+    }
+  })
