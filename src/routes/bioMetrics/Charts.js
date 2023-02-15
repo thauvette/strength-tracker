@@ -24,9 +24,9 @@ const Charts = ({ days }) => {
       >
         <option value="all">All Time</option>
         <option value="week">Week</option>
+        <option value="month">Month</option>
         <option value="6 weeks">6 weeks</option>
         <option value="8 weeks">8 weeks</option>
-        <option value="month">Month</option>
       </select>
       {data?.length > 1 ? (
         <div class="flex items-center justify-between py-4">

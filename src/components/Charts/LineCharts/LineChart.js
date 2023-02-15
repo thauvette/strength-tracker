@@ -22,6 +22,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
   const chartCanvasRef = useRef(null)
   const [range, setRange] = useState([])
   const [mean, setMean] = useState(null)
+  const [bookends, setBookends] = useState([])
   const [containerWidth, setContainerWidth] = useState(null)
   const tooltipRef = useRef(null)
 
@@ -125,6 +126,10 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
         .attr('y2', y(lastEntry?.y))
         .attr('transform', `translate(${margins.left}, 0)`)
         .style('stroke-dasharray', '3, 3')
+
+      setBookends([firstEntry?.y, lastEntry?.y])
+    } else {
+      setBookends([])
     }
 
     //  THE LINE
@@ -194,6 +199,11 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
     <div
       class={`${styles.lineChart} ${theme === 'dark' ? styles.darkChart : ''}`}
     >
+      {bookends?.length ? (
+        <p class="text-center">
+          {formatToFixed(bookends[0])} to {formatToFixed(bookends[1])}
+        </p>
+      ) : null}
       {range?.length ? (
         <p class="text-center">
           min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
