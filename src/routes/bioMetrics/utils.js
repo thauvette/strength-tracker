@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { formatToFixed } from '../../utilities.js/formatNumbers'
 
 export const convertDays = (days, startOf = 'week') => {
   const result =
@@ -56,7 +57,6 @@ const chunkMonths = (days) => {
 const chunkByRange = (days, range = 8, timeSpan = 'weeks') => {
   // from last entry go back in chucks of "range"
   // until we reach the earliest entry
-
   const dates = days.map((day) => dayjs(day.dayKey).toDate().getTime())
   const lastEntry = Math.max(...dates)
   const firstEntry = Math.min(...dates)
@@ -64,7 +64,6 @@ const chunkByRange = (days, range = 8, timeSpan = 'weeks') => {
   const diff = Math.ceil(
     dayjs(lastEntry).diff(dayjs(firstEntry), timeSpan, true),
   )
-
   const keys = Array.from({ length: Math.ceil(diff / range) }, (_, i) =>
     dayjs(lastEntry)
       .subtract((i + 1) * range, timeSpan)
@@ -97,17 +96,17 @@ const chunkByRange = (days, range = 8, timeSpan = 'weeks') => {
       [key]: items,
     }
   }, {})
-
   return Object.values(chunks).reduce((arr, chunk) => {
     const days = chunk.map((day) => dayjs(day.dayKey).toDate().getTime())
 
     const earliestDay = Math.min(...days)
     const latestDay = Math.max(...days)
-
+    const diff = dayjs(latestDay).diff(dayjs(earliestDay), timeSpan, true)
     arr.push({
       title: `${dayjs(earliestDay).format('MMM DD YYYY')} - ${dayjs(
         latestDay,
       ).format('MMM DD YYYY')}`,
+      subTitle: `${formatToFixed(diff)} ${timeSpan}`,
       items: chunk,
     })
 
@@ -135,6 +134,10 @@ export const renderData = ({ days, displayGroup }) => {
       return chunkByRange(days, 8, 'weeks')
     case '6 weeks':
       return chunkByRange(days, 6, 'weeks')
+    case '6 months':
+      return chunkByRange(days, 6, 'months')
+    case '3 months':
+      return chunkByRange(days, 3, 'months')
     case 'month':
       return chunkMonths(days)
     default:

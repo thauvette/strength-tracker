@@ -27,9 +27,12 @@ const Charts = ({ days }) => {
         <option value="month">Month</option>
         <option value="6 weeks">6 weeks</option>
         <option value="8 weeks">8 weeks</option>
+        <option value="3 months">3 months</option>
+        <option value="6 months">6 months</option>
       </select>
-      {data?.length > 1 ? (
-        <div class="flex items-center justify-between py-4">
+
+      <div class="flex items-center justify-between py-4">
+        {data?.length > 1 ? (
           <button
             class={`${activeChunk + 1 >= data.length ? 'opacity-50' : ''}`}
             disabled={activeChunk + 1 >= data.length}
@@ -38,9 +41,16 @@ const Charts = ({ days }) => {
           >
             <Icon name="arrow-back-outline" />
           </button>
+        ) : null}
+        <div class="text-center flex-1">
           {data?.[activeChunk]?.title && (
-            <h2 class="flex-1 text-center">{data?.[activeChunk]?.title}</h2>
+            <h2 class="">{data?.[activeChunk]?.title}</h2>
           )}
+          {data?.[activeChunk]?.subTitle && (
+            <h3 class="">{data?.[activeChunk]?.subTitle}</h3>
+          )}
+        </div>
+        {data?.length > 1 ? (
           <button
             class={`${!activeChunk ? 'opacity-50' : ''} `}
             disabled={!activeChunk}
@@ -48,8 +58,8 @@ const Charts = ({ days }) => {
           >
             <Icon name="arrow-forward-outline" />
           </button>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
 
       {data?.[activeChunk]?.items && (
         <div class="pb-8">

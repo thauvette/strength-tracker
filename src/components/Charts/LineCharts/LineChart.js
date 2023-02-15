@@ -199,17 +199,6 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
     <div
       class={`${styles.lineChart} ${theme === 'dark' ? styles.darkChart : ''}`}
     >
-      {bookends?.length ? (
-        <p class="text-center">
-          {formatToFixed(bookends[0])} to {formatToFixed(bookends[1])}
-        </p>
-      ) : null}
-      {range?.length ? (
-        <p class="text-center">
-          min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
-        </p>
-      ) : null}
-      <p class="text-center">Average {formatToFixed(mean)}</p>
       <div ref={containerRef} class="relative">
         <svg
           ref={chartCanvasRef}
@@ -239,6 +228,19 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
             </>
           )}
         </div>
+      </div>
+      <div class="py-4">
+        {bookends?.length ? (
+          <p class="text-center">
+            {formatToFixed(bookends[0])} to {formatToFixed(bookends[1])}
+          </p>
+        ) : null}
+        {range?.length ? (
+          <p class="text-center">
+            min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
+          </p>
+        ) : null}
+        <p class="text-center">Average {formatToFixed(mean)}</p>
       </div>
     </div>
   )
