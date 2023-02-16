@@ -1,3 +1,5 @@
+@tailwind utilities;
+
 .lineChart {
   &.darkChart {
     svg {
@@ -6,7 +8,7 @@
           stroke: #fff;
         }
         .axis {
-          color: #ccc;
+          color: theme('colors.gray.300');
           :global(text) {
             color: #fff;
           }
@@ -16,10 +18,10 @@
         color: #fff;
       }
       .meanLine {
-        stroke: #fdba74;
+        stroke: theme('colors.blue.100');
       }
       .timeLine {
-        stroke: #fdba74;
+        stroke: theme('colors.highlight.400');
       }
     }
   }
@@ -40,10 +42,10 @@
       color: #000;
     }
     .meanLine {
-      stroke: #7c2d12;
+      stroke: theme('colors.blue.400');
     }
     .timeLine {
-      stroke: #7c2d12;
+      stroke: theme('colors.highlight.400');
     }
   }
 }

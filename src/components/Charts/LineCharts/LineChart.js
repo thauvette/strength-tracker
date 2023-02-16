@@ -103,15 +103,15 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
 
     // THE MEAN
     const average = d3.mean(data, (d) => d.y)
-    // svg
-    //   .append('line')
-    //   .attr('class', styles.meanLine)
-    //   .attr('x1', 0)
-    //   .attr('y1', y(average)) // y position of the first end of the line
-    //   .attr('x2', innerWidth)
-    //   .attr('y2', y(average))
-    //   .attr('transform', `translate(${margins.left}, 0)`)
-    //   .style('stroke-dasharray', '3, 3')
+    svg
+      .append('line')
+      .attr('class', styles.meanLine)
+      .attr('x1', 0)
+      .attr('y1', y(average)) // y position of the first end of the line
+      .attr('x2', innerWidth)
+      .attr('y2', y(average))
+      .attr('transform', `translate(${margins.left}, 0)`)
+      .style('stroke-dasharray', '3, 3')
 
     const firstEntry = data.find((entry) => entry.x === xMin)
     const lastEntry = data.find((entry) => entry.x === xMax)
@@ -231,7 +231,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       </div>
       <div class="py-4">
         {bookends?.length ? (
-          <p class="text-center">
+          <p class="text-center text-highlight-400">
             {formatToFixed(bookends[0])} to {formatToFixed(bookends[1])}
           </p>
         ) : null}
@@ -240,7 +240,9 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
             min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
           </p>
         ) : null}
-        <p class="text-center">Average {formatToFixed(mean)}</p>
+        <p class="text-center text-blue-400 dark:text-blue-100">
+          Average {formatToFixed(mean)}
+        </p>
       </div>
     </div>
   )
