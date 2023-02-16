@@ -22,6 +22,7 @@ import {
   getAllSetsHistory,
 } from './sets'
 import { createRoutine, updateRoutine } from './routines'
+import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants'
 
 const DBContext = createContext()
 
@@ -188,8 +189,17 @@ export const DBProvider = ({ children }) => {
               if (currentIndex === -1) {
                 headerItems.push(key)
               }
-              rowData[position] =
-                typeof val === 'string' ? val.replace(',', '__comma__') : val
+
+              let formattedValue = val
+
+              if (Array.isArray(val)) {
+                formattedValue = val.join(ARRAY_SEPARATOR)
+              }
+
+              if (typeof val === 'string') {
+                formattedValue = val.replace(',', COMMA_REPLACEMENT)
+              }
+              rowData[position] = formattedValue
             })
           }
 

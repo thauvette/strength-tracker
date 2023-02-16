@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import Modal from '../../components/modal/Modal'
+import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants'
 import useDB from '../../context/db/db'
 
 export default function Backups() {
@@ -25,10 +26,21 @@ export default function Backups() {
               const values = items.slice(2)
               values.forEach((value, index) => {
                 if (value) {
-                  const formattedValue = value.replace('__comma__', ',')
-                  data[headers[index + 2]] = isNaN(formattedValue)
-                    ? formattedValue
-                    : +formattedValue
+                  let formattedValue
+                  if (value.contains(ARRAY_SEPARATOR)) {
+                    // this is an array.
+                    // we'll split it and then turn numbers back to numbers as they are probably tied to other ids.
+                    formattedValue = value
+                      .split(ARRAY_SEPARATOR)
+                      ?.map((val) => (isNaN(val) ? val : +val))
+                  } else if (value.contains(COMMA_REPLACEMENT)) {
+                    // this is just a string, probably a note with a comma in it.
+                    formattedValue = value.replace(COMMA_REPLACEMENT, ',')
+                  } else {
+                    formattedValue = isNaN(value) ? value : +value
+                  }
+
+                  data[headers[index + 2]] = formattedValue
                 }
               })
               if (!obj.stores.some((storeName) => storeName === items[0])) {
