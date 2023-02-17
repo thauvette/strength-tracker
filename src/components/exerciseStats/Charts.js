@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useState } from 'react'
 import { renderData } from './utils'
-import LineChart from '../../components/Charts/LineCharts/LineChart'
+import LineChart from '../async/LineChart'
 import Icon from '../icon/Icon'
 import { formatToFixed } from '../../utilities.js/formatNumbers'
 

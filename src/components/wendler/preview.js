@@ -4,16 +4,16 @@ import { route } from 'preact-router'
 import set from 'lodash.set'
 import cloneDeep from 'lodash.clonedeep'
 import get from 'lodash.get'
-import Accordion from '../../../../components/accordion/accordion'
-import Modal from '../../../../components/modal/Modal'
+import Accordion from '../accordion/accordion'
+import Modal from '../modal/Modal'
 
 import AuxExerciseForm from './auxExerciseForm'
-import useDB from '../../../../context/db/db'
+import useDB from '../../context/db/db'
 
-import { routes } from '../../../../config/routes'
+import { routes } from '../../config/routes'
 
-import ReorderForm from './reorderForm'
-import generateRandomId from '../../../../utilities.js/generateRandomId'
+import ReorderForm from '../reorderForm'
+import generateRandomId from '../../utilities.js/generateRandomId'
 
 export default function Preview({ initialValues }) {
   const { createCycle } = useDB()

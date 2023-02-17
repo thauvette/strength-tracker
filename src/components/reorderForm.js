@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import DraggableList from '../../../../components/draggableList/DraggableList'
+import DraggableList from './async/DraggableList'
 
 const ReorderForm = ({
   items = [],

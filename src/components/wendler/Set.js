@@ -1,6 +1,6 @@
 import { h } from 'preact'
-import EditableSet from '../../../components/editableSet/editableSet'
-import Icon from '../../../components/icon/Icon'
+import EditableSet from '../editableSet/editableSet'
+import Icon from '../icon/Icon'
 
 const Set = ({
   handleSubmit,

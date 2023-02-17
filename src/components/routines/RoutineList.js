@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { Link } from 'preact-router'
 import { useEffect, useState } from 'preact/hooks'
-import Icon from '../../components/icon/Icon'
+import Icon from '../icon/Icon'
 import { routes } from '../../config/routes'
 import { objectStores } from '../../context/db/config'
 import useDB from '../../context/db/db'

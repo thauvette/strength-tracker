@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useReducer, useRef, useState } from 'preact/hooks'
+import { useEffect, useReducer, useRef, useState } from 'preact/hooks'
 import Icon from '../icon/Icon'
 
 const initialDragState = {
@@ -34,6 +34,19 @@ const DraggableList = ({
   renderItem,
   initialOrder,
 }) => {
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (!document.getElementById('DragDropTouch')) {
+        console.log('ADD IT')
+        // add drag and drop polyfill
+        const script = document.createElement('script')
+        script.src =
+          'https://bernardo-castilho.github.io/DragDropTouch/DragDropTouch.js'
+        script.id = 'DragDropTouch'
+        document.body.appendChild(script)
+      }
+    }
+  }, [])
   const ghostRef = useRef(null)
   const [dragState, dispatchDragState] = useReducer(dragReducer, {
     ...initialDragState,

@@ -4,9 +4,9 @@ import * as d3 from 'd3'
 import dayjs from 'dayjs'
 
 import styles from './line-chart.scss'
-import { formatToFixed } from '../../../utilities.js/formatNumbers'
+import { formatToFixed } from '../../utilities.js/formatNumbers'
 
-import useTheme from '../../../context/theme'
+import useTheme from '../../context/theme'
 
 const margins = {
   top: 8,
@@ -28,7 +28,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
 
   const [selectedData, setSelectedData] = useState(null)
 
-  const drawLine = () => {
+  const drawLine = async () => {
     const { width, height } = containerRef.current.getBoundingClientRect()
 
     const innerWidth = width - margins.left - margins.right

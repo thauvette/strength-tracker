@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import EditableSet from '../../../../components/editableSet/editableSet'
-import ExerciseSearch from '../../../../components/exerciseSelection/ExerciseSearch'
+import EditableSet from '../editableSet/editableSet'
+import ExerciseSearch from '../exerciseSelection/ExerciseSearch'
 
 const AuxExerciseForm = ({
   week,

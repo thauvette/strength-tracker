@@ -2,13 +2,13 @@ import { h } from 'preact'
 import { useState, useEffect } from 'preact/compat'
 
 import style from './newSchedule.scss'
-import generateProgram from '../../../utilities.js/generateProgram'
-import useDB from '../../../context/db/db'
-import { objectStores } from '../../../context/db/config'
+import generateProgram from '../../utilities.js/generateProgram'
+import useDB from '../../context/db/db'
+import { objectStores } from '../../context/db/config'
 
-import OneRepMaxInput from './components/oneRepMaxInput'
+import OneRepMaxInput from './oneRepMaxInput'
 import { route } from 'preact-router'
-import { routes } from '../../../config/routes'
+import { routes } from '../../config/routes'
 
 const NewSchedule = ({ onSubmit, initialValues }) => {
   const { getWendlerExercises, getAllEntries } = useDB()

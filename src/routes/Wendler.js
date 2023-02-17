@@ -1,12 +1,12 @@
 import { h } from 'preact'
 import { route, Router } from 'preact-router'
 import { useState } from 'preact/hooks'
-import { routes } from '../../config/routes'
-import NewSchedule from './newSchedule/newSchedule'
-import Preview from './newSchedule/components/preview'
-import WendlerCycle from './WendlerCycle'
-import WendlerCycles from './WendlerCycles'
-import WendlerWorkout from './WendlerWorkout'
+import { routes } from '../config/routes'
+import NewSchedule from '../components/wendler/newSchedule'
+import Preview from '../components/wendler/preview'
+import WendlerCycle from '../components/wendler/WendlerCycle'
+import WendlerCycles from '../components/wendler/WendlerCycles'
+import WendlerWorkout from '../components/wendler/WendlerWorkout'
 
 const scrollToTop = () => {
   if (typeof window !== 'undefined') {

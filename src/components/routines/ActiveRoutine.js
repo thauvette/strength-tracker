@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import useSessionContext from '../../context/sessionData/sessionData'
-import PlannedWorkout from '../exercise/PlannedWorkout'
+import PlannedWorkout from '../PlannedWorkout'
 import useDB from '../../context/db/db'
 
 // TODO: - freeForm sets

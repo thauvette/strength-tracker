@@ -3,7 +3,7 @@ import { useState, useEffect } from 'preact/hooks'
 import get from 'lodash.get'
 import useDB from '../../context/db/db'
 
-import Set from './components/Set'
+import Set from '../../components/wendler/Set'
 import ExerciseHistoryModal from '../../components/exerciseHistoryModal/ExerciseHistoryModal'
 import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
 

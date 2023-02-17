@@ -1,11 +1,11 @@
 import { h } from 'preact'
 import dayjs from 'dayjs'
 import { useState } from 'preact/hooks'
-import ExerciseStats from '../../components/exerciseStats/ExerciseStats'
-import Plan from '../exercise/Plan'
-import EditableSet from '../../components/editableSet/editableSet'
+import ExerciseStats from '../exerciseStats/ExerciseStats'
+import Plan from '../../routes/exercise/Plan'
+import EditableSet from '../editableSet/editableSet'
 import generateRandomId from '../../utilities.js/generateRandomId'
-import Accordion from '../../components/accordion/accordion'
+import Accordion from '../accordion/accordion'
 
 const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
   const [view, setView] = useState('add')

@@ -1,11 +1,11 @@
 import { h } from 'preact'
 import { Link } from 'preact-router'
 import { useState } from 'preact/hooks'
-import EditableSet from '../../components/editableSet/editableSet'
-import ExerciseHistoryModal from '../../components/exerciseHistoryModal/ExerciseHistoryModal'
-import Icon from '../../components/icon/Icon'
-import { routes } from '../../config/routes'
-import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
+import EditableSet from './editableSet/editableSet'
+import ExerciseHistoryModal from './exerciseHistoryModal/ExerciseHistoryModal'
+import Icon from './icon/Icon'
+import { routes } from '../config/routes'
+import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory'
 
 const PlannedWorkout = ({
   sets,

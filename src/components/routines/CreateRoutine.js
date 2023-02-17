@@ -3,14 +3,14 @@ import { useState } from 'preact/hooks'
 import { route } from 'preact-router'
 
 import generateRandomId from '../../utilities.js/generateRandomId'
-import Modal from '../../components/modal/Modal'
+import Modal from '../modal/Modal'
 import AddExerciseForm from './AddExerciseForm'
-import ReorderForm from '../wendler/newSchedule/components/reorderForm'
+import ReorderForm from '../reorderForm'
 import useDB from '../../context/db/db'
 
 import { routes } from '../../config/routes'
-import Accordion from '../../components/accordion/accordion'
-import EditableSet from '../../components/editableSet/editableSet'
+import Accordion from '../accordion/accordion'
+import EditableSet from '../editableSet/editableSet'
 
 const CreateRoutine = ({ initialValues }) => {
   const { createRoutine, updateRoutine } = useDB()

@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import LineChart from '../../components/Charts/LineCharts/LineChart'
+import LineChart from '../async/LineChart'
 import { renderData } from './utils'
 import Icon from '../../components/icon/Icon'
 

@@ -3,27 +3,27 @@ import { useState } from 'preact/hooks'
 // Code-splitting is automated for `routes` directory
 import { Router } from 'preact-router'
 
-import { routes } from '../config/routes'
-import useDB, { DBProvider } from '../context/db/db'
+import { routes } from './config/routes'
+import useDB, { DBProvider } from './context/db/db'
 
-import Header from './header/Header'
-import Menu from './menu/Menu'
+import Header from './components/header/Header'
+import Menu from './components/menu/Menu'
 
-import Exercise from '../routes/exercise/Exercise'
-import Backups from '../routes/backups/backups'
-import Logs from '../routes/logs/logs'
-import Wendler from '../routes/wendler/Wendler'
-import NewWorkout from '../routes/workout/newWorkout'
-import Settings from '../routes/settings/Settings'
-import BioMetrics from '../routes/bioMetrics'
-import { ToastProvider } from '../context/toasts/Toasts'
+import Exercise from './routes/exercise/Exercise'
+import Backups from './routes/backups'
+import Logs from './routes/logs/logs'
+import Wendler from './routes/Wendler'
+import NewWorkout from './routes/workout/newWorkout'
+import Settings from './routes/settings/Settings'
+import BioMetrics from './routes/bioMetrics'
+import { ToastProvider } from './context/toasts/Toasts'
 import useSessionContext, {
   SessionDataProvider,
-} from '../context/sessionData/sessionData'
-import Fasting from '../routes/fasting/Fasting'
-import Routines from '../routes/routines/Routines'
-import { ThemeProvider } from '../context/theme'
-import LoadingSpinner from './LoadingSpinner'
+} from './context/sessionData/sessionData'
+import Fasting from './routes/fasting/Fasting'
+import Routines from './routes/Routines'
+import { ThemeProvider } from './context/theme'
+import LoadingSpinner from './components/LoadingSpinner'
 
 const AppWrapper = () => {
   const { isInitialized } = useDB()

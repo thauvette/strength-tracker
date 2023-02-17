@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import Icon from '../../components/icon/Icon'
+import Icon from '../icon/Icon'
 
 const WendlerCycleDay = ({
   runningSets,

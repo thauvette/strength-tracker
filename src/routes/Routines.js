@@ -1,11 +1,11 @@
 import { h } from 'preact'
 import Router, { route } from 'preact-router'
 import { useState } from 'preact/hooks'
-import { routes } from '../../config/routes'
-import ActiveRoutine from './ActiveRoutine'
-import CreateRoutine from './CreateRoutine'
-import Routine from './Routine'
-import RoutineList from './RoutineList'
+import { routes } from '../config/routes'
+import ActiveRoutine from '../components/routines/ActiveRoutine'
+import CreateRoutine from '../components/routines/CreateRoutine'
+import Routine from '../components/routines/Routine'
+import RoutineList from '../components/routines/RoutineList'
 
 const Routines = () => {
   const [editRoutineValues, setEditRoutineValues] = useState(null)

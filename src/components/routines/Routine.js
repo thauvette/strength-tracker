@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { route } from 'preact-router'
 import { useEffect, useState } from 'preact/hooks'
-import Accordion from '../../components/accordion/accordion'
+import Accordion from '../accordion/accordion'
 import { routes } from '../../config/routes'
 import { objectStores } from '../../context/db/config'
 import useDB from '../../context/db/db'
