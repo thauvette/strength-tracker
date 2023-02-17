@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import Counters from '../../components/counters/Counters'
-import { weeks } from '../../config/weights'
+import Counters from './counters/Counters'
+import { weeks } from '../config/weights'
 
 const convertWeekMath = (week) => {
   const maxPercent = Math.max(...week.map(({ math }) => math))

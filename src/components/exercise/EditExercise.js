@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import ExerciseForm from '../../components/exerciseForm/ExerciseForm'
+import ExerciseForm from '../exerciseForm/ExerciseForm'
 
 const EditExercise = ({ id, exerciseHistory, onEdit }) => (
   <div class="px-2">

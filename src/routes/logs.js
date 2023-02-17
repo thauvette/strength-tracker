@@ -2,16 +2,16 @@ import { h } from 'preact'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'preact/hooks'
 import { Link, route } from 'preact-router'
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
+import useDB from '../context/db/db'
+import { objectStores } from '../context/db/config'
 
-import Modal from '../../components/modal/Modal'
-import Calendar from '../../components/calendar/Calendar'
-import { routes } from '../../config/routes'
+import Modal from '../components/modal/Modal'
+import Calendar from '../components/calendar/Calendar'
+import { routes } from '../config/routes'
 
-import dateFormats from '../../config/dateFormats'
-import Icon from '../../components/icon/Icon'
-import useSessionContext from '../../context/sessionData/sessionData'
+import dateFormats from '../config/dateFormats'
+import Icon from '../components/icon/Icon'
+import useSessionContext from '../context/sessionData/sessionData'
 
 const Logs = () => {
   const { getAllSetsHistory, getAllEntries } = useDB()

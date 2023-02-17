@@ -1,9 +1,9 @@
 import { h } from 'preact'
-import Counters from '../../components/counters/Counters'
-import useWeightSettings from '../../hooks/useWeightSettings'
-import Modal from '../../components/modal/Modal'
+import Counters from '../components/counters/Counters'
+import useWeightSettings from '../hooks/useWeightSettings'
+import Modal from '../components/modal/Modal'
 import { useState } from 'preact/hooks'
-import NewPlateForm from './NewPlateForm'
+import NewPlateForm from '../components/NewPlateForm'
 
 const Settings = () => {
   const {

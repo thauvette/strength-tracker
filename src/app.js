@@ -1,28 +1,28 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-// Code-splitting is automated for `routes` directory
 import { Router } from 'preact-router'
-
+// ROUTES
+// Code-splitting is automated for `routes` directory
 import { routes } from './config/routes'
-import useDB, { DBProvider } from './context/db/db'
-
-import Header from './components/header/Header'
-import Menu from './components/menu/Menu'
-
-import Exercise from './routes/exercise/Exercise'
+import Exercise from './routes/Exercise'
 import Backups from './routes/backups'
-import Logs from './routes/logs/logs'
+import Logs from './routes/logs'
 import Wendler from './routes/Wendler'
-import NewWorkout from './routes/workout/newWorkout'
-import Settings from './routes/settings/Settings'
+import NewWorkout from './routes/newWorkout'
+import Settings from './routes/Settings'
 import BioMetrics from './routes/bioMetrics'
+import Fasting from './routes/Fasting'
+import Routines from './routes/Routines'
+
+import useDB, { DBProvider } from './context/db/db'
 import { ToastProvider } from './context/toasts/Toasts'
 import useSessionContext, {
   SessionDataProvider,
 } from './context/sessionData/sessionData'
-import Fasting from './routes/fasting/Fasting'
-import Routines from './routes/Routines'
 import { ThemeProvider } from './context/theme'
+
+import Header from './components/header/Header'
+import Menu from './components/menu/Menu'
 import LoadingSpinner from './components/LoadingSpinner'
 
 const AppWrapper = () => {

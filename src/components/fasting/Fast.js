@@ -1,14 +1,14 @@
 import { h } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
 import dayjs from 'dayjs'
 const duration = require('dayjs/plugin/duration')
 dayjs.extend(duration)
+import AnimateHeight from 'react-animate-height'
 
 import useDB from '../../context/db/db'
 import { objectStores } from '../../context/db/config'
-import { useEffect, useState } from 'preact/hooks'
-
 import Icon from '../../components/icon/Icon'
-import AnimateHeight from 'react-animate-height'
+
 import dateFormats from '../../config/dateFormats'
 import EditFastForm from './EditFastForm'
 

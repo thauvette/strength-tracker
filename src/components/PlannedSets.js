@@ -1,8 +1,8 @@
 import { h } from 'preact'
 
 import Plan from './Plan'
-import PlannedWorkout from '../../components/PlannedWorkout'
-import useDB from '../../context/db/db'
+import PlannedWorkout from './PlannedWorkout'
+import useDB from '../context/db/db'
 import dayjs from 'dayjs'
 
 const PlannedSets = ({

@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
-import { objectStores } from '../../context/db/config'
-import useDB from '../../context/db/db'
-import Fast from './Fast'
+import { objectStores } from '../context/db/config'
+import useDB from '../context/db/db'
+import Fast from '../components/fasting/Fast'
 
 const Fasting = () => {
   const [list, setList] = useState({})
