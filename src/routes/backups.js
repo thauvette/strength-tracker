@@ -1,8 +1,11 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
 import Modal from '../components/modal/Modal'
+import LoadingSpinner from '../components/LoadingSpinner'
+
 import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../config/constants'
 import useDB from '../context/db/db'
+import { objectStores } from '../context/db/config'
 
 export default function Backups() {
   const [isLoading, setIsLoading] = useState(false)
@@ -27,8 +30,19 @@ export default function Backups() {
               values.forEach((value, index) => {
                 if (value) {
                   let formattedValue
-
-                  if (value.includes(ARRAY_SEPARATOR)) {
+                  if (
+                    (items[0] === objectStores.routines &&
+                      headers[index + 2] === 'days') ||
+                    (items[0] === objectStores.wendlerCycles &&
+                      (headers[index + 2] === 'exerciseFormValues' ||
+                        headers[index + 2] === 'weeks'))
+                  ) {
+                    try {
+                      formattedValue = JSON.parse(atob(value))
+                    } catch (e) {
+                      formattedValue = []
+                    }
+                  } else if (value.includes(ARRAY_SEPARATOR)) {
                     // this is an array.
                     // we'll split it and then turn numbers back to numbers as they are probably tied to other ids.
                     formattedValue = value
@@ -109,12 +123,21 @@ export default function Backups() {
             class="py-2"
           />
         </label>
-        <button class="btn primary w-full mt-8" type="submit">
+        <button
+          disabled={!uploadedData}
+          class="btn primary w-full mt-8 disabled:opacity-80"
+          type="submit"
+        >
           Upload
         </button>
       </form>
       <Modal isOpen={isLoading}>
-        <p>Loading</p>
+        <div class="flex flex-col items-center">
+          <LoadingSpinner />
+          <p className="my-2">
+            Loading, this may take a bit depending on the size of the backup.
+          </p>
+        </div>
       </Modal>
     </div>
   )

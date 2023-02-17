@@ -173,9 +173,11 @@ export const DBProvider = ({ children }) => {
     const arr = []
     const headerItems = ['store', 'id']
 
-    for (const storeName of Array.from(db?.objectStoreNames || []).filter(
-      (name) => name !== objectStores.wendlerCycles,
-    )) {
+    Array.from(db?.objectStoreNames || []).forEach(async (storeName) => {
+      const entries = await getFromCursor(storeName)
+    })
+
+    for (const storeName of Array.from(db?.objectStoreNames || [])) {
       const entries = await getFromCursor(storeName)
       if (Object.keys(entries || {}).length) {
         Object.entries(entries).forEach(([id, data]) => {
@@ -192,11 +194,16 @@ export const DBProvider = ({ children }) => {
 
               let formattedValue = val
 
-              if (Array.isArray(val)) {
+              // in the case of routines and wendler cycles we have some json to deal iw
+              if (
+                (storeName === objectStores.routines && key === 'days') ||
+                (storeName === objectStores.wendlerCycles &&
+                  (key === 'exerciseFormValues' || key === 'weeks'))
+              ) {
+                formattedValue = btoa(JSON.stringify(val))
+              } else if (Array.isArray(val)) {
                 formattedValue = val.join(ARRAY_SEPARATOR)
-              }
-
-              if (typeof val === 'string') {
+              } else if (typeof val === 'string') {
                 formattedValue = val.replace(',', COMMA_REPLACEMENT)
               }
               rowData[position] = formattedValue
@@ -242,7 +249,6 @@ export const DBProvider = ({ children }) => {
   const writeItemFromBackup = (item) =>
     new Promise((resolve, reject) => {
       const { store, data, id } = item
-
       const objectStore = db
         .transaction([store], 'readwrite')
         .objectStore(store)
