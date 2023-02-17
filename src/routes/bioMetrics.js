@@ -2,12 +2,12 @@ import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import { Router } from 'preact-router'
 import set from 'lodash.set'
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
-import { routes } from '../../config/routes'
-import BioMetricsList from './bioMetricsList'
-import BioMetric from './bioMetric'
-import NewBioMetric from './newBioMetric'
+import useDB from '../context/db/db'
+import { objectStores } from '../context/db/config'
+import { routes } from '../config/routes'
+import BioMetricsList from '../components/bioMetrics/bioMetricsList'
+import BioMetric from '../components/bioMetrics/bioMetric'
+import NewBioMetric from '../components/bioMetrics/newBioMetric'
 
 const BioMetrics = () => {
   const { getAllEntries, createEntry, updateEntry, deleteEntry } = useDB()

@@ -15,7 +15,7 @@ import Logs from '../routes/logs/logs'
 import Wendler from '../routes/wendler/Wendler'
 import NewWorkout from '../routes/workout/newWorkout'
 import Settings from '../routes/settings/Settings'
-import BioMetrics from '../routes/bioMetrics/bioMetrics'
+import BioMetrics from '../routes/bioMetrics'
 import { ToastProvider } from '../context/toasts/Toasts'
 import useSessionContext, {
   SessionDataProvider,
@@ -23,6 +23,7 @@ import useSessionContext, {
 import Fasting from '../routes/fasting/Fasting'
 import Routines from '../routes/routines/Routines'
 import { ThemeProvider } from '../context/theme'
+import LoadingSpinner from './LoadingSpinner'
 
 const AppWrapper = () => {
   const { isInitialized } = useDB()
@@ -61,7 +62,9 @@ const AppWrapper = () => {
             </Router>
           </div>
         ) : (
-          <p>Loading</p>
+          <div class="flex items-center justify-center p-4">
+            <LoadingSpinner />
+          </div>
         )}
       </div>
     </>
