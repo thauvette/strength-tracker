@@ -121,7 +121,6 @@ export default function WendlerCycle({ id }) {
                 const dayIsComplete = isDayComplete(sets)
 
                 const { mainSets, auxSets, additionalSets } = getDaysSets(sets)
-                console.log(dayIsComplete)
                 return (
                   <div key={exercise} className="px-2 py-1">
                     <div className={`${isLastChild ? '' : 'border-b-2'}`}>
