@@ -173,10 +173,6 @@ export const DBProvider = ({ children }) => {
     const arr = []
     const headerItems = ['store', 'id']
 
-    Array.from(db?.objectStoreNames || []).forEach(async (storeName) => {
-      const entries = await getFromCursor(storeName)
-    })
-
     for (const storeName of Array.from(db?.objectStoreNames || [])) {
       const entries = await getFromCursor(storeName)
       if (Object.keys(entries || {}).length) {
@@ -194,7 +190,7 @@ export const DBProvider = ({ children }) => {
 
               let formattedValue = val
 
-              // in the case of routines and wendler cycles we have some json to deal iw
+              // in the case of routines and wendler cycles we have some json to deal with
               if (
                 (storeName === objectStores.routines && key === 'days') ||
                 (storeName === objectStores.wendlerCycles &&

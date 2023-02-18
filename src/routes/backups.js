@@ -63,7 +63,8 @@ export default function Backups() {
               }
               obj.items.push({
                 store: items[0],
-                id: isNaN(items[1]) ? items[1] : +items[1],
+                // fix for some wendler cycles not having ids.
+                id: items[1] ? (isNaN(items[1]) ? items[1] : +items[1]) : i + 1,
                 data,
               })
             }
