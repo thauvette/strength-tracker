@@ -29,17 +29,21 @@ export const convertDays = (days, startOf = 'week') => {
 
 export const convertDaysToWeeks = (days) => convertDays(days, 'week')
 
-const chunkWeeks = (days) => {
+const chunkWeeks = (days, dateFormat = 'ddd') => {
   const weeks = convertDaysToWeeks(days)
-  return weeks?.map((week) => ({
-    title: `Week of ${dayjs(week.key).format('MMM DD')}`,
-    dateFormat: 'ddd',
-    items: week.days.map((day) => ({
-      ...day,
-      x: dayjs(day.dayKey).toDate().getTime(),
-      y: day.average,
-    })),
-  }))
+  return weeks?.map((week) => {
+    return {
+      title: `Week of ${dayjs(week.key).format('MMM DD')}`,
+      dateFormat,
+      average: week.average,
+      dayKey: week.key,
+      items: week.days.map((day) => ({
+        ...day,
+        x: dayjs(day.dayKey).toDate().getTime(),
+        y: day.average,
+      })),
+    }
+  })
 }
 const chunkMonths = (days) => {
   const months = convertDays(days, 'month')
@@ -57,6 +61,7 @@ const chunkMonths = (days) => {
 const chunkByRange = (days, range = 8, timeSpan = 'weeks') => {
   // from last entry go back in chucks of "range"
   // until we reach the earliest entry
+
   const dates = days.map((day) => dayjs(day.dayKey).toDate().getTime())
   const lastEntry = Math.max(...dates)
   const firstEntry = Math.min(...dates)
@@ -73,7 +78,7 @@ const chunkByRange = (days, range = 8, timeSpan = 'weeks') => {
   const chunks = days.reduce((obj, day) => {
     // find the appropriate key
 
-    const key = keys.find((key, i) => {
+    const key = keys.find((key) => {
       // we are searching from the end back in time
       // the day key is the same or before the key
 
@@ -114,32 +119,37 @@ const chunkByRange = (days, range = 8, timeSpan = 'weeks') => {
   }, [])
 }
 
-export const renderData = ({ days, displayGroup }) => {
-  switch (displayGroup) {
+export const renderData = ({ days, timeSpan, chartGrouping }) => {
+  const dataArray =
+    chartGrouping === 'week' ? chunkWeeks(days || [], 'MMM DD') : days
+
+  switch (timeSpan) {
     case 'week':
-      return chunkWeeks(days || [])
+      return chunkWeeks(dataArray || [])
+    case 'month':
+      return chunkMonths(dataArray || [])
     case 'all':
       return [
         {
           title: 'All Time',
           dateFormat: 'MM/YY',
-          items: days.map((day) => ({
-            ...day,
-            x: dayjs(day.dayKey).toDate().getTime(),
-            y: day.average,
+          items: dataArray.map((entry) => ({
+            ...entry,
+            x: dayjs(entry.dayKey).toDate().getTime(),
+            y: entry.average,
           })),
         },
       ]
     case '8 weeks':
-      return chunkByRange(days, 8, 'weeks')
+      return chunkByRange(dataArray, 8, 'weeks')
     case '6 weeks':
-      return chunkByRange(days, 6, 'weeks')
+      return chunkByRange(dataArray, 6, 'weeks')
+    case '4 weeks':
+      return chunkByRange(dataArray, 4, 'weeks')
     case '6 months':
-      return chunkByRange(days, 6, 'months')
+      return chunkByRange(dataArray, 6, 'months')
     case '3 months':
-      return chunkByRange(days, 3, 'months')
-    case 'month':
-      return chunkMonths(days)
+      return chunkByRange(dataArray, 3, 'months')
     default:
       return null
   }
