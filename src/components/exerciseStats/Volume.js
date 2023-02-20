@@ -15,7 +15,8 @@ const VolumeRow = ({ day }) => {
       >
         <div class={`flex items-center justify-between py-4`}>
           <p>
-            {dayjs(day.day).format('DD MMM YYYY')} - {day.sets} sets
+            {dayjs(day.day).format("MMM DD 'YY")} -{' '}
+            {day.workingSets || day.sets} sets - {day.workingReps} reps
           </p>
           <p>
             {day.diff && (
@@ -34,7 +35,7 @@ const VolumeRow = ({ day }) => {
           {day?.items?.length > 0
             ? day.items.map((set) => (
                 <p key={set.created}>
-                  {set.reps} @ {set.weight}
+                  {set.reps} @ {set.weight} {set.isWarmUp ? '(warm up)' : ''}
                 </p>
               ))
             : null}
@@ -50,7 +51,17 @@ const Volume = ({ exerciseHistory }) => {
         const vol = items.reduce((num, set) => {
           return num + set.weight * set.reps
         }, 0)
-        arr.push({ day, vol, sets: items.length, items })
+        const workingSets = items?.filter((item) => !item?.isWarmUp)
+        arr.push({
+          day,
+          vol,
+          sets: items.length,
+          items,
+          workingSets: workingSets?.length || 0,
+          workingReps: workingSets?.reduce((num, set) => {
+            return num + +set.reps
+          }, 0),
+        })
         return arr
       }, [])
     : []

@@ -1,9 +1,10 @@
 import { h } from 'preact'
 
 import useDB from '../../context/db/db'
+import useToast from '../../context/toasts/Toasts'
+
 import EditableSet from '../editableSet/editableSet'
 import SetRow from '../setRow/setRow'
-import useToast from '../../context/toasts/Toasts'
 
 const Track = ({
   todaysHistory,
@@ -17,12 +18,17 @@ const Track = ({
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
   const { createOrUpdateLoggedSet } = useDB()
   const { fireToast } = useToast()
-  const submitNewSet = async ({ weight, reps }) => {
+
+  const submitNewSet = async ({ weight, reps, isWarmUp }) => {
     fireToast({ text: `${exerciseName?.toUpperCase() || ''} SET ADDED` })
-    await createOrUpdateLoggedSet(null, { weight, reps, exercise: +exerciseId })
+    await createOrUpdateLoggedSet(null, {
+      weight,
+      reps,
+      isWarmUp,
+      exercise: +exerciseId,
+    })
     onAddSet()
   }
-
   return (
     <div class="relative px-2">
       <div className="border-b-4 border-gray-200 dark:border-gray-600 pb-4">
@@ -37,12 +43,17 @@ const Track = ({
             lastWorkoutFirstSet?.weight ||
             0
           }
-          renderCtas={({ weight, reps }) => (
+          isWarmUp={
+            savedSet?.isWarmUp ||
+            lastSet?.isWarmUp ||
+            lastWorkoutFirstSet?.isWarmUp
+          }
+          renderCtas={({ weight, reps, isWarmUp }) => (
             <div class="px-2">
               <button
                 class={`primary w-full`}
                 onClick={() => {
-                  submitNewSet({ weight, reps })
+                  submitNewSet({ weight, reps, isWarmUp })
                 }}
               >
                 Save

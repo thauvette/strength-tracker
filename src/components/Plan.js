@@ -42,9 +42,10 @@ const maths = {
 const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
   const [goal, setGoal] = useState(initialWeight || 100)
   const [type, setType] = useState('threeByFiveAscending')
-  const sets = maths[type].map((day) => ({
+  const sets = maths[type].map((day, i) => ({
     reps: day.reps,
     weight: Math.round(day.math * goal),
+    isWarmUp: i <= 2,
   }))
   return (
     <div class="px-4">
@@ -74,8 +75,15 @@ const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
         />
       </div>
       {sets.map((set, i) => (
-        <p key={i} class={`mb-2 ${i > 2 ? 'bg-blue-200' : ''}`}>
-          {set.reps} @ {set.weight}
+        <p
+          key={i}
+          class={`mb-2 ${
+            i > 2
+              ? 'font-bold text-black dark:text-white'
+              : 'text-gray-600 dark:text-gray-300'
+          }`}
+        >
+          {set.reps} @ {set.weight} {i <= 2 ? '(warm up)' : '(working)'}
         </p>
       ))}
       <button

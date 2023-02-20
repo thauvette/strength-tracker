@@ -9,6 +9,7 @@ const ExerciseHistoryDay = ({ items, dayKey, onChangeSet, ormTime }) => {
   const isIntersecting = useIntersectObserver({
     ref,
   })
+
   return (
     <div ref={ref}>
       <div class="pb-4">
@@ -20,9 +21,9 @@ const ExerciseHistoryDay = ({ items, dayKey, onChangeSet, ormTime }) => {
           {items.map((item) => (
             <div key={item.created}>
               <div
-                class={`
-                        ${ormTime === item.created ? 'bg-blue-200' : ''}
-                        `}
+                class={`${
+                  ormTime === item.created ? 'bg-blue-200 dark:bg-blue-900' : ''
+                }`}
               >
                 <SetRow
                   set={item}

@@ -4,12 +4,14 @@ import { renderData } from './utils'
 import LineChart from '../async/LineChart'
 import Icon from '../icon/Icon'
 import { formatToFixed } from '../../utilities.js/formatNumbers'
+import dayjs from 'dayjs'
 
 const renderTooltipData = ({ chartType, activeData }) => {
   if (chartType === 'vol') {
     return (
       <div class="text-white text-center">
-        <p>{activeData?.data?.length} sets</p>
+        <p>{dayjs(activeData.x).format('MMM DD')}</p>
+        <p>{activeData?.data?.filter((item) => !item.isWarmUp)?.length} sets</p>
         <p>vol: {formatToFixed(activeData.y)}</p>
       </div>
     )

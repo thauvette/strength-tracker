@@ -48,7 +48,7 @@ const PlannedWorkout = ({
   return (
     <div>
       {sets.map((set, i) => {
-        const { reps, weight, created, exerciseName, exercise } = set
+        const { reps, weight, created, exerciseName, exercise, isWarmUp } = set
         return (
           <div key={i} class="border-b-4 pb-2 mb-4">
             <button
@@ -69,11 +69,14 @@ const PlannedWorkout = ({
                 <EditableSet
                   reps={reps}
                   weight={weight}
-                  renderCtas={({ reps, weight }) => {
+                  isWarmUp={isWarmUp}
+                  renderCtas={({ reps, weight, isWarmUp }) => {
                     return (
                       <div>
                         <button
-                          onClick={() => saveSet({ ...set, reps, weight }, i)}
+                          onClick={() =>
+                            saveSet({ ...set, reps, weight, isWarmUp }, i)
+                          }
                           class="primary w-full"
                         >
                           {created ? 'Update' : 'Save'}

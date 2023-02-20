@@ -10,10 +10,11 @@ import Icon from '../icon/Icon'
 
 const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()
-  const updateExistingSet = async ({ weight, reps, id }) => {
+  const updateExistingSet = async ({ weight, reps, id, isWarmUp }) => {
     await createOrUpdateLoggedSet(id, {
       weight,
       reps,
+      isWarmUp,
     })
     if (onChangeSet) {
       onChangeSet()
@@ -75,7 +76,8 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
         )}
 
         <p class="m-0 flex-1">
-          {set.reps} @ {set.weight}
+          {set.reps} @ {set.weight}{' '}
+          {set.isWarmUp ? <span class="text-xs">(warm up)</span> : null}
         </p>
         {isIntersecting && (
           <div class="flex items-center">
@@ -119,11 +121,12 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
                 closeDrawer()
               }}
               closeDrawer={closeDrawer}
-              handleUpdateSet={({ weight, reps, id }) => {
+              handleUpdateSet={({ weight, reps, id, isWarmUp }) => {
                 updateExistingSet({
                   weight,
                   reps,
                   id,
+                  isWarmUp,
                 })
                 closeDrawer()
               }}

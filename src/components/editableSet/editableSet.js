@@ -15,6 +15,7 @@ const EditableSet = ({
   onDuplicate,
   renderCtas,
   disablePlateModal,
+  isWarmUp: initialIsWarmUp = false,
 }) => {
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
@@ -22,7 +23,7 @@ const EditableSet = ({
   })
   const [reps, setReps] = useState(initialReps)
   const [weight, setWeight] = useState(initialWeight)
-
+  const [isWarmUp, setIsWarmUp] = useState(initialIsWarmUp)
   return (
     <>
       <div class="editable-set py-1">
@@ -36,6 +37,17 @@ const EditableSet = ({
               X
             </button>
           )}
+        </div>
+        <div class="mb-2">
+          <label class="flex items-center gap-2 ">
+            <input
+              type="checkbox"
+              checked={isWarmUp}
+              onInput={(e) => setIsWarmUp(e.target.checked)}
+            />
+
+            <p>Warm up set.</p>
+          </label>
         </div>
         <div class="flex pb-3">
           <div class="w-1/2 px-2">
@@ -141,7 +153,8 @@ const EditableSet = ({
             </button>
           </div>
         )}
-        {renderCtas && renderCtas({ weight, reps })}
+
+        {renderCtas && renderCtas({ weight, reps, isWarmUp })}
       </div>
       <Modal
         isOpen={plateModalState.isOpen}

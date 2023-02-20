@@ -20,6 +20,7 @@ const SetRowDrawer = ({
       <EditableSet
         reps={set.reps}
         weight={set.weight}
+        isWarmUp={set.isWarmUp}
         renderCtas={(data) => {
           return (
             <div class="flex">
@@ -31,6 +32,7 @@ const SetRowDrawer = ({
                       weight: data.weight,
                       reps: data.reps,
                       id: set.id,
+                      isWarmUp: data.isWarmUp,
                     })
                   }}
                 >

@@ -36,13 +36,14 @@ const PlannedSets = ({
       </>
     )
   }
+
   return (
     <div class="px-4">
       <h1 class="mb-6">Planned sets</h1>
       <PlannedWorkout
         sets={plannedSet || []}
-        onUpdateSet={({ reps, weight }, index) => {
-          const currentSet = { ...plannedSet[index], reps, weight }
+        onUpdateSet={({ reps, weight, isWarmUp }, index) => {
+          const currentSet = { ...plannedSet[index], reps, weight, isWarmUp }
           // create or update (if setID exists) set in DB
           createOrUpdateLoggedSet(currentSet.id, {
             ...currentSet,

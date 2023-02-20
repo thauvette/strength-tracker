@@ -120,11 +120,12 @@ const Logs = () => {
 
   const useDayAsRoutine = () => {
     const sets =
-      activeDayData?.map(({ exercise, name, reps, weight }) => ({
+      activeDayData?.map(({ exercise, name, reps, weight, isWarmUp }) => ({
         exercise,
         exerciseName: name,
         reps,
         weight,
+        isWarmUp,
       })) || []
     startRoutine(sets)
     route(routes.activeRoutine)
@@ -199,7 +200,7 @@ const Logs = () => {
               {sets.map((set) => (
                 <div key={set.created}>
                   <p>
-                    {set.reps} @ {set.weight}
+                    {set.reps} @ {set.weight} {set.isWarmUp ? '(warm up)' : ''}
                     {set.note && ` - ${set.note}`}
                   </p>
                 </div>
@@ -209,10 +210,16 @@ const Logs = () => {
         : activeDayData?.map((set) => (
             <div class="mb-4 card p-4" key={set.created}>
               <div class="flex items-center gap-2 ">
-                <p class="font-bold capitalize">{set.name}</p>
-                <p class="whitespace-nowrap">
-                  {set.reps} @ {set.weight}
-                </p>
+                <div>
+                  <div class="flex gap-2">
+                    <p class="font-bold capitalize">{set.name}</p>
+                    <p class="whitespace-nowrap">
+                      {set.reps} @ {set.weight}
+                    </p>
+                  </div>
+                  {set.isWarmUp ? <p>(warm up)</p> : null}
+                </div>
+
                 <Link
                   href={`${routes.exerciseBase}/${set.exercise}`}
                   class="ml-auto"

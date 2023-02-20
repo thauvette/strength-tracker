@@ -2,19 +2,21 @@ import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { Router, Link, route } from 'preact-router'
 import dayjs from 'dayjs'
-import ExerciseStats from '../components/exerciseStats/ExerciseStats'
-import Track from '../components/exercise/Track'
-import { routes } from '../config/routes'
-import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory'
-import EditExercise from '../components/exercise/EditExercise'
-import PlannedSets from '../components/PlannedSets'
-import useSessionContext from '../context/sessionData/sessionData'
+
 import useDB from '../context/db/db'
 import { objectStores } from '../context/db/config'
+import useSessionContext from '../context/sessionData/sessionData'
+import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory'
+
+import { routes } from '../config/routes'
+
+import ExerciseStats from '../components/exerciseStats/ExerciseStats'
+import Track from '../components/exercise/Track'
+import EditExercise from '../components/exercise/EditExercise'
+import PlannedSets from '../components/PlannedSets'
 import Icon from '../components/icon/Icon'
 
-const Exercise = (props) => {
-  const { id, remaining_path } = props
+const Exercise = ({ id, remaining_path }) => {
   const [exerciseHistory, getData] = useExerciseHistory(id)
   const { updateEntry } = useDB()
 
