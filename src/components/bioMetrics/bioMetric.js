@@ -15,7 +15,14 @@ import Days from './Days'
 import Weeks from './Weeks'
 import Charts from './Charts'
 
-const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
+const BioMetric = ({
+  id,
+  addEntry,
+  bioMetrics,
+  editEntry,
+  removeEntry,
+  remaining_path,
+}) => {
   const currentBioMetric = bioMetrics[id]
 
   const [deleteModalState, setDeleteModalState] = useState({
@@ -101,22 +108,31 @@ const BioMetric = ({ id, addEntry, bioMetrics, editEntry, removeEntry }) => {
         <h1 class="capitalize">{currentBioMetric?.name}</h1>
         <div class="flex py-2">
           <Link
-            class="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-transparent"
-            activeClassName="border-highlight-900 dark:border-highlight-200"
+            class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 ${
+              !remaining_path
+                ? 'border-highlight-900 dark:border-highlight-200'
+                : 'border-transparent'
+            }`}
             href={`${routes.bioMetricsBase}/${id}`}
           >
             Days
           </Link>
           <Link
-            class="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-transparent"
-            activeClassName="border-highlight-900 dark:border-highlight-200"
+            class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 ${
+              remaining_path === 'weeks'
+                ? 'border-highlight-900 dark:border-highlight-200'
+                : 'border-transparent'
+            }`}
             href={`${routes.bioMetricsBase}/${id}/weeks`}
           >
             Weeks
           </Link>
           <Link
-            class="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-transparent"
-            activeClassName="border-highlight-900 dark:border-highlight-200"
+            class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 ${
+              remaining_path === 'charts'
+                ? 'border-highlight-900 dark:border-highlight-200'
+                : 'border-transparent'
+            }`}
             href={`${routes.bioMetricsBase}/${id}/charts`}
           >
             Charts

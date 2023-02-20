@@ -2,12 +2,7 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-<!-- prettier-ignore -->
 TODO: more stats on exercise view (Charts)
-    - add a render tool tip option
-    -
-
-TODO: change app name and logo, and favicon
 
 <!-- prettier-ignore -->
 TODO: Edit exercises
@@ -23,9 +18,7 @@ TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
 
 TODO: back up settings (move to indexedDb as well)
 
-TODO: styles not loading when offline - probably also want to remove code splitting
-
-TODO: Screen always on? (currently only in chrome 84)
+TODO: Screen always on? (currently only available chrome 84)
 
 TODO: Swipe on calendar view??
 
@@ -35,7 +28,7 @@ TODO: wendler form errors
 
 TODO: Super sets
 
-TODO: connect to watch?
+TODO: connect to watch? - not available in brave
 
 TODO: custom plate calculator settings per exercise (example on RDL I only want 25s and under)
 
