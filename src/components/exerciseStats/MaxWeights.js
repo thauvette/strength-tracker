@@ -43,7 +43,9 @@ const MaxWeightRow = ({ set }) => {
                 <p
                   key={daysSet.created}
                   class={
-                    set.displayWeight === daysSet.weight ? 'bg-blue-200' : ''
+                    set.displayWeight === daysSet.weight
+                      ? 'bg-blue-200 dark:bg-blue-900'
+                      : ''
                   }
                 >
                   {daysSet.reps} @ {daysSet.weight}

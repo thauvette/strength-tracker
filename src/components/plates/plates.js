@@ -57,7 +57,7 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
             <div
               key={i}
               class={`${renderPlateClass(plate)} ${
-                i + 1 < neededPlates.length ? 'border-r border-gray-100' : ''
+                i + 1 < neededPlates.length ? 'border-l border-gray-100' : ''
               } rounded-sm`}
             />
           ))}
