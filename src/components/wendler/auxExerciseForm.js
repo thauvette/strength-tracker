@@ -17,11 +17,11 @@ const AuxExerciseForm = ({
 
   const [addToAllWeeks, setAddToAllWeeks] = useState(true)
 
-  const handleInput = ({ index, key, value }) => {
+  const handleInput = ({ index, values }) => {
     const currentSets = [...sets]
     currentSets[index] = {
       ...currentSets[index],
-      [key]: value,
+      ...values,
     }
     setSets(currentSets)
   }
@@ -36,7 +36,7 @@ const AuxExerciseForm = ({
   }
 
   const addSet = () => {
-    setSets([...sets, { reps: '', weight: '' }])
+    setSets([...sets, { reps: '', weight: '', isWarmUp: false }])
   }
 
   const duplicateSet = (values) => {
@@ -75,22 +75,19 @@ const AuxExerciseForm = ({
         return (
           <div key={index} class="border-b pb-6">
             <EditableSet
-              onChangeReps={(value) =>
+              handleChanges={({ reps, weight, isWarmUp }) => {
                 handleInput({
                   index,
-                  key: 'reps',
-                  value,
+                  values: {
+                    reps,
+                    weight,
+                    isWarmUp,
+                  },
                 })
-              }
-              onChangeWeight={(value) =>
-                handleInput({
-                  index,
-                  key: 'weight',
-                  value,
-                })
-              }
+              }}
               reps={setValues?.reps || ''}
               weight={setValues?.weight || ''}
+              isWarmUp={!!setValues?.isWarmUp}
               handleRemove={(e) => {
                 e.stopPropagation()
                 handleRemoveSet(index)

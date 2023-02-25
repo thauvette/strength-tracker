@@ -5,16 +5,17 @@ import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils'
 export const createOrUpdateLoggedSet = (db, id, data) =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets)
-
     if (!id) {
       const addRequest = objectStore.add({
         ...data,
+        exercise: +data.exercise,
         created: new Date().getTime(),
       })
       addRequest.onerror = (e) => console.warn(e)
       addRequest.onsuccess = (event) => {
         return resolve({
           ...data,
+          exercise: +data.exercise,
           created: new Date().getTime(),
           id: event?.target?.result,
         })

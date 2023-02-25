@@ -11,7 +11,7 @@ const Set = ({
   title,
   handleViewHistory,
 }) => {
-  const { reps, weight, completed } = set
+  const { reps, weight, isWarmUp, completed } = set
 
   return (
     <div class="border-b py-4">
@@ -19,6 +19,7 @@ const Set = ({
         <EditableSet
           reps={reps}
           weight={weight}
+          isWarmUp={isWarmUp}
           isComplete={!!completed}
           title={
             <>

@@ -115,7 +115,7 @@ export default function Preview({ initialValues }) {
           ...set,
           completed: null,
           exercise: exercise.name,
-          primaryId: exercise.id,
+          primaryId: +exercise.id,
           wendlerGroup: 'additional',
           wendlerId,
         }

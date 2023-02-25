@@ -65,6 +65,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
           reps: setData.reps,
           weight: setData.weight,
           exercise: setData.primaryId,
+          isWarmUp: setData.isWarmUp,
         })
         setId = res?.id
       } catch (err) {
@@ -83,6 +84,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     const path = isLegacy
       ? ['weeks', week, mainLift, 'runningSets', setIndex]
       : ['weeks', week, mainLift, setData?.wendlerGroup, setData.wendlerId]
+
     updateWendlerItem({
       id,
       path,

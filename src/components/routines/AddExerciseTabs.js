@@ -16,14 +16,15 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
         <EditableSet
           reps={addedSets?.[addedSets?.length - 1]?.reps || 0}
           weight={addedSets?.[addedSets?.length - 1]?.weight || 0}
-          renderCtas={({ weight, reps }) => {
+          isWarmUp={!!addedSets?.[addedSets?.length - 1]?.weight}
+          renderCtas={({ weight, reps, isWarmUp }) => {
             return (
               <button
                 class="bg-primary-900 text-white w-full"
                 onClick={() =>
                   setAddedSets([
                     ...addedSets,
-                    { weight, reps, id: generateRandomId() },
+                    { weight, reps, isWarmUp, id: generateRandomId() },
                   ])
                 }
               >
@@ -86,26 +87,17 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
                     title={null}
                     weight={set.weight || 0}
                     reps={set.reps || 0}
+                    isWarmUp={!!set.isWarmUp}
                     handleRemove={() => removeSet(set.id)}
-                    onChangeReps={(reps) => {
+                    handleChanges={({ reps, weight, isWarmUp }) => {
                       setAddedSets(
                         addedSets.map((addedSet, setIndex) =>
                           setIndex === i
                             ? {
                                 ...addedSet,
                                 reps,
-                              }
-                            : addedSet,
-                        ),
-                      )
-                    }}
-                    onChangeWeight={(weight) => {
-                      setAddedSets(
-                        addedSets.map((addedSet, setIndex) =>
-                          setIndex === i
-                            ? {
-                                ...addedSet,
                                 weight,
+                                isWarmUp,
                               }
                             : addedSet,
                         ),

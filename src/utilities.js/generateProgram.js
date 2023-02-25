@@ -55,6 +55,7 @@ export default function generateProgram({
           exercise: info.name,
           reps: set.reps,
           weight: rounded,
+          isWarmUp: set.isWarmUp || i <= 2,
           completed: matchingSet?.completed || null,
           primaryId: info.primaryId,
           wendlerGroup: 'main',
@@ -90,7 +91,7 @@ export default function generateProgram({
             reps: auxVersion === 'fsl' ? 5 : 10,
             weight: rounded,
             completed: existingSetData?.completed || null,
-            primaryId: matchingAuxData.primaryId,
+            primaryId: +matchingAuxData.primaryId,
             wendlerGroup: 'aux',
             wendlerId,
           }

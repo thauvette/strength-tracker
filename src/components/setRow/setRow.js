@@ -12,6 +12,7 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
   const { createOrUpdateLoggedSet, deleteEntry } = useDB()
   const updateExistingSet = async ({ weight, reps, id, isWarmUp }) => {
     await createOrUpdateLoggedSet(id, {
+      ...set,
       weight,
       reps,
       isWarmUp,

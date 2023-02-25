@@ -171,21 +171,14 @@ const CreateRoutine = ({ initialValues }) => {
                         <EditableSet
                           reps={set.reps}
                           weight={set.weight}
-                          onChangeReps={(value) => {
+                          isWarmUp={set.isWarmUp}
+                          handleChanges={({ weight, reps, isWarmUp }) => {
                             editSet({
                               set: {
                                 ...set,
-                                reps: value,
-                              },
-                              dayId: day.id,
-                              setId: set.id,
-                            })
-                          }}
-                          onChangeWeight={(value) => {
-                            editSet({
-                              set: {
-                                ...set,
-                                weight: value,
+                                weight,
+                                reps,
+                                isWarmUp,
                               },
                               dayId: day.id,
                               setId: set.id,

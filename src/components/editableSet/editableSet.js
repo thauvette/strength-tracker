@@ -1,21 +1,20 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 
 import Modal from '../modal/Modal'
 import Plates from '../plates/plates'
 
 const EditableSet = ({
-  onChangeReps,
-  onChangeWeight,
+  handleChanges,
   reps: initialReps,
   weight: initialWeight,
+  isWarmUp: initialIsWarmUp = false,
   handleRemove,
   title,
   titleClass,
   onDuplicate,
   renderCtas,
   disablePlateModal,
-  isWarmUp: initialIsWarmUp = false,
 }) => {
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
@@ -24,6 +23,17 @@ const EditableSet = ({
   const [reps, setReps] = useState(initialReps)
   const [weight, setWeight] = useState(initialWeight)
   const [isWarmUp, setIsWarmUp] = useState(initialIsWarmUp)
+
+  useEffect(() => {
+    if (handleChanges) {
+      handleChanges({
+        reps,
+        weight,
+        isWarmUp,
+      })
+    }
+  }, [reps, weight, isWarmUp]) // eslint-disable-line
+
   return (
     <>
       <div class="editable-set py-1">
@@ -43,7 +53,9 @@ const EditableSet = ({
             <input
               type="checkbox"
               checked={isWarmUp}
-              onInput={(e) => setIsWarmUp(e.target.checked)}
+              onInput={(e) => {
+                setIsWarmUp(e.target.checked)
+              }}
             />
 
             <p>Warm up set.</p>
@@ -58,9 +70,6 @@ const EditableSet = ({
                 onClick={() => {
                   const newValue = +reps > 1 ? +reps - 1 : 0
                   setReps(newValue)
-                  if (onChangeReps) {
-                    onChangeReps(newValue)
-                  }
                 }}
               >
                 -
@@ -70,18 +79,12 @@ const EditableSet = ({
                 value={reps}
                 onInput={(e) => {
                   setReps(e.target.value)
-                  if (onChangeReps) {
-                    onChangeReps(e.target.value)
-                  }
                 }}
               />
 
               <button
                 onClick={() => {
                   setReps(+reps + 1)
-                  if (onChangeReps) {
-                    onChangeReps(+reps + 1)
-                  }
                 }}
               >
                 +
@@ -98,9 +101,6 @@ const EditableSet = ({
                   const remainder = +weight % 5
                   const newWeight = +weight > 5 ? +weight - (remainder || 5) : 0
                   setWeight(newWeight)
-                  if (onChangeWeight) {
-                    onChangeWeight(newWeight)
-                  }
                 }}
               >
                 -
@@ -110,9 +110,6 @@ const EditableSet = ({
                 value={weight}
                 onInput={(e) => {
                   setWeight(e.target.value)
-                  if (onChangeWeight) {
-                    onChangeWeight(e.target.value)
-                  }
                 }}
               />
 
@@ -120,9 +117,6 @@ const EditableSet = ({
                 onClick={() => {
                   const newWeight = +weight + 5 - (+weight % 5)
                   setWeight(newWeight)
-                  if (onChangeWeight) {
-                    onChangeWeight(+weight + 5 - (+weight % 5))
-                  }
                 }}
               >
                 +

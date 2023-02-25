@@ -14,6 +14,7 @@ const ActiveRoutine = () => {
       weight: set.weight,
       reps: set.reps,
       exercise: set.exercise,
+      isWarmUp: set.isWarmUp,
     }).then((res) => {
       // add the id to the matching set
       const currentSets = [...activeRoutine]

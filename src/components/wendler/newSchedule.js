@@ -9,6 +9,7 @@ import { objectStores } from '../../context/db/config'
 import OneRepMaxInput from './oneRepMaxInput'
 import { route } from 'preact-router'
 import { routes } from '../../config/routes'
+import LoadingSpinner from '../LoadingSpinner'
 
 const NewSchedule = ({ onSubmit, initialValues }) => {
   const { getWendlerExercises, getAllEntries } = useDB()
@@ -87,7 +88,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
 
   return loading ? (
     <div class="text-center pt-4">
-      <p>Loading</p>
+      <LoadingSpinner />
     </div>
   ) : (
     <div class={`${style.home} px-2`}>
