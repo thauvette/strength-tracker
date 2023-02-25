@@ -19,13 +19,13 @@ const VolumeRow = ({ day }) => {
             {day.workingSets || day.sets} sets - {day.workingReps} reps
           </p>
           <p>
-            {day.diff && (
+            {day.diff !== undefined && day.diff !== null && (
               <span class="text-sm">
                 ({day.diff > 0 ? '+' : ''}
                 {day.diff})
               </span>
             )}{' '}
-            <span class="font-bold">{day.vol}</span>
+            <span class="font-bold">{day.workingVol}</span>
           </p>
         </div>
       </button>
@@ -48,19 +48,34 @@ const VolumeRow = ({ day }) => {
 const Volume = ({ exerciseHistory }) => {
   const volumeByDay = exerciseHistory?.items
     ? Object.entries(exerciseHistory?.items).reduce((arr, [day, items]) => {
-        const vol = items.reduce((num, set) => {
-          return num + set.weight * set.reps
-        }, 0)
-        const workingSets = items?.filter((item) => !item?.isWarmUp)
+        const volumeData = items.reduce(
+          (obj, set) => {
+            const isWorkingSet = !set.isWarmUp
+            return {
+              ...obj,
+              totalVol: obj.totalVol + set.weight * set.reps,
+              workingVol: isWorkingSet
+                ? obj.workingVol + set.weight * set.reps
+                : obj.workingVol,
+              workingSets: isWorkingSet ? obj.workingSets + 1 : obj.workingSets,
+              workingReps: isWorkingSet
+                ? obj.workingReps + set.reps
+                : obj.workingReps,
+            }
+          },
+          {
+            totalVol: 0,
+            workingVol: 0,
+            workingSets: 0,
+            workingReps: 0,
+          },
+        )
         arr.push({
           day,
-          vol,
+          vol: volumeData.totalVol,
           sets: items.length,
           items,
-          workingSets: workingSets?.length || 0,
-          workingReps: workingSets?.reduce((num, set) => {
-            return num + +set.reps
-          }, 0),
+          ...volumeData,
         })
         return arr
       }, [])
@@ -69,8 +84,8 @@ const Volume = ({ exerciseHistory }) => {
   return volumeByDay
     .sort((a, b) => (dayjs(a.day).isBefore(b.day) ? 1 : -1))
     .map((day, i) => {
-      const diff = volumeByDay[i + 1]?.vol
-        ? day.vol - volumeByDay[i + 1]?.vol
+      const diff = volumeByDay[i + 1]?.workingVol
+        ? day.vol - volumeByDay[i + 1]?.workingVol
         : null
 
       return <VolumeRow key={day.day} day={{ ...day, diff }} />
