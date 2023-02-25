@@ -21,6 +21,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
     altPrimary: initialValues?.altPrimary || '',
     musclesWorked: initialValues?.musclesWorked || [],
     secondaryMusclesWorked: initialValues?.secondaryMusclesWorked || [],
+    notes: initialValues?.notes || '',
     type: 'wr',
   })
   const [newMuscleGroupModalIsOpen, setNewMuscleGroupModalIsOpen] =
@@ -48,6 +49,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       musclesWorked,
       secondaryMusclesWorked,
       type,
+      notes,
     } = formData
 
     let newPrimaryId
@@ -68,6 +70,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       secondaryMusclesWorked,
       type,
       primaryGroup: newPrimaryId ? +newPrimaryId : +primaryGroup,
+      notes,
     }
     let res
     if (id) {
@@ -104,6 +107,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
         <label>
           <p>Name</p>
           <input
+            class="w-full"
             type="text"
             value={formData.name}
             onInput={(e) =>
@@ -117,8 +121,26 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       </div>
       <div class="pb-2">
         <label>
+          <p>Notes</p>
+          <textarea
+            class="w-full"
+            type="text"
+            value={formData.notes}
+            onInput={(e) =>
+              setFormData({
+                ...formData,
+                notes: e.target.value,
+              })
+            }
+          />
+        </label>
+      </div>
+
+      <div class="pb-2">
+        <label>
           <p>Exercise type</p>
           <select
+            class="w-full"
             value={formData.type}
             onInput={(e) =>
               setFormData({
@@ -139,100 +161,98 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
           </p>
         </label>
       </div>
-      <div>
-        <p>Primary Muscle Group (for sorting)</p>
-        {!!primaryGroupOptions?.length && (
-          <div>
-            <select
-              value={formData.primaryGroup}
-              onInput={(e) =>
-                setFormData({
-                  ...formData,
-                  primaryGroup: e.target.value,
-                })
-              }
-            >
-              <option value="">Select Primary Group</option>
-              {primaryGroupOptions.map((option) => (
-                <option key={option.id} value={option.id} class="capitalize">
-                  {option.name}
-                </option>
-              ))}
-              <option value="other">Other</option>
-            </select>
-            {formData?.primaryGroup === 'other' && (
-              <div>
-                <input
-                  type="text"
-                  onInput={(e) =>
-                    setFormData({
-                      ...formData,
-                      altPrimary: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            )}
-            <hr />
 
-            <Accordion
-              title={
-                <>
-                  Primary Muscles
-                  {formData?.musclesWorked?.length > 0 ? (
-                    <span class="pl-2 text-sm">
-                      {formData?.musclesWorked?.length}
-                    </span>
-                  ) : null}
-                </>
-              }
-              titleClass="capitalize font-bold text-lg"
-            >
-              <MuscleGroupsCheckList
-                groups={primaryGroupOptions}
-                formData={formData}
-                setFormData={setFormData}
-                formKey="musclesWorked"
-              />
-            </Accordion>
-
-            <Accordion
-              title={
-                <>
-                  Secondary Muscles{' '}
-                  {formData?.secondaryMusclesWorked?.length > 0 ? (
-                    <span class="pl-2 text-sm">
-                      {formData?.secondaryMusclesWorked?.length}
-                    </span>
-                  ) : null}
-                </>
-              }
-              titleClass="capitalize font-bold text-lg"
-            >
-              <MuscleGroupsCheckList
-                groups={primaryGroupOptions}
-                formData={formData}
-                setFormData={setFormData}
-                formKey="secondaryMusclesWorked"
-              />
-            </Accordion>
-          </div>
-        )}
-        <div class="py-3">
-          <button
-            class="text-sm btn secondary capitalize"
-            onClick={() => setNewMuscleGroupModalIsOpen(true)}
+      <p>Primary Muscle Group (for sorting)</p>
+      {!!primaryGroupOptions?.length && (
+        <div class="pb-4">
+          <select
+            class="w-full"
+            value={formData.primaryGroup}
+            onInput={(e) =>
+              setFormData({
+                ...formData,
+                primaryGroup: e.target.value,
+              })
+            }
           >
-            Add muscle group
-          </button>
+            <option value="">Select Primary Group</option>
+            {primaryGroupOptions.map((option) => (
+              <option key={option.id} value={option.id} class="capitalize">
+                {option.name}
+              </option>
+            ))}
+            <option value="other">Other</option>
+          </select>
+          {formData?.primaryGroup === 'other' && (
+            <div>
+              <input
+                class="w-full"
+                type="text"
+                onInput={(e) =>
+                  setFormData({
+                    ...formData,
+                    altPrimary: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
+          <hr class="my-6" />
+
+          <Accordion
+            title={
+              <>
+                Primary Muscles
+                {formData?.musclesWorked?.length > 0 ? (
+                  <span class="pl-2 text-sm">
+                    {formData?.musclesWorked?.length}
+                  </span>
+                ) : null}
+              </>
+            }
+            titleClass="capitalize font-bold text-lg"
+          >
+            <MuscleGroupsCheckList
+              groups={primaryGroupOptions}
+              formData={formData}
+              setFormData={setFormData}
+              formKey="musclesWorked"
+            />
+          </Accordion>
+
+          <Accordion
+            title={
+              <>
+                Secondary Muscles{' '}
+                {formData?.secondaryMusclesWorked?.length > 0 ? (
+                  <span class="pl-2 text-sm">
+                    {formData?.secondaryMusclesWorked?.length}
+                  </span>
+                ) : null}
+              </>
+            }
+            titleClass="capitalize font-bold text-lg"
+          >
+            <MuscleGroupsCheckList
+              groups={primaryGroupOptions}
+              formData={formData}
+              setFormData={setFormData}
+              formKey="secondaryMusclesWorked"
+            />
+          </Accordion>
         </div>
-      </div>
-      <div class="pt-4">
+      )}
+      <div class="py-3">
         <button
-          class={`text-white ${formIsValid ? 'bg-primary-900' : 'bg-gray-500'}`}
-          disabled={!formIsValid}
-          onClick={submit}
+          class="text-sm btn secondary capitalize"
+          onClick={() => setNewMuscleGroupModalIsOpen(true)}
         >
+          Add muscle group
+        </button>
+      </div>
+
+      <div class="pt-4">
+        <button class="primary w-full" disabled={!formIsValid} onClick={submit}>
           Save
         </button>
       </div>

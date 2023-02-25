@@ -97,7 +97,8 @@
   }
 
   input,
-  select {
+  select,
+  textarea {
     @apply bg-transparent border border-primary-700 dark:border-primary-200;
     border-radius: 4px;
     padding: 4px 8px;

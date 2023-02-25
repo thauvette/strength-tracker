@@ -65,21 +65,25 @@ const Exercise = ({ id, remaining_path }) => {
       getData()
     })
   }
-
   return (
     <div>
-      <div class="px-3 py-3 flex items-center justify-between">
-        <h1 class="capitalize">{exerciseHistory?.name}</h1>
-        <button
-          onClick={toggleExerciseFavorite}
-          class="text-highlight-900 dark:text-highlight-100"
-        >
-          <Icon
-            width="28"
-            name={exerciseHistory?.isFavorite ? 'star' : 'star-outline'}
-          />
-        </button>
+      <div class="px-3 py-3 ">
+        <div class="flex items-center justify-between">
+          <h1 class="capitalize">{exerciseHistory?.name}</h1>
+
+          <button
+            onClick={toggleExerciseFavorite}
+            class="text-highlight-900 dark:text-highlight-100"
+          >
+            <Icon
+              width="28"
+              name={exerciseHistory?.isFavorite ? 'star' : 'star-outline'}
+            />
+          </button>
+        </div>
+        {exerciseHistory?.notes && <p>{exerciseHistory.notes}</p>}
       </div>
+
       <div class="flex pb-4">
         <Link
           href={`${routes.exerciseBase}/${id}`}

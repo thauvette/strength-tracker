@@ -13,6 +13,7 @@ const EditExercise = ({ id, exerciseHistory, onEdit }) => (
           exerciseHistory?.secondaryMusclesWorked?.map((group) => +group.id) ||
           [],
         exerciseType: exerciseHistory?.type || 'wr',
+        notes: exerciseHistory?.notes || '',
       }}
       id={+id}
       onSubmit={onEdit}
