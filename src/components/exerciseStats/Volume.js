@@ -14,7 +14,7 @@ const VolumeRow = ({ day }) => {
         onClick={toggleOpen}
       >
         <div class={`flex items-center justify-between py-4`}>
-          <p>
+          <p class="text-sm">
             {dayjs(day.day).format("MMM DD 'YY")} -{' '}
             {day.workingSets || day.sets} sets - {day.workingReps} reps
           </p>
@@ -25,7 +25,7 @@ const VolumeRow = ({ day }) => {
                 {day.diff})
               </span>
             )}{' '}
-            <span class="font-bold">{day.workingVol}</span>
+            <span class="text-sm font-bold">{day.workingVol}</span>
           </p>
         </div>
       </button>
