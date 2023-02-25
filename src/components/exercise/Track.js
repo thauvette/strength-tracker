@@ -43,7 +43,7 @@ const Track = ({
         <EditableSet
           reps={initialValues?.reps || 0}
           weight={initialValues?.weight || 0}
-          isWarmUp={!!initialValues.isWarmUp}
+          isWarmUp={!!initialValues?.isWarmUp}
           renderCtas={({ weight, reps, isWarmUp }) => (
             <div class="px-2">
               <button
