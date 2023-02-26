@@ -50,10 +50,10 @@ const AppWrapper = () => {
         {isInitialized ? (
           <div class={`filter bg-1 flex-1 py-4 ${menuIsOpen ? 'blur-sm' : ''}`}>
             <Router onChange={closeMenu}>
+              <Logs path={`${routes.logs}:optional?/:params?`} />
               <Wendler path={`${routes.wendlerBase}/:remaining_path*`} />
               <Exercise path={routes.exercise} />
               <Backups path={routes.backups} />
-              <Logs path={routes.logs} />
               <NewWorkout path={`${routes.newWorkout}/:remaining_path*`} />
               <Settings path={routes.settings} />
               <BioMetrics path={`${routes.bioCatchAll}`} />

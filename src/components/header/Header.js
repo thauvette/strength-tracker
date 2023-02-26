@@ -1,14 +1,18 @@
 import { h } from 'preact'
 import { Link } from 'preact-router/match'
-
+import dayjs from 'dayjs'
 import { routes } from '../../config/routes'
 import Icon from '../icon/Icon'
 import style from './style.scss'
+import dateFormats from '../../config/dateFormats'
 
 const Header = ({ toggleMenu, menuIsOpen, activeRoutine }) => (
   <header class="flex items-center justify-between px-4 h-14 bg-2 z-20">
     <div class="flex items-center">
-      <Link class="text-primary-900 dark:text-gray-50 text-3xl" href="/">
+      <Link
+        class="text-primary-900 dark:text-gray-50 text-3xl"
+        href={`${routes.logs}?date=${dayjs().format(dateFormats.day)}`}
+      >
         <Icon name="calendar-outline" width="32" />
       </Link>
       {activeRoutine && (

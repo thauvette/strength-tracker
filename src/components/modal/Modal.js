@@ -29,11 +29,19 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
 
   useEffect(() => {
     function backOnClose() {
-      route(window.location.pathname, true)
+      let path = window.location.pathname
+      if (window?.location?.search) {
+        path = `${path}${window.location.search}`
+      }
+      route(path, true)
       onRequestClose()
     }
     if (isOpen) {
-      route(`${window.location.pathname}#open`)
+      let path = `${window.location.pathname}`
+      if (window?.location?.search) {
+        path = `${path}${window.location.search}#open`
+      }
+      route(path)
       window.addEventListener('popstate', backOnClose)
     }
 

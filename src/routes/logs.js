@@ -13,7 +13,8 @@ import dateFormats from '../config/dateFormats'
 import Icon from '../components/icon/Icon'
 import useSessionContext from '../context/sessionData/sessionData'
 
-const Logs = () => {
+// date is a query param
+const Logs = ({ date }) => {
   const { getAllSetsHistory, getAllEntries } = useDB()
 
   const { startRoutine } = useSessionContext()
@@ -25,10 +26,23 @@ const Logs = () => {
     bioMetrics: null,
   })
 
-  const [activeDate, setActiveDate] = useState(dayjs().format(dateFormats.day))
+  const [activeDate, setActiveDate] = useState(
+    date || dayjs().format(dateFormats.day),
+  )
   const [calendarIsOpen, setCalendarIsOpen] = useState(false)
 
   const [view, setView] = useState('groups')
+
+  const changeDate = (date) => {
+    setActiveDate(date)
+    route(`${routes.logs}?date=${date}`)
+  }
+
+  useEffect(() => {
+    if (date && date !== activeDate) {
+      changeDate(date)
+    }
+  }, [date, activeDate])
 
   const getData = () => {
     const promises = [
@@ -107,12 +121,12 @@ const Logs = () => {
   }, {})
 
   const stepByDate = (amount) =>
-    setActiveDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day))
+    changeDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day))
 
   const toggleCalendar = () => setCalendarIsOpen(!calendarIsOpen)
 
   const selectDate = (date) => {
-    setActiveDate(date.format(dateFormats.day))
+    changeDate(date.format(dateFormats.day))
     setCalendarIsOpen(false)
   }
 
@@ -153,7 +167,7 @@ const Logs = () => {
           </button>
           {isToday ? null : (
             <button
-              onClick={() => setActiveDate(dayjs().format(dateFormats.day))}
+              onClick={() => changeDate(dayjs().format(dateFormats.day))}
               ariaLabel="go to today"
               class="text-2xl"
             >
