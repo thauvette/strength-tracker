@@ -85,7 +85,7 @@ const Volume = ({ exerciseHistory }) => {
     .sort((a, b) => (dayjs(a.day).isBefore(b.day) ? 1 : -1))
     .map((day, i) => {
       const diff = volumeByDay[i + 1]?.workingVol
-        ? day.vol - volumeByDay[i + 1]?.workingVol
+        ? day.workingVol - volumeByDay[i + 1]?.workingVol
         : null
 
       return <VolumeRow key={day.day} day={{ ...day, diff }} />
