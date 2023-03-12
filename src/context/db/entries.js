@@ -2,6 +2,25 @@ import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils'
 
 export const getAllEntries = async (db, store) => await getFromCursor(db, store)
 
+export const getAllEntriesByKey = async (db, store, key, id) =>
+  new Promise((resolve) => {
+    const { objectStore } = openObjectStoreTransaction(db, store)
+
+    const index = objectStore.index(key)
+    const keyRange = IDBKeyRange.only(+id)
+    const cursorRequest = index.openCursor(keyRange)
+    const result = []
+    cursorRequest.onsuccess = function (event) {
+      const data = event?.target?.result?.value
+      if (data) {
+        result.push(data)
+        event?.target?.result.continue()
+      } else {
+        resolve(result)
+      }
+    }
+  })
+
 export const deleteEntry = (db, store, id) =>
   new Promise((resolve, reject) => {
     const request = db
