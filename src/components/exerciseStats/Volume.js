@@ -57,9 +57,11 @@ const Volume = ({ exerciseHistory }) => {
               workingVol: isWorkingSet
                 ? obj.workingVol + set.weight * set.reps
                 : obj.workingVol,
-              workingSets: isWorkingSet ? obj.workingSets + 1 : obj.workingSets,
+              workingSets: isWorkingSet
+                ? +obj.workingSets + 1
+                : obj.workingSets,
               workingReps: isWorkingSet
-                ? obj.workingReps + set.reps
+                ? obj.workingReps + +set.reps
                 : obj.workingReps,
             }
           },
