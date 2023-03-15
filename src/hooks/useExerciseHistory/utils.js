@@ -64,37 +64,15 @@ export const formatPrs = (items) => {
       }, {})
     : {}
 
-  const mostReps = Math.max(...Object.keys(maxes))
-  let lastRepsWithData
-  return Array.from({ length: mostReps }, (_, i) => {
-    const targetKey = mostReps - i
-    const hasActualData = !!maxes[targetKey]
-
-    const actualWeight = maxes[targetKey]?.weight
-    const lastWeight = maxes[lastRepsWithData]?.weight
-    const shouldUseLastSet = !!(!actualWeight || lastWeight >= actualWeight)
-    const isActualSet = hasActualData && !shouldUseLastSet
-    if (isActualSet) {
-      lastRepsWithData = targetKey
-    }
+  return Object.values(maxes).map((set) => {
+    const daysHistory = items.filter((item) =>
+      dayjs(item.created).isSame(dayjs(set.created), 'day'),
+    )
     return {
-      isActualSet,
-      reps: targetKey,
-      displayWeight: shouldUseLastSet ? lastWeight : actualWeight,
-      actualWeight,
-      date: hasActualData
-        ? maxes[targetKey]?.created
-        : maxes[lastRepsWithData]?.created,
+      ...set,
+      displayWeight: set.weight,
+      date: set.created,
+      daysHistory,
     }
   })
-    .reverse()
-    .map((set) => {
-      const daysHistory = items.filter((item) =>
-        dayjs(item.created).isSame(dayjs(set.date), 'day'),
-      )
-      return {
-        ...set,
-        daysHistory,
-      }
-    })
 }
