@@ -23,6 +23,7 @@ const useExerciseHistory = (id) => {
           })
           .catch((err) => {
             console.log(err)
+            throw err
           })
       : null
 

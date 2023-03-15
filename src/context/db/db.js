@@ -15,7 +15,13 @@ import {
   createCycle,
 } from './wendler'
 import { createBioMetric } from './bioMetrics'
-import { createEntry, deleteEntry, getAllEntries, updateEntry } from './entries'
+import {
+  createEntry,
+  deleteEntry,
+  getAllEntries,
+  getAllEntriesByKey,
+  updateEntry,
+} from './entries'
 import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
@@ -108,7 +114,7 @@ export const DBProvider = ({ children }) => {
   }
 
   const getExerciseById = (id) =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       const { objectStore } = openObjectStoreTransaction(objectStores.exercises)
       const keyRange = IDBKeyRange.only(+id)
 
@@ -116,11 +122,17 @@ export const DBProvider = ({ children }) => {
       cursorRequest.onsuccess = (event) => {
         resolve(event?.target?.result?.value)
       }
+      cursorRequest.onerror = (err) => {
+        reject(err)
+      }
     })
 
   const getExerciseHistoryById = (id) =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       getExerciseById(id).then(async (exerciseResponse) => {
+        if (!exerciseResponse) {
+          reject('404')
+        }
         const muscleGroupData = await getFromCursor(objectStores.muscleGroups)
 
         const primaryMuscles = []
@@ -142,18 +154,49 @@ export const DBProvider = ({ children }) => {
             })
           })
         }
+        let weights
+        if (exerciseResponse?.type === 'bwr') {
+          weights = await getAllEntriesByKey(
+            db,
+            objectStores.bioEntries,
+            'bioMetric',
+            1,
+          )
+        }
+
         const { objectStore } = openObjectStoreTransaction(objectStores.sets)
+
+        const results = []
+
         // get all sets for this exercise
         const index = objectStore.index('exercise')
         const keyRange = IDBKeyRange.only(+id)
         const cursorRequest = index.openCursor(keyRange)
-
-        const results = []
-
-        cursorRequest.onsuccess = function (event) {
+        cursorRequest.onsuccess = async function (event) {
           const data = event?.target?.result?.value
           if (data) {
-            results.push({ ...data, id: event?.target?.result?.primaryKey })
+            const result = { ...data, id: event?.target?.result?.primaryKey }
+            // find the closets bw record
+            let closetsRecord
+            if (exerciseResponse.type === 'bwr' && weights?.length) {
+              closetsRecord = weights.reduce((obj, entry) => {
+                const diff = Math.abs(
+                  dayjs(entry.date).diff(dayjs(result.created)),
+                )
+                if (!obj.diff || diff < obj.diff) {
+                  obj = {
+                    ...entry,
+                    diff,
+                  }
+                }
+                return obj
+              }, {})
+            }
+
+            if (closetsRecord?.value) {
+              result.bw = closetsRecord.value
+            }
+            results.push(result)
             event?.target?.result.continue()
           } else {
             resolve({
