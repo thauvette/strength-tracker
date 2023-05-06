@@ -52,7 +52,9 @@ const MaxWeightRow = ({ set, includeBwInHistory }) => {
           {daysHistory?.length > 0
             ? daysHistory.map((daysSet) => {
                 const weight = includeBwInHistory
-                  ? formatToFixed(daysSet.weight + (daysSet.bw || 0))
+                  ? formatToFixed(
+                      +daysSet.weight + (daysSet.bw ? +daysSet.bw : 0),
+                    )
                   : daysSet.weight
                 return (
                   <p
