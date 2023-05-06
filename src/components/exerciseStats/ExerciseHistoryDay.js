@@ -27,8 +27,8 @@ const ExerciseHistoryDay = ({
         <div class="py-2">
           {items.map((item) => {
             const weight = includeBwInHistory
-              ? formatToFixed(item.weight + (item.bw || 0))
-              : item.weight
+              ? formatToFixed(+item.weight + (item.bw ? +item.bw : 0))
+              : +item.weight
             return (
               <div key={item.created}>
                 <div

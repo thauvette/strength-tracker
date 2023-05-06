@@ -59,8 +59,8 @@ export const formatPrs = (items, includeBwInHistory) => {
   const maxes = items?.length
     ? items.reduce((obj, item) => {
         const weight = includeBwInHistory
-          ? formatToFixed(item.weight + (item.bw || 0))
-          : item.weight
+          ? formatToFixed(+item.weight + (item.bw || 0))
+          : +item.weight
 
         if (!obj?.[item.reps] || obj[item.reps].weight < weight) {
           obj[item.reps] = { ...item, weight }
