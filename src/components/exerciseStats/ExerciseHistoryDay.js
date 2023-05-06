@@ -3,8 +3,15 @@ import { useRef } from 'preact/hooks'
 import dayjs from 'dayjs'
 import useIntersectObserver from '../../hooks/useIntersectObserver'
 import SetRow from '../setRow/setRow'
+import { formatToFixed } from '../../utilities.js/formatNumbers'
 
-const ExerciseHistoryDay = ({ items, dayKey, onChangeSet, ormTime }) => {
+const ExerciseHistoryDay = ({
+  items,
+  dayKey,
+  onChangeSet,
+  ormTime,
+  includeBwInHistory = false,
+}) => {
   const ref = useRef(null)
   const isIntersecting = useIntersectObserver({
     ref,
@@ -18,21 +25,28 @@ const ExerciseHistoryDay = ({ items, dayKey, onChangeSet, ormTime }) => {
         </div>
 
         <div class="py-2">
-          {items.map((item) => (
-            <div key={item.created}>
-              <div
-                class={`${
-                  ormTime === item.created ? 'bg-blue-200 dark:bg-blue-900' : ''
-                }`}
-              >
-                <SetRow
-                  set={item}
-                  onChangeSet={onChangeSet}
-                  isIntersecting={isIntersecting}
-                />
+          {items.map((item) => {
+            const weight = includeBwInHistory
+              ? formatToFixed(item.weight + (item.bw || 0))
+              : item.weight
+            return (
+              <div key={item.created}>
+                <div
+                  class={`${
+                    ormTime === item.created
+                      ? 'bg-blue-200 dark:bg-blue-900'
+                      : ''
+                  }`}
+                >
+                  <SetRow
+                    set={{ ...item, weight }}
+                    onChangeSet={onChangeSet}
+                    isIntersecting={isIntersecting}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@ import { h } from 'preact'
 import { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 
+import { formatToFixed } from '../../utilities.js/formatNumbers'
+
 const VolumeRow = ({ day }) => {
   const [isOpen, setIsOpen] = useState(false)
   const toggleOpen = () => setIsOpen(!isOpen)
@@ -22,7 +24,7 @@ const VolumeRow = ({ day }) => {
             {day.diff !== undefined && day.diff !== null && (
               <span class="text-sm">
                 ({day.diff > 0 ? '+' : ''}
-                {day.diff})
+                {formatToFixed(day.diff)})
               </span>
             )}{' '}
             <span class="text-sm font-bold">{day.workingVol}</span>
@@ -45,18 +47,23 @@ const VolumeRow = ({ day }) => {
   )
 }
 
-const Volume = ({ exerciseHistory }) => {
+const Volume = ({ exerciseHistory, includeBwInHistory }) => {
   const volumeByDay = exerciseHistory?.items
     ? Object.entries(exerciseHistory?.items).reduce((arr, [day, items]) => {
         const volumeData = items.reduce(
           (obj, set) => {
             const isWorkingSet = !set.isWarmUp
+
+            const weight = includeBwInHistory
+              ? +set.weight + (+set.bw || 0)
+              : +set.weight
+
             return {
               ...obj,
-              totalVol: obj.totalVol + set.weight * set.reps,
+              totalVol: formatToFixed(obj.totalVol + weight * set.reps),
               workingVol: isWorkingSet
-                ? obj.workingVol + set.weight * set.reps
-                : obj.workingVol,
+                ? formatToFixed(obj.workingVol + weight * set.reps)
+                : formatToFixed(obj.workingVol),
               workingSets: isWorkingSet
                 ? +obj.workingSets + 1
                 : obj.workingSets,

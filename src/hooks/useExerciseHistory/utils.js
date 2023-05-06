@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { formatToFixed } from '../../utilities.js/formatNumbers'
 
 export const formatHistory = (items) => {
   let eorm
@@ -54,12 +55,17 @@ export const formatHistory = (items) => {
   }
 }
 
-export const formatPrs = (items) => {
+export const formatPrs = (items, includeBwInHistory) => {
   const maxes = items?.length
     ? items.reduce((obj, item) => {
-        if (!obj?.[item.reps] || obj[item.reps].weight < item.weight) {
-          obj[item.reps] = item
+        const weight = includeBwInHistory
+          ? formatToFixed(item.weight + (item.bw || 0))
+          : item.weight
+
+        if (!obj?.[item.reps] || obj[item.reps].weight < weight) {
+          obj[item.reps] = { ...item, weight }
         }
+
         return obj
       }, {})
     : {}

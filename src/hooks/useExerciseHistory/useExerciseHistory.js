@@ -18,6 +18,8 @@ const useExerciseHistory = (id) => {
               eorm: formattedHistory.eorm,
               raw: res.items,
               prs: formatPrs(res?.items),
+              prsWithBW:
+                res.type === 'bwr' ? formatPrs(res?.items, true) : null,
               id,
             })
           })
@@ -30,6 +32,7 @@ const useExerciseHistory = (id) => {
   useEffect(() => {
     getData()
   }, [id]) // eslint-disable-line
+
   return [exerciseHistory, getData]
 }
 

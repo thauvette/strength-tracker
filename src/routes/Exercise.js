@@ -15,9 +15,11 @@ import Track from '../components/exercise/Track'
 import EditExercise from '../components/exercise/EditExercise'
 import PlannedSets from '../components/PlannedSets'
 import Icon from '../components/icon/Icon'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const Exercise = ({ id, remaining_path }) => {
-  const [exerciseHistory, getData] = useExerciseHistory(id)
+  const [includeBwInHistory, setIncludeBwInHistory] = useState(false)
+  const [exerciseHistory, getData] = useExerciseHistory(id, includeBwInHistory)
   const { updateEntry } = useDB()
 
   // using this to prevent making a change
@@ -37,7 +39,11 @@ const Exercise = ({ id, remaining_path }) => {
   }, []) // eslint-disable-line
 
   if (!exerciseHistory) {
-    return null
+    return (
+      <div class="flex justify-center">
+        <LoadingSpinner />
+      </div>
+    )
   }
 
   const itemsArrays = Object.values(exerciseHistory?.items || {})
@@ -124,7 +130,6 @@ const Exercise = ({ id, remaining_path }) => {
           Plan
         </Link>
       </div>
-
       <Router>
         <Track
           path={`${routes.exerciseBase}/:id`}
@@ -142,6 +147,8 @@ const Exercise = ({ id, remaining_path }) => {
           path={`${routes.exerciseBase}/:id/history`}
           exerciseHistory={exerciseHistory}
           onChangeSet={getData}
+          includeBwInHistory={includeBwInHistory}
+          setIncludeBwInHistory={setIncludeBwInHistory}
         />
         <EditExercise
           path={`${routes.exerciseBase}/:id/edit`}

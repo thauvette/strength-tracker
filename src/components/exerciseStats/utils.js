@@ -1,12 +1,18 @@
 import dayjs from 'dayjs'
 
-const renderVolumeData = (exerciseHistory) => {
+const renderVolumeData = (exerciseHistory, includeBwInHistory = false) => {
   return Object.entries(exerciseHistory?.items || {}).map(([dayKey, items]) => {
     return {
       x: dayjs(dayKey).toDate().getTime(),
       y: items
         .filter((item) => !item.isWarmUp)
-        .reduce((num, item) => num + item.weight * item.reps, 0),
+        .reduce((num, item) => {
+          const weight = includeBwInHistory
+            ? item.weight + (item.bw || 0)
+            : item.weight
+
+          return num + weight * item.reps
+        }, 0),
       data: items,
     }
   })
@@ -50,11 +56,16 @@ const chunkData = ({ data, timeSpan }) => {
   }
 }
 
-export const renderData = ({ chartType, exerciseHistory, timeSpan }) => {
+export const renderData = ({
+  chartType,
+  exerciseHistory,
+  timeSpan,
+  includeBwInHistory,
+}) => {
   switch (chartType) {
     case 'vol':
       return chunkData({
-        data: renderVolumeData(exerciseHistory),
+        data: renderVolumeData(exerciseHistory, includeBwInHistory),
         timeSpan,
       })
     default:

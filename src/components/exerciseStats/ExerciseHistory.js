@@ -2,7 +2,11 @@ import { h } from 'preact'
 import dayjs from 'dayjs'
 import ExerciseHistoryDay from './ExerciseHistoryDay'
 
-const ExerciseHistory = ({ exerciseHistory, onChangeSet }) => (
+const ExerciseHistory = ({
+  exerciseHistory,
+  onChangeSet,
+  includeBwInHistory,
+}) => (
   <>
     {exerciseHistory?.items &&
     Object.keys(exerciseHistory?.items)?.length > 0 ? (
@@ -15,6 +19,7 @@ const ExerciseHistory = ({ exerciseHistory, onChangeSet }) => (
             onChangeSet={onChangeSet}
             dayKey={dayKey}
             ormTime={exerciseHistory?.eorm?.time}
+            includeBwInHistory={includeBwInHistory}
           />
         ))
     ) : (

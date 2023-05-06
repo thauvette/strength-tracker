@@ -8,22 +8,44 @@ import Charts from './Charts'
 
 const tabs = ['history', 'PRs', 'volume', 'charts']
 
-const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
+const ExerciseStats = ({
+  exerciseHistory,
+  onChangeSet,
+  includeBwInHistory = false,
+  setIncludeBwInHistory,
+}) => {
   const [activeTab, setActiveTab] = useState(tabs[0])
+
   const renderView = () => {
     switch (activeTab) {
       case 'PRs':
-        return <MaxWeights exerciseHistory={exerciseHistory} />
+        return (
+          <MaxWeights
+            exerciseHistory={exerciseHistory}
+            includeBwInHistory={includeBwInHistory}
+          />
+        )
       case 'volume':
-        return <Volume exerciseHistory={exerciseHistory} />
+        return (
+          <Volume
+            exerciseHistory={exerciseHistory}
+            includeBwInHistory={includeBwInHistory}
+          />
+        )
       case 'charts':
-        return <Charts exerciseHistory={exerciseHistory} />
+        return (
+          <Charts
+            exerciseHistory={exerciseHistory}
+            includeBwInHistory={includeBwInHistory}
+          />
+        )
       case 'history':
       default:
         return (
           <ExerciseHistory
             exerciseHistory={exerciseHistory}
             onChangeSet={onChangeSet}
+            includeBwInHistory={includeBwInHistory}
           />
         )
     }
@@ -46,6 +68,18 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
           </button>
         ))}
       </div>
+      {exerciseHistory.type === 'bwr' && setIncludeBwInHistory && (
+        <label class="flex gap-2 items-center">
+          <input
+            type="checkbox"
+            checked={includeBwInHistory}
+            onInput={(e) => {
+              setIncludeBwInHistory(e.target.checked)
+            }}
+          />
+          <p>Include body weight in stats</p>
+        </label>
+      )}
       {renderView()}
     </div>
   )

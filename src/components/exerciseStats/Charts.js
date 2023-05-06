@@ -19,12 +19,17 @@ const renderTooltipData = ({ chartType, activeData }) => {
   return <p class="text-white text-center">{formatToFixed(activeData.y)}</p>
 }
 
-const Charts = ({ exerciseHistory }) => {
+const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
   const [chartType, setChartType] = useState('vol')
   const [timeSpan, setTimeSpan] = useState('all')
   const [activeChunk, setActiveChunk] = useState(0)
 
-  const data = renderData({ chartType, timeSpan, exerciseHistory })
+  const data = renderData({
+    chartType,
+    timeSpan,
+    exerciseHistory,
+    includeBwInHistory,
+  })
   const chartData = data?.[activeChunk]?.data
 
   const showArrows = data?.length > 1
@@ -84,7 +89,9 @@ const Charts = ({ exerciseHistory }) => {
       {chartData?.length > 0 ? (
         <div class="py-4">
           <LineChart
-            key={`${chartType}-${timeSpan}-${activeChunk}`}
+            key={`${chartType}-${timeSpan}-${activeChunk}-${
+              includeBwInHistory ? '1' : '2'
+            }`}
             data={chartData}
             renderTooltip={(activeData) =>
               renderTooltipData({ chartType, activeData })
