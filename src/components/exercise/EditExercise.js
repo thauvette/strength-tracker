@@ -14,6 +14,7 @@ const EditExercise = ({ id, exerciseHistory, onEdit }) => (
           [],
         exerciseType: exerciseHistory?.type || 'wr',
         notes: exerciseHistory?.notes || '',
+        barWeight: exerciseHistory?.barWeight || 45,
       }}
       id={+id}
       onSubmit={onEdit}

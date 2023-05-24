@@ -13,6 +13,7 @@ const Track = ({
   exerciseName,
   savedSet,
   setSavedSet,
+  barWeight,
 }) => {
   const lastSet = todaysHistory?.[todaysHistory?.length - 1]
 
@@ -64,6 +65,7 @@ const Track = ({
               isWarmUp,
             })
           }}
+          barWeight={barWeight}
         />
       </div>
       <div class="mx-2 pt-4">

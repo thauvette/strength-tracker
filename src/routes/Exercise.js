@@ -142,6 +142,7 @@ const Exercise = ({ id, remaining_path }) => {
           exerciseName={exerciseHistory?.name}
           savedSet={savedSet}
           setSavedSet={setSavedSet}
+          barWeight={exerciseHistory?.barWeight || 45}
         />
         <ExerciseStats
           path={`${routes.exerciseBase}/:id/history`}

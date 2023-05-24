@@ -15,6 +15,7 @@ const EditableSet = ({
   onDuplicate,
   renderCtas,
   disablePlateModal,
+  barWeight,
 }) => {
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
@@ -172,7 +173,7 @@ const EditableSet = ({
             Close x
           </button>
         </div>
-        <Plates weight={plateModalState.weight} />
+        <Plates weight={plateModalState.weight} barWeight={barWeight || 45} />
       </Modal>
     </>
   )

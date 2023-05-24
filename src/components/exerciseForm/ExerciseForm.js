@@ -10,6 +10,7 @@ import Accordion from '../accordion/accordion'
 import Modal from '../../components/modal/Modal'
 import NewMuscleGroupForm from './NewMuscleGroupForm'
 import useToast from '../../context/toasts/Toasts'
+import Counters from '../counters/Counters'
 
 const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
   const { createEntry, getMuscleGroups, updateEntry } = useDB()
@@ -23,6 +24,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
     secondaryMusclesWorked: initialValues?.secondaryMusclesWorked || [],
     notes: initialValues?.notes || '',
     type: 'wr',
+    barWeight: initialValues?.barWeight || 45,
   })
   const [newMuscleGroupModalIsOpen, setNewMuscleGroupModalIsOpen] =
     useState(false)
@@ -50,6 +52,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       secondaryMusclesWorked,
       type,
       notes,
+      barWeight,
     } = formData
 
     let newPrimaryId
@@ -71,6 +74,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       type,
       primaryGroup: newPrimaryId ? +newPrimaryId : +primaryGroup,
       notes,
+      barWeight,
     }
     let res
     if (id) {
@@ -249,6 +253,21 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
         >
           Add muscle group
         </button>
+      </div>
+
+      <div class="py-4">
+        <p class="mb-4">Bar weight: </p>
+        <Counters
+          value={formData.barWeight}
+          setValue={(val) => {
+            setFormData({
+              ...formData,
+              barWeight: val,
+            })
+          }}
+          roundToFive
+          jumpBy={5}
+        />
       </div>
 
       <div class="pt-4">
