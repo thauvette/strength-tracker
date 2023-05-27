@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { formatToFixed } from '../../utilities.js/formatNumbers'
 
-export const formatHistory = (items) => {
+export const formatHistory = ({ items, includeBwInHistory = false }) => {
   let eorm
   const formattedHistory = items?.length
     ? items.reduce((obj, item) => {
@@ -51,11 +51,14 @@ export const formatHistory = (items) => {
     eorm,
     lastWorkoutFirstSet,
     lastWorkoutHeaviestSet: heaviestSet,
-    prs: formatPrs(items),
+    prs: formatPrs({ items, includeBwInHistory: false, formattedHistory }),
+    prsWithBW: includeBwInHistory
+      ? formatPrs({ items, includeBwInHistory: true, formattedHistory })
+      : null,
   }
 }
 
-export const formatPrs = (items, includeBwInHistory) => {
+export const formatPrs = ({ items, includeBwInHistory, formattedHistory }) => {
   const maxes = items?.length
     ? items.reduce((obj, item) => {
         const weight = includeBwInHistory
@@ -70,15 +73,25 @@ export const formatPrs = (items, includeBwInHistory) => {
       }, {})
     : {}
 
-  return Object.values(maxes).map((set) => {
-    const daysHistory = items.filter((item) =>
-      dayjs(item.created).isSame(dayjs(set.created), 'day'),
-    )
-    return {
-      ...set,
-      displayWeight: set.weight,
-      date: set.created,
-      daysHistory,
-    }
-  })
+  return Object.values(maxes)
+    .map((set, index) => {
+      const dayKey = dayjs(set.created).format('YYYY-MM-DD')
+      // if any weight after is greater don't include set
+      const remaining = Object.values(maxes).slice(index + 1)
+
+      const isNotHeaviest = remaining.some(
+        (remainingSet) => remainingSet.weight >= set.weight,
+      )
+
+      if (isNotHeaviest) {
+        return null
+      }
+      return {
+        ...set,
+        displayWeight: set.weight,
+        date: set.created,
+        daysHistory: formattedHistory?.[dayKey],
+      }
+    })
+    .filter((set) => !!set)
 }

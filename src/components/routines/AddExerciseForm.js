@@ -5,23 +5,30 @@ import Icon from '../icon/Icon'
 import useDB from '../../context/db/db'
 import { formatHistory } from '../../hooks/useExerciseHistory/utils'
 import AddExerciseTabs from './AddExerciseTabs'
+import Modal from '../modal/Modal'
+import LoadingSpinner from '../LoadingSpinner'
 
 const AddExerciseForm = ({ submit }) => {
   const [selectedExercise, setSelectedExercise] = useState(null)
   const [addedSets, setAddedSets] = useState([])
-
+  const [isLoading, setIsLoading] = useState(false)
   const { getExerciseHistoryById } = useDB()
 
   const selectExercise = async (exercise) => {
+    setIsLoading(true)
     const data = await getExerciseHistoryById(+exercise.id)
 
     if (data) {
       setSelectedExercise({
         id: +exercise.id,
         ...data,
-        ...formatHistory(data?.items || []),
+        ...formatHistory({
+          items: data?.items || [],
+          includeBwInHistory: data.type === 'bwr',
+        }),
       })
     }
+    setIsLoading(false)
   }
   const handleSubmit = () => {
     if (!addedSets?.length) {
@@ -80,10 +87,15 @@ const AddExerciseForm = ({ submit }) => {
   }
 
   return (
-    <div>
+    <div class="relative">
       <ExerciseSearch
         handleSelectExercise={(exercise) => selectExercise(exercise)}
       />
+      {isLoading && (
+        <div class="absolute inset-0 flex pt-40 justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   )
 }

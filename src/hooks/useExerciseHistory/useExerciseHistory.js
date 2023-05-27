@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'preact/hooks'
 import useDB from '../../context/db/db'
 
-import { formatHistory, formatPrs } from './utils'
+import { formatHistory } from './utils'
 
 const useExerciseHistory = (id) => {
   const { getExerciseHistoryById } = useDB()
@@ -11,15 +11,17 @@ const useExerciseHistory = (id) => {
     id
       ? getExerciseHistoryById(id)
           .then((res) => {
-            const formattedHistory = formatHistory(res?.items)
+            const formattedHistory = formatHistory({
+              items: res?.items,
+              includeBwInHistory: res.type === 'bwr',
+            })
             setExerciseHistory({
               ...res,
               items: formattedHistory.items,
               eorm: formattedHistory.eorm,
               raw: res.items,
-              prs: formatPrs(res?.items),
-              prsWithBW:
-                res.type === 'bwr' ? formatPrs(res?.items, true) : null,
+              prs: formattedHistory.prs,
+              prsWithBW: formattedHistory.prsWithBW,
               id,
             })
           })
