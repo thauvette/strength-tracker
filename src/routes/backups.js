@@ -51,6 +51,8 @@ export default function Backups() {
                   } else if (value.includes(COMMA_REPLACEMENT)) {
                     // this is just a string, probably a note with a comma in it.
                     formattedValue = value.replace(COMMA_REPLACEMENT, ',')
+                  } else if (value === 'false') {
+                    formattedValue = false
                   } else {
                     formattedValue = isNaN(value) ? value : +value
                   }
