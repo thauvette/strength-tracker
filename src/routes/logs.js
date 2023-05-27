@@ -131,16 +131,18 @@ const Logs = ({ date }) => {
   }
 
   const isToday = dayjs(activeDate).isSame(dayjs(), 'day')
-
   const useDayAsRoutine = () => {
     const sets =
-      activeDayData?.map(({ exercise, name, reps, weight, isWarmUp }) => ({
-        exercise,
-        exerciseName: name,
-        reps,
-        weight,
-        isWarmUp,
-      })) || []
+      activeDayData?.map(
+        ({ exercise, name, reps, weight, isWarmUp, barWeight }) => ({
+          exercise,
+          exerciseName: name,
+          reps,
+          weight,
+          isWarmUp,
+          barWeight: barWeight || 45,
+        }),
+      ) || []
     startRoutine(sets)
     route(routes.activeRoutine)
   }

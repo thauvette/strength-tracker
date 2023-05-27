@@ -167,6 +167,7 @@ const Exercise = ({ id, remaining_path }) => {
               sets: sets?.map((set) => ({
                 ...set,
                 exerciseName: exerciseHistory?.name,
+                barWeight: exerciseHistory.barWeight,
               })),
             })
           }}

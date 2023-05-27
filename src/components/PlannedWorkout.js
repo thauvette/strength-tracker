@@ -48,7 +48,15 @@ const PlannedWorkout = ({
   return (
     <div>
       {sets.map((set, i) => {
-        const { reps, weight, created, exerciseName, exercise, isWarmUp } = set
+        const {
+          reps,
+          weight,
+          created,
+          exerciseName,
+          exercise,
+          isWarmUp,
+          barWeight,
+        } = set
         return (
           <div key={i} class="border-b-4 pb-2 mb-4">
             <button
@@ -63,13 +71,13 @@ const PlannedWorkout = ({
                 </p>
               </div>
             </button>
-
             {i === activeSet && (
               <div class="pb-2">
                 <EditableSet
                   reps={reps}
                   weight={weight}
                   isWarmUp={isWarmUp}
+                  barWeight={barWeight}
                   renderCtas={({ reps, weight, isWarmUp }) => {
                     return (
                       <div>
