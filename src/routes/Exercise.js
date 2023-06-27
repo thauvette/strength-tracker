@@ -19,7 +19,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 const Exercise = ({ id, remaining_path }) => {
   const [includeBwInHistory, setIncludeBwInHistory] = useState(false)
-  const [exerciseHistory, getData] = useExerciseHistory(id, includeBwInHistory)
+  const [exerciseHistory, getData] = useExerciseHistory(id)
   const { updateEntry } = useDB()
 
   // using this to prevent making a change
