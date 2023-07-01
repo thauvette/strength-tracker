@@ -1,3 +1,4 @@
+// assumes an ordered array
 export default function getClosestTimeStamp(items, target) {
   let result
   let lastDelta

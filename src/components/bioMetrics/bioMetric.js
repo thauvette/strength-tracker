@@ -54,31 +54,38 @@ const BioMetric = ({
       data,
     })
   }
-
-  const groupedItems = cloneDeep(currentBioMetric?.items || [])?.reduce(
-    (obj, item) => {
-      const dayKey = dayjs(item.date).format('YYYY-MM-DD')
-
-      const currentDayItems = obj[dayKey]?.items || []
-      currentDayItems.push(item)
-      const total = currentDayItems
-        .map((item) => +item.value)
-        ?.reduce((num, value) => num + value, 0)
-
-      let dayAverage
-      try {
-        dayAverage = total / currentDayItems.length
-      } catch (err) {}
-      return {
-        ...obj,
-        [dayKey]: {
-          items: currentDayItems,
-          average: dayAverage,
-        },
-      }
-    },
-    {},
+  const sortedItems = cloneDeep(currentBioMetric?.items || [])?.sort(
+    (a, b) =>
+      dayjs(a.date).toDate().getTime() - dayjs(b.date).toDate().getTime(),
   )
+  const groupedItems = sortedItems?.reduce((obj, item, index) => {
+    const dayKey = dayjs(item.date).format('YYYY-MM-DD')
+
+    const currentDayItems = obj[dayKey]?.items || []
+
+    const lastValue = sortedItems[index - 1]?.value
+    // if no last value the diff is 0
+    const diff = item.value - (lastValue || item.value)
+    currentDayItems.push({
+      ...item,
+      diff,
+    })
+    const total = currentDayItems
+      .map((item) => +item.value)
+      ?.reduce((num, value) => num + value, 0)
+
+    let dayAverage
+    try {
+      dayAverage = total / currentDayItems.length
+    } catch (err) {}
+    return {
+      ...obj,
+      [dayKey]: {
+        items: currentDayItems?.reverse(),
+        average: dayAverage,
+      },
+    }
+  }, {})
 
   const orderedKeys = Object.keys(groupedItems).sort((a, b) =>
     dayjs(a).isBefore(dayjs(b)) ? 1 : -1,
