@@ -158,25 +158,22 @@ export const DBProvider = ({ children }) => {
         let weights
         let sortedKeys
         let weightEntries
-        if (exerciseResponse?.type === 'bwr') {
-          weights = await getAllEntriesByKey(
-            db,
-            objectStores.bioEntries,
-            'bioMetric',
-            1,
-          )
-          weightEntries = weights?.reduce(
-            (obj, item) => ({
-              ...obj,
-              [item.created]: item,
-            }),
-            {},
-          )
 
-          sortedKeys = weights
-            ?.map((item) => item.created)
-            ?.sort((a, b) => a - b)
-        }
+        weights = await getAllEntriesByKey(
+          db,
+          objectStores.bioEntries,
+          'bioMetric',
+          1,
+        )
+        weightEntries = weights?.reduce(
+          (obj, item) => ({
+            ...obj,
+            [item.created]: item,
+          }),
+          {},
+        )
+
+        sortedKeys = weights?.map((item) => item.created)?.sort((a, b) => a - b)
 
         const { objectStore } = openObjectStoreTransaction(objectStores.sets)
 
@@ -192,11 +189,8 @@ export const DBProvider = ({ children }) => {
             const result = { ...data, id: event?.target?.result?.primaryKey }
 
             // find the closets bw record
-            let closetsRecord
-            if (exerciseResponse.type === 'bwr' && weights?.length) {
-              const closetsKey = getClosestTimeStamp(sortedKeys, result.created)
-              closetsRecord = weightEntries?.[closetsKey]
-            }
+            const closetsKey = getClosestTimeStamp(sortedKeys, result.created)
+            const closetsRecord = weightEntries?.[closetsKey]
 
             if (closetsRecord?.value) {
               result.bw = closetsRecord.value

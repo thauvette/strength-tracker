@@ -2,6 +2,7 @@ import { h } from 'preact'
 import dayjs from 'dayjs'
 import EditableSet from '../editableSet/editableSet'
 import SetNoteForm from '../setNoteForm/SetNoteForm'
+import { formatToFixed } from '../../utilities.js/formatNumbers'
 
 const SetRowDrawer = ({
   set,
@@ -78,13 +79,45 @@ const SetRowDrawer = ({
 
   if (drawerContent === 'stats') {
     return (
-      <div>
-        <p>Logged: {dayjs(set.created).format('MMM DD, YYYY h:mm a')}</p>
+      <div class="text-lg">
+        <div class="flex justify-between py-2 border-b">
+          <p>Logged:</p>
+          <p class="text-right">
+            {dayjs(set.created).format('MMM DD, YYYY h:mm a')}
+          </p>
+        </div>
+
         {set.updated && (
-          <p>Updated: {dayjs(set.updated).format('MMM DD, YYYY h:mm a')}</p>
+          <div class="flex justify-between py-2 border-b">
+            <p>Updated:</p>
+            <p class="text-right">
+              {dayjs(set.updated).format('MMM DD, YYYY h:mm a')}
+            </p>
+          </div>
         )}
-        <p>Estimated one rep max: {set.estOneRepMax}</p>
-        {set.note && <p>Note: {set.note}</p>}
+        <div class="flex justify-between py-2 border-b">
+          <p>Estimated one rep max:</p>
+          <p class="text-right">{set.estOneRepMax}</p>
+        </div>
+
+        {set.bw ? (
+          <div class="flex justify-between py-2 border-b">
+            <p>% body weight:</p>
+            <p class="text-right">
+              {formatToFixed((set.weight / set.bw) * 100)}
+            </p>
+          </div>
+        ) : null}
+        <div class="flex justify-between py-2 border-b">
+          <p>single set volume:</p>
+          <p class="text-right">{formatToFixed(set.weight * set.reps)}</p>
+        </div>
+        {set.note && (
+          <div class="py-2">
+            <p>Note:</p>
+            <p>{set.note}</p>
+          </div>
+        )}
       </div>
     )
   }
