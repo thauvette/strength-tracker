@@ -18,8 +18,7 @@ const Day = ({ day, setEditModalState }) => {
         <p>{dayjs(dayKey).format('ddd MMM DD YYYY')}</p>
         <div class="flex items-center gap-2">
           <p>{formatToFixed(average)}</p>
-
-          <ChangeIndicator number={change} />
+          {isIntersecting && <ChangeIndicator number={change} />}
         </div>
       </div>
       <div className="flex justify between p-2 card-body">
