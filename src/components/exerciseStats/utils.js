@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import chunkDatesByRange, {
   getAllTimeData,
 } from '../../utilities.js/chunkDatesByRange'
+import calculateOneRepMax from '../../utilities.js/calculateOneRepMax'
 
 export const renderChartData = ({
   chartType,
@@ -24,16 +25,6 @@ export const renderChartData = ({
           return
         }
 
-        if (
-          !maxEORM.value ||
-          (item.estOneRepMax && +item.estOneRepMax > maxEORM.value)
-        ) {
-          maxEORM = {
-            ...item,
-            value: +item.estOneRepMax,
-          }
-        }
-
         const singleSetVol = includeBwInHistory
           ? (+item.weight + (+item.bw || 0)) * +item.reps
           : +item.weight * +item.reps
@@ -54,6 +45,17 @@ export const renderChartData = ({
           maxWeight = {
             ...item,
             value: +weight,
+          }
+        }
+        const oneRepMax = calculateOneRepMax({
+          reps: +item.reps,
+          weight: +weight,
+        })
+
+        if (!maxEORM.value || (oneRepMax && oneRepMax > maxEORM.value)) {
+          maxEORM = {
+            ...item,
+            value: oneRepMax,
           }
         }
 
