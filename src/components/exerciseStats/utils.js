@@ -35,15 +35,15 @@ export const renderChartData = ({
         }
 
         const singleSetVol = includeBwInHistory
-          ? (item.weight + (+item.bw || 0)) * item.reps
-          : item.weight * item.reps
+          ? (+item.weight + (+item.bw || 0)) * +item.reps
+          : +item.weight * +item.reps
 
-        vol.value += singleSetVol
+        vol.value += +singleSetVol
 
         if (!maxSingleSetVol.value || singleSetVol > maxSingleSetVol.value) {
           maxSingleSetVol = {
             ...item,
-            value: singleSetVol,
+            value: +singleSetVol,
           }
         }
 
@@ -53,7 +53,7 @@ export const renderChartData = ({
         if (!maxWeight.value || weight > maxWeight.value) {
           maxWeight = {
             ...item,
-            value: weight,
+            value: +weight,
           }
         }
 
