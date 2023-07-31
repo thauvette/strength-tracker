@@ -1,5 +1,5 @@
 import { DB_NAME, DB_VERSION, objectStores } from './config'
-import muscleGroups from '../../config/muscleGroups'
+import muscleGroups, { updatedMuscleGroups } from '../../config/muscleGroups'
 import { getFromCursor as getFromCursorUtil } from './utils/dbUtils'
 
 const initializeDb = (callback) => {
@@ -15,7 +15,7 @@ const initializeDb = (callback) => {
   let requiresExercises = false
   let requiresBioMetrics = false
   let requiresExerciseGroupRefactor = false
-
+  let requiresMuscleGroupUpdate = false
   dbRequest.onsuccess = async (e) => {
     const database = e.target.result
     const exerciseTransaction = database.transaction(
@@ -147,6 +147,67 @@ const initializeDb = (callback) => {
         })
       })
     }
+
+    if (requiresMuscleGroupUpdate) {
+      // get current muscle groups
+      const muscleGroupTransaction = database.transaction(
+        objectStores.muscleGroups,
+        'readwrite',
+      )
+
+      const musclesStore = muscleGroupTransaction.objectStore(
+        objectStores.muscleGroups,
+      )
+      // add in new ones
+      Promise.all(
+        updatedMuscleGroups.map((muscle) => {
+          if (muscle.id) {
+            return musclesStore.put(muscle, muscle.id)
+          }
+          return musclesStore.add(muscle)
+        }),
+      ).then(async () => {
+        // get all exercises and make sure primary and secondary muscles are arrays.
+        const currentExercises = await getFromCursorUtil(
+          database,
+          objectStores.exercises,
+        )
+
+        const exerciseStore = database
+          .transaction(objectStores.exercises, 'readwrite')
+          .objectStore(objectStores.exercises)
+
+        Object.entries(currentExercises || {}).forEach(([id, exercise]) => {
+          const { musclesWorked, secondaryMusclesWorked } = exercise
+
+          const primary =
+            typeof musclesWorked === 'number' ||
+            typeof musclesWorked === 'string'
+              ? [musclesWorked]
+              : Array.isArray(musclesWorked)
+              ? musclesWorked
+              : []
+
+          const secondary =
+            typeof secondaryMusclesWorked === 'number' ||
+            typeof secondaryMusclesWorked === 'string'
+              ? [secondaryMusclesWorked]
+              : Array.isArray(secondaryMusclesWorked)
+              ? secondaryMusclesWorked
+              : []
+
+          exerciseStore.put(
+            {
+              ...exercise,
+              musclesWorked: primary,
+              secondaryMusclesWorked: secondary,
+            },
+            +id,
+          )
+        })
+      })
+    }
+
     callback(dbRequest.result)
   }
 
@@ -225,6 +286,10 @@ const initializeDb = (callback) => {
       })
       routineStore.createIndex('name', 'name', { unique: false })
       routineStore.createIndex('id', 'id', { unique: true })
+    }
+    if (e.oldVersion < 7) {
+      // updating muscle groups.
+      requiresMuscleGroupUpdate = true
     }
   }
 }

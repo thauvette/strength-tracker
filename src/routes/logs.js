@@ -12,6 +12,8 @@ import { routes } from '../config/routes'
 import dateFormats from '../config/dateFormats'
 import Icon from '../components/icon/Icon'
 import useSessionContext from '../context/sessionData/sessionData'
+import Body from '../components/async/body'
+import { uniq } from 'lodash'
 
 // date is a query param
 const Logs = ({ date }) => {
@@ -32,6 +34,8 @@ const Logs = ({ date }) => {
   const [calendarIsOpen, setCalendarIsOpen] = useState(false)
 
   const [view, setView] = useState('groups')
+
+  const [selectedExercise, setSelectedExercise] = useState(null)
 
   const changeDate = (date) => {
     setActiveDate(date)
@@ -147,6 +151,36 @@ const Logs = ({ date }) => {
     route(routes.activeRoutine)
   }
 
+  const musclesWorked = selectedExercise
+    ? {
+        activePrimary: selectedExercise.musclesWorked,
+        activeSecondary: selectedExercise.secondaryMusclesWorked,
+      }
+    : activeDayData?.reduce(
+        (obj, set) => {
+          const activePrimary = uniq([
+            ...obj.activePrimary,
+            ...(set.musclesWorked || []),
+          ])
+
+          const activeSecondary = uniq([
+            ...obj.activeSecondary,
+            ...(set.secondaryMusclesWorked || []),
+          ])
+          return {
+            activePrimary,
+            activeSecondary,
+          }
+        },
+        {
+          activePrimary: [],
+          activeSecondary: [],
+        },
+      ) || {
+        activePrimary: [],
+        activeSecondary: [],
+      }
+
   return (
     <div class="px-2">
       <div className="flex items-center justify-between pb-6">
@@ -186,29 +220,56 @@ const Logs = ({ date }) => {
         </button>
       </div>
       {activeDayData?.length > 0 ? (
-        <div class="flex justify-between pb-6">
-          <button
-            class="link underline"
-            onClick={() => setView(view === 'groups' ? 'order' : 'groups')}
-          >
-            {view === 'groups' ? 'View in Order' : 'View in Groups'}
-          </button>
-          {!isToday && (
-            <button class="hollow" onClick={useDayAsRoutine}>
-              Do workout
+        <>
+          <div class="px-8 pb-4">
+            <div class="flex items-center justify-center gap-4 pb-4 text-lg">
+              <p class="capitalize">{selectedExercise?.name || 'Workout'}</p>
+              {selectedExercise ? (
+                <button class="p-0" onClick={() => setSelectedExercise(null)}>
+                  X
+                </button>
+              ) : null}
+            </div>
+            <Body {...musclesWorked} />
+          </div>
+          <div class="flex justify-between pb-6">
+            <button
+              class="link underline"
+              onClick={() => setView(view === 'groups' ? 'order' : 'groups')}
+            >
+              {view === 'groups' ? 'View in Order' : 'View in Groups'}
             </button>
-          )}
-        </div>
+            {!isToday && (
+              <button class="hollow" onClick={useDayAsRoutine}>
+                Do workout
+              </button>
+            )}
+          </div>
+        </>
       ) : null}
 
       {view === 'groups'
         ? Object.entries(sortedDayData).map(([name, sets]) => (
             <div key={name} class="mb-4 card p-4 ">
               <div class="flex justify-between pb-2">
-                <p class="font-bold capitalize">{name}</p>
+                <button
+                  onClick={() =>
+                    setSelectedExercise(
+                      selectedExercise?.exercise === sets?.[0].exercise
+                        ? null
+                        : sets?.[0],
+                    )
+                  }
+                  class="font-bold capitalize pl-0"
+                >
+                  {name}
+                </button>
                 {sets?.[0]?.exercise && (
-                  <Link href={`${routes.exerciseBase}/${sets[0].exercise}`}>
-                    View
+                  <Link
+                    href={`${routes.exerciseBase}/${sets[0].exercise}`}
+                    ariaLabel={`go to ${name}`}
+                  >
+                    <Icon name="open" />
                   </Link>
                 )}
               </div>
@@ -224,25 +285,40 @@ const Logs = ({ date }) => {
             </div>
           ))
         : activeDayData?.map((set) => (
-            <div class="mb-4 card p-4" key={set.created}>
-              <div class="flex items-center gap-2 ">
-                <div>
-                  <div class="flex gap-2">
-                    <p class="font-bold capitalize">{set.name}</p>
-                    <p class="whitespace-nowrap">
+            <div
+              class="bg-gray-200 odd:bg-gray-50 dark:bg-gray-900 dark:odd:bg-gray-800 px-2 py-4"
+              key={set.created}
+            >
+              <div class="flex gap-2 ">
+                <div class="text-sm">
+                  <button
+                    class="font-bold capitalize text-sm"
+                    onClick={() =>
+                      setSelectedExercise(
+                        selectedExercise?.exercise === set.exercise
+                          ? null
+                          : set,
+                      )
+                    }
+                  >
+                    {set.name}{' '}
+                    {set.isWarmUp ? (
+                      <span class="text-xs font-normal">(warm up)</span>
+                    ) : null}
+                    <p class="whitespace-nowrap text-left">
                       {set.reps} @ {set.weight}
                     </p>
-                  </div>
-                  {set.isWarmUp ? <p>(warm up)</p> : null}
+                  </button>
                 </div>
-
                 <Link
+                  class="ml-auto pt-2"
                   href={`${routes.exerciseBase}/${set.exercise}`}
-                  class="ml-auto"
+                  ariaLabel={`go to ${set.name}`}
                 >
-                  View
+                  <Icon name="open" />
                 </Link>
               </div>
+
               {set.note && (
                 <div class="pt-2">
                   <p>{set.note}</p>
@@ -253,6 +329,7 @@ const Logs = ({ date }) => {
 
       {logState?.bioMetrics?.[activeDate] ? (
         <div>
+          <h1 class="my-4">Bio metrics</h1>
           {Object.entries(logState?.bioMetrics?.[activeDate]).map(
             ([id, bioMetric]) => (
               <div key={id} class="mb-4 card p-4">

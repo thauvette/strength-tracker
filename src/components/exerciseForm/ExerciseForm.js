@@ -11,6 +11,7 @@ import Modal from '../../components/modal/Modal'
 import NewMuscleGroupForm from './NewMuscleGroupForm'
 import useToast from '../../context/toasts/Toasts'
 import Counters from '../counters/Counters'
+import Body from '../async/body'
 
 const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
   const { createEntry, getMuscleGroups, updateEntry } = useDB()
@@ -202,7 +203,10 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
             </div>
           )}
           <hr class="my-6" />
-
+          <Body
+            activePrimary={formData?.musclesWorked || []}
+            activeSecondary={formData?.secondaryMusclesWorked || []}
+          />
           <Accordion
             title={
               <>

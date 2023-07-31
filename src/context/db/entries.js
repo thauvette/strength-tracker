@@ -1,3 +1,5 @@
+import { objectStores } from './config'
+import { fireSetRemovedEvent } from './sets'
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils'
 
 export const getAllEntries = async (db, store) => await getFromCursor(db, store)
@@ -30,6 +32,9 @@ export const deleteEntry = (db, store, id) =>
     request.onsuccess = async function () {
       try {
         const remainingData = await getFromCursor(db, store)
+        if (store === objectStores.sets) {
+          fireSetRemovedEvent({ id })
+        }
         resolve(remainingData)
       } catch (e) {
         reject(new Error(e.message || 'something went wrong? '))
