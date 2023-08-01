@@ -2,8 +2,6 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-TODO: more stats on exercise view (Charts)
-
 <!-- prettier-ignore -->
 TODO: Edit exercises
     - add exercise types
@@ -13,17 +11,25 @@ TODO: Edit exercises
         [] time
         [] time + weight
 
+TODO: Wendler choose main exercises.
+
 TODO: wendler first set last vs BBB and SLBBB
 
 TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
+
+TODO: import/export individual exercises and bio metrics
+
+TODO: day modal when viewing exercise history
+
+TODO: feedback on backup
+
+TODO: ios double click zoom
 
 TODO: back up settings (move to indexedDb as well)
 
 TODO: Screen always on? (currently only available chrome 84)
 
 TODO: Swipe on calendar view??
-
-TODO: clean up all naming conventions.
 
 TODO: wendler form errors
 
