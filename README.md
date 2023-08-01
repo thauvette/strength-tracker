@@ -2,6 +2,8 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: by default exercises don't have muscle groups so the body svg doesn't highlight. Add messaging?
+
 <!-- prettier-ignore -->
 TODO: Edit exercises
     - add exercise types
