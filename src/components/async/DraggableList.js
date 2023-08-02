@@ -37,7 +37,6 @@ const DraggableList = ({
   useEffect(() => {
     if (typeof document !== 'undefined') {
       if (!document.getElementById('DragDropTouch')) {
-        console.log('ADD IT')
         // add drag and drop polyfill
         const script = document.createElement('script')
         script.src =

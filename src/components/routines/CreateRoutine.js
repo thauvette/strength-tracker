@@ -16,7 +16,14 @@ const CreateRoutine = ({ initialValues }) => {
   const { createRoutine, updateRoutine } = useDB()
   const [routineName, setRoutineName] = useState(initialValues?.name || '')
   const [days, setDays] = useState(
-    initialValues?.days || [
+    initialValues?.days?.map((day) => ({
+      ...day,
+      sets:
+        day?.sets?.map((set) => ({
+          ...set,
+          exerciseId: set.exercise,
+        })) || [],
+    })) || [
       {
         name: 'Day 1',
         id: generateRandomId(),

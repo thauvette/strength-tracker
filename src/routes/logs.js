@@ -14,6 +14,9 @@ import Icon from '../components/icon/Icon'
 import useSessionContext from '../context/sessionData/sessionData'
 import Body from '../components/async/body'
 import { uniq } from 'lodash'
+import CalendarControls from '../components/logs/calendarControls'
+import LogGroup from '../components/logs/logGroup'
+import LogSet from '../components/logs/logSet'
 
 // date is a query param
 const Logs = ({ date }) => {
@@ -183,42 +186,13 @@ const Logs = ({ date }) => {
 
   return (
     <div class="px-2">
-      <div className="flex items-center justify-between pb-6">
-        <button
-          onClick={() => stepByDate(-1)}
-          class="text-2xl"
-          ariaLabel="previous date"
-        >
-          <Icon name="arrow-back-outline" />
-        </button>
-        <div>
-          <button
-            class="m-0"
-            onClick={toggleCalendar}
-            ariaLabel="open calendar"
-          >
-            {isToday
-              ? 'Today'
-              : dayjs(activeDate).format(dateFormats.dayDisplay)}
-          </button>
-          {isToday ? null : (
-            <button
-              onClick={() => changeDate(dayjs().format(dateFormats.day))}
-              ariaLabel="go to today"
-              class="text-2xl"
-            >
-              <Icon name="calendar-outline" />
-            </button>
-          )}
-        </div>
-        <button
-          ariaLabel="next day"
-          class="text-2xl"
-          onClick={() => stepByDate(1)}
-        >
-          <Icon name="arrow-forward-outline" />
-        </button>
-      </div>
+      <CalendarControls
+        isToday={isToday}
+        toggleCalendar={toggleCalendar}
+        stepByDate={stepByDate}
+        activeDate={activeDate}
+        changeDate={changeDate}
+      />
       {activeDayData?.length > 0 ? (
         <>
           <div class="px-8 pb-4">
@@ -250,81 +224,29 @@ const Logs = ({ date }) => {
 
       {view === 'groups'
         ? Object.entries(sortedDayData).map(([name, sets]) => (
-            <div key={name} class="mb-4 card p-4 ">
-              <div class="flex justify-between pb-2">
-                <button
-                  onClick={() =>
-                    setSelectedExercise(
-                      selectedExercise?.exercise === sets?.[0].exercise
-                        ? null
-                        : sets?.[0],
-                    )
-                  }
-                  class="font-bold capitalize pl-0"
-                >
-                  {name}
-                </button>
-                {sets?.[0]?.exercise && (
-                  <Link
-                    href={`${routes.exerciseBase}/${sets[0].exercise}`}
-                    ariaLabel={`go to ${name}`}
-                  >
-                    <Icon name="open" />
-                  </Link>
-                )}
-              </div>
-
-              {sets.map((set) => (
-                <div key={set.created}>
-                  <p>
-                    {set.reps} @ {set.weight} {set.isWarmUp ? '(warm up)' : ''}
-                    {set.note && ` - ${set.note}`}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <LogGroup
+              key={name}
+              name={name}
+              sets={sets}
+              toggleActive={() =>
+                setSelectedExercise(
+                  selectedExercise?.exercise === sets?.[0].exercise
+                    ? null
+                    : sets?.[0],
+                )
+              }
+            />
           ))
         : activeDayData?.map((set) => (
-            <div
-              class="bg-gray-200 odd:bg-gray-50 dark:bg-gray-900 dark:odd:bg-gray-800 px-2 py-4"
+            <LogSet
               key={set.created}
-            >
-              <div class="flex gap-2 ">
-                <div class="text-sm">
-                  <button
-                    class="font-bold capitalize text-sm"
-                    onClick={() =>
-                      setSelectedExercise(
-                        selectedExercise?.exercise === set.exercise
-                          ? null
-                          : set,
-                      )
-                    }
-                  >
-                    {set.name}{' '}
-                    {set.isWarmUp ? (
-                      <span class="text-xs font-normal">(warm up)</span>
-                    ) : null}
-                    <p class="whitespace-nowrap text-left">
-                      {set.reps} @ {set.weight}
-                    </p>
-                  </button>
-                </div>
-                <Link
-                  class="ml-auto pt-2"
-                  href={`${routes.exerciseBase}/${set.exercise}`}
-                  ariaLabel={`go to ${set.name}`}
-                >
-                  <Icon name="open" />
-                </Link>
-              </div>
-
-              {set.note && (
-                <div class="pt-2">
-                  <p>{set.note}</p>
-                </div>
-              )}
-            </div>
+              set={set}
+              toggleActive={() =>
+                setSelectedExercise(
+                  selectedExercise?.exercise === set.exercise ? null : set,
+                )
+              }
+            />
           ))}
 
       {logState?.bioMetrics?.[activeDate] ? (
