@@ -10,7 +10,6 @@ import Calendar from '../components/calendar/Calendar'
 import { routes } from '../config/routes'
 
 import dateFormats from '../config/dateFormats'
-import Icon from '../components/icon/Icon'
 import useSessionContext from '../context/sessionData/sessionData'
 import Body from '../components/async/body'
 import { uniq } from 'lodash'

@@ -1,3 +1,6 @@
+import { objectStores } from '../config'
+import formatExercise from './formatExercise'
+
 export const openObjectStoreTransaction = (db, store) => {
   const transaction = db.transaction([store], 'readwrite')
   const objectStore = transaction.objectStore(store)
@@ -5,6 +8,14 @@ export const openObjectStoreTransaction = (db, store) => {
     transaction,
     objectStore,
   }
+}
+
+const formatData = (store, data) => {
+  if (store === objectStores.exercises) {
+    return formatExercise(data)
+  }
+
+  return data
 }
 
 export const getFromCursor = (db, store) =>
@@ -16,7 +27,7 @@ export const getFromCursor = (db, store) =>
     objectStore.openCursor().onsuccess = (event) => {
       const cursor = event.target.result
       if (cursor) {
-        results[cursor.key] = cursor.value
+        results[cursor.key] = formatData(store, cursor.value)
         cursor.continue()
       }
     }

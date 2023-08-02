@@ -31,6 +31,7 @@ import {
 import { createRoutine, updateRoutine } from './routines'
 import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants'
 import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp'
+import formatExercise from './utils/formatExercise'
 
 const DBContext = createContext()
 
@@ -288,10 +289,14 @@ export const DBProvider = ({ children }) => {
   const writeItemFromBackup = (item) =>
     new Promise((resolve, reject) => {
       const { store, data, id } = item
+
+      const result =
+        store === objectStores.exercises ? formatExercise(data) : data
+
       const objectStore = db
         .transaction([store], 'readwrite')
         .objectStore(store)
-        .put(data, id)
+        .put(result, id)
 
       objectStore.onsuccess = () => resolve(item)
 
