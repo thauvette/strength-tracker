@@ -4,7 +4,7 @@ const MuscleGroupsCheckList = ({ groups, formData, setFormData, formKey }) =>
   groups?.length
     ? groups.map((group) => (
         <div key={group.id}>
-          <p class="capitalize font-bold">{group.name}</p>
+          <p class="uppercase font-bold border-b">{group.name}</p>
           {group.secondaryGroups?.length > 0 && (
             <div class="flex flex-wrap">
               {group.secondaryGroups.map((muscle) => (

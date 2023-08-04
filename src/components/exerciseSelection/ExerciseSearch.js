@@ -52,13 +52,13 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
     if (showNewExerciseForm) {
       return (
         <ExerciseForm
-          onSubmit={() => {
-            getOptions()
-            setShowNewExerciseForm(false)
+          onSubmit={(res) => {
+            handleSelectExercise(res)
           }}
           initialValues={{
             name: searchText,
           }}
+          title="Add Exercise"
         />
       )
     }

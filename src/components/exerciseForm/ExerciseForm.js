@@ -7,28 +7,23 @@ import exerciseTypes from '../../config/exerciseTypes'
 import MuscleGroupsCheckList from './MuscleGroupsCheckList'
 import Accordion from '../accordion/accordion'
 
-import Modal from '../../components/modal/Modal'
-import NewMuscleGroupForm from './NewMuscleGroupForm'
 import useToast from '../../context/toasts/Toasts'
 import Counters from '../counters/Counters'
 import Body from '../async/body'
 
-const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
+const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
   const { createEntry, getMuscleGroups, updateEntry } = useDB()
   const { fireToast } = useToast()
   const [primaryGroupOptions, setPrimaryGroupOptions] = useState([])
   const [formData, setFormData] = useState({
     name: initialValues?.name || '',
     primaryGroup: initialValues?.primaryGroup || '',
-    altPrimary: initialValues?.altPrimary || '',
     musclesWorked: initialValues?.musclesWorked || [],
     secondaryMusclesWorked: initialValues?.secondaryMusclesWorked || [],
     notes: initialValues?.notes || '',
     type: 'wr',
     barWeight: initialValues?.barWeight || 45,
   })
-  const [newMuscleGroupModalIsOpen, setNewMuscleGroupModalIsOpen] =
-    useState(false)
 
   const getData = () => {
     getMuscleGroups().then((res) => {
@@ -48,7 +43,6 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
     const {
       name,
       primaryGroup,
-      altPrimary,
       musclesWorked,
       secondaryMusclesWorked,
       type,
@@ -56,24 +50,12 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       barWeight,
     } = formData
 
-    let newPrimaryId
-    let newPrimary
-    if (primaryGroup === 'other') {
-      newPrimary = await createEntry(objectStores.muscleGroups, {
-        name: altPrimary.toLowerCase(),
-        isPrimary: 1,
-      })
-      if (newPrimary) {
-        newPrimaryId = newPrimary?.id
-      }
-    }
-
     const data = {
       name,
       musclesWorked,
       secondaryMusclesWorked,
       type,
-      primaryGroup: newPrimaryId ? +newPrimaryId : +primaryGroup,
+      primaryGroup: +primaryGroup,
       notes,
       barWeight,
     }
@@ -82,12 +64,6 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
       res = await updateEntry(objectStores.exercises, id, data)
     } else {
       res = await createEntry(objectStores.exercises, data)
-      if (newPrimary) {
-        setPrimaryGroupOptions((currentOptions) => [
-          ...currentOptions,
-          newPrimary,
-        ])
-      }
     }
     if (onSubmit) {
       e.stopPropagation()
@@ -98,16 +74,13 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
     })
   }
 
-  const formIsValid =
-    formData.name.length &&
-    formData.primaryGroup &&
-    (formData.primaryGroup !== 'other' || formData.altPrimary?.length)
+  const formIsValid = formData.name.length && formData.primaryGroup
 
   return !primaryGroupOptions ? (
     <p>Loading</p>
   ) : (
     <div class="p-4">
-      <h2>Add Exercise</h2>
+      {title && <h2>Add Exercise</h2>}
       <div class="pb-2">
         <label>
           <p>Name</p>
@@ -186,80 +159,64 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
                 {option.name}
               </option>
             ))}
-            <option value="other">Other</option>
           </select>
-          {formData?.primaryGroup === 'other' && (
-            <div>
-              <input
-                class="w-full"
-                type="text"
-                onInput={(e) =>
-                  setFormData({
-                    ...formData,
-                    altPrimary: e.target.value,
-                  })
-                }
-              />
-            </div>
-          )}
           <hr class="my-6" />
           <Body
             activePrimary={formData?.musclesWorked || []}
             activeSecondary={formData?.secondaryMusclesWorked || []}
           />
-          <Accordion
-            title={
-              <>
-                Primary Muscles
-                {formData?.musclesWorked?.length > 0 ? (
-                  <span class="pl-2 text-sm">
-                    {formData?.musclesWorked?.length}
-                  </span>
-                ) : null}
-              </>
-            }
-            titleClass="capitalize font-bold text-lg"
-          >
-            <MuscleGroupsCheckList
-              groups={primaryGroupOptions}
-              formData={formData}
-              setFormData={setFormData}
-              formKey="musclesWorked"
-            />
-          </Accordion>
-
-          <Accordion
-            title={
-              <>
-                Secondary Muscles{' '}
-                {formData?.secondaryMusclesWorked?.length > 0 ? (
-                  <span class="pl-2 text-sm">
-                    {formData?.secondaryMusclesWorked?.length}
-                  </span>
-                ) : null}
-              </>
-            }
-            titleClass="capitalize font-bold text-lg"
-          >
-            <MuscleGroupsCheckList
-              groups={primaryGroupOptions}
-              formData={formData}
-              setFormData={setFormData}
-              formKey="secondaryMusclesWorked"
-            />
-          </Accordion>
+          <div class="my-4">
+            <Accordion
+              title={
+                <>
+                  Primary Muscles
+                  {formData?.musclesWorked?.length > 0 ? (
+                    <span class="pl-2 text-sm">
+                      {formData?.musclesWorked?.length}
+                    </span>
+                  ) : null}
+                </>
+              }
+              titleClass="capitalize font-bold text-lg"
+            >
+              <div class="pl-6 border-b">
+                <MuscleGroupsCheckList
+                  groups={primaryGroupOptions}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formKey="musclesWorked"
+                />
+              </div>
+            </Accordion>
+          </div>
+          <div class="my-4">
+            <Accordion
+              title={
+                <>
+                  Secondary Muscles{' '}
+                  {formData?.secondaryMusclesWorked?.length > 0 ? (
+                    <span class="pl-2 text-sm">
+                      {formData?.secondaryMusclesWorked?.length}
+                    </span>
+                  ) : null}
+                </>
+              }
+              titleClass="capitalize font-bold text-lg"
+            >
+              <div class="pl-6 border-b">
+                <MuscleGroupsCheckList
+                  groups={primaryGroupOptions}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formKey="secondaryMusclesWorked"
+                />
+              </div>
+            </Accordion>
+          </div>
         </div>
       )}
-      <div class="py-3">
-        <button
-          class="text-sm btn secondary capitalize"
-          onClick={() => setNewMuscleGroupModalIsOpen(true)}
-        >
-          Add muscle group
-        </button>
-      </div>
 
-      <div class="py-4">
+      <div class="pb-8">
         <p class="mb-4">Bar weight: </p>
         <Counters
           value={formData.barWeight}
@@ -274,24 +231,15 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null }) => {
         />
       </div>
 
-      <div class="pt-4">
-        <button class="primary w-full" disabled={!formIsValid} onClick={submit}>
+      <div class="pt-4 fixed bottom-0 right-0 left-0 text-center">
+        <button
+          class="primary w-full max-w-lg mx-auto"
+          disabled={!formIsValid}
+          onClick={submit}
+        >
           Save
         </button>
       </div>
-      {newMuscleGroupModalIsOpen && (
-        <Modal
-          isOpen={newMuscleGroupModalIsOpen}
-          onRequestClose={() => setNewMuscleGroupModalIsOpen(false)}
-        >
-          <NewMuscleGroupForm
-            onSubmit={() => {
-              getData()
-              setNewMuscleGroupModalIsOpen()
-            }}
-          />
-        </Modal>
-      )}
     </div>
   )
 }
