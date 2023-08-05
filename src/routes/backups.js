@@ -22,9 +22,15 @@ export default function Backups() {
         const headers = rows[0].split(',')
         const result = rows.reduce(
           (obj, row, i) => {
+            // rows[0] is the headers
             if (i) {
               const items = row.split(',')
               // items 0 and 1 are store and id, everything else goes under value
+              // we no longer allow customizing muscle groups
+              if (items[0] === objectStores.muscleGroups) {
+                return obj
+              }
+
               const data = {}
               const values = items.slice(2)
               values.forEach((value, index) => {
@@ -60,7 +66,8 @@ export default function Backups() {
                   data[headers[index + 2]] = formattedValue
                 }
               })
-              if (!obj.stores.some((storeName) => storeName === items[0])) {
+
+              if (!obj.stores.includes(items[0])) {
                 obj.stores.push(items[0])
               }
               obj.items.push({
