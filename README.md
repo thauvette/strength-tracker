@@ -2,11 +2,6 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
-TODO: need to fix musclesWorked on import (they need to be arrays)
-
-    - the new muscle groups are also being wiped out by saved ones.
-    - might need to rewrite the whole muscle group stuff.
-
 TODO: by default exercises don't have muscle groups so the body svg doesn't highlight. Add messaging?
 
 <!-- prettier-ignore -->
