@@ -26,7 +26,7 @@ import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
   getAllSetsHistory,
-  getTodaySets,
+  getSetsByDay,
 } from './sets'
 import { createRoutine, updateRoutine } from './routines'
 import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants'
@@ -356,7 +356,8 @@ export const DBProvider = ({ children }) => {
           createOrUpdateLoggedSet(db, id, data),
         deleteLoggedSet: (id) => deleteLoggedSet(db, id),
         getAllSetsHistory: () => getAllSetsHistory(db),
-        getTodaySets: () => getTodaySets(db),
+        getTodaySets: () => getSetsByDay(db, dayjs().toDate()),
+        getSetsByDay: (date) => getSetsByDay(db, date),
         getExerciseOptions,
         getExerciseHistoryById,
         getExerciseById,

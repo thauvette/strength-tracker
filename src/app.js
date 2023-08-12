@@ -24,6 +24,7 @@ import { ThemeProvider } from './context/theme'
 import Header from './components/header/Header'
 import Menu from './components/menu/Menu'
 import LoadingSpinner from './components/LoadingSpinner'
+import { DayHistoryModalContextProvider } from './context/dayHistoryModalContext'
 
 const AppWrapper = () => {
   const { isInitialized } = useDB()
@@ -75,7 +76,9 @@ const App = () => (
     <ThemeProvider>
       <ToastProvider>
         <SessionDataProvider>
-          <AppWrapper />
+          <DayHistoryModalContextProvider>
+            <AppWrapper />
+          </DayHistoryModalContextProvider>
         </SessionDataProvider>
       </ToastProvider>
     </ThemeProvider>

@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import useIntersectObserver from '../../hooks/useIntersectObserver'
 import SetRow from '../setRow/setRow'
 import { formatToFixed } from '../../utilities.js/formatNumbers'
+import useDayHistoryContext from '../../context/dayHistoryModalContext'
 
 const ExerciseHistoryDay = ({
   items,
@@ -16,13 +17,16 @@ const ExerciseHistoryDay = ({
   const isIntersecting = useIntersectObserver({
     ref,
   })
-
+  const { showDayHistory } = useDayHistoryContext()
   return (
     <div ref={ref}>
       <div class="pb-4">
-        <div class="border-b-2 pb-1 ">
+        <button
+          class="border-b-2 pb-1 "
+          onClick={() => showDayHistory(dayjs(dayKey).toDate())}
+        >
           <p class="font-medium">{dayjs(dayKey).format('MMM DD, YYYY')}</p>
-        </div>
+        </button>
 
         <div class="py-2">
           {items.map((item) => {

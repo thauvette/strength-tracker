@@ -105,11 +105,11 @@ export const getAllSetsHistory = (db) =>
     })
   })
 
-export const getTodaySets = (db) => {
+export const getSetsByDay = (db, day) => {
   const todaysSets = new Promise((resolve) => {
-    const today = dayjs()
-    const start = today.startOf('day').toDate().getTime()
-    const end = today.endOf('day').toDate().getTime()
+    const targetDay = dayjs(day)
+    const start = targetDay.startOf('day').toDate().getTime()
+    const end = targetDay.endOf('day').toDate().getTime()
     const range = IDBKeyRange.bound(start, end)
     const { objectStore, transaction } = openObjectStoreTransaction(
       db,

@@ -21,10 +21,6 @@ TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
 
 TODO: import/export individual exercises and bio metrics
 
-TODO: day modal when viewing exercise history
-
-TODO: feedback on backup
-
 TODO: back up settings (move to indexedDb as well)
 
 TODO: Screen always on? (currently only available chrome 84)
