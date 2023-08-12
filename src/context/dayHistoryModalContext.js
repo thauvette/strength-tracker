@@ -1,16 +1,18 @@
 import { h } from 'preact'
 import { useState, createContext, useContext } from 'preact/compat'
+import dayjs from 'dayjs'
 import useDB from './db/db'
 import Modal from '../components/modal/Modal'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Icon from '../components/icon/Icon'
 import { Link } from 'preact-router'
 import { routes } from '../config/routes'
+import dateFormats from '../config/dateFormats'
 
 const DayHistoryModalContext = createContext(null)
 
 export const DayHistoryModalContextProvider = ({ children }) => {
-  const [{ isOpen, isLoading, data }, setState] = useState({
+  const [{ isOpen, isLoading, data, day }, setState] = useState({
     isOpen: false,
     isLoading: false,
     data: null,
@@ -21,11 +23,13 @@ export const DayHistoryModalContextProvider = ({ children }) => {
       isOpen: true,
       isLoading: true,
       data: null,
+      day: null,
     })
     getSetsByDay(date).then((res) => {
       setState({
         isOpen: true,
         isLoading: false,
+        day: date,
         data: res.reduce((arr, set) => {
           const currentIndex = arr
             .map((item) => item.exerciseId)
@@ -51,6 +55,7 @@ export const DayHistoryModalContextProvider = ({ children }) => {
       isOpen: false,
       isLoading: false,
       data: null,
+      day: null,
     })
 
   return (
@@ -64,6 +69,12 @@ export const DayHistoryModalContextProvider = ({ children }) => {
         {isLoading && <LoadingSpinner />}
         {data && (
           <div>
+            <div class="flex justify-between items-center pb-4">
+              <h1 class="text-2xl">
+                {dayjs(day).format(dateFormats.dayDisplay)}
+              </h1>
+              <button onClick={closeModal}>Close X</button>
+            </div>
             {data.length > 0 ? (
               <div>
                 {data.map((group) => (
