@@ -182,6 +182,9 @@ const Logs = ({ date }) => {
         activePrimary: [],
         activeSecondary: [],
       }
+  const times = activeDayData?.map((item) => item.created) || []
+  const earliestSet = times?.length ? Math.min(...times) : null
+  const lasSet = times?.length ? Math.max(...times) : null
 
   return (
     <div class="px-2">
@@ -195,6 +198,14 @@ const Logs = ({ date }) => {
       {activeDayData?.length > 0 ? (
         <>
           <div class="px-8 pb-4">
+            {earliestSet && lasSet && (
+              <p class="text-center">
+                {dayjs(earliestSet).format(dateFormats.timeToSeconds)}
+                {' to '}
+                {dayjs(lasSet).format(dateFormats.timeToSeconds)} (
+                {dayjs(lasSet).diff(earliestSet, 'minutes')} mins)
+              </p>
+            )}
             <div class="flex items-center justify-center gap-4 pb-4 text-lg">
               <p class="capitalize">{selectedExercise?.name || 'Workout'}</p>
               {selectedExercise ? (

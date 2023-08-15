@@ -1,7 +1,9 @@
 import { h } from 'preact'
 import { Link } from 'preact-router'
+import dayjs from 'dayjs'
 import { routes } from '../../config/routes'
 import Icon from '../icon/Icon'
+import dateFormats from '../../config/dateFormats'
 
 const LogGroup = ({ name, sets, toggleActive }) => (
   <div key={name} class="mb-4 card p-4 ">
@@ -22,9 +24,13 @@ const LogGroup = ({ name, sets, toggleActive }) => (
     {sets.map((set) => (
       <div key={set.created}>
         <p>
-          {set.reps} @ {set.weight} {set.isWarmUp ? '(warm up)' : ''}
-          {set.note && ` - ${set.note}`}
+          {set.reps} @ {set.weight} {set.isWarmUp ? '(warm up)' : ''}{' '}
+          <span class="text-sm float-right">
+            {dayjs(set.created).format(dateFormats.timeToSeconds)}
+          </span>
         </p>
+
+        {set.note && <p class="pl-2"> - {set.note}</p>}
       </div>
     ))}
   </div>

@@ -39,7 +39,7 @@ export const DayHistoryModalContextProvider = ({ children }) => {
             arr.push({
               exerciseId: set.exercise,
               name: set.exerciseData?.name,
-              sets: [],
+              sets: [set],
             })
           } else {
             arr[currentIndex].sets.push(set)
@@ -94,6 +94,12 @@ export const DayHistoryModalContextProvider = ({ children }) => {
                           <p key={set.created}>
                             {set.reps} @ {set.weight}{' '}
                             {set.isWarmUp && `(warm up)`}
+                            <span class="text-sm">
+                              {' - '}
+                              {dayjs(set.created).format(
+                                dateFormats.timeToSeconds,
+                              )}
+                            </span>
                           </p>
                         ))
                       : null}

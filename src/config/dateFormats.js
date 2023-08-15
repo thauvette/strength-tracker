@@ -4,4 +4,5 @@ export default {
   day: 'YYYY-MM-DD',
   dayDisplay: 'MMM DD YYYY',
   time: 'HH:mm',
+  timeToSeconds: 'H:mm:ss',
 }

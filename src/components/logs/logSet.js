@@ -1,7 +1,9 @@
 import { h } from 'preact'
 import { Link } from 'preact-router'
+import dayjs from 'dayjs'
 import { routes } from '../../config/routes'
 import Icon from '../icon/Icon'
+import dateFormats from '../../config/dateFormats'
 
 const LogSet = ({ set, toggleActive }) => (
   <div class="bg-gray-200 odd:bg-gray-50 dark:bg-gray-900 dark:odd:bg-gray-800 px-2 py-4">
@@ -14,6 +16,9 @@ const LogSet = ({ set, toggleActive }) => (
           ) : null}
           <p class="whitespace-nowrap text-left">
             {set.reps} @ {set.weight}
+          </p>
+          <p class="whitespace-nowrap text-left">
+            {dayjs(set.created).format(dateFormats.timeToSeconds)}
           </p>
         </button>
       </div>
