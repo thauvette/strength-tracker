@@ -9,5 +9,5 @@ export const objectStores = {
   routines: 'routines',
 }
 
-export const DB_VERSION = 7
+export const DB_VERSION = 8
 export const DB_NAME = 'track_strength'

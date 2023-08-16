@@ -55,7 +55,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
       <path
         d="M469.477 121.5C469.477 121.5 457.477 125.5 452.977 127C448.477 128.5 428.977 133 428.977 133C428.977 133 431.977 120 431.977 111.5C431.977 103 428.977 99 428.977 99L448.477 111.5L469.477 121.5Z"
         className={`trap ${generateFill({
-          ids: [16, 30],
+          ids: [16, 25],
           activePrimary,
           activeSecondary,
         })}`}
@@ -63,7 +63,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
       <path
         d="M379.663 121.5C379.663 121.5 391.663 125.5 396.162 127C400.662 128.5 420.163 133 420.163 133C420.163 133 417.162 120 417.162 111.5C417.162 103 420.162 99.0001 420.162 99.0001L400.663 111.5L379.663 121.5Z"
         className={`trap ${generateFill({
-          ids: [16, 30],
+          ids: [16, 25],
           activePrimary,
           activeSecondary,
         })}`}
@@ -71,7 +71,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
       <path
         d="M428.839 135.216L464.839 125.716C464.839 125.716 456.839 152.716 454.339 168.716C451.839 184.716 428.839 226.216 428.839 226.216L428.839 135.216Z"
         className={`trap ${generateFill({
-          ids: [16, 31],
+          ids: [16, 26],
           activePrimary,
           activeSecondary,
         })}`}
@@ -79,7 +79,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
       <path
         d="M419.693 135.216L383.693 125.716C383.693 125.716 391.693 152.716 394.193 168.716C396.693 184.716 419.693 226.216 419.693 226.216L419.693 135.216Z"
         className={`trap ${generateFill({
-          ids: [16, 31],
+          ids: [16, 26],
           activePrimary,
           activeSecondary,
         })}`}
@@ -199,7 +199,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
       <path
         d="M403.207 446.338L417.5 407.5C417.5 407.5 428.5 380 425.5 376.5C422.5 373 414.5 376 412.5 378C410.5 380 413.5 383.5 410.5 401.5C407.5 419.5 403.207 446.338 403.207 446.338Z"
         className={`adductor ${generateFill({
-          ids: [13],
+          ids: [24],
           activePrimary,
           activeSecondary,
         })}`}
@@ -207,7 +207,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
       <path
         d="M452.388 445.923L438.095 407.085C438.095 407.085 427.095 379.585 430.095 376.085C433.095 372.585 441.095 375.585 443.095 377.585C445.095 379.585 442.095 383.085 445.095 401.085C448.095 419.085 452.388 445.923 452.388 445.923Z"
         className={`adductor ${generateFill({
-          ids: [13],
+          ids: [24],
           activePrimary,
           activeSecondary,
         })}`}

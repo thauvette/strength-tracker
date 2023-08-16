@@ -149,7 +149,6 @@ const initializeDb = (callback) => {
     }
 
     if (requiresMuscleGroupUpdate) {
-      // get current muscle groups
       const muscleGroupTransaction = database.transaction(
         objectStores.muscleGroups,
         'readwrite',
@@ -287,7 +286,7 @@ const initializeDb = (callback) => {
       routineStore.createIndex('name', 'name', { unique: false })
       routineStore.createIndex('id', 'id', { unique: true })
     }
-    if (e.oldVersion < 7) {
+    if (e.oldVersion < 8) {
       // updating muscle groups.
       requiresMuscleGroupUpdate = true
     }
