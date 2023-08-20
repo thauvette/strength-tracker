@@ -304,35 +304,39 @@ export const DBProvider = ({ children }) => {
     })
 
   const restoreFromBackup = async (entries) => {
-    // get list of stores to clear.
-    const storeClearPromises = entries.stores.map((store) =>
-      clearStore(store)
-        .then((res) => res)
-        .catch((err) => {
-          return {
-            store,
-            error: err,
-          }
-        }),
-    )
+    try {
+      // get list of stores to clear.
+      const storeClearPromises = entries.stores.map((store) =>
+        clearStore(store)
+          .then((res) => res)
+          .catch((err) => {
+            return {
+              store,
+              error: err,
+            }
+          }),
+      )
 
-    const itemPromises = entries.items.map((item) =>
-      writeItemFromBackup(item)
-        .then((res) => res)
-        .catch((err) => {
-          return {
-            ...item,
-            error: err,
-          }
-        }),
-    )
+      const itemPromises = entries.items.map((item) =>
+        writeItemFromBackup(item)
+          .then((res) => res)
+          .catch((err) => {
+            return {
+              ...item,
+              error: err,
+            }
+          }),
+      )
 
-    const storesResponse = await Promise.all(storeClearPromises)
-    const itemResponses = await Promise.all(itemPromises)
+      const storesResponse = await Promise.all(storeClearPromises)
+      const itemResponses = await Promise.all(itemPromises)
 
-    return {
-      storesResponse,
-      itemResponses,
+      return {
+        storesResponse,
+        itemResponses,
+      }
+    } catch (err) {
+      return Promise.reject(err?.message || 'Unable to restore data')
     }
   }
 

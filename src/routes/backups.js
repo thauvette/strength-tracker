@@ -104,11 +104,16 @@ export default function Backups() {
       })
       .catch((err) => {
         setError(err?.message || 'Restore partially unsuccessful')
+        setIsLoading(false)
       })
   }
   return (
     <div class="px-2">
-      {error && <p>{error}</p>}
+      {error && (
+        <div class="p-4 border border-red bg-red-50 bg-opacity-80">
+          <p class="text-red font-bold">{error}</p>
+        </div>
+      )}
       <div class="border-b-2 pb-8 mb-8">
         <h2 class="my-2">Back Up</h2>
         <p class="my-4">Automatically generate and download your backup</p>
