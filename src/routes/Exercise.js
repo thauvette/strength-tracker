@@ -1,76 +1,76 @@
-import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
-import { Router, Link, route } from 'preact-router'
-import dayjs from 'dayjs'
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
+import { Router, Link, route } from 'preact-router';
+import dayjs from 'dayjs';
 
-import useDB from '../context/db/db'
-import { objectStores } from '../context/db/config'
-import useSessionContext from '../context/sessionData/sessionData'
-import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory'
+import useDB from '../context/db/db.tsx';
+import { objectStores } from '../context/db/config.ts';
+import useSessionContext from '../context/sessionData/sessionData';
+import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 
-import { routes } from '../config/routes'
+import { routes } from '../config/routes';
 
-import ExerciseStats from '../components/exerciseStats/ExerciseStats'
-import Track from '../components/exercise/Track'
-import EditExercise from '../components/exercise/EditExercise'
-import PlannedSets from '../components/PlannedSets'
-import Icon from '../components/icon/Icon'
-import LoadingSpinner from '../components/LoadingSpinner'
+import ExerciseStats from '../components/exerciseStats/ExerciseStats';
+import Track from '../components/exercise/Track';
+import EditExercise from '../components/exercise/EditExercise';
+import PlannedSets from '../components/PlannedSets';
+import Icon from '../components/icon/Icon';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Exercise = ({ id, remaining_path }) => {
-  const [includeBwInHistory, setIncludeBwInHistory] = useState(false)
-  const [exerciseHistory, getData] = useExerciseHistory(id)
-  const { updateEntry } = useDB()
+  const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
+  const [exerciseHistory, getData] = useExerciseHistory(id);
+  const { updateEntry } = useDB();
 
   // using this to prevent making a change
   // then looking at another tab and losing that change
   const [savedSet, setSavedSet] = useState({
     weight: null,
     reps: null,
-  })
+  });
 
-  const { updatePlanedSet, getPlannedSets } = useSessionContext()
-  const plannedSet = getPlannedSets(id)
+  const { updatePlanedSet, getPlannedSets } = useSessionContext();
+  const plannedSet = getPlannedSets(id);
 
   useEffect(() => {
     if (plannedSet) {
-      route(`/exercise/${id}/planned`)
+      route(`/exercise/${id}/planned`);
     }
-  }, []) // eslint-disable-line
+  }, []); // eslint-disable-line
 
   if (!exerciseHistory) {
     return (
       <div class="flex justify-center">
         <LoadingSpinner />
       </div>
-    )
+    );
   }
 
-  const itemsArrays = Object.values(exerciseHistory?.items || {})
+  const itemsArrays = Object.values(exerciseHistory?.items || {});
   const lastIndex = Object.values(exerciseHistory?.items || {})?.length
     ? Object.values(exerciseHistory?.items || {})?.length - 1
-    : 0
+    : 0;
 
   const lastWorkOutSorted = itemsArrays?.[lastIndex]?.sort((a, b) =>
     a.create < b.create ? -1 : 1,
-  )
+  );
 
-  const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null
+  const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null;
   const heaviestSet =
     lastWorkOutSorted?.reduce((obj, set) => {
       if (!obj || +obj.weight < +set.weight) {
-        return set
+        return set;
       }
-      return obj
-    }, null) || null
+      return obj;
+    }, null) || null;
 
   const toggleExerciseFavorite = () => {
     updateEntry(objectStores.exercises, id, {
       isFavorite: !exerciseHistory?.isFavorite,
     }).finally(() => {
-      getData()
-    })
-  }
+      getData();
+    });
+  };
   return (
     <div>
       <div class="px-3 py-3 ">
@@ -169,12 +169,12 @@ const Exercise = ({ id, remaining_path }) => {
                 exerciseName: exerciseHistory?.name,
                 barWeight: exerciseHistory.barWeight,
               })),
-            })
+            });
           }}
         />
       </Router>
     </div>
-  )
-}
+  );
+};
 
-export default Exercise
+export default Exercise;

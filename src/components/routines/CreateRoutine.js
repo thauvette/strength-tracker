@@ -1,20 +1,20 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import { route } from 'preact-router'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import { route } from 'preact-router';
 
-import generateRandomId from '../../utilities.js/generateRandomId'
-import Modal from '../modal/Modal'
-import AddExerciseForm from './AddExerciseForm'
-import ReorderForm from '../reorderForm'
-import useDB from '../../context/db/db'
+import generateRandomId from '../../utilities.js/generateRandomId';
+import Modal from '../modal/Modal';
+import AddExerciseForm from './AddExerciseForm';
+import ReorderForm from '../reorderForm';
+import useDB from '../../context/db/db.tsx';
 
-import { routes } from '../../config/routes'
-import Accordion from '../accordion/accordion'
-import EditableSet from '../editableSet/editableSet'
+import { routes } from '../../config/routes';
+import Accordion from '../accordion/accordion';
+import EditableSet from '../editableSet/editableSet';
 
 const CreateRoutine = ({ initialValues }) => {
-  const { createRoutine, updateRoutine } = useDB()
-  const [routineName, setRoutineName] = useState(initialValues?.name || '')
+  const { createRoutine, updateRoutine } = useDB();
+  const [routineName, setRoutineName] = useState(initialValues?.name || '');
   const [days, setDays] = useState(
     initialValues?.days?.map((day) => ({
       ...day,
@@ -30,16 +30,16 @@ const CreateRoutine = ({ initialValues }) => {
         sets: [],
       },
     ],
-  )
+  );
 
   const [exerciseModalState, setExerciseModalState] = useState({
     isOpen: false,
     dayId: null,
     formType: '',
-  })
+  });
 
   const addDay = () => {
-    const number = days?.length + 1
+    const number = days?.length + 1;
     setDays([
       ...days,
       {
@@ -47,8 +47,8 @@ const CreateRoutine = ({ initialValues }) => {
         id: generateRandomId(),
         sets: [],
       },
-    ])
-  }
+    ]);
+  };
   const updateDayName = (id, value) => {
     setDays(
       days.map((day) =>
@@ -59,22 +59,22 @@ const CreateRoutine = ({ initialValues }) => {
             }
           : day,
       ),
-    )
-  }
-  const removeDay = (id) => setDays(days.filter((day) => day.id !== id))
+    );
+  };
+  const removeDay = (id) => setDays(days.filter((day) => day.id !== id));
 
   const addSets = (dayId, sets) => {
     setDays(
       days.map((day) =>
         day.id === dayId ? { ...day, sets: [...day.sets, ...sets] } : day,
       ),
-    )
+    );
     setExerciseModalState({
       isOpen: false,
       dayId: null,
       formType: '',
-    })
-  }
+    });
+  };
   // pass null for set to remove it
   const editSet = ({ dayId, setId, set }) => {
     setDays(
@@ -85,12 +85,12 @@ const CreateRoutine = ({ initialValues }) => {
             sets: day.sets
               .map((currentSet) => (currentSet.id === setId ? set : currentSet))
               ?.filter((currentSet) => !!currentSet),
-          }
+          };
         }
-        return day
+        return day;
       }),
-    )
-  }
+    );
+  };
 
   const reorderSets = (dayId, order) => {
     setDays(
@@ -101,12 +101,12 @@ const CreateRoutine = ({ initialValues }) => {
             sets: order
               .map((index) => day.sets?.[index])
               .filter((set) => !!set),
-          }
+          };
         }
-        return day
+        return day;
       }),
-    )
-  }
+    );
+  };
 
   const submit = async () => {
     const data = {
@@ -123,17 +123,17 @@ const CreateRoutine = ({ initialValues }) => {
             id: set.id,
           })) || [],
       })),
-    }
-    let res
+    };
+    let res;
     try {
       if (initialValues?.id) {
-        res = await updateRoutine(initialValues.id, data)
+        res = await updateRoutine(initialValues.id, data);
       } else {
-        res = await createRoutine(data)
+        res = await createRoutine(data);
       }
     } catch (e) {}
-    route(`${routes.routinesBase}/${res?.id}`)
-  }
+    route(`${routes.routinesBase}/${res?.id}`);
+  };
 
   return (
     <div class="px-2 py-4">
@@ -165,7 +165,7 @@ const CreateRoutine = ({ initialValues }) => {
               {day.sets.length ? (
                 <div class="py-4">
                   {day.sets.map((set) => {
-                    const { exerciseName, id, reps, weight, freeForm } = set
+                    const { exerciseName, id, reps, weight, freeForm } = set;
                     return (
                       <Accordion
                         key={id}
@@ -189,18 +189,18 @@ const CreateRoutine = ({ initialValues }) => {
                               },
                               dayId: day.id,
                               setId: set.id,
-                            })
+                            });
                           }}
                           handleRemove={() => {
                             editSet({
                               dayId: day.id,
                               set: null,
                               setId: set.id,
-                            })
+                            });
                           }}
                         />
                       </Accordion>
-                    )
+                    );
                   })}
                 </div>
               ) : null}
@@ -233,7 +233,7 @@ const CreateRoutine = ({ initialValues }) => {
                 </button>
               </div>
             </div>
-          )
+          );
         })}
         <button onClick={addDay}>+ Add a day</button>
         <div class="pt-8">
@@ -267,12 +267,12 @@ const CreateRoutine = ({ initialValues }) => {
                     })) || []
                 }
                 onSave={({ newOrder }) => {
-                  reorderSets(exerciseModalState.dayId, newOrder)
+                  reorderSets(exerciseModalState.dayId, newOrder);
                   setExerciseModalState({
                     isOpen: false,
                     dayId: null,
                     formType: '',
-                  })
+                  });
                 }}
                 allowEditAllWeeks={false}
               />
@@ -285,7 +285,7 @@ const CreateRoutine = ({ initialValues }) => {
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CreateRoutine
+export default CreateRoutine;

@@ -1,64 +1,64 @@
-import { h } from 'preact'
-import { useState } from 'preact/compat'
-import AnimateHeight from 'react-animate-height'
+import { h } from 'preact';
+import { useState } from 'preact/compat';
+import AnimateHeight from 'react-animate-height';
 
-import SetRowDrawer from './setRowDrawer'
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
+import SetRowDrawer from './setRowDrawer';
+import useDB from '../../context/db/db.tsx';
+import { objectStores } from '../../context/db/config.ts';
 
-import Icon from '../icon/Icon'
+import Icon from '../icon/Icon';
 
 const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
-  const { createOrUpdateLoggedSet, deleteEntry } = useDB()
+  const { createOrUpdateLoggedSet, deleteEntry } = useDB();
   const updateExistingSet = async ({ weight, reps, id, isWarmUp }) => {
     await createOrUpdateLoggedSet(id, {
       ...set,
       weight,
       reps,
       isWarmUp,
-    })
+    });
     if (onChangeSet) {
-      onChangeSet()
+      onChangeSet();
     }
-  }
+  };
 
   const deleteSet = async () => {
-    await deleteEntry(objectStores.sets, set.id)
+    await deleteEntry(objectStores.sets, set.id);
     if (onChangeSet) {
-      onChangeSet()
+      onChangeSet();
     }
-  }
+  };
 
   const [drawerState, setDrawerState] = useState({
     open: false,
     content: null, // one of note, edit, stats.
-  })
+  });
 
   const closeDrawer = () => {
     setDrawerState({
       ...drawerState,
       open: false,
-    })
+    });
     if (typeof window !== 'undefined') {
       window.setTimeout(() => {
         setDrawerState({
           open: false,
           content: null,
-        })
-      }, 300)
+        });
+      }, 300);
     }
-  }
+  };
 
   const handleToggleDrawerContent = (contentType) => {
     if (drawerState.open && drawerState.content === contentType) {
-      closeDrawer()
+      closeDrawer();
     } else {
       setDrawerState({
         open: true,
         content: contentType,
-      })
+      });
     }
-  }
+  };
 
   return (
     <div class="py-2 border-b-2 border-gray-200 dark:border-gray-600">
@@ -117,9 +117,9 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
               drawerContent={drawerState.content}
               onChangeSet={() => {
                 if (onChangeSet) {
-                  onChangeSet()
+                  onChangeSet();
                 }
-                closeDrawer()
+                closeDrawer();
               }}
               closeDrawer={closeDrawer}
               handleUpdateSet={({ weight, reps, id, isWarmUp }) => {
@@ -128,8 +128,8 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
                   reps,
                   id,
                   isWarmUp,
-                })
-                closeDrawer()
+                });
+                closeDrawer();
               }}
               handleDeleteSet={deleteSet}
             />
@@ -137,7 +137,7 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
         </AnimateHeight>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SetRow
+export default SetRow;

@@ -6,14 +6,14 @@ import {
   openObjectStoreTransaction as openObjectStoreTransactionUtil,
   getItem,
 } from './utils/dbUtils';
-import initializeDb from './initializeDb';
+import initializeDb from './initializeDb.js';
 import { objectStores } from './config';
 import {
   getWendlerExercises,
   updateWendlerItem,
   getWendlerCycle,
   createCycle,
-} from './wendler';
+} from './wendler.js';
 import { createBioMetric } from './bioMetrics';
 import {
   createEntry,
@@ -21,22 +21,23 @@ import {
   getAllEntries,
   getAllEntriesByKey,
   updateEntry,
-} from './entries';
+} from './entries.js';
 import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
   getAllSetsHistory,
   getSetsByDay,
-} from './sets';
-import { createRoutine, updateRoutine } from './routines';
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants';
-import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp';
-import formatExercise from './utils/formatExercise';
+} from './sets.js';
+import { createRoutine, updateRoutine } from './routines.js';
+import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants.js';
+import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp.js';
+import formatExercise from './utils/formatExercise.js';
+import { Exercise, MuscleGroup, ObjectStoreEvent } from './types';
 
-const DBContext = createContext();
+const DBContext = createContext(null);
 
 export const DBProvider = ({ children }) => {
-  const [db, setDb] = useState(null);
+  const [db, setDb] = useState<IDBDatabase | null>(null);
 
   // INITIALIZE OUR DB
   useEffect(() => {
@@ -47,7 +48,7 @@ export const DBProvider = ({ children }) => {
     return null;
   }
 
-  const getFromCursor = (store) => getFromCursorUtil(db, store);
+  const getFromCursor = (store: string) => getFromCursorUtil(db, store);
 
   const openObjectStoreTransaction = (store) =>
     openObjectStoreTransactionUtil(db, store);
@@ -57,9 +58,10 @@ export const DBProvider = ({ children }) => {
       // need to get exercises and muscle groups and connect
       // then together.
       getFromCursor(objectStores.muscleGroups).then(
-        async (muscleGroupsObject) => {
-          const exercises = await getFromCursor(objectStores.exercises);
-
+        async (muscleGroupsObject: { [key: number]: MuscleGroup }) => {
+          const exercises: {
+            [key: number]: Exercise;
+          } = await getFromCursor(objectStores.exercises);
           const data = Object.entries(exercises || {}).reduce(
             (obj, [exerciseId, exercise]) => {
               const muscleGroupData = muscleGroupsObject[exercise.primaryGroup];
@@ -124,7 +126,7 @@ export const DBProvider = ({ children }) => {
       const keyRange = IDBKeyRange.only(+id);
 
       const cursorRequest = objectStore.openCursor(keyRange);
-      cursorRequest.onsuccess = (event) => {
+      cursorRequest.onsuccess = (event: ObjectStoreEvent) => {
         resolve(event?.target?.result?.value);
       };
       cursorRequest.onerror = (err) => {
@@ -134,7 +136,7 @@ export const DBProvider = ({ children }) => {
 
   const getExerciseHistoryById = (id) =>
     new Promise((resolve, reject) => {
-      getExerciseById(id).then(async (exerciseResponse) => {
+      getExerciseById(id).then(async (exerciseResponse: Exercise) => {
         if (!exerciseResponse) {
           reject('404');
         }
@@ -189,14 +191,14 @@ export const DBProvider = ({ children }) => {
         const index = objectStore.index('exercise');
         const keyRange = IDBKeyRange.only(+id);
         const cursorRequest = index.openCursor(keyRange);
-        cursorRequest.onsuccess = async function (event) {
+        cursorRequest.onsuccess = async function (event: ObjectStoreEvent) {
           const data = event?.target?.result?.value;
           if (data) {
             const result = { ...data, id: event?.target?.result?.primaryKey };
 
             // find the closets bw record
             const closetsKey = getClosestTimeStamp(sortedKeys, result.created);
-            const closetsRecord = weightEntries?.[closetsKey];
+            const closetsRecord = closetsKey ? weightEntries[closetsKey] : null;
 
             if (closetsRecord?.value) {
               result.bw = closetsRecord.value;
@@ -225,12 +227,12 @@ export const DBProvider = ({ children }) => {
       const entries = await getFromCursor(storeName);
       if (Object.keys(entries || {}).length) {
         Object.entries(entries).forEach(([id, data]) => {
-          const rowData = [storeName, id];
+          const rowData: any[] = [storeName, id];
           if (Object.keys(data || {}).length) {
             Object.entries(data).forEach(([key, val]) => {
               const currentIndex = headerItems.indexOf(key);
               const position =
-                currentIndex === -1 ? headerItems?.length : currentIndex;
+                currentIndex === -1 ? headerItems.length : currentIndex;
 
               if (currentIndex === -1) {
                 headerItems.push(key);
@@ -349,14 +351,14 @@ export const DBProvider = ({ children }) => {
       value={{
         isInitialized: !!db,
         // WENDLER
-        getWendlerCycle: (id) => getWendlerCycle(db, id),
+        getWendlerCycle: (id: string) => getWendlerCycle(db, id),
         getWendlerExercises: () => getWendlerExercises(db),
         createCycle: (data) => createCycle(db, data),
         updateWendlerItem: ({ id, path, value }) =>
           updateWendlerItem(db, { id, path, value }),
         // ENTRIES
-        getAllEntries: (store) => getAllEntries(db, store),
-        deleteEntry: (store, id) => deleteEntry(db, store, id),
+        getAllEntries: (store: string) => getAllEntries(db, store),
+        deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
         createEntry: (store, data) => createEntry(db, store, data),
         updateEntry: (store, id, data) => updateEntry(db, store, id, data),
         // SETS

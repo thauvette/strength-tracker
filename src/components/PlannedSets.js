@@ -1,9 +1,9 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
-import Plan from './Plan'
-import PlannedWorkout from './PlannedWorkout'
-import useDB from '../context/db/db'
-import dayjs from 'dayjs'
+import Plan from './Plan';
+import PlannedWorkout from './PlannedWorkout';
+import useDB from '../context/db/db.tsx';
+import dayjs from 'dayjs';
 
 const PlannedSets = ({
   id,
@@ -12,7 +12,7 @@ const PlannedSets = ({
   plannedSet,
   lastHeavySet,
 }) => {
-  const { createOrUpdateLoggedSet } = useDB()
+  const { createOrUpdateLoggedSet } = useDB();
   if (!plannedSet) {
     return (
       <>
@@ -34,7 +34,7 @@ const PlannedSets = ({
           }
         />
       </>
-    )
+    );
   }
 
   return (
@@ -43,7 +43,7 @@ const PlannedSets = ({
       <PlannedWorkout
         sets={plannedSet || []}
         onUpdateSet={({ reps, weight, isWarmUp }, index) => {
-          const currentSet = { ...plannedSet[index], reps, weight, isWarmUp }
+          const currentSet = { ...plannedSet[index], reps, weight, isWarmUp };
           // create or update (if setID exists) set in DB
           createOrUpdateLoggedSet(currentSet.id, {
             ...currentSet,
@@ -52,11 +52,11 @@ const PlannedSets = ({
             updatePlanedSet({
               id,
               sets: plannedSet.map((set, i) => {
-                return i === index ? res : set
+                return i === index ? res : set;
               }),
-            })
-            onChangeCompleteSet()
-          })
+            });
+            onChangeCompleteSet();
+          });
         }}
       />
 
@@ -70,7 +70,7 @@ const PlannedSets = ({
         <p>This will not delete any logged sets</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PlannedSets
+export default PlannedSets;

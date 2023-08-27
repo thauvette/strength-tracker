@@ -1,9 +1,9 @@
-import { h } from 'preact'
-import useDB from '../../context/db/db'
-import useToast from '../../context/toasts/Toasts'
+import { h } from 'preact';
+import useDB from '../../context/db/db.tsx';
+import useToast from '../../context/toasts/Toasts';
 
-import EditableSet from '../editableSet/editableSet'
-import SetRow from '../setRow/setRow'
+import EditableSet from '../editableSet/editableSet';
+import SetRow from '../setRow/setRow';
 
 const Track = ({
   todaysHistory,
@@ -15,27 +15,27 @@ const Track = ({
   setSavedSet,
   barWeight,
 }) => {
-  const lastSet = todaysHistory?.[todaysHistory?.length - 1]
+  const lastSet = todaysHistory?.[todaysHistory?.length - 1];
 
-  const { createOrUpdateLoggedSet } = useDB()
-  const { fireToast } = useToast()
+  const { createOrUpdateLoggedSet } = useDB();
+  const { fireToast } = useToast();
 
   const submitNewSet = async ({ weight, reps, isWarmUp }) => {
-    fireToast({ text: `${exerciseName?.toUpperCase() || ''} SET ADDED` })
+    fireToast({ text: `${exerciseName?.toUpperCase() || ''} SET ADDED` });
     await createOrUpdateLoggedSet(null, {
       weight,
       reps,
       isWarmUp,
       exercise: +exerciseId,
-    })
-    onAddSet()
-  }
+    });
+    onAddSet();
+  };
   const initialValues =
     savedSet?.weight && savedSet?.reps
       ? savedSet
       : lastSet
       ? lastSet
-      : lastWorkoutFirstSet
+      : lastWorkoutFirstSet;
 
   return (
     <div class="relative px-2">
@@ -50,7 +50,7 @@ const Track = ({
               <button
                 class={`primary w-full`}
                 onClick={() => {
-                  submitNewSet({ weight, reps, isWarmUp })
+                  submitNewSet({ weight, reps, isWarmUp });
                 }}
               >
                 Save
@@ -63,7 +63,7 @@ const Track = ({
               reps,
               weight,
               isWarmUp,
-            })
+            });
           }}
           barWeight={barWeight}
         />
@@ -79,7 +79,7 @@ const Track = ({
           </div>
         ))}
     </div>
-  )
-}
+  );
+};
 
-export default Track
+export default Track;

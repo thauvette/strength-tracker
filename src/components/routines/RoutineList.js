@@ -1,16 +1,16 @@
-import { h } from 'preact'
-import { Link } from 'preact-router'
-import { useEffect, useState } from 'preact/hooks'
-import Icon from '../icon/Icon'
-import { routes } from '../../config/routes'
-import { objectStores } from '../../context/db/config'
-import useDB from '../../context/db/db'
+import { h } from 'preact';
+import { Link } from 'preact-router';
+import { useEffect, useState } from 'preact/hooks';
+import Icon from '../icon/Icon';
+import { routes } from '../../config/routes';
+import { objectStores } from '../../context/db/config.ts';
+import useDB from '../../context/db/db.tsx';
 
 const RoutineList = ({ navigateToEdit }) => {
-  const { getAllEntries, deleteEntry } = useDB()
-  const [routines, setRoutines] = useState([])
+  const { getAllEntries, deleteEntry } = useDB();
+  const [routines, setRoutines] = useState([]);
   const deleteRoutine = (id) =>
-    deleteEntry(objectStores.routines, id).then(() => getRoutines())
+    deleteEntry(objectStores.routines, id).then(() => getRoutines());
 
   const getRoutines = () => {
     getAllEntries(objectStores.routines).then((res) => {
@@ -19,13 +19,13 @@ const RoutineList = ({ navigateToEdit }) => {
           id,
           ...routine,
         })),
-      )
-    })
-  }
+      );
+    });
+  };
 
   useEffect(() => {
-    getRoutines()
-  }, []) // eslint-disable-line
+    getRoutines();
+  }, []); // eslint-disable-line
 
   return (
     <div class="px-2">
@@ -62,7 +62,7 @@ const RoutineList = ({ navigateToEdit }) => {
           : null}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RoutineList
+export default RoutineList;

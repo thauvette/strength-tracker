@@ -1,66 +1,66 @@
-import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
-import ExerciseForm from '../exerciseForm/ExerciseForm'
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
+import ExerciseForm from '../exerciseForm/ExerciseForm';
 
-import useDB from '../../context/db/db'
-import ExercisesByGroup from './ExercisesByGroup'
-import ExerciseSelection from './ExerciseSelection'
+import useDB from '../../context/db/db.tsx';
+import ExercisesByGroup from './ExercisesByGroup';
+import ExerciseSelection from './ExerciseSelection';
 
 const ExerciseSearch = ({ handleSelectExercise }) => {
-  const { getExerciseOptions } = useDB()
-  const [exerciseOptions, setExerciseOptions] = useState({})
-  const [showNewExerciseForm, setShowNewExerciseForm] = useState(false)
-  const [searchText, setSearchText] = useState('')
+  const { getExerciseOptions } = useDB();
+  const [exerciseOptions, setExerciseOptions] = useState({});
+  const [showNewExerciseForm, setShowNewExerciseForm] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
-  const [activeGroupId, setActiveGroupId] = useState('')
+  const [activeGroupId, setActiveGroupId] = useState('');
 
   const activeGroup = activeGroupId
     ? exerciseOptions[activeGroupId]?.items
-    : null
+    : null;
 
   const getOptions = () => {
     getExerciseOptions().then((res) => {
       const startedExercises = Object.values(res || {}).reduce((arr, group) => {
         group?.items?.forEach((item) => {
           if (item.isFavorite) {
-            arr.push(item)
+            arr.push(item);
           }
-        })
-        return arr
-      }, [])
+        });
+        return arr;
+      }, []);
       const result = {
         ...res,
-      }
+      };
       if (startedExercises?.length) {
         result.starred = {
           name: 'Favorites',
           items: startedExercises,
           id: 'starred',
-        }
+        };
       }
-      setExerciseOptions(result)
-    })
-  }
+      setExerciseOptions(result);
+    });
+  };
 
   useEffect(() => {
-    getOptions()
-  }, []) // eslint-disable-line
+    getOptions();
+  }, []); // eslint-disable-line
   if (!exerciseOptions) {
-    return null
+    return null;
   }
   const renderComponents = () => {
     if (showNewExerciseForm) {
       return (
         <ExerciseForm
           onSubmit={(res) => {
-            handleSelectExercise(res)
+            handleSelectExercise(res);
           }}
           initialValues={{
             name: searchText,
           }}
           title="Add Exercise"
         />
-      )
+      );
     }
     if (!activeGroup) {
       return (
@@ -70,7 +70,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
           handleSelectGroup={(id) => setActiveGroupId(id)}
           searchText={searchText}
         />
-      )
+      );
     }
     return (
       <>
@@ -83,8 +83,8 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
           handleSelectExercise={handleSelectExercise}
         />
       </>
-    )
-  }
+    );
+  };
 
   return (
     <div class="h-full flex flex-col">
@@ -114,7 +114,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
       </div>
       <div class="flex-grow">{renderComponents()}</div>
     </div>
-  )
-}
+  );
+};
 
-export default ExerciseSearch
+export default ExerciseSearch;

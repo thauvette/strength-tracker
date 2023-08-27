@@ -1,14 +1,3 @@
-// Object Stores
-export type possibleStores =
-  | 'wendler_cycles'
-  | 'exercises'
-  | 'sets'
-  | 'bio_metrics'
-  | 'bio_metric_entries'
-  | 'muscle_groups'
-  | 'fasting'
-  | 'routines';
-
 // BIO METRICS
 export interface BioMetric {
   name: String;
@@ -24,4 +13,49 @@ export interface BioEntry {
 
 export interface BioEntriesResponse {
   [key: number]: BioEntry;
+}
+
+// MUSCLE GROUPS
+export interface MuscleGroup {
+  name: string;
+  isPrimary: 0 | 1;
+  parentGroup: number | null;
+}
+
+// Exercises
+export interface Exercise {
+  musclesWorked: number[];
+  name: string;
+  primaryGroup: number;
+  secondaryMusclesWorked: number[];
+  type: string;
+  updated: number | undefined;
+  created: number | undefined;
+}
+
+export interface Fast {
+  created: number;
+  start: number;
+  end: number;
+  updated: number;
+}
+
+export interface Routine {
+  created: number;
+  name: string;
+  days: {
+    id: string;
+    name: string;
+    sets: {
+      exercise: number;
+      exerciseName: string;
+      id: string;
+      reps: number;
+      weight: number;
+    }[];
+  }[];
+}
+
+export interface ObjectStoreEvent extends Event {
+  target: IDBRequest;
 }

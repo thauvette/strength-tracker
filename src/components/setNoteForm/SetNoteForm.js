@@ -1,19 +1,19 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import useDB from '../../context/db/db'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import useDB from '../../context/db/db.tsx';
 
 const SetNoteForm = ({ text, onSave, id }) => {
-  const { createOrUpdateLoggedSet } = useDB()
+  const { createOrUpdateLoggedSet } = useDB();
 
-  const [note, setNote] = useState(text || '')
+  const [note, setNote] = useState(text || '');
 
   const save = async (e) => {
-    e.preventDefault()
-    await createOrUpdateLoggedSet(id, { note })
+    e.preventDefault();
+    await createOrUpdateLoggedSet(id, { note });
     if (onSave) {
-      onSave(note)
+      onSave(note);
     }
-  }
+  };
 
   return id ? (
     <form onSubmit={save}>
@@ -32,7 +32,7 @@ const SetNoteForm = ({ text, onSave, id }) => {
     </form>
   ) : (
     <p>Set id not found, unable to add note</p>
-  )
-}
+  );
+};
 
-export default SetNoteForm
+export default SetNoteForm;

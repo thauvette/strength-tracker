@@ -1,20 +1,20 @@
-import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
+import useDB from '../../context/db/db.tsx';
+import { objectStores } from '../../context/db/config.ts';
 
-import exerciseTypes from '../../config/exerciseTypes'
-import MuscleGroupsCheckList from './MuscleGroupsCheckList'
-import Accordion from '../accordion/accordion'
+import exerciseTypes from '../../config/exerciseTypes';
+import MuscleGroupsCheckList from './MuscleGroupsCheckList';
+import Accordion from '../accordion/accordion';
 
-import useToast from '../../context/toasts/Toasts'
-import Counters from '../counters/Counters'
-import Body from '../async/body'
+import useToast from '../../context/toasts/Toasts';
+import Counters from '../counters/Counters';
+import Body from '../async/body';
 
 const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
-  const { createEntry, getMuscleGroups, updateEntry } = useDB()
-  const { fireToast } = useToast()
-  const [primaryGroupOptions, setPrimaryGroupOptions] = useState([])
+  const { createEntry, getMuscleGroups, updateEntry } = useDB();
+  const { fireToast } = useToast();
+  const [primaryGroupOptions, setPrimaryGroupOptions] = useState([]);
   const [formData, setFormData] = useState({
     name: initialValues?.name || '',
     primaryGroup: initialValues?.primaryGroup || '',
@@ -23,7 +23,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
     notes: initialValues?.notes || '',
     type: 'wr',
     barWeight: initialValues?.barWeight || 45,
-  })
+  });
 
   const getData = () => {
     getMuscleGroups().then((res) => {
@@ -31,13 +31,13 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
         Object.values(res || {})
           .filter((option) => !!option.isPrimary)
           .sort((a, b) => (a.name < b.name ? -1 : 1)),
-      )
-    })
-  }
+      );
+    });
+  };
 
   useEffect(() => {
-    getData()
-  }, []) // eslint-disable-line
+    getData();
+  }, []); // eslint-disable-line
 
   const submit = async (e) => {
     const {
@@ -48,7 +48,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
       type,
       notes,
       barWeight,
-    } = formData
+    } = formData;
 
     const data = {
       name,
@@ -58,23 +58,23 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
       primaryGroup: +primaryGroup,
       notes,
       barWeight,
-    }
-    let res
+    };
+    let res;
     if (id) {
-      res = await updateEntry(objectStores.exercises, id, data)
+      res = await updateEntry(objectStores.exercises, id, data);
     } else {
-      res = await createEntry(objectStores.exercises, data)
+      res = await createEntry(objectStores.exercises, data);
     }
     if (onSubmit) {
-      e.stopPropagation()
-      onSubmit(res)
+      e.stopPropagation();
+      onSubmit(res);
     }
     fireToast({
       text: `${name} updated`,
-    })
-  }
+    });
+  };
 
-  const formIsValid = formData.name.length && formData.primaryGroup
+  const formIsValid = formData.name.length && formData.primaryGroup;
 
   return !primaryGroupOptions ? (
     <p>Loading</p>
@@ -224,7 +224,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
             setFormData({
               ...formData,
               barWeight: val,
-            })
+            });
           }}
           roundToFive
           jumpBy={5}
@@ -241,7 +241,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExerciseForm
+export default ExerciseForm;
