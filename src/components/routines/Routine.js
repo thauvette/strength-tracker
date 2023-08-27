@@ -1,40 +1,40 @@
-import { h } from 'preact'
-import { route } from 'preact-router'
-import { useEffect, useState } from 'preact/hooks'
-import Accordion from '../accordion/accordion'
-import { routes } from '../../config/routes'
-import { objectStores } from '../../context/db/config'
-import useDB from '../../context/db/db'
-import useSessionContext from '../../context/sessionData/sessionData'
+import { h } from 'preact';
+import { route } from 'preact-router';
+import { useEffect, useState } from 'preact/hooks';
+import Accordion from '../accordion/accordion';
+import { routes } from '../../config/routes';
+import { objectStores } from '../../context/db/config.ts';
+import useDB from '../../context/db/db.tsx';
+import useSessionContext from '../../context/sessionData/sessionData';
 
 const Routine = ({ id }) => {
-  const [routine, setRoutine] = useState(null)
-  const [error, setError] = useState(null)
-  const { getItem } = useDB()
-  const { startRoutine } = useSessionContext()
+  const [routine, setRoutine] = useState(null);
+  const [error, setError] = useState(null);
+  const { getItem } = useDB();
+  const { startRoutine } = useSessionContext();
 
   const getRoutine = () => {
     getItem(objectStores.routines, id)
       .then((res) => {
-        setRoutine(res)
+        setRoutine(res);
       })
-      .catch((err) => setError(err))
-  }
+      .catch((err) => setError(err));
+  };
 
   useEffect(() => {
-    getRoutine()
-  }, []) // eslint-disable-line
+    getRoutine();
+  }, []); // eslint-disable-line
 
   const setActiveRoutine = (sets) => {
-    startRoutine(sets)
-    route(routes.activeRoutine)
-  }
+    startRoutine(sets);
+    route(routes.activeRoutine);
+  };
 
   if (!routine && !error) {
-    return null
+    return null;
   }
   if (error) {
-    return <p>{error}</p>
+    return <p>{error}</p>;
   }
   return (
     <div class="px-2">
@@ -68,11 +68,11 @@ const Routine = ({ id }) => {
                   </div>
                 </Accordion>
               </div>
-            )
+            );
           })
         : null}
     </div>
-  )
-}
+  );
+};
 
-export default Routine
+export default Routine;

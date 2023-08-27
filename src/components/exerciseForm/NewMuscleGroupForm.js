@@ -1,33 +1,33 @@
-import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
+import useDB from '../../context/db/db.tsx';
+import { objectStores } from '../../context/db/config.ts';
 
 const NewMuscleGroupForm = ({ onSubmit }) => {
-  const { createEntry, getMuscleGroups } = useDB()
-  const [groups, setGroups] = useState(null)
+  const { createEntry, getMuscleGroups } = useDB();
+  const [groups, setGroups] = useState(null);
 
   useEffect(() => {
     getMuscleGroups().then((res) => {
-      setGroups(Object.values(res || {}).filter((group) => group.isPrimary))
-    })
-  }, []) //eslint-disable-line
+      setGroups(Object.values(res || {}).filter((group) => group.isPrimary));
+    });
+  }, []); //eslint-disable-line
 
   const submit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const name = formData.get('name')
-    const primaryGroup = formData.get('primaryGroup')
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get('name');
+    const primaryGroup = formData.get('primaryGroup');
 
     await createEntry(objectStores.muscleGroups, {
       isPrimary: 0,
       parentGroup: +primaryGroup,
       name,
-    })
+    });
     if (onSubmit) {
-      onSubmit()
+      onSubmit();
     }
-  }
+  };
 
   return groups?.length ? (
     <form onSubmit={submit}>
@@ -54,7 +54,7 @@ const NewMuscleGroupForm = ({ onSubmit }) => {
         </button>
       </div>
     </form>
-  ) : null
-}
+  ) : null;
+};
 
-export default NewMuscleGroupForm
+export default NewMuscleGroupForm;

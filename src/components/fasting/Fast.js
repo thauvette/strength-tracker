@@ -1,84 +1,84 @@
-import { h } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
-import dayjs from 'dayjs'
-const duration = require('dayjs/plugin/duration')
-dayjs.extend(duration)
-import AnimateHeight from 'react-animate-height'
+import { h } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
+import dayjs from 'dayjs';
+const duration = require('dayjs/plugin/duration');
+dayjs.extend(duration);
+import AnimateHeight from 'react-animate-height';
 
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
-import Icon from '../../components/icon/Icon'
+import useDB from '../../context/db/db.tsx';
+import { objectStores } from '../../context/db/config.ts';
+import Icon from '../../components/icon/Icon';
 
-import dateFormats from '../../config/dateFormats'
-import EditFastForm from './EditFastForm'
+import dateFormats from '../../config/dateFormats';
+import EditFastForm from './EditFastForm';
 
 const printDiff = (data, now) => {
-  const end = data.end || now
-  const duration = dayjs.duration(dayjs(end).diff(data.start))
-  return duration.format('HH:mm:ss')
-}
+  const end = data.end || now;
+  const duration = dayjs.duration(dayjs(end).diff(data.start));
+  return duration.format('HH:mm:ss');
+};
 
 const Fast = ({ id, data, onEdit }) => {
-  const { updateEntry, deleteEntry } = useDB()
-  const [now, setNow] = useState(new Date().getTime())
+  const { updateEntry, deleteEntry } = useDB();
+  const [now, setNow] = useState(new Date().getTime());
   const [editState, setEditState] = useState({
     formName: '',
     isOpen: false,
-  })
+  });
 
   // if the fast is ongoing we'll show the count
   useEffect(() => {
-    let timer
+    let timer;
     if (!data.end) {
       timer = setInterval(() => {
-        setNow(new Date().getTime())
-      }, 1000)
+        setNow(new Date().getTime());
+      }, 1000);
     }
     return () => {
       if (timer) {
-        clearInterval(timer)
+        clearInterval(timer);
       }
-    }
-  }, [now, data.end])
+    };
+  }, [now, data.end]);
 
   const updateEnd = (end) => {
     updateEntry(objectStores.fasting, +id, {
       end,
     }).then((res) => {
       if (onEdit) {
-        onEdit(res)
+        onEdit(res);
       }
-    })
-  }
+    });
+  };
 
   const end = () => {
-    updateEnd(new Date().getTime())
-  }
+    updateEnd(new Date().getTime());
+  };
 
   const remove = () => {
     deleteEntry(objectStores.fasting, +id).then(() => {
       if (onEdit) {
-        onEdit()
+        onEdit();
       }
-    })
-  }
+    });
+  };
 
   const toggleEditOpen = (formName) => {
     setEditState({
       formName,
       isOpen: !editState.isOpen,
-    })
-  }
+    });
+  };
   const handleEditForm = (values) => {
     updateEntry(objectStores.fasting, +id, {
       ...values,
     }).then((res) => {
       if (onEdit) {
-        onEdit(res)
+        onEdit(res);
       }
-      toggleEditOpen('edit')
-    })
-  }
+      toggleEditOpen('edit');
+    });
+  };
   return (
     <div key={id} class={`p-2 mx-2 mb-4 card`}>
       <div>
@@ -101,7 +101,7 @@ const Fast = ({ id, data, onEdit }) => {
         </button>
         <button
           onClick={() => {
-            toggleEditOpen('delete')
+            toggleEditOpen('delete');
           }}
         >
           <Icon name="trash-outline" />
@@ -121,7 +121,7 @@ const Fast = ({ id, data, onEdit }) => {
               <button
                 class="bg-red-900 text-white"
                 onClick={() => {
-                  remove()
+                  remove();
                 }}
               >
                 Yup, ditch it
@@ -147,7 +147,7 @@ const Fast = ({ id, data, onEdit }) => {
         </div>
       </AnimateHeight>
     </div>
-  )
-}
+  );
+};
 
-export default Fast
+export default Fast;

@@ -1,41 +1,41 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import Modal from '../components/modal/Modal'
-import LoadingSpinner from '../components/LoadingSpinner'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import Modal from '../components/modal/Modal';
+import LoadingSpinner from '../components/LoadingSpinner';
 
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../config/constants'
-import useDB from '../context/db/db'
-import { objectStores } from '../context/db/config'
+import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../config/constants';
+import useDB from '../context/db/db.tsx';
+import { objectStores } from '../context/db/config.ts';
 
 export default function Backups() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [uploadedData, setUploadedData] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [uploadedData, setUploadedData] = useState(null);
 
-  const { createBackup, restoreFromBackup } = useDB()
+  const { createBackup, restoreFromBackup } = useDB();
 
   const readFile = (file) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = function readSuccess(e) {
       try {
-        const rows = e.target.result.split('\n')
-        const headers = rows[0].split(',')
+        const rows = e.target.result.split('\n');
+        const headers = rows[0].split(',');
         const result = rows.reduce(
           (obj, row, i) => {
             // rows[0] is the headers
             if (i) {
-              const items = row.split(',')
+              const items = row.split(',');
               // items 0 and 1 are store and id, everything else goes under value
               // we no longer allow customizing muscle groups
               if (items[0] === objectStores.muscleGroups) {
-                return obj
+                return obj;
               }
 
-              const data = {}
-              const values = items.slice(2)
+              const data = {};
+              const values = items.slice(2);
               values.forEach((value, index) => {
                 if (value) {
-                  let formattedValue
+                  let formattedValue;
                   if (
                     (items[0] === objectStores.routines &&
                       headers[index + 2] === 'days') ||
@@ -44,68 +44,68 @@ export default function Backups() {
                         headers[index + 2] === 'weeks'))
                   ) {
                     try {
-                      formattedValue = JSON.parse(atob(value))
+                      formattedValue = JSON.parse(atob(value));
                     } catch (e) {
-                      formattedValue = []
+                      formattedValue = [];
                     }
                   } else if (value.includes(ARRAY_SEPARATOR)) {
                     // this is an array.
                     // we'll split it and then turn numbers back to numbers as they are probably tied to other ids.
                     formattedValue = value
                       .split(ARRAY_SEPARATOR)
-                      ?.map((val) => (isNaN(val) ? val : +val))
+                      ?.map((val) => (isNaN(val) ? val : +val));
                   } else if (value.includes(COMMA_REPLACEMENT)) {
                     // this is just a string, probably a note with a comma in it.
-                    formattedValue = value.replace(COMMA_REPLACEMENT, ',')
+                    formattedValue = value.replace(COMMA_REPLACEMENT, ',');
                   } else if (value === 'false') {
-                    formattedValue = false
+                    formattedValue = false;
                   } else {
-                    formattedValue = isNaN(value) ? value : +value
+                    formattedValue = isNaN(value) ? value : +value;
                   }
 
-                  data[headers[index + 2]] = formattedValue
+                  data[headers[index + 2]] = formattedValue;
                 }
-              })
+              });
 
               if (!obj.stores.includes(items[0])) {
-                obj.stores.push(items[0])
+                obj.stores.push(items[0]);
               }
               obj.items.push({
                 store: items[0],
                 // fix for some wendler cycles not having ids.
                 id: items[1] ? (isNaN(items[1]) ? items[1] : +items[1]) : i + 1,
                 data,
-              })
+              });
             }
-            return obj
+            return obj;
           },
           { stores: [], items: [] },
-        )
+        );
         // pass this to DB to create entries.
-        setUploadedData(result)
+        setUploadedData(result);
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
-    }
-    reader.readAsText(file)
-  }
+    };
+    reader.readAsText(file);
+  };
   function submit(e) {
-    setIsLoading(true)
-    e.preventDefault()
-    const formData = new FormData(e.target)
+    setIsLoading(true);
+    e.preventDefault();
+    const formData = new FormData(e.target);
 
     restoreFromBackup({
       ...uploadedData,
       stores: formData.get('overwrite') === 'on' ? uploadedData.stores : [],
     })
       .then(() => {
-        setIsLoading(false)
-        alert('DATA RESTORED')
+        setIsLoading(false);
+        alert('DATA RESTORED');
       })
       .catch((err) => {
-        setError(err?.message || 'Restore partially unsuccessful')
-        setIsLoading(false)
-      })
+        setError(err?.message || 'Restore partially unsuccessful');
+        setIsLoading(false);
+      });
   }
   return (
     <div class="px-2">
@@ -155,5 +155,5 @@ export default function Backups() {
         </div>
       </Modal>
     </div>
-  )
+  );
 }

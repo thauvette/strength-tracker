@@ -1,32 +1,32 @@
-import { h } from 'preact'
-import { useState, useEffect } from 'preact/compat'
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/compat';
 
-import style from './newSchedule.scss'
-import generateProgram from '../../utilities.js/generateProgram'
-import useDB from '../../context/db/db'
-import { objectStores } from '../../context/db/config'
+import style from './newSchedule.scss';
+import generateProgram from '../../utilities.js/generateProgram';
+import useDB from '../../context/db/db.tsx';
+import { objectStores } from '../../context/db/config.ts';
 
-import OneRepMaxInput from './oneRepMaxInput'
-import { route } from 'preact-router'
-import { routes } from '../../config/routes'
-import LoadingSpinner from '../LoadingSpinner'
+import OneRepMaxInput from './oneRepMaxInput';
+import { route } from 'preact-router';
+import { routes } from '../../config/routes';
+import LoadingSpinner from '../LoadingSpinner';
 
 const NewSchedule = ({ onSubmit, initialValues }) => {
-  const { getWendlerExercises, getAllEntries } = useDB()
-  const [loading, setLoading] = useState(true)
-  const [formErrors, setFormErrors] = useState({})
-  const [exercises, setExercises] = useState(initialValues?.exercises || {})
-  const [auxVersion, setAuxVersion] = useState(initialValues?.auxVersion || '')
+  const { getWendlerExercises, getAllEntries } = useDB();
+  const [loading, setLoading] = useState(true);
+  const [formErrors, setFormErrors] = useState({});
+  const [exercises, setExercises] = useState(initialValues?.exercises || {});
+  const [auxVersion, setAuxVersion] = useState(initialValues?.auxVersion || '');
 
   useEffect(() => {
     if (initialValues) {
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
     const promises = [
       getWendlerExercises(),
       getAllEntries(objectStores.wendlerCycles),
-    ]
+    ];
     Promise.all(promises)
       .then((responses) => {
         const formattedWendlerExercises = responses[0].reduce(
@@ -34,24 +34,24 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
             return {
               ...obj,
               [exercise.primaryId]: exercise,
-            }
+            };
           },
           {},
-        )
-        let lastWeights = null
+        );
+        let lastWeights = null;
         if (responses[1] && Object.keys(responses[1])?.length) {
           lastWeights = Object.values(responses[1]).sort((a, b) => {
-            return a.created > b.created ? -1 : 1
-          })[0]?.exerciseFormValues
+            return a.created > b.created ? -1 : 1;
+          })[0]?.exerciseFormValues;
         }
         setExercises({
           ...formattedWendlerExercises,
           ...(lastWeights || {}),
-        })
+        });
       })
       .catch((e) => console.log(e))
-      .finally(() => setLoading(false))
-  }, [getWendlerExercises, getAllEntries, initialValues])
+      .finally(() => setLoading(false));
+  }, [getWendlerExercises, getAllEntries, initialValues]);
 
   function handleInput(e) {
     setExercises({
@@ -60,30 +60,30 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
         ...exercises[e.target.name],
         weight: +e.target.value || '',
       },
-    })
+    });
   }
 
   async function generatePreview() {
-    setFormErrors({})
-    const errors = {}
+    setFormErrors({});
+    const errors = {};
 
     Object.values(exercises).forEach((exercise) => {
       if (exercise?.weight === undefined || exercise?.weight < 0) {
-        errors[exercise.primaryId] = 'This is field required'
+        errors[exercise.primaryId] = 'This is field required';
       }
-    })
+    });
 
     if (Object.keys(errors)?.length) {
-      return setFormErrors(errors)
+      return setFormErrors(errors);
     }
     const preview = generateProgram({
       exercises,
       auxVersion,
       initialValues,
-    })
+    });
 
-    onSubmit({ exercises, preview, auxVersion })
-    route(routes.wendlerNewPreview)
+    onSubmit({ exercises, preview, auxVersion });
+    route(routes.wendlerNewPreview);
   }
 
   return loading ? (
@@ -126,7 +126,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NewSchedule
+export default NewSchedule;

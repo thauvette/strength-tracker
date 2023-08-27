@@ -1,51 +1,51 @@
-import { h } from 'preact'
-import { useState } from 'preact/compat'
-import { route } from 'preact-router'
-import set from 'lodash.set'
-import cloneDeep from 'lodash.clonedeep'
-import get from 'lodash.get'
-import Accordion from '../accordion/accordion'
-import Modal from '../modal/Modal'
+import { h } from 'preact';
+import { useState } from 'preact/compat';
+import { route } from 'preact-router';
+import set from 'lodash.set';
+import cloneDeep from 'lodash.clonedeep';
+import get from 'lodash.get';
+import Accordion from '../accordion/accordion';
+import Modal from '../modal/Modal';
 
-import AuxExerciseForm from './auxExerciseForm'
-import useDB from '../../context/db/db'
+import AuxExerciseForm from './auxExerciseForm';
+import useDB from '../../context/db/db.tsx';
 
-import { routes } from '../../config/routes'
+import { routes } from '../../config/routes';
 
-import ReorderForm from '../reorderForm'
-import generateRandomId from '../../utilities.js/generateRandomId'
+import ReorderForm from '../reorderForm';
+import generateRandomId from '../../utilities.js/generateRandomId';
 
 export default function Preview({ initialValues }) {
-  const { createCycle } = useDB()
-  const [preview, setPreview] = useState({ ...(initialValues?.preview || {}) })
-  const [viewByLift, setViewByLift] = useState(false)
+  const { createCycle } = useDB();
+  const [preview, setPreview] = useState({ ...(initialValues?.preview || {}) });
+  const [viewByLift, setViewByLift] = useState(false);
   const [formData, setFormData] = useState({
     title: initialValues?.title || '',
     description: initialValues?.description || '',
-  })
-  const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false)
-  const [auxExerciseFormData, setAuxExerciseFormData] = useState(null)
+  });
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [auxExerciseModalIsOpen, setAuxExerciseModalIsOpen] = useState(false);
+  const [auxExerciseFormData, setAuxExerciseFormData] = useState(null);
 
   const [editOrderModalState, setEditOrderModalState] = useState({
     isOpen: false,
     targetWeek: null,
     mainLift: null,
-  })
+  });
 
   if (!preview || !Object.keys(preview).length) {
-    return null
+    return null;
   }
 
   const openAuxExerciseModal = (exercise) => {
-    setAuxExerciseFormData(exercise)
-    setAuxExerciseModalIsOpen(true)
-  }
+    setAuxExerciseFormData(exercise);
+    setAuxExerciseModalIsOpen(true);
+  };
 
   const closeAuxExerciseModal = () => {
-    setAuxExerciseFormData(null)
-    setAuxExerciseModalIsOpen(false)
-  }
+    setAuxExerciseFormData(null);
+    setAuxExerciseModalIsOpen(false);
+  };
 
   const openReorderModal = ({ targetWeek, mainLift, items }) => {
     setEditOrderModalState({
@@ -53,36 +53,36 @@ export default function Preview({ initialValues }) {
       targetWeek,
       mainLift,
       items,
-    })
-  }
+    });
+  };
 
   const closeReorderModal = () => {
     setEditOrderModalState({
       isOpen: false,
       targetWeek: null,
       mainLift: null,
-    })
-  }
+    });
+  };
 
   const previewByLift = Object.entries(preview).reduce((obj, [key, week]) => {
     Object.values(week).forEach((data) => {
       if (!obj[data.primaryId]) {
-        obj[data.primaryId] = {}
+        obj[data.primaryId] = {};
       }
-      obj[data.primaryId][key] = data
-    })
-    return obj
-  }, {})
+      obj[data.primaryId][key] = data;
+    });
+    return obj;
+  }, {});
 
   function handleInput(e) {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
+    });
   }
 
   function saveToWorkouts() {
-    const mainLifts = cloneDeep(preview)
+    const mainLifts = cloneDeep(preview);
     createCycle({
       title: formData?.title || '',
       description: formData?.description || '',
@@ -93,24 +93,24 @@ export default function Preview({ initialValues }) {
       created: initialValues.created,
       version: 2,
     }).then(() => {
-      route(routes.wendlerCycles)
-    })
+      route(routes.wendlerCycles);
+    });
   }
 
   function handleAddAuxExercise({ exercise, sets, addToAllWeeks }) {
-    const { week: targetWeek, mainLift: targetLift } = auxExerciseFormData
+    const { week: targetWeek, mainLift: targetLift } = auxExerciseFormData;
     // either all weeks or just one week.
-    const weeksToUpdate = addToAllWeeks ? [1, 2, 3] : [targetWeek]
+    const weeksToUpdate = addToAllWeeks ? [1, 2, 3] : [targetWeek];
     weeksToUpdate.forEach((weekNum) => {
       const currentRunningSets =
-        preview?.[weekNum]?.[targetLift]?.runningSets || []
+        preview?.[weekNum]?.[targetLift]?.runningSets || [];
       const currentAdditionalSets =
-        preview?.[weekNum]?.[targetLift]?.additional || {}
+        preview?.[weekNum]?.[targetLift]?.additional || {};
 
       sets.forEach((set) => {
-        const wendlerId = generateRandomId()
-        const pathKey = `${weekNum}.${targetLift}.additional.${wendlerId}`
-        currentRunningSets.push(pathKey)
+        const wendlerId = generateRandomId();
+        const pathKey = `${weekNum}.${targetLift}.additional.${wendlerId}`;
+        currentRunningSets.push(pathKey);
         currentAdditionalSets[wendlerId] = {
           ...set,
           completed: null,
@@ -118,8 +118,8 @@ export default function Preview({ initialValues }) {
           primaryId: +exercise.id,
           wendlerGroup: 'additional',
           wendlerId,
-        }
-      })
+        };
+      });
 
       setPreview(
         set(
@@ -127,23 +127,23 @@ export default function Preview({ initialValues }) {
           [weekNum, targetLift, 'runningSets'],
           currentRunningSets,
         ),
-      )
-    })
+      );
+    });
 
-    setAuxExerciseFormData(null)
-    setAuxExerciseModalIsOpen(false)
+    setAuxExerciseFormData(null);
+    setAuxExerciseModalIsOpen(false);
   }
 
   const renderDay = ({ sets, title, week, mainLift }) => (
     <div>
       <ul>
         {sets.map((setPath, i) => {
-          const set = get(preview, setPath)
+          const set = get(preview, setPath);
           return (
             <li key={i} class="py-1 px-2">
               {set.exercise}: {set.reps} @ {set.weight}
             </li>
-          )
+          );
         })}
       </ul>
       <div class="pt-6">
@@ -165,11 +165,11 @@ export default function Preview({ initialValues }) {
               targetWeek: week,
               mainLift,
               items: sets.map((setPath) => {
-                const set = get(preview, setPath)
+                const set = get(preview, setPath);
                 return {
                   ...set,
                   label: `${set.exercise}: ${set.reps} @ ${set.weight}`,
-                }
+                };
               }),
             })
           }
@@ -178,7 +178,7 @@ export default function Preview({ initialValues }) {
         </button>
       </div>
     </div>
-  )
+  );
 
   return (
     <div class="px-2">
@@ -238,12 +238,12 @@ export default function Preview({ initialValues }) {
                             </div>
                           </Accordion>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
       <div class="py-4 fixed bottom-0 right-8">
         <button class="primary" onClick={() => setModalIsOpen(true)}>
@@ -306,31 +306,31 @@ export default function Preview({ initialValues }) {
               items={editOrderModalState.items}
               onSave={({ newOrder, updateAllWeeks }) => {
                 if (!newOrder) {
-                  return closeReorderModal()
+                  return closeReorderModal();
                 }
 
                 const weeks = updateAllWeeks
                   ? [1, 2, 3]
-                  : [editOrderModalState.targetWeek]
-                const clonedPreview = cloneDeep(preview)
+                  : [editOrderModalState.targetWeek];
+                const clonedPreview = cloneDeep(preview);
 
                 weeks.forEach((week) => {
                   const currentSets = get(
                     preview,
                     [week, editOrderModalState.mainLift, 'runningSets'],
                     [],
-                  )
-                  const newOrderSets = newOrder.map((num) => currentSets[num])
+                  );
+                  const newOrderSets = newOrder.map((num) => currentSets[num]);
 
                   set(
                     clonedPreview,
                     [week, editOrderModalState.mainLift, 'runningSets'],
                     newOrderSets,
-                  )
-                })
+                  );
+                });
 
-                setPreview(clonedPreview)
-                closeReorderModal()
+                setPreview(clonedPreview);
+                closeReorderModal();
               }}
               allowEditAllWeeks={daysHaveSameSets(
                 Object.values(preview || {}),
@@ -341,12 +341,12 @@ export default function Preview({ initialValues }) {
         ) : null}
       </Modal>
     </div>
-  )
+  );
 }
 
 const daysHaveSameSets = (weeks, targetLift) => {
   const strings = weeks.map((week) =>
     week?.[targetLift]?.runningSets?.map((set) => set.primaryId)?.join(),
-  )
-  return strings ? strings.every((string) => string === strings[0]) : false
-}
+  );
+  return strings ? strings.every((string) => string === strings[0]) : false;
+};

@@ -1,18 +1,18 @@
-import { h } from 'preact'
-import { route } from 'preact-router'
-import { routes } from '../../config/routes'
-import useDB from '../../context/db/db'
+import { h } from 'preact';
+import { route } from 'preact-router';
+import { routes } from '../../config/routes';
+import useDB from '../../context/db/db.tsx';
 
 const NewBioMetric = ({ onSubmit }) => {
-  const { createBioMetric } = useDB()
+  const { createBioMetric } = useDB();
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
+    e.preventDefault();
+    const formData = new FormData(e.target);
     createBioMetric(formData.get('name')).then((res) => {
-      onSubmit()
-      route(`${routes.bioMetrics}/${res.id}`)
-    })
-  }
+      onSubmit();
+      route(`${routes.bioMetricsBase}/${res.id}`);
+    });
+  };
   return (
     <div class="p-2">
       <h1>New</h1>
@@ -28,7 +28,7 @@ const NewBioMetric = ({ onSubmit }) => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default NewBioMetric
+export default NewBioMetric;

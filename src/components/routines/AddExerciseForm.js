@@ -1,22 +1,22 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import ExerciseSearch from '../exerciseSelection/ExerciseSearch'
-import Icon from '../icon/Icon'
-import useDB from '../../context/db/db'
-import { formatHistory } from '../../hooks/useExerciseHistory/utils'
-import AddExerciseTabs from './AddExerciseTabs'
-import Modal from '../modal/Modal'
-import LoadingSpinner from '../LoadingSpinner'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import ExerciseSearch from '../exerciseSelection/ExerciseSearch';
+import Icon from '../icon/Icon';
+import useDB from '../../context/db/db.tsx';
+import { formatHistory } from '../../hooks/useExerciseHistory/utils';
+import AddExerciseTabs from './AddExerciseTabs';
+import Modal from '../modal/Modal';
+import LoadingSpinner from '../LoadingSpinner';
 
 const AddExerciseForm = ({ submit }) => {
-  const [selectedExercise, setSelectedExercise] = useState(null)
-  const [addedSets, setAddedSets] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const { getExerciseHistoryById } = useDB()
+  const [selectedExercise, setSelectedExercise] = useState(null);
+  const [addedSets, setAddedSets] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { getExerciseHistoryById } = useDB();
 
   const selectExercise = async (exercise) => {
-    setIsLoading(true)
-    const data = await getExerciseHistoryById(+exercise.id)
+    setIsLoading(true);
+    const data = await getExerciseHistoryById(+exercise.id);
 
     if (data) {
       setSelectedExercise({
@@ -26,10 +26,10 @@ const AddExerciseForm = ({ submit }) => {
           items: data?.items || [],
           includeBwInHistory: data.type === 'bwr',
         }),
-      })
+      });
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
   const handleSubmit = () => {
     if (!addedSets?.length) {
       submit([
@@ -38,8 +38,8 @@ const AddExerciseForm = ({ submit }) => {
           exerciseName: selectedExercise.name,
           freeForm: true,
         },
-      ])
-      return
+      ]);
+      return;
     }
 
     submit(
@@ -48,16 +48,16 @@ const AddExerciseForm = ({ submit }) => {
         exerciseId: selectedExercise.id,
         exerciseName: selectedExercise.name,
       })),
-    )
-  }
+    );
+  };
   if (selectedExercise) {
     return (
       <div>
         <div class="border-b-1 flex items center">
           <button
             onClick={() => {
-              setSelectedExercise(null)
-              setAddedSets([])
+              setSelectedExercise(null);
+              setAddedSets([]);
             }}
           >
             ← Back
@@ -83,7 +83,7 @@ const AddExerciseForm = ({ submit }) => {
           setAddedSets={setAddedSets}
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -97,7 +97,7 @@ const AddExerciseForm = ({ submit }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AddExerciseForm
+export default AddExerciseForm;

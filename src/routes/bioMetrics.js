@@ -1,64 +1,66 @@
-import { h } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
-import { Router } from 'preact-router'
-import set from 'lodash.set'
-import useDB from '../context/db/db'
-import { objectStores } from '../context/db/config'
-import { routes } from '../config/routes'
-import BioMetricsList from '../components/bioMetrics/bioMetricsList'
-import BioMetric from '../components/bioMetrics/bioMetric'
-import NewBioMetric from '../components/bioMetrics/newBioMetric'
+import { h } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
+import { Router } from 'preact-router';
+import set from 'lodash.set';
+import useDB from '../context/db/db.tsx';
+import { objectStores } from '../context/db/config.ts';
+import { routes } from '../config/routes';
+import BioMetricsList from '../components/bioMetrics/bioMetricsList';
+import BioMetric from '../components/bioMetrics/bioMetric';
+import NewBioMetric from '../components/bioMetrics/newBioMetric';
 
 const BioMetrics = () => {
-  const { getAllEntries, createEntry, updateEntry, deleteEntry } = useDB()
-  const [bioList, setBioList] = useState({})
-  const [loading, setLoading] = useState(true)
+  const { getAllEntries, createEntry, updateEntry, deleteEntry } = useDB();
+  const [bioList, setBioList] = useState({});
+  const [loading, setLoading] = useState(true);
   const fetchBioMetrics = () => {
     const promises = [
       getAllEntries(objectStores.bioMetrics),
       getAllEntries(objectStores.bioEntries),
-    ]
+    ];
     Promise.all(promises)
       .then(([bioMetrics, entries]) => {
-        const result = { ...bioMetrics }
+        const result = { ...bioMetrics };
         if (entries && Object.keys(entries).length) {
           Object.entries(entries).forEach(([id, entry]) => {
             if (!result?.[entry?.bioMetric]?.items) {
-              set(result, [entry?.bioMetric, 'items'], [])
+              set(result, [entry?.bioMetric, 'items'], []);
             }
             result?.[entry?.bioMetric]?.items.push({
               id,
               ...entry,
-            })
-          })
+            });
+          });
         }
-        setBioList(result)
+        setBioList(result);
       })
-      .finally(() => setLoading(false))
-  }
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
-    fetchBioMetrics()
-  }, []) // eslint-disable-line
+    fetchBioMetrics();
+  }, []); // eslint-disable-line
 
   const addEntry = ({ bioMetricId, data }) => {
     createEntry(objectStores.bioEntries, {
       bioMetric: +bioMetricId,
       ...data,
     }).then(() => {
-      fetchBioMetrics()
-    })
-  }
+      fetchBioMetrics();
+    });
+  };
 
   const editEntry = (id, data) => {
-    updateEntry(objectStores.bioEntries, id, data).then(() => fetchBioMetrics())
-  }
+    updateEntry(objectStores.bioEntries, id, data).then(() =>
+      fetchBioMetrics(),
+    );
+  };
 
   const removeEntry = (id) =>
-    deleteEntry(objectStores.bioEntries, id).then(() => fetchBioMetrics())
+    deleteEntry(objectStores.bioEntries, id).then(() => fetchBioMetrics());
 
   if (loading) {
-    return null
+    return null;
   }
 
   return (
@@ -76,7 +78,7 @@ const BioMetrics = () => {
         removeEntry={removeEntry}
       />
     </Router>
-  )
-}
+  );
+};
 
-export default BioMetrics
+export default BioMetrics;

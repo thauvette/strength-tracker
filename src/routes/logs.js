@@ -1,79 +1,79 @@
-import { h } from 'preact'
-import dayjs from 'dayjs'
-import { useEffect, useState } from 'preact/hooks'
-import { Link, route } from 'preact-router'
-import useDB from '../context/db/db'
-import { objectStores } from '../context/db/config'
+import { h } from 'preact';
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'preact/hooks';
+import { Link, route } from 'preact-router';
+import useDB from '../context/db/db.tsx';
+import { objectStores } from '../context/db/config.ts';
 
-import Modal from '../components/modal/Modal'
-import Calendar from '../components/calendar/Calendar'
-import { routes } from '../config/routes'
+import Modal from '../components/modal/Modal';
+import Calendar from '../components/calendar/Calendar';
+import { routes } from '../config/routes';
 
-import dateFormats from '../config/dateFormats'
-import useSessionContext from '../context/sessionData/sessionData'
-import Body from '../components/async/body'
-import { uniq } from 'lodash'
-import CalendarControls from '../components/logs/calendarControls'
-import LogGroup from '../components/logs/logGroup'
-import LogSet from '../components/logs/logSet'
+import dateFormats from '../config/dateFormats';
+import useSessionContext from '../context/sessionData/sessionData';
+import Body from '../components/async/body';
+import { uniq } from 'lodash';
+import CalendarControls from '../components/logs/calendarControls';
+import LogGroup from '../components/logs/logGroup';
+import LogSet from '../components/logs/logSet';
 
 // date is a query param
 const Logs = ({ date }) => {
-  const { getAllSetsHistory, getAllEntries } = useDB()
+  const { getAllSetsHistory, getAllEntries } = useDB();
 
-  const { startRoutine } = useSessionContext()
+  const { startRoutine } = useSessionContext();
 
   const [logState, setLogState] = useState({
     loading: true,
     data: null,
     error: null,
     bioMetrics: null,
-  })
+  });
 
   const [activeDate, setActiveDate] = useState(
     date || dayjs().format(dateFormats.day),
-  )
-  const [calendarIsOpen, setCalendarIsOpen] = useState(false)
+  );
+  const [calendarIsOpen, setCalendarIsOpen] = useState(false);
 
-  const [view, setView] = useState('groups')
+  const [view, setView] = useState('groups');
 
-  const [selectedExercise, setSelectedExercise] = useState(null)
+  const [selectedExercise, setSelectedExercise] = useState(null);
 
   const changeDate = (date) => {
-    setActiveDate(date)
-    route(`${routes.logs}?date=${date}`)
-  }
+    setActiveDate(date);
+    route(`${routes.logs}?date=${date}`);
+  };
 
   useEffect(() => {
     if (date && date !== activeDate) {
-      changeDate(date)
+      changeDate(date);
     }
-  }, [date, activeDate])
+  }, [date, activeDate]);
 
   const getData = () => {
     const promises = [
       getAllSetsHistory(),
       getAllEntries(objectStores.bioMetrics),
       getAllEntries(objectStores.bioEntries),
-    ]
+    ];
 
     return Promise.all(promises).then(
       ([logsRes, bioMetricsRes, bioEntriesRes]) => {
         const bioData = Object.values(bioEntriesRes || {}).reduce(
           (obj, entry) => {
-            const dayKey = dayjs(entry.date).format(dateFormats.day)
+            const dayKey = dayjs(entry.date).format(dateFormats.day);
 
-            const currentDayData = obj[dayKey] || {}
+            const currentDayData = obj[dayKey] || {};
             const bioName =
-              bioMetricsRes[entry.bioMetric]?.name || entry.bioMetric
-            const id = entry.bioMetric
+              bioMetricsRes[entry.bioMetric]?.name || entry.bioMetric;
+            const id = entry.bioMetric;
             const currentEntries = currentDayData[id] || {
               name: bioName,
               bioId: entry.bioMetric,
               items: [],
-            }
+            };
 
-            currentEntries.items.push(entry)
+            currentEntries.items.push(entry);
 
             return {
               ...obj,
@@ -81,62 +81,62 @@ const Logs = ({ date }) => {
                 ...currentDayData,
                 [id]: currentEntries,
               },
-            }
+            };
           },
           {},
-        )
+        );
 
         setLogState({
           loading: false,
           error: null,
           data: logsRes,
           bioMetrics: bioData,
-        })
+        });
       },
-    )
-  }
+    );
+  };
 
   useEffect(() => {
-    getData()
-  }, []) // eslint-disable-line
+    getData();
+  }, []); // eslint-disable-line
 
   if (logState.loading) {
     return (
       <div>
         <p>Loading</p>
       </div>
-    )
+    );
   }
   if (logState.error) {
     return (
       <div>
         <p>{logState.error}</p>
       </div>
-    )
+    );
   }
-  const activeDayData = logState.data?.[activeDate] || []
+  const activeDayData = logState.data?.[activeDate] || [];
   const sortedDayData = activeDayData.reduce((obj, exercise) => {
-    const key = exercise.name
+    const key = exercise.name;
 
-    const currentExerciseSets = obj[key] || []
-    currentExerciseSets.push(exercise)
+    const currentExerciseSets = obj[key] || [];
+    currentExerciseSets.push(exercise);
     return {
       ...obj,
       [key]: currentExerciseSets,
-    }
-  }, {})
+    };
+  }, {});
 
   const stepByDate = (amount) =>
-    changeDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day))
+    changeDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day));
 
-  const toggleCalendar = () => setCalendarIsOpen(!calendarIsOpen)
+  const toggleCalendar = () => setCalendarIsOpen(!calendarIsOpen);
 
   const selectDate = (date) => {
-    changeDate(date.format(dateFormats.day))
-    setCalendarIsOpen(false)
-  }
+    changeDate(date.format(dateFormats.day));
+    setCalendarIsOpen(false);
+  };
 
-  const isToday = dayjs(activeDate).isSame(dayjs(), 'day')
+  const isToday = dayjs(activeDate).isSame(dayjs(), 'day');
   const useDayAsRoutine = () => {
     const sets =
       activeDayData?.map(
@@ -148,10 +148,10 @@ const Logs = ({ date }) => {
           isWarmUp,
           barWeight: barWeight || 45,
         }),
-      ) || []
-    startRoutine(sets)
-    route(routes.activeRoutine)
-  }
+      ) || [];
+    startRoutine(sets);
+    route(routes.activeRoutine);
+  };
 
   const musclesWorked = selectedExercise
     ? {
@@ -163,16 +163,16 @@ const Logs = ({ date }) => {
           const activePrimary = uniq([
             ...obj.activePrimary,
             ...(set.musclesWorked || []),
-          ])
+          ]);
 
           const activeSecondary = uniq([
             ...obj.activeSecondary,
             ...(set.secondaryMusclesWorked || []),
-          ])
+          ]);
           return {
             activePrimary,
             activeSecondary,
-          }
+          };
         },
         {
           activePrimary: [],
@@ -181,10 +181,10 @@ const Logs = ({ date }) => {
       ) || {
         activePrimary: [],
         activeSecondary: [],
-      }
-  const times = activeDayData?.map((item) => item.created) || []
-  const earliestSet = times?.length ? Math.min(...times) : null
-  const lasSet = times?.length ? Math.max(...times) : null
+      };
+  const times = activeDayData?.map((item) => item.created) || [];
+  const earliestSet = times?.length ? Math.min(...times) : null;
+  const lasSet = times?.length ? Math.max(...times) : null;
 
   return (
     <div class="px-2">
@@ -292,9 +292,9 @@ const Logs = ({ date }) => {
         <Calendar
           startDate={activeDate}
           renderDay={(day, isCurrentMonth) => {
-            const isToday = day.isSame(dayjs(), 'day')
-            const dayData = logState.data?.[day.format(dateFormats.day)]
-            const hasData = !!dayData?.length
+            const isToday = day.isSame(dayjs(), 'day');
+            const dayData = logState.data?.[day.format(dateFormats.day)];
+            const hasData = !!dayData?.length;
             const groupString = hasData
               ? Array.from(
                   new Set(
@@ -303,15 +303,15 @@ const Logs = ({ date }) => {
                     ),
                   ),
                 )
-              : null
+              : null;
 
             let classNames = isCurrentMonth
               ? ''
-              : 'bg-gray-100 dark:bg-gray-900'
+              : 'bg-gray-100 dark:bg-gray-900';
             if (isToday) {
-              classNames = 'bg-highlight-200 dark:text-black'
+              classNames = 'bg-highlight-200 dark:text-black';
             } else if (hasData && isCurrentMonth) {
-              classNames = 'bg-blue-100 dark:bg-blue-900'
+              classNames = 'bg-blue-100 dark:bg-blue-900';
             }
 
             return (
@@ -326,12 +326,12 @@ const Logs = ({ date }) => {
                   )}
                 </button>
               </div>
-            )
+            );
           }}
         />
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default Logs
+export default Logs;
