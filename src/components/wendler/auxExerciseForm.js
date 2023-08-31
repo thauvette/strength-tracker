@@ -1,7 +1,7 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import EditableSet from '../editableSet/editableSet'
-import ExerciseSearch from '../exerciseSelection/ExerciseSearch'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import EditableSet from '../editableSet/editableSet.tsx';
+import ExerciseSearch from '../exerciseSelection/ExerciseSearch';
 
 const AuxExerciseForm = ({
   week,
@@ -12,40 +12,40 @@ const AuxExerciseForm = ({
 }) => {
   const [sets, setSets] = useState(
     initialValues?.sets || [{ reps: '', weight: '' }],
-  )
-  const [exercise, setExercise] = useState(initialValues?.exercise || null)
+  );
+  const [exercise, setExercise] = useState(initialValues?.exercise || null);
 
-  const [addToAllWeeks, setAddToAllWeeks] = useState(true)
+  const [addToAllWeeks, setAddToAllWeeks] = useState(true);
 
   const handleInput = ({ index, values }) => {
-    const currentSets = [...sets]
+    const currentSets = [...sets];
     currentSets[index] = {
       ...currentSets[index],
       ...values,
-    }
-    setSets(currentSets)
-  }
+    };
+    setSets(currentSets);
+  };
 
   const handleRemoveSet = (index) => {
-    const currentSets = [...sets]
+    const currentSets = [...sets];
 
     if (currentSets[index]) {
-      currentSets.splice(index, 1)
-      setSets(currentSets)
+      currentSets.splice(index, 1);
+      setSets(currentSets);
     }
-  }
+  };
 
   const addSet = () => {
-    setSets([...sets, { reps: '', weight: '', isWarmUp: false }])
-  }
+    setSets([...sets, { reps: '', weight: '', isWarmUp: false }]);
+  };
 
   const duplicateSet = (values) => {
-    setSets([...sets, { ...values }])
-  }
+    setSets([...sets, { ...values }]);
+  };
 
   const save = () => {
-    handleSubmit({ exercise, sets, addToAllWeeks })
-  }
+    handleSubmit({ exercise, sets, addToAllWeeks });
+  };
 
   return exercise?.id ? (
     <div>
@@ -83,14 +83,14 @@ const AuxExerciseForm = ({
                     weight,
                     isWarmUp,
                   },
-                })
+                });
               }}
               reps={setValues?.reps || ''}
               weight={setValues?.weight || ''}
               isWarmUp={!!setValues?.isWarmUp}
               handleRemove={(e) => {
-                e.stopPropagation()
-                handleRemoveSet(index)
+                e.stopPropagation();
+                handleRemoveSet(index);
               }}
               handleAddSet={addSet}
               title={`Set ${index + 1}`}
@@ -98,7 +98,7 @@ const AuxExerciseForm = ({
               disablePlateModal
             />
           </div>
-        )
+        );
       })}
       <div class="border-b py-2">
         <button class="blue" onClick={addSet}>
@@ -117,7 +117,7 @@ const AuxExerciseForm = ({
     </div>
   ) : (
     <ExerciseSearch handleSelectExercise={setExercise} />
-  )
-}
+  );
+};
 
-export default AuxExerciseForm
+export default AuxExerciseForm;

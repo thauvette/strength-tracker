@@ -16,12 +16,14 @@ import { uniq } from 'lodash';
 import CalendarControls from '../components/logs/calendarControls';
 import LogGroup from '../components/logs/logGroup';
 import LogSet from '../components/logs/logSet';
+import useQuickSetAdd from '../context/quickAddSetModalContext.tsx';
 
 // date is a query param
 const Logs = ({ date }) => {
   const { getAllSetsHistory, getAllEntries } = useDB();
 
   const { startRoutine } = useSessionContext();
+  const { launchQuickAdd } = useQuickSetAdd();
 
   const [logState, setLogState] = useState({
     loading: true,
@@ -98,6 +100,8 @@ const Logs = ({ date }) => {
 
   useEffect(() => {
     getData();
+    addEventListener('dbSetAdded', getData);
+    return () => removeEventListener('dbSetAdded', getData);
   }, []); // eslint-disable-line
 
   if (logState.loading) {
@@ -214,7 +218,9 @@ const Logs = ({ date }) => {
                 </button>
               ) : null}
             </div>
-            <Body {...musclesWorked} />
+            <div className="max-w-[10rem] mx-auto">
+              <Body {...musclesWorked} />
+            </div>
           </div>
           <div class="flex justify-between pb-6">
             <button
@@ -244,6 +250,9 @@ const Logs = ({ date }) => {
                     ? null
                     : sets?.[0],
                 )
+              }
+              quickAdd={
+                isToday ? () => launchQuickAdd(sets?.[0].exercise) : null
               }
             />
           ))

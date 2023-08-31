@@ -1,8 +1,8 @@
-import { h } from 'preact'
-import dayjs from 'dayjs'
-import EditableSet from '../editableSet/editableSet'
-import SetNoteForm from '../setNoteForm/SetNoteForm'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
+import { h } from 'preact';
+import dayjs from 'dayjs';
+import EditableSet from '../editableSet/editableSet.tsx';
+import SetNoteForm from '../setNoteForm/SetNoteForm';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 const SetRowDrawer = ({
   set,
@@ -13,7 +13,7 @@ const SetRowDrawer = ({
   handleDeleteSet,
 }) => {
   if (!drawerContent) {
-    return null
+    return null;
   }
 
   if (drawerContent === 'edit') {
@@ -34,7 +34,7 @@ const SetRowDrawer = ({
                       reps: data.reps,
                       id: set.id,
                       isWarmUp: data.isWarmUp,
-                    })
+                    });
                   }}
                 >
                   Update
@@ -46,14 +46,14 @@ const SetRowDrawer = ({
                 </button>
               </div>
             </div>
-          )
+          );
         }}
       />
-    )
+    );
   }
   if (drawerContent === 'note') {
     // text, onSave, id
-    return <SetNoteForm id={set.id} text={set.note} onSave={onChangeSet} />
+    return <SetNoteForm id={set.id} text={set.note} onSave={onChangeSet} />;
   }
 
   if (drawerContent === 'delete') {
@@ -74,7 +74,7 @@ const SetRowDrawer = ({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (drawerContent === 'stats') {
@@ -119,9 +119,9 @@ const SetRowDrawer = ({
           </div>
         )}
       </div>
-    )
+    );
   }
 
-  return null
-}
-export default SetRowDrawer
+  return null;
+};
+export default SetRowDrawer;

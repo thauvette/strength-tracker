@@ -1,4 +1,10 @@
-import { useEffect, useState, createContext, useContext } from 'preact/compat';
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+} from 'preact/compat';
 import dayjs from 'dayjs';
 
 import {
@@ -37,18 +43,14 @@ import { Exercise, MuscleGroup, ObjectStoreEvent } from './types';
 const DBContext = createContext(null);
 
 export const DBProvider = ({ children }) => {
-  const [db, setDb] = useState<IDBDatabase | null>(null);
+  const [db, setDb] = useState<IDBDatabase>(null);
 
   // INITIALIZE OUR DB
   useEffect(() => {
     initializeDb(setDb);
   }, []); // eslint-disable-line
 
-  if (!db) {
-    return null;
-  }
-
-  const getFromCursor = (store: string) => getFromCursorUtil(db, store);
+  const getFromCursor = (store) => getFromCursorUtil(db, store);
 
   const openObjectStoreTransaction = (store) =>
     openObjectStoreTransactionUtil(db, store);
@@ -59,9 +61,7 @@ export const DBProvider = ({ children }) => {
       // then together.
       getFromCursor(objectStores.muscleGroups).then(
         async (muscleGroupsObject: { [key: number]: MuscleGroup }) => {
-          const exercises: {
-            [key: number]: Exercise;
-          } = await getFromCursor(objectStores.exercises);
+          const exercises = await getFromCursor(objectStores.exercises);
           const data = Object.entries(exercises || {}).reduce(
             (obj, [exerciseId, exercise]) => {
               const muscleGroupData = muscleGroupsObject[exercise.primaryGroup];
@@ -223,7 +223,7 @@ export const DBProvider = ({ children }) => {
     const arr = [];
     const headerItems = ['store', 'id'];
 
-    for (const storeName of Array.from(db?.objectStoreNames || [])) {
+    for (const storeName of Array.from(db?.objectStoreNames)) {
       const entries = await getFromCursor(storeName);
       if (Object.keys(entries || {}).length) {
         Object.entries(entries).forEach(([id, data]) => {
@@ -345,43 +345,43 @@ export const DBProvider = ({ children }) => {
       return Promise.reject(err?.message || 'Unable to restore data');
     }
   };
+  const memoizedValue = useMemo(
+    () => ({
+      isInitialized: !!db,
+      // WENDLER
+      getWendlerCycle: (id: string) => getWendlerCycle(db, id),
+      getWendlerExercises: () => getWendlerExercises(db),
+      createCycle: (data) => createCycle(db, data),
+      updateWendlerItem: ({ id, path, value }) =>
+        updateWendlerItem(db, { id, path, value }),
+      // ENTRIES
+      getAllEntries: (store) => getAllEntries(db, store),
+      deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
+      createEntry: (store, data) => createEntry(db, store, data),
+      updateEntry: (store, id, data) => updateEntry(db, store, id, data),
+      // SETS
+      createOrUpdateLoggedSet: (id, data) =>
+        createOrUpdateLoggedSet(db, id, data),
+      deleteLoggedSet: (id) => deleteLoggedSet(db, id),
+      getAllSetsHistory: () => getAllSetsHistory(db),
+      getTodaySets: () => getSetsByDay(db, dayjs().toDate()),
+      getSetsByDay: (date) => getSetsByDay(db, date),
+      getExerciseOptions,
+      getExerciseHistoryById,
+      getExerciseById,
+      createBackup,
+      restoreFromBackup,
+      createBioMetric: (name) => createBioMetric(db, name),
+      getMuscleGroups,
+      createRoutine: (data) => createRoutine(db, data),
+      updateRoutine: (id, data) => updateRoutine(db, id, data),
+      getItem: (store, id) => getItem(db, store, id),
+    }),
+    [db], // eslint-disable-line
+  );
 
   return (
-    <DBContext.Provider
-      value={{
-        isInitialized: !!db,
-        // WENDLER
-        getWendlerCycle: (id: string) => getWendlerCycle(db, id),
-        getWendlerExercises: () => getWendlerExercises(db),
-        createCycle: (data) => createCycle(db, data),
-        updateWendlerItem: ({ id, path, value }) =>
-          updateWendlerItem(db, { id, path, value }),
-        // ENTRIES
-        getAllEntries: (store: string) => getAllEntries(db, store),
-        deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
-        createEntry: (store, data) => createEntry(db, store, data),
-        updateEntry: (store, id, data) => updateEntry(db, store, id, data),
-        // SETS
-        createOrUpdateLoggedSet: (id, data) =>
-          createOrUpdateLoggedSet(db, id, data),
-        deleteLoggedSet: (id) => deleteLoggedSet(db, id),
-        getAllSetsHistory: () => getAllSetsHistory(db),
-        getTodaySets: () => getSetsByDay(db, dayjs().toDate()),
-        getSetsByDay: (date) => getSetsByDay(db, date),
-        getExerciseOptions,
-        getExerciseHistoryById,
-        getExerciseById,
-        createBackup,
-        restoreFromBackup,
-        createBioMetric: (name) => createBioMetric(db, name),
-        getMuscleGroups,
-        createRoutine: (data) => createRoutine(db, data),
-        updateRoutine: (id, data) => updateRoutine(db, id, data),
-        getItem: (store, id) => getItem(db, store, id),
-      }}
-    >
-      {children}
-    </DBContext.Provider>
+    <DBContext.Provider value={memoizedValue}>{children}</DBContext.Provider>
   );
 };
 

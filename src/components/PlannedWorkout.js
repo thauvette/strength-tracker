@@ -1,11 +1,11 @@
-import { h } from 'preact'
-import { Link } from 'preact-router'
-import { useState } from 'preact/hooks'
-import EditableSet from './editableSet/editableSet'
-import ExerciseHistoryModal from './exerciseHistoryModal/ExerciseHistoryModal'
-import Icon from './icon/Icon'
-import { routes } from '../config/routes'
-import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory'
+import { h } from 'preact';
+import { Link } from 'preact-router';
+import { useState } from 'preact/hooks';
+import EditableSet from './editableSet/editableSet.tsx';
+import ExerciseHistoryModal from './exerciseHistoryModal/ExerciseHistoryModal';
+import Icon from './icon/Icon';
+import { routes } from '../config/routes';
+import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 
 const PlannedWorkout = ({
   sets,
@@ -15,35 +15,35 @@ const PlannedWorkout = ({
 }) => {
   const firstIncompleteSet = sets
     .map(({ created }) => created)
-    .indexOf(undefined)
+    .indexOf(undefined);
   const [activeSet, setActiveSet] = useState(
     firstIncompleteSet >= 0 ? firstIncompleteSet : 0,
-  )
+  );
 
   const [exerciseModalState, setExerciseModalState] = useState({
     id: null,
     isOpen: false,
-  })
+  });
 
-  const [exerciseHistory, getData] = useExerciseHistory(exerciseModalState.id)
+  const [exerciseHistory, getData] = useExerciseHistory(exerciseModalState.id);
 
   const saveSet = (set, index) => {
-    setActiveSet(index + 1)
-    onUpdateSet(set, index)
-  }
+    setActiveSet(index + 1);
+    onUpdateSet(set, index);
+  };
 
   const openExerciseModal = (id) => {
     setExerciseModalState({
       id,
       isOpen: true,
-    })
-  }
+    });
+  };
 
   const closeExerciseModal = () =>
     setExerciseModalState({
       id: null,
       isOpen: false,
-    })
+    });
 
   return (
     <div>
@@ -56,7 +56,7 @@ const PlannedWorkout = ({
           exercise,
           isWarmUp,
           barWeight,
-        } = set
+        } = set;
         return (
           <div key={i} class="border-b-4 pb-2 mb-4">
             <button
@@ -108,13 +108,13 @@ const PlannedWorkout = ({
                           )}
                         </div>
                       </div>
-                    )
+                    );
                   }}
                 />
               </div>
             )}
           </div>
-        )
+        );
       })}
       {exerciseModalState.isOpen &&
         exerciseHistory?.id === exerciseModalState?.id && (
@@ -126,7 +126,7 @@ const PlannedWorkout = ({
           />
         )}
     </div>
-  )
-}
+  );
+};
 
-export default PlannedWorkout
+export default PlannedWorkout;

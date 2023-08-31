@@ -2,7 +2,7 @@ import { h } from 'preact';
 import useDB from '../../context/db/db.tsx';
 import useToast from '../../context/toasts/Toasts';
 
-import EditableSet from '../editableSet/editableSet';
+import EditableSet from '../editableSet/editableSet.tsx';
 import SetRow from '../setRow/setRow';
 
 const Track = ({

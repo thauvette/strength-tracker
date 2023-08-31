@@ -11,7 +11,7 @@ export const objectStores: {
   routines: 'routines',
 };
 
-export type possibleStores =
+export type PossibleStores =
   | 'wendler_cycles'
   | 'exercises'
   | 'sets'

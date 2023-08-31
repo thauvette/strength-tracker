@@ -1,11 +1,11 @@
-import { h } from 'preact'
-import { Link } from 'preact-router'
-import dayjs from 'dayjs'
-import { routes } from '../../config/routes'
-import Icon from '../icon/Icon'
-import dateFormats from '../../config/dateFormats'
+import { h } from 'preact';
+import { Link } from 'preact-router';
+import dayjs from 'dayjs';
+import { routes } from '../../config/routes';
+import Icon from '../icon/Icon';
+import dateFormats from '../../config/dateFormats';
 
-const LogGroup = ({ name, sets, toggleActive }) => (
+const LogGroup = ({ name, sets, toggleActive, quickAdd }) => (
   <div key={name} class="mb-4 card p-4 ">
     <div class="flex justify-between pb-2">
       <button onClick={toggleActive} class="font-bold capitalize pl-0">
@@ -33,7 +33,8 @@ const LogGroup = ({ name, sets, toggleActive }) => (
         {set.note && <p class="pl-2"> - {set.note}</p>}
       </div>
     ))}
+    {quickAdd && <button onClick={quickAdd}>+ Quick Add</button>}
   </div>
-)
+);
 
-export default LogGroup
+export default LogGroup;

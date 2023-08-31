@@ -1,3 +1,5 @@
+import { PossibleStores } from './config';
+
 // BIO METRICS
 export interface BioMetric {
   name: String;
@@ -31,6 +33,22 @@ export interface Exercise {
   type: string;
   updated: number | undefined;
   created: number | undefined;
+  barWeight?: number | undefined;
+}
+
+export interface SetType {
+  created: number;
+  exercise: number;
+  reps: number;
+  updated: number;
+  weight: number;
+  isWarmUp: boolean;
+}
+
+export interface HydratedSet extends SetType {
+  bw?: number;
+  exerciseData: Exercise;
+  id: number;
 }
 
 export interface Fast {
@@ -58,4 +76,11 @@ export interface Routine {
 
 export interface ObjectStoreEvent extends Event {
   target: IDBRequest;
+}
+
+export interface DBContextType {
+  isInitialized: boolean;
+  getAllEntries: (store: PossibleStores) => Promise<{
+    [key: number]: Exercise | BioEntry | BioMetric;
+  }>;
 }

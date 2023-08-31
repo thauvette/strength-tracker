@@ -26,6 +26,8 @@ import Menu from './components/menu/Menu';
 import LoadingSpinner from './components/LoadingSpinner';
 import { DayHistoryModalContextProvider } from './context/dayHistoryModalContext';
 
+import { QuickAddSetModalProvider } from './context/quickAddSetModalContext';
+
 const AppWrapper = () => {
   const { isInitialized } = useDB();
 
@@ -88,7 +90,9 @@ const App = () => (
       <ToastProvider>
         <SessionDataProvider>
           <DayHistoryModalContextProvider>
-            <AppWrapper />
+            <QuickAddSetModalProvider>
+              <AppWrapper />
+            </QuickAddSetModalProvider>
           </DayHistoryModalContextProvider>
         </SessionDataProvider>
       </ToastProvider>

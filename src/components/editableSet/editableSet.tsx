@@ -1,12 +1,33 @@
-import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { h } from 'preact';
+import { useState, useEffect } from 'preact/hooks';
 
-import Modal from '../modal/Modal'
-import Plates from '../plates/plates'
+import Modal from '../modal/Modal';
+import Plates from '../plates/plates';
+import { LOCAL_STORAGE_PLATE_SETTINGS } from '../../config/constants';
+
+interface SetAttributes {
+  reps: number;
+  weight: number;
+  isWarmUp: boolean;
+}
+
+interface Props {
+  handleChanges?: (SetAttributes) => void;
+  reps?: number;
+  weight?: number;
+  isWarmUp?: boolean;
+  handleRemove?: () => void;
+  title?: string;
+  titleClass?: string;
+  onDuplicate?: (SetAttributes) => void;
+  renderCtas?: (SetAttributes) => void;
+  disablePlateModal?: boolean;
+  barWeight?: number;
+}
 
 const EditableSet = ({
   handleChanges,
-  reps: initialReps,
+  reps: initialReps = 0,
   weight: initialWeight,
   isWarmUp: initialIsWarmUp = false,
   handleRemove,
@@ -16,14 +37,21 @@ const EditableSet = ({
   renderCtas,
   disablePlateModal,
   barWeight,
-}) => {
+}: Props) => {
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
     isOpen: false,
-  })
-  const [reps, setReps] = useState(initialReps)
-  const [weight, setWeight] = useState(initialWeight)
-  const [isWarmUp, setIsWarmUp] = useState(initialIsWarmUp)
+  });
+  const [reps, setReps] = useState(initialReps);
+  const [weight, setWeight] = useState(initialWeight);
+  const [isWarmUp, setIsWarmUp] = useState(initialIsWarmUp);
+
+  const plateSettings = JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS),
+  );
+  const defaultPlateWeight = plateSettings?.barWeight
+    ? +plateSettings.barWeight
+    : 45;
 
   useEffect(() => {
     if (handleChanges) {
@@ -31,9 +59,9 @@ const EditableSet = ({
         reps,
         weight,
         isWarmUp,
-      })
+      });
     }
-  }, [reps, weight, isWarmUp]) // eslint-disable-line
+  }, [reps, weight, isWarmUp]); // eslint-disable-line
 
   return (
     <>
@@ -54,8 +82,9 @@ const EditableSet = ({
             <input
               type="checkbox"
               checked={isWarmUp}
-              onInput={(e) => {
-                setIsWarmUp(e.target.checked)
+              onInput={(e: Event) => {
+                if (e.target instanceof HTMLInputElement)
+                  setIsWarmUp(e.target.checked);
               }}
             />
 
@@ -69,8 +98,8 @@ const EditableSet = ({
               <button
                 disabled={reps === 0}
                 onClick={() => {
-                  const newValue = +reps > 1 ? +reps - 1 : 0
-                  setReps(newValue)
+                  const newValue = +reps > 1 ? +reps - 1 : 0;
+                  setReps(newValue);
                 }}
               >
                 -
@@ -78,14 +107,16 @@ const EditableSet = ({
               <input
                 class="flex-1 w-16 text-center"
                 value={reps}
-                onInput={(e) => {
-                  setReps(e.target.value)
+                onInput={(e: Event) => {
+                  if (e.target instanceof HTMLInputElement) {
+                    setReps(+e.target.value);
+                  }
                 }}
               />
 
               <button
                 onClick={() => {
-                  setReps(+reps + 1)
+                  setReps(+reps + 1);
                 }}
               >
                 +
@@ -99,9 +130,10 @@ const EditableSet = ({
               <button
                 disabled={weight <= 0}
                 onClick={() => {
-                  const remainder = +weight % 5
-                  const newWeight = +weight > 5 ? +weight - (remainder || 5) : 0
-                  setWeight(newWeight)
+                  const remainder = +weight % 5;
+                  const newWeight =
+                    +weight > 5 ? +weight - (remainder || 5) : 0;
+                  setWeight(newWeight);
                 }}
               >
                 -
@@ -109,15 +141,17 @@ const EditableSet = ({
               <input
                 class="flex-1 w-16 text-center"
                 value={weight}
-                onInput={(e) => {
-                  setWeight(e.target.value)
+                onInput={(e: Event) => {
+                  if (e.target instanceof HTMLInputElement) {
+                    setWeight(+e.target.value);
+                  }
                 }}
               />
 
               <button
                 onClick={() => {
-                  const newWeight = +weight + 5 - (+weight % 5)
-                  setWeight(newWeight)
+                  const newWeight = +weight + 5 - (+weight % 5);
+                  setWeight(newWeight);
                 }}
               >
                 +
@@ -173,10 +207,13 @@ const EditableSet = ({
             Close x
           </button>
         </div>
-        <Plates weight={plateModalState.weight} barWeight={barWeight || 45} />
+        <Plates
+          weight={plateModalState.weight}
+          barWeight={barWeight || defaultPlateWeight}
+        />
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default EditableSet
+export default EditableSet;

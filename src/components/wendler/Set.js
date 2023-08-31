@@ -1,6 +1,6 @@
-import { h } from 'preact'
-import EditableSet from '../editableSet/editableSet'
-import Icon from '../icon/Icon'
+import { h } from 'preact';
+import EditableSet from '../editableSet/editableSet.tsx';
+import Icon from '../icon/Icon';
 
 const Set = ({
   handleSubmit,
@@ -11,7 +11,7 @@ const Set = ({
   title,
   handleViewHistory,
 }) => {
-  const { reps, weight, isWarmUp, completed } = set
+  const { reps, weight, isWarmUp, completed } = set;
 
   return (
     <div class="border-b py-4">
@@ -88,7 +88,7 @@ const Set = ({
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Set
+export default Set;

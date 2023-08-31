@@ -10,7 +10,7 @@ import useDB from '../../context/db/db.tsx';
 
 import { routes } from '../../config/routes';
 import Accordion from '../accordion/accordion';
-import EditableSet from '../editableSet/editableSet';
+import EditableSet from '../editableSet/editableSet.tsx';
 
 const CreateRoutine = ({ initialValues }) => {
   const { createRoutine, updateRoutine } = useDB();

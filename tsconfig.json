@@ -9,6 +9,7 @@
     "allowUmdGlobalAccess": true,
     "noEmit": true,
     "allowJs": true,
+    "allowImportingTsExtensions": true,
     "checkJs": false,
     "skipLibCheck": true,
     "baseUrl": "./",

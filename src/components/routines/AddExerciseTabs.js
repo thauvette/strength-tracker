@@ -1,14 +1,14 @@
-import { h } from 'preact'
-import dayjs from 'dayjs'
-import { useState } from 'preact/hooks'
-import ExerciseStats from '../exerciseStats/ExerciseStats'
-import Plan from '../Plan'
-import EditableSet from '../editableSet/editableSet'
-import generateRandomId from '../../utilities.js/generateRandomId'
-import Accordion from '../accordion/accordion'
+import { h } from 'preact';
+import dayjs from 'dayjs';
+import { useState } from 'preact/hooks';
+import ExerciseStats from '../exerciseStats/ExerciseStats';
+import Plan from '../Plan';
+import EditableSet from '../editableSet/editableSet.tsx';
+import generateRandomId from '../../utilities.js/generateRandomId';
+import Accordion from '../accordion/accordion';
 
 const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
-  const [view, setView] = useState('add')
+  const [view, setView] = useState('add');
 
   const views = {
     add: (
@@ -30,7 +30,7 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
               >
                 + Add Set
               </button>
-            )
+            );
           }}
           disablePlateModal
         />
@@ -69,11 +69,11 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
         <ExerciseStats exerciseHistory={selectedExercise} />
       </div>
     ),
-  }
+  };
 
   const removeSet = (id) => {
-    setAddedSets(addedSets.filter((set) => set.id !== id))
-  }
+    setAddedSets(addedSets.filter((set) => set.id !== id));
+  };
 
   return (
     <>
@@ -101,7 +101,7 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
                               }
                             : addedSet,
                         ),
-                      )
+                      );
                     }}
                     onDuplicate={() =>
                       setAddedSets([
@@ -147,7 +147,7 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
       </div>
       <div class="pb-4">{views[view]}</div>
     </>
-  )
-}
+  );
+};
 
-export default AddExerciseTabs
+export default AddExerciseTabs;

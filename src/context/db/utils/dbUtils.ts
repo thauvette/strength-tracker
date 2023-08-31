@@ -24,13 +24,7 @@ const formatData = (store: string, data: any) => {
   return data;
 };
 
-// TODO: this needs conditional types
-export const getFromCursor = (
-  db: IDBDatabase,
-  store: string,
-): Promise<{
-  [key: number]: any;
-}> =>
+export const getFromCursor = (db: IDBDatabase, store: string) =>
   new Promise((resolve, reject) => {
     const { transaction, objectStore } = openObjectStoreTransaction(db, store);
 
