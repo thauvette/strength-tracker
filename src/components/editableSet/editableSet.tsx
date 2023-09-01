@@ -46,9 +46,17 @@ const EditableSet = ({
   const [weight, setWeight] = useState(initialWeight);
   const [isWarmUp, setIsWarmUp] = useState(initialIsWarmUp);
 
-  const plateSettings = JSON.parse(
-    localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS),
-  );
+  let plateSettings;
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      plateSettings = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE_PLATE_SETTINGS),
+      );
+    } catch (err) {
+      plateSettings = null;
+    }
+  }
+
   const defaultPlateWeight = plateSettings?.barWeight
     ? +plateSettings.barWeight
     : 45;

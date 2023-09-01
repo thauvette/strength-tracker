@@ -1,40 +1,48 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
-import { useEffect, useContext, createContext, useState } from 'preact/compat'
-import { LOCAL_STORAGE_THEME } from '../config/constants'
+import { useEffect, useContext, createContext, useState } from 'preact/compat';
+import { LOCAL_STORAGE_THEME } from '../config/constants';
 
-const ThemeContext = createContext()
+const ThemeContext = createContext();
 
-const useTheme = () => useContext(ThemeContext)
+const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-  const initialTheme = JSON.parse(localStorage.getItem(LOCAL_STORAGE_THEME))
-  let prefersDark = initialTheme === 'dark'
-  if (!initialTheme && typeof window !== undefined) {
-    prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  let initialTheme = 'dark';
+  if (typeof window !== 'undefined' && window?.localStorage) {
+    initialTheme = JSON.parse(localStorage.getItem(LOCAL_STORAGE_THEME));
+  }
+
+  let prefersDark = initialTheme === 'dark';
+  if (!initialTheme && typeof window !== 'undefined') {
+    prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
   const [theme, setTheme] = useState(
     initialTheme ? initialTheme : prefersDark ? 'dark' : 'light',
-  ) // dark || light
+  ); // dark || light
 
   useEffect(() => {
     if (initialTheme === 'dark') {
-      document.documentElement.classList.add('dark')
+      document.documentElement.classList.add('dark');
     }
-  }, []) // eslint-disable-line
+  }, []); // eslint-disable-line
 
   const toggleThemeMode = () => {
-    const newMode = theme === 'light' ? 'dark' : 'light'
-    setTheme(newMode)
-    localStorage.setItem(LOCAL_STORAGE_THEME, JSON.stringify(newMode))
+    const newMode = theme === 'light' ? 'dark' : 'light';
+    setTheme(newMode);
+
+    if (typeof window !== 'undefined' && window?.localStorage) {
+      localStorage.setItem(LOCAL_STORAGE_THEME, JSON.stringify(newMode));
+    }
+
     // toggle root
     if (newMode === 'dark') {
-      document.documentElement.classList.add('dark')
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark')
+      document.documentElement.classList.remove('dark');
     }
-  }
+  };
 
   return (
     <ThemeContext.Provider
@@ -45,7 +53,7 @@ export const ThemeProvider = ({ children }) => {
     >
       {children}
     </ThemeContext.Provider>
-  )
-}
+  );
+};
 
-export default useTheme
+export default useTheme;
