@@ -102,6 +102,11 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
               <input
                 onInput={(e) => setSearchText(e.target.value)}
                 value={searchText}
+                onFocus={(e) => {
+                  e.target.scrollIntoView({
+                    behavior: 'smooth',
+                  });
+                }}
               />
             </label>
             <div class="pb-1">

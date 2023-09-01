@@ -65,7 +65,7 @@ const EditableSet = ({
 
   return (
     <>
-      <div class="editable-set py-1">
+      <div class="py-1">
         <div class="flex items-center justify-between">
           {title && (
             <p class={`m-0 ml-4 ${titleClass ? titleClass : ''}`}>{title}</p>
@@ -77,8 +77,8 @@ const EditableSet = ({
             </button>
           )}
         </div>
-        <div class="mb-2">
-          <label class="flex items-center gap-2 ">
+        <div class="mb-2 flex">
+          <label class="flex items-center gap-2">
             <input
               type="checkbox"
               checked={isWarmUp}
@@ -105,7 +105,7 @@ const EditableSet = ({
                 -
               </button>
               <input
-                class="flex-1 w-16 text-center"
+                class="flex-1 w-full text-center"
                 value={reps}
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
@@ -139,7 +139,7 @@ const EditableSet = ({
                 -
               </button>
               <input
-                class="flex-1 w-16 text-center"
+                class="flex-1 w-full text-center"
                 value={weight}
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {

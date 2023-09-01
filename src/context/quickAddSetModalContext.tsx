@@ -6,13 +6,11 @@ import { Exercise, HydratedSet } from './db/types';
 import useDB from './db/db';
 import { objectStores } from './db/config';
 import Modal from '../components/modal/Modal';
-import EditableSet from '../components/editableSet/editableSet.tsx';
+import EditableSet from '../components/editableSet/editableSet';
 
 import useToast from './toasts/Toasts';
 
-const QuickAddSetModalContext = createContext<{
-  launchQuickAdd: (exerciseId: number) => void;
-}>(null);
+const QuickAddSetModalContext = createContext(null);
 
 export const QuickAddSetModalProvider = ({ children }) => {
   const { getItem, getSetsByDay, createOrUpdateLoggedSet } = useDB();
