@@ -1,7 +1,8 @@
 import { h } from 'preact';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'preact/hooks';
-import { Link, route } from 'preact-router';
+import { route } from 'preact-router';
+import { uniq } from 'lodash';
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
 
@@ -10,20 +11,17 @@ import Calendar from '../components/calendar/Calendar';
 import { routes } from '../config/routes';
 
 import dateFormats from '../config/dateFormats';
-import useSessionContext from '../context/sessionData/sessionData';
-import Body from '../components/async/body';
-import { uniq } from 'lodash';
+
 import CalendarControls from '../components/logs/calendarControls';
-import LogGroup from '../components/logs/logGroup';
-import LogSet from '../components/logs/logSet';
-import useQuickSetAdd from '../context/quickAddSetModalContext.tsx';
+
+import LoadingSpinner from '../components/LoadingSpinner.js';
+import LogHeader from '../components/logs/logHeader';
+import BioMetricList from '../components/logs/bioMetricList';
+import ExerciseLists from '../components/logs/exerciseLists';
 
 // date is a query param
 const Logs = ({ date }) => {
   const { getAllSetsHistory, getAllEntries } = useDB();
-
-  const { startRoutine } = useSessionContext();
-  const { launchQuickAdd } = useQuickSetAdd();
 
   const [logState, setLogState] = useState({
     loading: true,
@@ -37,9 +35,8 @@ const Logs = ({ date }) => {
   );
   const [calendarIsOpen, setCalendarIsOpen] = useState(false);
 
-  const [view, setView] = useState('groups');
-
   const [selectedExercise, setSelectedExercise] = useState(null);
+  const clearSelectedExercise = () => setSelectedExercise(null);
 
   const changeDate = (date) => {
     setActiveDate(date);
@@ -106,8 +103,8 @@ const Logs = ({ date }) => {
 
   if (logState.loading) {
     return (
-      <div>
-        <p>Loading</p>
+      <div class="flex justify-center">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -119,16 +116,6 @@ const Logs = ({ date }) => {
     );
   }
   const activeDayData = logState.data?.[activeDate] || [];
-  const sortedDayData = activeDayData.reduce((obj, exercise) => {
-    const key = exercise.name;
-
-    const currentExerciseSets = obj[key] || [];
-    currentExerciseSets.push(exercise);
-    return {
-      ...obj,
-      [key]: currentExerciseSets,
-    };
-  }, {});
 
   const stepByDate = (amount) =>
     changeDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day));
@@ -141,21 +128,6 @@ const Logs = ({ date }) => {
   };
 
   const isToday = dayjs(activeDate).isSame(dayjs(), 'day');
-  const useDayAsRoutine = () => {
-    const sets =
-      activeDayData?.map(
-        ({ exercise, name, reps, weight, isWarmUp, barWeight }) => ({
-          exercise,
-          exerciseName: name,
-          reps,
-          weight,
-          isWarmUp,
-          barWeight: barWeight || 45,
-        }),
-      ) || [];
-    startRoutine(sets);
-    route(routes.activeRoutine);
-  };
 
   const musclesWorked = selectedExercise
     ? {
@@ -186,9 +158,6 @@ const Logs = ({ date }) => {
         activePrimary: [],
         activeSecondary: [],
       };
-  const times = activeDayData?.map((item) => item.created) || [];
-  const earliestSet = times?.length ? Math.min(...times) : null;
-  const lasSet = times?.length ? Math.max(...times) : null;
 
   return (
     <div class="px-2">
@@ -201,101 +170,26 @@ const Logs = ({ date }) => {
       />
       {activeDayData?.length > 0 ? (
         <>
-          <div class="px-8 pb-4">
-            {earliestSet && lasSet && (
-              <p class="text-center">
-                {dayjs(earliestSet).format(dateFormats.timeToSeconds)}
-                {' to '}
-                {dayjs(lasSet).format(dateFormats.timeToSeconds)} (
-                {dayjs(lasSet).diff(earliestSet, 'minutes')} mins)
-              </p>
-            )}
-            <div class="flex items-center justify-center gap-4 pb-4 text-lg">
-              <p class="capitalize">{selectedExercise?.name || 'Workout'}</p>
-              {selectedExercise ? (
-                <button class="p-0" onClick={() => setSelectedExercise(null)}>
-                  X
-                </button>
-              ) : null}
-            </div>
-            <div className="max-w-[10rem] mx-auto">
-              <Body {...musclesWorked} />
-            </div>
-          </div>
-          <div class="flex justify-between pb-6">
-            <button
-              class="link underline"
-              onClick={() => setView(view === 'groups' ? 'order' : 'groups')}
-            >
-              {view === 'groups' ? 'View in Order' : 'View in Groups'}
-            </button>
-            {!isToday && (
-              <button class="hollow" onClick={useDayAsRoutine}>
-                Do workout
-              </button>
-            )}
-          </div>
+          <LogHeader
+            activeDayData={activeDayData}
+            selectedExercise={selectedExercise}
+            clearSelectedExercise={clearSelectedExercise}
+            musclesWorked={musclesWorked}
+          />
+          <ExerciseLists
+            activeDayData={activeDayData}
+            isToday={isToday}
+            toggleSelectedExercise={(set) =>
+              setSelectedExercise(
+                selectedExercise?.exercise === set.exercise ? null : set,
+              )
+            }
+          />
         </>
       ) : null}
 
-      {view === 'groups'
-        ? Object.entries(sortedDayData).map(([name, sets]) => (
-            <LogGroup
-              key={name}
-              name={name}
-              sets={sets}
-              toggleActive={() =>
-                setSelectedExercise(
-                  selectedExercise?.exercise === sets?.[0].exercise
-                    ? null
-                    : sets?.[0],
-                )
-              }
-              quickAdd={
-                isToday ? () => launchQuickAdd(sets?.[0].exercise) : null
-              }
-            />
-          ))
-        : activeDayData?.map((set) => (
-            <LogSet
-              key={set.created}
-              set={set}
-              toggleActive={() =>
-                setSelectedExercise(
-                  selectedExercise?.exercise === set.exercise ? null : set,
-                )
-              }
-            />
-          ))}
-
       {logState?.bioMetrics?.[activeDate] ? (
-        <div>
-          <h1 class="my-4">Bio metrics</h1>
-          {Object.entries(logState?.bioMetrics?.[activeDate]).map(
-            ([id, bioMetric]) => (
-              <div key={id} class="mb-4 card p-4">
-                <div class="flex items-center justify-between">
-                  <p class="font-bold capitalize">{bioMetric.name}</p>
-                  <div class="flex justify-end">
-                    <Link href={`${routes.bioMetricsBase}/${bioMetric.bioId}`}>
-                      View
-                    </Link>
-                  </div>
-                </div>
-                {bioMetric.items?.length
-                  ? bioMetric.items.map((item) => (
-                      <div key={item.created}>
-                        <p>
-                          {dayjs(item.date).format(dateFormats.time)} -{' '}
-                          {item.value}
-                        </p>
-                      </div>
-                    ))
-                  : null}
-              </div>
-            ),
-          )}
-        </div>
+        <BioMetricList bioMetrics={logState?.bioMetrics?.[activeDate]} />
       ) : null}
       <Modal isOpen={calendarIsOpen} onRequestClose={toggleCalendar}>
         <Calendar

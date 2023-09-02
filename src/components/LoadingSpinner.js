@@ -1,11 +1,11 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
 export default function LoadingSpinner() {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        class="w-8 h-8 mr-2 text-primary-200 animate-spin dark:text-white fill-primary-800"
+        class="w-8 h-8 mr-2 fill-white text-primary-800 animate-spin dark:text-white dark:fill-black"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -21,5 +21,5 @@ export default function LoadingSpinner() {
       </svg>
       <span class="sr-only">Loading...</span>
     </div>
-  )
+  );
 }
