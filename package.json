@@ -10,7 +10,7 @@
     "lint": "eslint src",
     "test": "jest --watch",
     "start": "preact watch",
-    "format": "prettier --write 'src/**/*{js,scss}'"
+    "format": "prettier --write 'src/**/*{js,scss,ts,tsx,css}'"
   },
   "eslintConfig": {
     "extends": "preact",

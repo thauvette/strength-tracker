@@ -193,7 +193,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
     window.addEventListener('resize', checkWidth);
 
     return () => window.removeEventListener('resize', checkWidth);
-  }, [containerWidth, theme]);
+  }, [containerWidth, theme]); // eslint-disable-line
 
   return (
     <div

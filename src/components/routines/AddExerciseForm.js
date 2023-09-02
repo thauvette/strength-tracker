@@ -5,7 +5,6 @@ import Icon from '../icon/Icon';
 import useDB from '../../context/db/db.tsx';
 import { formatHistory } from '../../hooks/useExerciseHistory/utils';
 import AddExerciseTabs from './AddExerciseTabs';
-import Modal from '../modal/Modal';
 import LoadingSpinner from '../LoadingSpinner';
 
 const AddExerciseForm = ({ submit }) => {
