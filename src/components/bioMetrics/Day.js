@@ -1,5 +1,7 @@
 import { useRef } from 'preact/hooks';
 import dayjs from 'dayjs';
+import { Fragment } from 'preact/jsx-runtime';
+
 import useIntersectObserver from '../../hooks/useIntersectObserver';
 import { formatToFixed } from '../../utilities.js/formatNumbers';
 import Icon from '../icon/Icon';
@@ -21,11 +23,11 @@ const Day = ({ day, setEditModalState }) => {
           {isIntersecting && <ChangeIndicator number={change} />}
         </div>
       </div>
-      <div className="flex justify between p-2 card-body">
-        <div className="flex-1 ">
-          {items.map((item) => {
-            return (
-              <div key={item.id} className="flex items-center mb-2 text-lg">
+      <div className="grid grid-cols-[1fr_repeat(3,_auto)] items-center gap-1 p-2 card-body">
+        {items.map((item) => {
+          return (
+            <Fragment key={item.id}>
+              <div class="flex items-center col-start-1">
                 <button
                   onClick={() =>
                     setEditModalState({
@@ -39,14 +41,13 @@ const Day = ({ day, setEditModalState }) => {
                 </button>
 
                 <p>{dayjs(item.date).format('h:mm a')}</p>
-                <div class="ml-auto flex items-center gap-2">
-                  <p className="font-bold text-sm mr-1">{item.value}</p>
-                  {isIntersecting && <ChangeIndicator number={item.diff} />}
-                </div>
               </div>
-            );
-          })}
-        </div>
+
+              <p className="font-bold text-sm mr-1">{item.value}</p>
+              {isIntersecting && <ChangeIndicator number={item.diff} />}
+            </Fragment>
+          );
+        })}
       </div>
     </div>
   );

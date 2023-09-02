@@ -1,7 +1,6 @@
 import { h } from 'preact';
-import dayjs from 'dayjs';
-import Icon from '../../components/icon/Icon';
 import { convertDaysToWeeks } from './utils';
+import Week from './Week';
 
 const Weeks = ({ days = [] }) => {
   if (!days?.length) {
@@ -18,33 +17,8 @@ const Weeks = ({ days = [] }) => {
         const change = previousWeekAverage
           ? week.average - previousWeekAverage
           : undefined;
-        return (
-          <div key={week.key} className="mb-3">
-            <div className="flex items-center justify-between p-2 text-lg font-bold card-header">
-              <p>Week of {dayjs(week.key).format('MMM DD YYYY')}</p>
-              <p>{week.average.toFixed(2)}</p>
-            </div>
-            <div className="flex justify between p-2 card-body">
-              <p className="flex-1 ">
-                {week?.count} {week?.count > 1 ? 'entries' : 'entry'}
-              </p>
-              {change !== undefined && (
-                <div>
-                  <div className="flex" items-start>
-                    {change !== 0 && (
-                      <Icon
-                        name={
-                          change > 0 ? 'arrow-up-outline' : 'arrow-down-outline'
-                        }
-                      />
-                    )}
-                    <p className="ml-2">{change.toFixed(2)}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
+
+        return <Week key={week.key} week={week} change={change} />;
       })}
     </div>
   );
