@@ -1,6 +1,6 @@
-import { h } from 'preact'
-import BioMetricForm from './bioMetricForm'
-import Day from './Day'
+import { h } from 'preact';
+import BioMetricForm from './bioMetricForm';
+import Day from './Day';
 
 const Days = ({
   days,
@@ -13,7 +13,7 @@ const Days = ({
     <BioMetricForm
       initialValues={initialFormValues}
       submit={(data) => {
-        handleAddEntry(data)
+        handleAddEntry(data);
       }}
       name={name}
       submitText="Add New +"
@@ -23,6 +23,6 @@ const Days = ({
       <Day key={day.dayKey} day={day} setEditModalState={setEditModalState} />
     ))}
   </div>
-)
+);
 
-export default Days
+export default Days;

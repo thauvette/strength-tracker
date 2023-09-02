@@ -4,19 +4,19 @@ const formatExercise = (data) => {
     ? data.musclesWorked
     : !data.musclesWorked
     ? []
-    : [data.musclesWorked]
+    : [data.musclesWorked];
 
   const secondaryMusclesWorked = Array.isArray(data.secondaryMusclesWorked)
     ? data.secondaryMusclesWorked
     : !data.secondaryMusclesWorked
     ? []
-    : [data.secondaryMusclesWorked]
+    : [data.secondaryMusclesWorked];
 
   return {
     ...data,
     musclesWorked,
     secondaryMusclesWorked,
-  }
-}
+  };
+};
 
-export default formatExercise
+export default formatExercise;

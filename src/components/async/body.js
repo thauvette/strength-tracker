@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
 /**
  * @param {Object} props
@@ -9,15 +9,15 @@ import { h } from 'preact'
 
 const generateFill = ({ ids, activePrimary = [], activeSecondary = [] }) => {
   if (activePrimary.some((primaryId) => ids.some((id) => id === +primaryId))) {
-    return 'fill-[#1e3a8a] '
+    return 'fill-[#1e3a8a] ';
   }
   if (
     activeSecondary.some((secondaryId) => ids.some((id) => id === +secondaryId))
   ) {
-    return 'fill-[#60a5fa] '
+    return 'fill-[#60a5fa] ';
   }
-  return 'fill-[#dbeafe]'
-}
+  return 'fill-[#dbeafe]';
+};
 
 const Body = ({ activePrimary = [], activeSecondary = [] }) => {
   // get muscle groups from db, so active muscle group props can just be numbers
@@ -460,7 +460,7 @@ const Body = ({ activePrimary = [], activeSecondary = [] }) => {
         })}`}
       />
     </svg>
-  )
-}
+  );
+};
 
-export default Body
+export default Body;

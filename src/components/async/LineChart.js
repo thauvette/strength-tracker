@@ -1,67 +1,67 @@
-import { h } from 'preact'
-import { useLayoutEffect, useRef, useState } from 'preact/hooks'
-import * as d3 from 'd3'
-import dayjs from 'dayjs'
+import { h } from 'preact';
+import { useLayoutEffect, useRef, useState } from 'preact/hooks';
+import * as d3 from 'd3';
+import dayjs from 'dayjs';
 
-import styles from './line-chart.scss'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
+import styles from './line-chart.scss';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 
-import useTheme from '../../context/theme'
+import useTheme from '../../context/theme';
 
 const margins = {
   top: 8,
   right: 24,
   bottom: 42,
   left: 16,
-}
+};
 
 const LineChart = ({ data, dateFormat, renderTooltip }) => {
-  const { theme } = useTheme()
+  const { theme } = useTheme();
 
-  const containerRef = useRef(null)
-  const chartCanvasRef = useRef(null)
-  const [range, setRange] = useState([])
-  const [mean, setMean] = useState(null)
-  const [bookends, setBookends] = useState([])
-  const [containerWidth, setContainerWidth] = useState(null)
-  const tooltipRef = useRef(null)
+  const containerRef = useRef(null);
+  const chartCanvasRef = useRef(null);
+  const [range, setRange] = useState([]);
+  const [mean, setMean] = useState(null);
+  const [bookends, setBookends] = useState([]);
+  const [containerWidth, setContainerWidth] = useState(null);
+  const tooltipRef = useRef(null);
 
-  const [selectedData, setSelectedData] = useState(null)
+  const [selectedData, setSelectedData] = useState(null);
 
   const drawLine = async () => {
-    const { width, height } = containerRef.current.getBoundingClientRect()
+    const { width, height } = containerRef.current.getBoundingClientRect();
 
-    const innerWidth = width - margins.left - margins.right
-    const innerHeight = height - margins.top - margins.bottom
+    const innerWidth = width - margins.left - margins.right;
+    const innerHeight = height - margins.top - margins.bottom;
 
     const root = d3
       .select(chartCanvasRef.current)
       .attr('width', width)
-      .attr('height', height)
+      .attr('height', height);
 
-    root.selectAll('*').remove()
-    setSelectedData(null)
+    root.selectAll('*').remove();
+    setSelectedData(null);
     const svg = root
       .append('g')
-      .attr('transform', `translate(${margins.left}, ${margins.top})`)
-    const x = d3.scaleTime().range([0, innerWidth])
-    const y = d3.scaleLinear().range([innerHeight, 0])
+      .attr('transform', `translate(${margins.left}, ${margins.top})`);
+    const x = d3.scaleTime().range([0, innerWidth]);
+    const y = d3.scaleLinear().range([innerHeight, 0]);
 
-    const yMin = d3.min(data, (d) => d.y)
-    const yMax = d3.max(data, (d) => d.y)
-    const xMin = d3.min(data, (d) => d.x)
-    const xMax = d3.max(data, (d) => d.x)
-    x.domain([xMin, xMax])
-    y.domain([yMin - yMin * 0.05, yMax + yMax * 0.05])
+    const yMin = d3.min(data, (d) => d.y);
+    const yMax = d3.max(data, (d) => d.y);
+    const xMin = d3.min(data, (d) => d.x);
+    const xMax = d3.max(data, (d) => d.x);
+    x.domain([xMin, xMax]);
+    y.domain([yMin - yMin * 0.05, yMax + yMax * 0.05]);
 
     const valueLine = d3
       .line()
       .x((d) => {
-        return x(d.x)
+        return x(d.x);
       })
       .y((d) => {
-        return y(d.y)
-      })
+        return y(d.y);
+      });
 
     // Add the X Axis
     svg
@@ -79,7 +79,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('x', -margins.bottom)
       .attr('dy', '.35em')
       .attr('transform', 'rotate(-90)')
-      .style('text-anchor', 'start')
+      .style('text-anchor', 'start');
 
     // Add the Y Axis
     svg
@@ -99,10 +99,10 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('dy', '0.71em')
       .attr('text-anchor', 'end')
       .attr('transform', `translate(${16}, 0)`)
-      .text('value')
+      .text('value');
 
     // THE MEAN
-    const average = d3.mean(data, (d) => d.y)
+    const average = d3.mean(data, (d) => d.y);
     svg
       .append('line')
       .attr('class', styles.meanLine)
@@ -111,10 +111,10 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('x2', innerWidth)
       .attr('y2', y(average))
       .attr('transform', `translate(${margins.left}, 0)`)
-      .style('stroke-dasharray', '3, 3')
+      .style('stroke-dasharray', '3, 3');
 
-    const firstEntry = data.find((entry) => entry.x === xMin)
-    const lastEntry = data.find((entry) => entry.x === xMax)
+    const firstEntry = data.find((entry) => entry.x === xMin);
+    const lastEntry = data.find((entry) => entry.x === xMax);
 
     if (firstEntry?.y && lastEntry?.y) {
       svg
@@ -125,11 +125,11 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
         .attr('y1', y(firstEntry?.y))
         .attr('y2', y(lastEntry?.y))
         .attr('transform', `translate(${margins.left}, 0)`)
-        .style('stroke-dasharray', '3, 3')
+        .style('stroke-dasharray', '3, 3');
 
-      setBookends([firstEntry?.y, lastEntry?.y])
+      setBookends([firstEntry?.y, lastEntry?.y]);
     } else {
-      setBookends([])
+      setBookends([]);
     }
 
     //  THE LINE
@@ -138,10 +138,10 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .data([data])
       .attr('class', styles.line)
       .attr('d', valueLine)
-      .attr('transform', `translate(${margins.left}, 0)`)
+      .attr('transform', `translate(${margins.left}, 0)`);
 
     // Dots
-    const dotGroup = svg.append('g')
+    const dotGroup = svg.append('g');
 
     dotGroup
       .selectAll('innerDots')
@@ -152,7 +152,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('cy', (d) => y(d.y))
       .attr('fill', theme === 'dark' ? '#fff' : '#000')
       .attr('r', 2)
-      .attr('transform', `translate(${margins.left}, 0)`)
+      .attr('transform', `translate(${margins.left}, 0)`);
 
     dotGroup
       .selectAll('dots')
@@ -165,35 +165,35 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('fill', 'transparent')
       .attr('transform', `translate(${margins.left}, 0)`)
       .on('click', (e, d) => {
-        setSelectedData(d)
-        tooltipRef.current.style.top = `${y(d.y) - margins.top - 20}px`
-        tooltipRef.current.style.left = `${x(d.x)}px`
-      })
-    setRange([yMin, yMax])
-    setMean(average)
-  }
+        setSelectedData(d);
+        tooltipRef.current.style.top = `${y(d.y) - margins.top - 20}px`;
+        tooltipRef.current.style.left = `${x(d.x)}px`;
+      });
+    setRange([yMin, yMax]);
+    setMean(average);
+  };
 
   useLayoutEffect(() => {
     if (!containerWidth) {
-      const wrapper = containerRef?.current
-      const initialWidth = wrapper?.getBoundingClientRect()?.width || 400
-      setContainerWidth(initialWidth)
+      const wrapper = containerRef?.current;
+      const initialWidth = wrapper?.getBoundingClientRect()?.width || 400;
+      setContainerWidth(initialWidth);
     } else {
-      drawLine()
+      drawLine();
     }
 
     function checkWidth() {
-      const wrapper = containerRef?.current
-      const newWidth = wrapper?.getBoundingClientRect()?.width || 400
+      const wrapper = containerRef?.current;
+      const newWidth = wrapper?.getBoundingClientRect()?.width || 400;
       if (newWidth !== containerWidth) {
-        setContainerWidth(newWidth)
+        setContainerWidth(newWidth);
       }
     }
 
-    window.addEventListener('resize', checkWidth)
+    window.addEventListener('resize', checkWidth);
 
-    return () => window.removeEventListener('resize', checkWidth)
-  }, [containerWidth, theme])
+    return () => window.removeEventListener('resize', checkWidth);
+  }, [containerWidth, theme]);
 
   return (
     <div
@@ -207,7 +207,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
         />
         <div
           onClick={() => {
-            setSelectedData(null)
+            setSelectedData(null);
           }}
           ref={tooltipRef}
           class={`absolute bg-black bg-opacity-50 p-2
@@ -245,7 +245,7 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LineChart
+export default LineChart;

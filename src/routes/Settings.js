@@ -1,9 +1,9 @@
-import { h } from 'preact'
-import Counters from '../components/counters/Counters'
-import useWeightSettings from '../hooks/useWeightSettings'
-import Modal from '../components/modal/Modal'
-import { useState } from 'preact/hooks'
-import NewPlateForm from '../components/NewPlateForm'
+import { h } from 'preact';
+import Counters from '../components/counters/Counters';
+import useWeightSettings from '../hooks/useWeightSettings';
+import Modal from '../components/modal/Modal';
+import { useState } from 'preact/hooks';
+import NewPlateForm from '../components/NewPlateForm';
 
 const Settings = () => {
   const {
@@ -13,8 +13,8 @@ const Settings = () => {
     barWeight,
     availablePlates,
     addPlate,
-  } = useWeightSettings()
-  const [newPlateModalIsOpen, setNewPlateModalIsOpen] = useState(false)
+  } = useWeightSettings();
+  const [newPlateModalIsOpen, setNewPlateModalIsOpen] = useState(false);
   return (
     <div className="px-2">
       <h1>Settings</h1>
@@ -36,13 +36,13 @@ const Settings = () => {
           <p class="pr-12">Count</p>
         </div>
         {availablePlates?.map((plate, index) => {
-          const id = `plate-${plate.weight}`
+          const id = `plate-${plate.weight}`;
           const handlePlateCount = (count) => {
             updatePlateCount({
               index,
               count,
-            })
-          }
+            });
+          };
           return (
             <div
               key={index}
@@ -63,7 +63,7 @@ const Settings = () => {
                 jumpBy={1}
               />
             </div>
-          )
+          );
         })}
         <div class="pt-4">
           <button
@@ -80,13 +80,13 @@ const Settings = () => {
       >
         <NewPlateForm
           onSubmit={(data) => {
-            addPlate(data)
-            setNewPlateModalIsOpen(false)
+            addPlate(data);
+            setNewPlateModalIsOpen(false);
           }}
         />
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

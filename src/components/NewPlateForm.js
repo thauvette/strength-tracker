@@ -1,17 +1,17 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import Counters from './counters/Counters'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import Counters from './counters/Counters';
 
 const NewPlateForm = ({ onSubmit }) => {
-  const [weight, setWeight] = useState(0)
-  const [count, setCount] = useState(10)
+  const [weight, setWeight] = useState(0);
+  const [count, setCount] = useState(10);
 
   const submit = () => {
     onSubmit({
       weight,
       count,
-    })
-  }
+    });
+  };
 
   return (
     <div>
@@ -27,7 +27,7 @@ const NewPlateForm = ({ onSubmit }) => {
         Add
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default NewPlateForm
+export default NewPlateForm;

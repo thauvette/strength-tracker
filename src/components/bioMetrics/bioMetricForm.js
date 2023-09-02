@@ -1,8 +1,8 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import dayjs from 'dayjs'
-import dateFormats from '../../config/dateFormats'
-import useToast from '../../context/toasts/Toasts'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import dayjs from 'dayjs';
+import dateFormats from '../../config/dateFormats';
+import useToast from '../../context/toasts/Toasts';
 
 const BioMetricForm = ({
   initialValues,
@@ -13,22 +13,22 @@ const BioMetricForm = ({
 }) => {
   const [date, setDate] = useState(
     initialValues?.date || dayjs().format(dateFormats.day),
-  )
+  );
   const [time, setTime] = useState(
     initialValues?.time || dayjs().format(dateFormats.time),
-  )
-  const [value, setValue] = useState(initialValues?.value || '')
-  const { fireToast } = useToast()
+  );
+  const [value, setValue] = useState(initialValues?.value || '');
+  const { fireToast } = useToast();
   const handleAddEntry = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     submit({
       value,
       date: dayjs(`${date}T${time}:00`).format(),
-    })
+    });
     fireToast({
       text: `${name} added`,
-    })
-  }
+    });
+  };
 
   return (
     <form onSubmit={handleAddEntry} class="pb-4">
@@ -48,7 +48,7 @@ const BioMetricForm = ({
           type="date"
           value={date}
           onInput={(e) => {
-            setDate(e.target.value)
+            setDate(e.target.value);
           }}
           placeholder="date"
         />
@@ -59,7 +59,7 @@ const BioMetricForm = ({
           class="w-2/4"
           type="time"
           onInput={(e) => {
-            setTime(e.target.value)
+            setTime(e.target.value);
           }}
           value={time}
           placeholder="time"
@@ -75,7 +75,7 @@ const BioMetricForm = ({
         </button>
       )}
     </form>
-  )
-}
+  );
+};
 
-export default BioMetricForm
+export default BioMetricForm;

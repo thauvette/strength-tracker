@@ -1,17 +1,17 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import LineChart from '../async/LineChart'
-import { renderData } from './utils'
-import Icon from '../../components/icon/Icon'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import LineChart from '../async/LineChart';
+import { renderData } from './utils';
+import Icon from '../../components/icon/Icon';
 
 const Charts = ({ days }) => {
-  const [chartSpan, setChartSpan] = useState('all')
-  const [chartGrouping, setChartGrouping] = useState('day')
+  const [chartSpan, setChartSpan] = useState('all');
+  const [chartGrouping, setChartGrouping] = useState('day');
 
-  const [activeChunk, setActiveChunk] = useState(0)
+  const [activeChunk, setActiveChunk] = useState(0);
 
   // array of {title: items: [{x: getTime format, y: value}]}
-  const data = renderData({ days, timeSpan: chartSpan, chartGrouping })
+  const data = renderData({ days, timeSpan: chartSpan, chartGrouping });
 
   return (
     <div>
@@ -21,8 +21,8 @@ const Charts = ({ days }) => {
         <select
           value={chartGrouping}
           onInput={(e) => {
-            setChartGrouping(e.target.value)
-            setActiveChunk(0)
+            setChartGrouping(e.target.value);
+            setActiveChunk(0);
           }}
           class="mb-4 w-full"
         >
@@ -35,8 +35,8 @@ const Charts = ({ days }) => {
         <select
           value={chartSpan}
           onInput={(e) => {
-            setChartSpan(e.target.value)
-            setActiveChunk(0)
+            setChartSpan(e.target.value);
+            setActiveChunk(0);
           }}
           class="mb-4 w-full"
         >
@@ -90,7 +90,7 @@ const Charts = ({ days }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Charts
+export default Charts;

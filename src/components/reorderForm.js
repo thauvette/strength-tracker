@@ -1,6 +1,6 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import DraggableList from './async/DraggableList'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import DraggableList from './async/DraggableList';
 
 const ReorderForm = ({
   items = [],
@@ -10,12 +10,12 @@ const ReorderForm = ({
 }) => {
   const [order, setOrder] = useState(
     Array.from({ length: items.length }, (_, i) => i),
-  )
-  const [updateAllWeeks, setUpdateAllWeeks] = useState(allowEditAllWeeks)
+  );
+  const [updateAllWeeks, setUpdateAllWeeks] = useState(allowEditAllWeeks);
 
   const submit = () => {
-    onSave({ newOrder: order, updateAllWeeks })
-  }
+    onSave({ newOrder: order, updateAllWeeks });
+  };
 
   return (
     <div>
@@ -37,7 +37,7 @@ const ReorderForm = ({
       <DraggableList
         items={items}
         onReorderEnd={(newOrder) => {
-          setOrder(newOrder)
+          setOrder(newOrder);
         }}
         renderItem={({ setIndex }) => <p>{items[setIndex]?.label}</p>}
         initialOrder={order}
@@ -49,7 +49,7 @@ const ReorderForm = ({
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ReorderForm
+export default ReorderForm;

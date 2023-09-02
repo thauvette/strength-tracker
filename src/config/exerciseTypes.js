@@ -21,4 +21,4 @@ export default [
     label: 'timed reps',
     description: 'x reps in x time (eg: 50 pull ups in 10 minutes)',
   },
-]
+];

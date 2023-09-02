@@ -1,7 +1,7 @@
-import { h } from 'preact'
-import { useState } from 'preact/compat'
-import AnimateHeight from 'react-animate-height'
-import Icon from '../icon/Icon'
+import { h } from 'preact';
+import { useState } from 'preact/compat';
+import AnimateHeight from 'react-animate-height';
+import Icon from '../icon/Icon';
 
 export default function Accordion({
   openByDefault = false,
@@ -13,7 +13,7 @@ export default function Accordion({
   headerIcon,
   containerClass = '',
 }) {
-  const [isOpen, setIsOpen] = useState(openByDefault)
+  const [isOpen, setIsOpen] = useState(openByDefault);
 
   return (
     <div class={containerClass}>
@@ -39,5 +39,5 @@ export default function Accordion({
         {children}
       </AnimateHeight>
     </div>
-  )
+  );
 }

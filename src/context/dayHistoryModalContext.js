@@ -1,30 +1,30 @@
-import { h } from 'preact'
-import { useState, createContext, useContext } from 'preact/compat'
-import dayjs from 'dayjs'
-import useDB from './db/db'
-import Modal from '../components/modal/Modal'
-import LoadingSpinner from '../components/LoadingSpinner'
-import Icon from '../components/icon/Icon'
-import { Link } from 'preact-router'
-import { routes } from '../config/routes'
-import dateFormats from '../config/dateFormats'
+import { h } from 'preact';
+import { useState, createContext, useContext } from 'preact/compat';
+import dayjs from 'dayjs';
+import useDB from './db/db';
+import Modal from '../components/modal/Modal';
+import LoadingSpinner from '../components/LoadingSpinner';
+import Icon from '../components/icon/Icon';
+import { Link } from 'preact-router';
+import { routes } from '../config/routes';
+import dateFormats from '../config/dateFormats';
 
-const DayHistoryModalContext = createContext(null)
+const DayHistoryModalContext = createContext(null);
 
 export const DayHistoryModalContextProvider = ({ children }) => {
   const [{ isOpen, isLoading, data, day }, setState] = useState({
     isOpen: false,
     isLoading: false,
     data: null,
-  })
-  const { getSetsByDay } = useDB()
+  });
+  const { getSetsByDay } = useDB();
   const showDayHistory = (date) => {
     setState({
       isOpen: true,
       isLoading: true,
       data: null,
       day: null,
-    })
+    });
     getSetsByDay(date).then((res) => {
       setState({
         isOpen: true,
@@ -33,30 +33,30 @@ export const DayHistoryModalContextProvider = ({ children }) => {
         data: res.reduce((arr, set) => {
           const currentIndex = arr
             .map((item) => item.exerciseId)
-            .indexOf(set.exercise)
+            .indexOf(set.exercise);
 
           if (currentIndex === -1) {
             arr.push({
               exerciseId: set.exercise,
               name: set.exerciseData?.name,
               sets: [set],
-            })
+            });
           } else {
-            arr[currentIndex].sets.push(set)
+            arr[currentIndex].sets.push(set);
           }
 
-          return arr
+          return arr;
         }, []),
-      })
-    })
-  }
+      });
+    });
+  };
   const closeModal = () =>
     setState({
       isOpen: false,
       isLoading: false,
       data: null,
       day: null,
-    })
+    });
 
   return (
     <DayHistoryModalContext.Provider
@@ -113,9 +113,9 @@ export const DayHistoryModalContextProvider = ({ children }) => {
         )}
       </Modal>
     </DayHistoryModalContext.Provider>
-  )
-}
+  );
+};
 
-const useDayHistoryContext = () => useContext(DayHistoryModalContext)
+const useDayHistoryContext = () => useContext(DayHistoryModalContext);
 
-export default useDayHistoryContext
+export default useDayHistoryContext;

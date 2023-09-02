@@ -1,15 +1,15 @@
 // assumes an ordered array
 export default function getClosestTimeStamp(items, target) {
-  let result
-  let lastDelta
+  let result;
+  let lastDelta;
 
   items.some((item) => {
-    const delta = Math.abs(target - item)
+    const delta = Math.abs(target - item);
     if (delta >= lastDelta) {
-      return true
+      return true;
     }
-    result = item
-    lastDelta = delta
-  })
-  return result
+    result = item;
+    lastDelta = delta;
+  });
+  return result;
 }

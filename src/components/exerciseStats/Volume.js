@@ -1,13 +1,13 @@
-import dayjs from 'dayjs'
-import { h } from 'preact'
-import { useState } from 'react'
-import AnimateHeight from 'react-animate-height'
+import dayjs from 'dayjs';
+import { h } from 'preact';
+import { useState } from 'react';
+import AnimateHeight from 'react-animate-height';
 
-import { formatToFixed } from '../../utilities.js/formatNumbers'
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 const VolumeRow = ({ day }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const toggleOpen = () => setIsOpen(!isOpen)
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleOpen = () => setIsOpen(!isOpen);
   return (
     <div class="border-b-4">
       <button
@@ -44,19 +44,19 @@ const VolumeRow = ({ day }) => {
         </div>
       </AnimateHeight>
     </div>
-  )
-}
+  );
+};
 
 const Volume = ({ exerciseHistory, includeBwInHistory }) => {
   const volumeByDay = exerciseHistory?.items
     ? Object.entries(exerciseHistory?.items).reduce((arr, [day, items]) => {
         const volumeData = items.reduce(
           (obj, set) => {
-            const isWorkingSet = !set.isWarmUp
+            const isWorkingSet = !set.isWarmUp;
 
             const weight = includeBwInHistory
               ? +set.weight + (+set.bw || 0)
-              : +set.weight
+              : +set.weight;
 
             return {
               ...obj,
@@ -70,7 +70,7 @@ const Volume = ({ exerciseHistory, includeBwInHistory }) => {
               workingReps: isWorkingSet
                 ? obj.workingReps + +set.reps
                 : obj.workingReps,
-            }
+            };
           },
           {
             totalVol: 0,
@@ -78,27 +78,27 @@ const Volume = ({ exerciseHistory, includeBwInHistory }) => {
             workingSets: 0,
             workingReps: 0,
           },
-        )
+        );
         arr.push({
           day,
           vol: volumeData.totalVol,
           sets: items.length,
           items,
           ...volumeData,
-        })
-        return arr
+        });
+        return arr;
       }, [])
-    : []
+    : [];
 
   return volumeByDay
     .sort((a, b) => (dayjs(a.day).isBefore(b.day) ? 1 : -1))
     .map((day, i) => {
       const diff = volumeByDay[i + 1]?.workingVol
         ? day.workingVol - volumeByDay[i + 1]?.workingVol
-        : null
+        : null;
 
-      return <VolumeRow key={day.day} day={{ ...day, diff }} />
-    })
-}
+      return <VolumeRow key={day.day} day={{ ...day, diff }} />;
+    });
+};
 
-export default Volume
+export default Volume;

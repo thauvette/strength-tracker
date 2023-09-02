@@ -1,28 +1,28 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
 
 const EditFastForm = ({ initialValues, handleSubmit }) => {
-  const [formValues, setFormValues] = useState({ ...initialValues })
+  const [formValues, setFormValues] = useState({ ...initialValues });
 
   const submit = () => {
     const endDateTime =
       formValues.endDate && formValues.endTime
         ? new Date(`${formValues.endDate}T${formValues.endTime}:00`).getTime()
-        : null
+        : null;
     handleSubmit({
       start: new Date(
         `${formValues.startDate}T${formValues.startTime}:00`,
       ).getTime(),
       end: endDateTime,
-    })
-  }
+    });
+  };
 
   const handleInput = (e) => {
     setFormValues({
       ...formValues,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   return (
     <div>
@@ -80,7 +80,7 @@ const EditFastForm = ({ initialValues, handleSubmit }) => {
         Save
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default EditFastForm
+export default EditFastForm;

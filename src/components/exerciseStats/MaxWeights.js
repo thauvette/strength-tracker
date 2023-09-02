@@ -1,13 +1,13 @@
-import { h } from 'preact'
-import dayjs from 'dayjs'
-import { useState } from 'preact/hooks'
-import AnimateHeight from 'react-animate-height'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
+import { h } from 'preact';
+import dayjs from 'dayjs';
+import { useState } from 'preact/hooks';
+import AnimateHeight from 'react-animate-height';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 const MaxWeights = ({ exerciseHistory, includeBwInHistory }) => {
   const prs = includeBwInHistory
     ? exerciseHistory?.prsWithBW
-    : exerciseHistory?.prs
+    : exerciseHistory?.prs;
   return (
     <div class="px-2">
       {prs?.length ? (
@@ -22,12 +22,12 @@ const MaxWeights = ({ exerciseHistory, includeBwInHistory }) => {
         <p>No prs</p>
       )}
     </div>
-  )
-}
+  );
+};
 
 const MaxWeightRow = ({ set, includeBwInHistory }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const { daysHistory } = set
+  const [isOpen, setIsOpen] = useState(false);
+  const { daysHistory } = set;
 
   return (
     <div class="border-b-4">
@@ -55,7 +55,7 @@ const MaxWeightRow = ({ set, includeBwInHistory }) => {
                   ? formatToFixed(
                       +daysSet.weight + (daysSet.bw ? +daysSet.bw : 0),
                     )
-                  : daysSet.weight
+                  : daysSet.weight;
                 return (
                   <p
                     key={daysSet.created}
@@ -67,13 +67,13 @@ const MaxWeightRow = ({ set, includeBwInHistory }) => {
                   >
                     {daysSet.reps} @ {weight}
                   </p>
-                )
+                );
               })
             : null}
         </div>
       </AnimateHeight>
     </div>
-  )
-}
+  );
+};
 
-export default MaxWeights
+export default MaxWeights;

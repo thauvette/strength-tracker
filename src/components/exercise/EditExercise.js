@@ -1,5 +1,5 @@
-import { h } from 'preact'
-import ExerciseForm from '../exerciseForm/ExerciseForm'
+import { h } from 'preact';
+import ExerciseForm from '../exerciseForm/ExerciseForm';
 
 const EditExercise = ({ id, exerciseHistory, onEdit }) => (
   <div class="px-2">
@@ -20,6 +20,6 @@ const EditExercise = ({ id, exerciseHistory, onEdit }) => (
       onSubmit={onEdit}
     />
   </div>
-)
+);
 
-export default EditExercise
+export default EditExercise;

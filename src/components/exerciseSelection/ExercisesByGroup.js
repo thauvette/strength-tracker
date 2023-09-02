@@ -1,12 +1,12 @@
-import { h } from 'preact'
-import ButtonList from '../buttonList/ButtonList'
+import { h } from 'preact';
+import ButtonList from '../buttonList/ButtonList';
 
 const ExercisesByGroup = ({ searchText, handleSelectExercise, group }) => {
   const matches = group.filter(
     (exercise) =>
       !searchText ||
       exercise.name?.toLowerCase()?.includes(searchText?.toLowerCase()),
-  )
+  );
 
   return (
     <div>
@@ -17,7 +17,7 @@ const ExercisesByGroup = ({ searchText, handleSelectExercise, group }) => {
         }))}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ExercisesByGroup
+export default ExercisesByGroup;

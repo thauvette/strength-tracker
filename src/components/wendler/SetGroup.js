@@ -1,9 +1,9 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import Modal from '../../../components/modal/Modal'
-import useExerciseHistory from '../../../hooks/useExerciseHistory/useExerciseHistory'
-import ExerciseStats from '../../../components/exerciseStats/ExerciseStats'
-import Set from './Set'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import Modal from '../../../components/modal/Modal';
+import useExerciseHistory from '../../../hooks/useExerciseHistory/useExerciseHistory';
+import ExerciseStats from '../../../components/exerciseStats/ExerciseStats';
+import Set from './Set';
 
 const SetGroup = ({
   title,
@@ -15,13 +15,13 @@ const SetGroup = ({
   handleUndoSet,
   handleSubmitSet,
 }) => {
-  const [historyModalIsOpen, setHistoryModalIsOpen] = useState(false)
-  const [exerciseHistory, getHistory] = useExerciseHistory(exerciseId)
+  const [historyModalIsOpen, setHistoryModalIsOpen] = useState(false);
+  const [exerciseHistory, getHistory] = useExerciseHistory(exerciseId);
 
   const handleOpenHistoryModal = () => {
-    getHistory()
-    setHistoryModalIsOpen(true)
-  }
+    getHistory();
+    setHistoryModalIsOpen(true);
+  };
 
   return (
     <div>
@@ -61,7 +61,7 @@ const SetGroup = ({
                   setIndex,
                   weight: newValues.weight,
                   reps: newValues.reps,
-                })
+                });
               }}
               handleUndo={(newValues) => {
                 handleUndoSet({
@@ -69,13 +69,13 @@ const SetGroup = ({
                   setIndex,
                   weight: newValues.weight,
                   reps: newValues.reps,
-                })
+                });
               }}
             />
-          )
+          );
         })}
     </div>
-  )
-}
+  );
+};
 
-export default SetGroup
+export default SetGroup;

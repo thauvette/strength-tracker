@@ -1,25 +1,25 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import useWeightSettings from '../../hooks/useWeightSettings'
-import calculatePlates from './calculatePlates'
-import PlateControls from './plateControls'
-import renderPlateClass from './renderPlateClass'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import useWeightSettings from '../../hooks/useWeightSettings';
+import calculatePlates from './calculatePlates';
+import PlateControls from './plateControls';
+import renderPlateClass from './renderPlateClass';
 
 const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
-  const { weightSettings } = useWeightSettings()
+  const { weightSettings } = useWeightSettings();
 
-  const [weight, setWeight] = useState(initialWeight)
+  const [weight, setWeight] = useState(initialWeight);
   const [barWeight, setBarWeight] = useState(
     initialBarWeight || weightSettings?.barWeight || 45,
-  )
+  );
 
   const { plates: neededPlates, remainder } = calculatePlates({
     targetWeight: +weight || 0,
     barWeight,
     plateSet: weightSettings?.availablePlates,
-  })
+  });
 
-  const showBar = weight >= barWeight
+  const showBar = weight >= barWeight;
 
   const plateText = Object.entries(
     neededPlates.reduce((obj, plate) => {
@@ -27,12 +27,12 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
         return {
           ...obj,
           [plate]: obj[plate] + 1,
-        }
+        };
       }
       return {
         ...obj,
         [plate]: 1,
-      }
+      };
     }, {}),
   )
     .map(([plate, count]) => ({
@@ -40,7 +40,7 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
       count,
     }))
     .sort((a, b) => (a.plate > b.plate ? -1 : 1))
-    .map((plate) => `${plate.count} x ${plate.plate}`)
+    .map((plate) => `${plate.count} x ${plate.plate}`);
 
   return (
     <div>
@@ -87,7 +87,7 @@ const Plates = ({ weight: initialWeight, barWeight: initialBarWeight }) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Plates
+export default Plates;

@@ -1,10 +1,10 @@
-import { h } from 'preact'
-import { useRef } from 'preact/hooks'
-import dayjs from 'dayjs'
-import useIntersectObserver from '../../hooks/useIntersectObserver'
-import SetRow from '../setRow/setRow'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
-import useDayHistoryContext from '../../context/dayHistoryModalContext'
+import { h } from 'preact';
+import { useRef } from 'preact/hooks';
+import dayjs from 'dayjs';
+import useIntersectObserver from '../../hooks/useIntersectObserver';
+import SetRow from '../setRow/setRow';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
+import useDayHistoryContext from '../../context/dayHistoryModalContext';
 
 const ExerciseHistoryDay = ({
   items,
@@ -13,11 +13,11 @@ const ExerciseHistoryDay = ({
   ormTime,
   includeBwInHistory = false,
 }) => {
-  const ref = useRef(null)
+  const ref = useRef(null);
   const isIntersecting = useIntersectObserver({
     ref,
-  })
-  const { showDayHistory } = useDayHistoryContext()
+  });
+  const { showDayHistory } = useDayHistoryContext();
   return (
     <div ref={ref}>
       <div class="pb-4">
@@ -32,7 +32,7 @@ const ExerciseHistoryDay = ({
           {items.map((item) => {
             const weight = includeBwInHistory
               ? formatToFixed(+item.weight + (item.bw ? +item.bw : 0))
-              : +item.weight
+              : +item.weight;
             return (
               <div key={item.created}>
                 <div
@@ -49,12 +49,12 @@ const ExerciseHistoryDay = ({
                   />
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExerciseHistoryDay
+export default ExerciseHistoryDay;

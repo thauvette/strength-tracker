@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
 const Icon = ({ name, width = '16' }) => {
   switch (name) {
@@ -20,7 +20,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M244 400L100 256l144-144M120 256h292"
           />
         </svg>
-      )
+      );
     case 'arrow-forward-outline':
       return (
         <svg
@@ -39,7 +39,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M268 112l144 144-144 144M392 256H100"
           />
         </svg>
-      )
+      );
     case 'bar-chart-outline':
       return (
         <svg
@@ -97,7 +97,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'calendar-outline':
       return (
         <svg
@@ -143,7 +143,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M464 160H48"
           />
         </svg>
-      )
+      );
     case 'checkmark-outline':
       return (
         <svg
@@ -162,7 +162,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M416 128L192 384l-96-96"
           />
         </svg>
-      )
+      );
     case 'chevron-down-outline':
       return (
         <svg
@@ -181,7 +181,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M112 184l144 144 144-144"
           />
         </svg>
-      )
+      );
     case 'clipboard-outline':
       return (
         <svg
@@ -211,7 +211,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'clipboard':
       return (
         <svg
@@ -226,7 +226,7 @@ const Icon = ({ name, width = '16' }) => {
             fill="currentColor"
           />
         </svg>
-      )
+      );
     case 'close-circle-outline':
       return (
         <svg
@@ -252,7 +252,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M320 320L192 192M192 320l128-128"
           />
         </svg>
-      )
+      );
     case 'copy-outline':
       return (
         <svg
@@ -283,7 +283,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'create-outline':
       return (
         <svg
@@ -306,7 +306,7 @@ const Icon = ({ name, width = '16' }) => {
             fill="currentColor"
           />
         </svg>
-      )
+      );
     case 'list-outline':
       return (
         <svg
@@ -355,7 +355,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'reorder-two-outline':
       return (
         <svg
@@ -374,7 +374,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M112 304h288M112 208h288"
           />
         </svg>
-      )
+      );
     case 'trash-outline':
       return (
         <svg
@@ -408,7 +408,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'stopwatch-outline':
       return (
         <svg
@@ -451,7 +451,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'barbell-outline':
       return (
         <svg
@@ -522,7 +522,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'save-outline':
       return (
         <svg
@@ -541,7 +541,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'arrow-up-outline':
       return (
         <svg
@@ -560,7 +560,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M112 244l144-144 144 144M256 120v292"
           />
         </svg>
-      )
+      );
     case 'arrow-down-outline':
       return (
         <svg
@@ -579,7 +579,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M112 268l144 144 144-144M256 392V100"
           />
         </svg>
-      )
+      );
     case 'star-outline':
       return (
         <svg
@@ -597,7 +597,7 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     case 'star':
       return (
         <svg
@@ -613,7 +613,7 @@ const Icon = ({ name, width = '16' }) => {
             d="M394 480a16 16 0 01-9.39-3L256 383.76 127.39 477a16 16 0 01-24.55-18.08L153 310.35 23 221.2a16 16 0 019-29.2h160.38l48.4-148.95a16 16 0 0130.44 0l48.4 149H480a16 16 0 019.05 29.2L359 310.35l50.13 148.53A16 16 0 01394 480z"
           />
         </svg>
-      )
+      );
     case 'open':
       return (
         <svg
@@ -631,10 +631,10 @@ const Icon = ({ name, width = '16' }) => {
             stroke-width="32"
           />
         </svg>
-      )
+      );
     default:
-      return null
+      return null;
   }
-}
+};
 
-export default Icon
+export default Icon;

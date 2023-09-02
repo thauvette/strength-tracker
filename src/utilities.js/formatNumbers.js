@@ -1,12 +1,12 @@
 export const formatToFixed = (num) => {
-  const value = +num
+  const value = +num;
   if (!value || isNaN(value)) {
-    return ''
+    return '';
   }
 
   if (Number.isInteger(value)) {
-    return value
+    return value;
   }
 
-  return Number(value.toFixed(2))
-}
+  return Number(value.toFixed(2));
+};

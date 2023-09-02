@@ -1,46 +1,46 @@
-import dayjs from 'dayjs'
-import { h } from 'preact'
-import chunk from 'lodash.chunk'
-import { useState } from 'preact/hooks'
-import Icon from '../icon/Icon'
+import dayjs from 'dayjs';
+import { h } from 'preact';
+import chunk from 'lodash.chunk';
+import { useState } from 'preact/hooks';
+import Icon from '../icon/Icon';
 
 const Calendar = ({ startDate, renderDay }) => {
   const [start, setStart] = useState(
     dayjs(startDate || new Date()).startOf('month'),
-  )
+  );
 
-  const end = dayjs(start).endOf('month')
+  const end = dayjs(start).endOf('month');
 
-  const prevMonth = dayjs(start).subtract(1, 'month')
+  const prevMonth = dayjs(start).subtract(1, 'month');
 
-  const endOfPrevMonth = prevMonth.endOf('month').format('D')
+  const endOfPrevMonth = prevMonth.endOf('month').format('D');
 
-  const firstNeededDateOfPrevMonth = +endOfPrevMonth - +start.format('d') + 1
+  const firstNeededDateOfPrevMonth = +endOfPrevMonth - +start.format('d') + 1;
 
-  const firstDay = prevMonth.date(firstNeededDateOfPrevMonth)
+  const firstDay = prevMonth.date(firstNeededDateOfPrevMonth);
 
   const paddingStart = Array.from({ length: +start.format('d') }, (_, i) =>
     firstDay.add(i, 'days'),
-  )
+  );
 
   const days = Array.from({ length: +end.format('DD') }, (_, i) =>
     start.add(i, 'days'),
-  )
+  );
 
   const paddingEnd = Array.from(
     { length: 6 - start.endOf('month').day() },
     (_, i) => start.endOf('month').add(i + 1, 'days'),
-  )
+  );
 
-  const weeks = chunk([...paddingStart, ...days, ...paddingEnd], 7)
+  const weeks = chunk([...paddingStart, ...days, ...paddingEnd], 7);
 
   const changeMonth = (amount) => {
-    setStart(start.add(amount, 'month').startOf('month'))
-  }
+    setStart(start.add(amount, 'month').startOf('month'));
+  };
 
   const printDay = (day) => {
-    if (!day) return <div />
-    const isCurrentMonth = day.isSame(start, 'month')
+    if (!day) return <div />;
+    const isCurrentMonth = day.isSame(start, 'month');
     return renderDay ? (
       renderDay(day, isCurrentMonth)
     ) : (
@@ -51,8 +51,8 @@ const Calendar = ({ startDate, renderDay }) => {
       >
         <p>{day.format('D')}</p>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div class="bg-1">
@@ -97,7 +97,7 @@ const Calendar = ({ startDate, renderDay }) => {
         {weeks.map((week) => week.map((day) => printDay(day)))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Calendar
+export default Calendar;

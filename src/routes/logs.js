@@ -3,17 +3,16 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'preact/hooks';
 import { route } from 'preact-router';
 import { uniq } from 'lodash';
+
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
 
-import Modal from '../components/modal/Modal';
-import Calendar from '../components/calendar/Calendar';
 import { routes } from '../config/routes';
-
 import dateFormats from '../config/dateFormats';
 
 import CalendarControls from '../components/logs/calendarControls';
-
+import Modal from '../components/modal/Modal';
+import Calendar from '../components/calendar/Calendar';
 import LoadingSpinner from '../components/LoadingSpinner.js';
 import LogHeader from '../components/logs/logHeader';
 import BioMetricList from '../components/logs/bioMetricList';

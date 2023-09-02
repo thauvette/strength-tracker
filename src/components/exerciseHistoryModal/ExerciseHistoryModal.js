@@ -1,7 +1,7 @@
-import { h } from 'preact'
-import Modal from '../modal/Modal'
-import ExerciseStats from '../exerciseStats/ExerciseStats'
-import Icon from '../icon/Icon'
+import { h } from 'preact';
+import Modal from '../modal/Modal';
+import ExerciseStats from '../exerciseStats/ExerciseStats';
+import Icon from '../icon/Icon';
 
 const ExerciseHistoryModal = ({
   isOpen,
@@ -22,6 +22,6 @@ const ExerciseHistoryModal = ({
       <ExerciseStats exerciseHistory={exerciseHistory} onChangeSet={onUpdate} />
     </>
   </Modal>
-)
+);
 
-export default ExerciseHistoryModal
+export default ExerciseHistoryModal;

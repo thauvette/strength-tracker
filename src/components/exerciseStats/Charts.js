@@ -1,10 +1,10 @@
-import { h } from 'preact'
-import { useState } from 'react'
-import { renderChartData } from './utils'
-import LineChart from '../async/LineChart'
-import Icon from '../icon/Icon'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
-import dayjs from 'dayjs'
+import { h } from 'preact';
+import { useState } from 'react';
+import { renderChartData } from './utils';
+import LineChart from '../async/LineChart';
+import Icon from '../icon/Icon';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
+import dayjs from 'dayjs';
 
 const renderTooltipData = ({ chartType, activeData }) => {
   if (chartType === 'vol') {
@@ -14,7 +14,7 @@ const renderTooltipData = ({ chartType, activeData }) => {
         <p>{activeData?.data?.filter((item) => !item.isWarmUp)?.length} sets</p>
         <p>vol: {formatToFixed(activeData.y)}</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -24,25 +24,25 @@ const renderTooltipData = ({ chartType, activeData }) => {
       <p>weight: {activeData?.[chartType]?.weight}</p>
       <p>bw: {activeData?.[chartType]?.bw}</p>
     </div>
-  )
-}
+  );
+};
 
 const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
-  const [chartType, setChartType] = useState('vol')
-  const [timeSpan, setTimeSpan] = useState('all')
-  const [activeChunk, setActiveChunk] = useState(0)
+  const [chartType, setChartType] = useState('vol');
+  const [timeSpan, setTimeSpan] = useState('all');
+  const [activeChunk, setActiveChunk] = useState(0);
 
   const data = renderChartData({
     chartType,
     timeSpan,
     exerciseHistory,
     includeBwInHistory,
-  })
+  });
 
-  const chartData = data?.[activeChunk]?.data
+  const chartData = data?.[activeChunk]?.data;
 
-  const showArrows = data?.length > 1
-  const title = data?.[activeChunk]?.title
+  const showArrows = data?.length > 1;
+  const title = data?.[activeChunk]?.title;
   return (
     <div>
       <h1>Charts</h1>
@@ -55,8 +55,8 @@ const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
             class="w-full"
             id="chartType"
             onInput={(e) => {
-              setChartType(e.target.value)
-              setActiveChunk(0)
+              setChartType(e.target.value);
+              setActiveChunk(0);
             }}
             value={chartType}
           >
@@ -75,8 +75,8 @@ const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
             class="w-full"
             id="timeSpan"
             onInput={(e) => {
-              setTimeSpan(e.target.value)
-              setActiveChunk(0)
+              setTimeSpan(e.target.value);
+              setActiveChunk(0);
             }}
             value={timeSpan}
           >
@@ -131,7 +131,7 @@ const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
         </div>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default Charts
+export default Charts;

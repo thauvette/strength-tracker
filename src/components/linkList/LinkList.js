@@ -1,5 +1,5 @@
-import { h } from 'preact'
-import { Link } from 'preact-router'
+import { h } from 'preact';
+import { Link } from 'preact-router';
 
 const LinkList = ({ links = [] }) => (
   <ul>
@@ -11,6 +11,6 @@ const LinkList = ({ links = [] }) => (
       </li>
     ))}
   </ul>
-)
+);
 
-export default LinkList
+export default LinkList;

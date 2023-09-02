@@ -1,19 +1,19 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import dayjs from 'dayjs'
-import cloneDeep from 'lodash.clonedeep'
-import Router from 'preact-router'
-import { Link } from 'preact-router/match'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import dayjs from 'dayjs';
+import cloneDeep from 'lodash.clonedeep';
+import Router from 'preact-router';
+import { Link } from 'preact-router/match';
 
-import dateFormats from '../../config/dateFormats'
-import BioMetricForm from './bioMetricForm'
+import dateFormats from '../../config/dateFormats';
+import BioMetricForm from './bioMetricForm';
 
-import Modal from '../modal/Modal'
-import Icon from '../icon/Icon'
-import { routes } from '../../config/routes'
-import Days from './Days'
-import Weeks from './Weeks'
-import Charts from './Charts'
+import Modal from '../modal/Modal';
+import Icon from '../icon/Icon';
+import { routes } from '../../config/routes';
+import Days from './Days';
+import Weeks from './Weeks';
+import Charts from './Charts';
 
 const BioMetric = ({
   id,
@@ -23,60 +23,60 @@ const BioMetric = ({
   removeEntry,
   remaining_path,
 }) => {
-  const currentBioMetric = bioMetrics[id]
+  const currentBioMetric = bioMetrics[id];
 
   const [deleteModalState, setDeleteModalState] = useState({
     open: false,
     id: null,
-  })
+  });
   const [editModalState, setEditModalState] = useState({
     isOpen: false,
     item: null,
-  })
+  });
   const closeEditModal = () => {
     setEditModalState({
       isOpen: false,
       item: null,
-    })
-  }
+    });
+  };
   const deleteModalItem = currentBioMetric?.items?.find(
     (item) => item.id === deleteModalState.id,
-  )
+  );
   const closeDeleteModal = () =>
     setDeleteModalState({
       open: false,
       id: null,
-    })
+    });
 
   const handleAddEntry = (data) => {
     addEntry({
       bioMetricId: id,
       data,
-    })
-  }
+    });
+  };
   const sortedItems = cloneDeep(currentBioMetric?.items || [])?.sort(
     (a, b) =>
       dayjs(a.date).toDate().getTime() - dayjs(b.date).toDate().getTime(),
-  )
+  );
   const groupedItems = sortedItems?.reduce((obj, item, index) => {
-    const dayKey = dayjs(item.date).format('YYYY-MM-DD')
+    const dayKey = dayjs(item.date).format('YYYY-MM-DD');
 
-    const currentDayItems = obj[dayKey]?.items || []
+    const currentDayItems = obj[dayKey]?.items || [];
 
-    const lastValue = sortedItems[index - 1]?.value
+    const lastValue = sortedItems[index - 1]?.value;
     // if no last value the diff is 0
-    const diff = item.value - (lastValue || item.value)
+    const diff = item.value - (lastValue || item.value);
     currentDayItems.push({
       ...item,
       diff,
-    })
+    });
     const total = currentDayItems
       .map((item) => +item.value)
-      ?.reduce((num, value) => num + value, 0)
+      ?.reduce((num, value) => num + value, 0);
 
-    let dayAverage
+    let dayAverage;
     try {
-      dayAverage = total / currentDayItems.length
+      dayAverage = total / currentDayItems.length;
     } catch (err) {}
     return {
       ...obj,
@@ -84,30 +84,30 @@ const BioMetric = ({
         items: currentDayItems?.reverse(),
         average: dayAverage,
       },
-    }
-  }, {})
+    };
+  }, {});
 
   const orderedKeys = Object.keys(groupedItems).sort((a, b) =>
     dayjs(a).isBefore(dayjs(b)) ? 1 : -1,
-  )
+  );
 
   const days = orderedKeys?.map((dayKey, i) => {
-    const { items, average } = groupedItems[dayKey]
-    const previousDayKey = orderedKeys[i + 1]
+    const { items, average } = groupedItems[dayKey];
+    const previousDayKey = orderedKeys[i + 1];
 
-    const previousData = previousDayKey ? groupedItems[previousDayKey] : null
+    const previousData = previousDayKey ? groupedItems[previousDayKey] : null;
 
     const change = previousData?.average
       ? average - previousData?.average
-      : undefined
+      : undefined;
 
     return {
       dayKey,
       items,
       average,
       change,
-    }
-  })
+    };
+  });
 
   return (
     <div class="px-2">
@@ -157,7 +157,7 @@ const BioMetric = ({
                 ?.value || '',
           }}
           handleAddEntry={(data) => {
-            handleAddEntry(data)
+            handleAddEntry(data);
           }}
           name={currentBioMetric?.name}
         />
@@ -177,8 +177,8 @@ const BioMetric = ({
             <button
               class="btn warning flex-1 mr-1"
               onClick={() => {
-                removeEntry(deleteModalState.id)
-                closeDeleteModal()
+                removeEntry(deleteModalState.id);
+                closeDeleteModal();
               }}
             >
               Yup, ditch it
@@ -197,8 +197,8 @@ const BioMetric = ({
           <div>
             <BioMetricForm
               submit={(data) => {
-                editEntry(editModalState.item.id, data)
-                closeEditModal()
+                editEntry(editModalState.item.id, data);
+                closeEditModal();
               }}
               initialValues={{
                 value: editModalState.item.value,
@@ -221,12 +221,12 @@ const BioMetric = ({
                   <button
                     className="flex-1 bg-red-900 text-white "
                     onClick={(e) => {
-                      e.preventDefault()
+                      e.preventDefault();
                       setDeleteModalState({
                         id: editModalState.item.id,
                         open: true,
-                      })
-                      closeEditModal()
+                      });
+                      closeEditModal();
                     }}
                   >
                     <div className="flex items-center justify-center">
@@ -241,7 +241,7 @@ const BioMetric = ({
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default BioMetric
+export default BioMetric;

@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
 const ButtonList = ({ buttons = [] }) => (
   <ul>
@@ -10,6 +10,6 @@ const ButtonList = ({ buttons = [] }) => (
       </li>
     ))}
   </ul>
-)
+);
 
-export default ButtonList
+export default ButtonList;

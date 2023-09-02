@@ -1,12 +1,12 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
 const Counters = ({ value, setValue, roundToFive, jumpBy }) => (
   <div class="flex items-center">
     <button
       disabled={value <= 0}
       onClick={() => {
-        const remainder = roundToFive ? +value % jumpBy : 0
-        setValue(+value > jumpBy ? +value - (remainder || jumpBy) : 0)
+        const remainder = roundToFive ? +value % jumpBy : 0;
+        setValue(+value > jumpBy ? +value - (remainder || jumpBy) : 0);
       }}
     >
       -
@@ -20,13 +20,13 @@ const Counters = ({ value, setValue, roundToFive, jumpBy }) => (
 
     <button
       onClick={() => {
-        const remainder = roundToFive ? +value % jumpBy : 0
-        setValue(+value + jumpBy - remainder)
+        const remainder = roundToFive ? +value % jumpBy : 0;
+        setValue(+value + jumpBy - remainder);
       }}
     >
       +
     </button>
   </div>
-)
+);
 
-export default Counters
+export default Counters;

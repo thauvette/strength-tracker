@@ -73,12 +73,12 @@ export const weeks = [
     { reps: 3, math: 0.9 * 0.85 },
     { reps: 1, repText: '1+', math: 0.9 * 0.95 },
   ],
-]
+];
 
-export const bigButBoringSetsByWeek = [0.9 * 0.5, 0.9 * 0.55, 0.9 * 0.6]
+export const bigButBoringSetsByWeek = [0.9 * 0.5, 0.9 * 0.55, 0.9 * 0.6];
 
 export const firstSetLastWeeksMath = [
   weeks[0][3].math,
   weeks[1][3].math,
   weeks[2][3].math,
-]
+];

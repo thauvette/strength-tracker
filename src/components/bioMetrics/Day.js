@@ -1,17 +1,17 @@
-import { useRef } from 'preact/hooks'
-import dayjs from 'dayjs'
-import useIntersectObserver from '../../hooks/useIntersectObserver'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
-import Icon from '../icon/Icon'
-import ChangeIndicator from './ChangeIndicator'
+import { useRef } from 'preact/hooks';
+import dayjs from 'dayjs';
+import useIntersectObserver from '../../hooks/useIntersectObserver';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
+import Icon from '../icon/Icon';
+import ChangeIndicator from './ChangeIndicator';
 
 const Day = ({ day, setEditModalState }) => {
-  const ref = useRef(null)
+  const ref = useRef(null);
   const isIntersecting = useIntersectObserver({
     ref,
-  })
+  });
 
-  const { items, average, change, dayKey } = day
+  const { items, average, change, dayKey } = day;
   return (
     <div ref={ref} className="mb-3">
       <div className="flex items-center justify-between card-header">
@@ -44,12 +44,12 @@ const Day = ({ day, setEditModalState }) => {
                   {isIntersecting && <ChangeIndicator number={item.diff} />}
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Day
+export default Day;

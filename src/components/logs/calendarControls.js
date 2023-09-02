@@ -1,7 +1,7 @@
-import { h } from 'preact'
-import Icon from '../icon/Icon'
-import dayjs from 'dayjs'
-import dateFormats from '../../config/dateFormats'
+import { h } from 'preact';
+import Icon from '../icon/Icon';
+import dayjs from 'dayjs';
+import dateFormats from '../../config/dateFormats';
 
 const CalendarControls = ({
   isToday,
@@ -36,6 +36,6 @@ const CalendarControls = ({
       <Icon name="arrow-forward-outline" />
     </button>
   </div>
-)
+);
 
-export default CalendarControls
+export default CalendarControls;

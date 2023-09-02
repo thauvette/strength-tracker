@@ -1,8 +1,8 @@
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 import chunkDatesByRange, {
   getAllTimeData,
-} from '../../utilities.js/chunkDatesByRange'
-import calculateOneRepMax from '../../utilities.js/calculateOneRepMax'
+} from '../../utilities.js/chunkDatesByRange';
+import calculateOneRepMax from '../../utilities.js/calculateOneRepMax';
 
 export const renderChartData = ({
   chartType,
@@ -18,49 +18,49 @@ export const renderChartData = ({
           value: 0,
         },
         maxSingleSetVol = {},
-        maxEORM = {}
-      const data = obj?.[dayKey]?.data || []
+        maxEORM = {};
+      const data = obj?.[dayKey]?.data || [];
       items.forEach((item) => {
         if (item.isWarmUp) {
-          return
+          return;
         }
 
         const singleSetVol = includeBwInHistory
           ? (+item.weight + (+item.bw || 0)) * +item.reps
-          : +item.weight * +item.reps
+          : +item.weight * +item.reps;
 
-        vol.value += +singleSetVol
+        vol.value += +singleSetVol;
 
         if (!maxSingleSetVol.value || singleSetVol > maxSingleSetVol.value) {
           maxSingleSetVol = {
             ...item,
             value: +singleSetVol,
-          }
+          };
         }
 
         const weight = includeBwInHistory
           ? +item.weight + (+item.bw || 0)
-          : +item.weight
+          : +item.weight;
         if (!maxWeight.value || weight > maxWeight.value) {
           maxWeight = {
             ...item,
             value: +weight,
-          }
+          };
         }
         const oneRepMax = calculateOneRepMax({
           reps: +item.reps,
           weight: +weight,
-        })
+        });
 
         if (!maxEORM.value || (oneRepMax && oneRepMax > maxEORM.value)) {
           maxEORM = {
             ...item,
             value: oneRepMax,
-          }
+          };
         }
 
-        data.push(item)
-      })
+        data.push(item);
+      });
 
       return {
         ...obj,
@@ -71,10 +71,10 @@ export const renderChartData = ({
           maxEORM,
           data,
         },
-      }
+      };
     },
     {},
-  )
+  );
   // Need to chunk from timeSpan
   const chartData = Object.entries(daysWithData || {}).map(
     ([timeKey, data]) => ({
@@ -84,13 +84,13 @@ export const renderChartData = ({
       x: dayjs(timeKey).toDate().getTime(),
       y: data[chartType]?.value,
     }),
-  )
-  const [num, time] = timeSpan?.split(' ')
+  );
+  const [num, time] = timeSpan?.split(' ');
 
   switch (timeSpan) {
     case 'all':
-      return [getAllTimeData(chartData)]
+      return [getAllTimeData(chartData)];
     default:
-      return Object.values(chunkDatesByRange(chartData, +num, time))?.reverse()
+      return Object.values(chunkDatesByRange(chartData, +num, time))?.reverse();
   }
-}
+};

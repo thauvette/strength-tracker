@@ -1,23 +1,23 @@
-import { h } from 'preact'
-import dayjs from 'dayjs'
-import Icon from '../../components/icon/Icon'
-import { convertDaysToWeeks } from './utils'
+import { h } from 'preact';
+import dayjs from 'dayjs';
+import Icon from '../../components/icon/Icon';
+import { convertDaysToWeeks } from './utils';
 
 const Weeks = ({ days = [] }) => {
   if (!days?.length) {
-    return null
+    return null;
   }
-  const weeks = convertDaysToWeeks(days)
+  const weeks = convertDaysToWeeks(days);
 
   return (
     <div class="py-4">
       <h2>Weeks</h2>
       {weeks.map((week, i) => {
-        const previousWeekAverage = Object.values(weeks)?.[i + 1]?.average
+        const previousWeekAverage = Object.values(weeks)?.[i + 1]?.average;
 
         const change = previousWeekAverage
           ? week.average - previousWeekAverage
-          : undefined
+          : undefined;
         return (
           <div key={week.key} className="mb-3">
             <div className="flex items-center justify-between p-2 text-lg font-bold card-header">
@@ -44,10 +44,10 @@ const Weeks = ({ days = [] }) => {
               )}
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default Weeks
+export default Weeks;

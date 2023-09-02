@@ -20,7 +20,7 @@ export const routes = {
   routinesBase: '/routines',
   routinesNew: '/routines/new',
   activeRoutine: '/routines/active',
-}
+};
 
 export const menuItems = [
   {
@@ -47,4 +47,4 @@ export const menuItems = [
     href: routes.routinesBase,
     title: 'Routines',
   },
-]
+];

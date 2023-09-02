@@ -1,76 +1,78 @@
-import { h } from 'preact'
-import { useEffect, useRef, createPortal } from 'preact/compat'
-import { route } from 'preact-router'
+import { h } from 'preact';
+import { useEffect, useRef, createPortal } from 'preact/compat';
+import { route } from 'preact-router';
 
 const ModalElement = ({ isOpen, children, onRequestClose }) => {
-  const contentRef = useRef(null)
+  const contentRef = useRef(null);
   useEffect(() => {
     function handleOutsideClick(e) {
       if (contentRef.current && !contentRef.current.contains(e.target)) {
-        onRequestClose()
+        onRequestClose();
       }
     }
     function handleEscKey(e) {
       if (e.keyCode === 27) {
-        onRequestClose()
+        onRequestClose();
       }
     }
 
     if (isOpen && onRequestClose) {
-      window.addEventListener('click', handleOutsideClick, { capture: true })
-      window.addEventListener('keydown', handleEscKey)
+      window.addEventListener('click', handleOutsideClick, { capture: true });
+      window.addEventListener('keydown', handleEscKey);
     }
 
     return () => {
-      window.removeEventListener('click', handleOutsideClick, { capture: true })
-      window.removeEventListener('keydown', handleEscKey)
-    }
-  }, [isOpen, onRequestClose])
+      window.removeEventListener('click', handleOutsideClick, {
+        capture: true,
+      });
+      window.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isOpen, onRequestClose]);
 
   useEffect(() => {
     function backOnClose() {
-      let path = window.location.pathname
+      let path = window.location.pathname;
       if (window?.location?.search) {
-        path = `${path}${window.location.search}`
+        path = `${path}${window.location.search}`;
       }
-      route(path, true)
-      onRequestClose()
+      route(path, true);
+      onRequestClose();
     }
     if (isOpen) {
-      let path = `${window.location.pathname}`
+      let path = `${window.location.pathname}`;
       if (window?.location?.search) {
-        path = `${path}${window.location.search}#open`
+        path = `${path}${window.location.search}#open`;
       }
-      route(path)
-      window.addEventListener('popstate', backOnClose)
+      route(path);
+      window.addEventListener('popstate', backOnClose);
     }
 
     return () => {
       if (isOpen) {
         if (window?.location?.hash === '#open') {
-          window.history.back()
+          window.history.back();
         }
-        window.removeEventListener('popstate', backOnClose)
+        window.removeEventListener('popstate', backOnClose);
       }
-    }
-  }, [isOpen]) // eslint-disable-line
+    };
+  }, [isOpen]); // eslint-disable-line
 
   useEffect(() => {
     if (typeof document === undefined) {
-      return
+      return;
     }
     if (isOpen) {
-      document.querySelector('body')?.classList.add('modal-open')
+      document.querySelector('body')?.classList.add('modal-open');
     } else {
-      document.querySelector('body')?.classList.remove('modal-open')
+      document.querySelector('body')?.classList.remove('modal-open');
     }
     return () => {
       if (typeof document === undefined) {
-        return
+        return;
       }
-      document.querySelector('body')?.classList.remove('modal-open')
-    }
-  }, [isOpen])
+      document.querySelector('body')?.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   return (
     <div
@@ -90,10 +92,10 @@ const ModalElement = ({ isOpen, children, onRequestClose }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-const getElement = () => (document ? document.getElementById('app') : null)
+const getElement = () => (document ? document.getElementById('app') : null);
 
 const Modal = ({ isOpen, children, onRequestClose }) =>
   isOpen
@@ -105,6 +107,6 @@ const Modal = ({ isOpen, children, onRequestClose }) =>
         />,
         getElement(),
       )
-    : null
+    : null;
 
-export default Modal
+export default Modal;

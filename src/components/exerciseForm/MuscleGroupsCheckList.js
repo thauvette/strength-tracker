@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from 'preact';
 
 const MuscleGroupsCheckList = ({ groups, formData, setFormData, formKey }) =>
   groups?.length
@@ -16,20 +16,20 @@ const MuscleGroupsCheckList = ({ groups, formData, setFormData, formKey }) =>
                       (muscleId) => muscleId === +muscle.id,
                     )}
                     onInput={(e) => {
-                      let currentSelections = [...formData[formKey]]
+                      let currentSelections = [...formData[formKey]];
 
                       if (e.target.checked) {
-                        currentSelections.push(+muscle.id)
+                        currentSelections.push(+muscle.id);
                       } else {
                         currentSelections = currentSelections.filter(
                           (id) => +id !== +muscle.id,
-                        )
+                        );
                       }
 
                       setFormData({
                         ...formData,
                         [formKey]: currentSelections,
-                      })
+                      });
                     }}
                   />
                   <p class="m-0 whitespace-nowrap">{muscle.name}</p>
@@ -39,6 +39,6 @@ const MuscleGroupsCheckList = ({ groups, formData, setFormData, formKey }) =>
           )}
         </div>
       ))
-    : null
+    : null;
 
-export default MuscleGroupsCheckList
+export default MuscleGroupsCheckList;

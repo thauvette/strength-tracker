@@ -1,16 +1,16 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
 
-import Modal from '../modal/Modal'
-import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory'
-import ExerciseStats from '../exerciseStats/ExerciseStats'
+import Modal from '../modal/Modal';
+import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistory';
+import ExerciseStats from '../exerciseStats/ExerciseStats';
 
 const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
-  const [exerciseHistory] = useExerciseHistory(id)
-  const oneRepMax = exerciseHistory?.eorm?.max
-  const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [historyModalIsOpen, setHistoryModalIsOpen] = useState(false)
-  const [targetWeight, setTargetWeight] = useState(oneRepMax || info.weight)
+  const [exerciseHistory] = useExerciseHistory(id);
+  const oneRepMax = exerciseHistory?.eorm?.max;
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [historyModalIsOpen, setHistoryModalIsOpen] = useState(false);
+  const [targetWeight, setTargetWeight] = useState(oneRepMax || info.weight);
 
   return (
     <div key={id} class="py-4 border-b-2">
@@ -40,7 +40,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
                   name: id,
                   value: Math.ceil(oneRepMax),
                 },
-              })
+              });
             }}
           >
             Set to EORM: {Math.ceil(oneRepMax)}
@@ -49,8 +49,8 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
         <button
           class="link"
           onClick={() => {
-            setModalIsOpen(true)
-            setTargetWeight(oneRepMax || info.weight)
+            setModalIsOpen(true);
+            setTargetWeight(oneRepMax || info.weight);
           }}
         >
           Calculate from end goal
@@ -79,8 +79,8 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
                     name: id,
                     value: Math.ceil(targetWeight / 0.9 / 0.95),
                   },
-                })
-                setModalIsOpen(false)
+                });
+                setModalIsOpen(false);
               }}
             >
               Set max to {Math.ceil(targetWeight / 0.9 / 0.95)}
@@ -91,7 +91,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
       <Modal
         isOpen={historyModalIsOpen}
         onRequestClose={() => {
-          setHistoryModalIsOpen(false)
+          setHistoryModalIsOpen(false);
         }}
       >
         <div>
@@ -105,7 +105,7 @@ const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
         </div>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default OneRepMaxInput
+export default OneRepMaxInput;

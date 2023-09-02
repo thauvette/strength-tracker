@@ -1,6 +1,6 @@
-import { h } from 'preact'
-import dayjs from 'dayjs'
-import ExerciseHistoryDay from './ExerciseHistoryDay'
+import { h } from 'preact';
+import dayjs from 'dayjs';
+import ExerciseHistoryDay from './ExerciseHistoryDay';
 
 const ExerciseHistory = ({
   exerciseHistory,
@@ -26,6 +26,6 @@ const ExerciseHistory = ({
       <p>No history found</p>
     )}
   </>
-)
+);
 
-export default ExerciseHistory
+export default ExerciseHistory;

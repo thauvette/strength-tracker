@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import { h } from 'preact';
 import {
   useState,
   createContext,
@@ -6,43 +6,45 @@ import {
   useCallback,
   useEffect,
   createPortal,
-} from 'preact/compat'
+} from 'preact/compat';
 
-import Icon from '../../components/icon/Icon'
+import Icon from '../../components/icon/Icon';
 
-import './toasts.scss'
+import './toasts.scss';
 
-import generateRandomId from '../../utilities.js/generateRandomId'
+import generateRandomId from '../../utilities.js/generateRandomId';
 
-const ToastContext = createContext()
+const ToastContext = createContext();
 
 // types: success, error, warn??
 
 export const ToastProvider = ({ children }) => {
-  const [toasts, setToasts] = useState([])
+  const [toasts, setToasts] = useState([]);
   const fireToast = useCallback(
     (toast) => {
-      setToasts([...toasts, { ...toast, id: generateRandomId() }])
+      setToasts([...toasts, { ...toast, id: generateRandomId() }]);
     },
     [toasts],
-  )
+  );
   const removeToast = (activeToasts, toast) => {
-    setToasts(activeToasts.filter((activeToast) => activeToast.id !== toast.id))
-  }
+    setToasts(
+      activeToasts.filter((activeToast) => activeToast.id !== toast.id),
+    );
+  };
   useEffect(() => {
-    let timer
+    let timer;
     if (toasts?.length > 0) {
       timer = setTimeout(() => {
-        removeToast(toasts, toasts[0])
-      }, 2000)
+        removeToast(toasts, toasts[0]);
+      }, 2000);
     }
 
     return () => {
       if (timer) {
-        clearTimeout(timer)
+        clearTimeout(timer);
       }
-    }
-  }, [toasts])
+    };
+  }, [toasts]);
 
   return (
     <ToastContext.Provider
@@ -55,16 +57,16 @@ export const ToastProvider = ({ children }) => {
         {children}
       </>
     </ToastContext.Provider>
-  )
-}
+  );
+};
 
-const useToast = () => useContext(ToastContext)
+const useToast = () => useContext(ToastContext);
 
-const getElement = () => (document ? document.getElementById('app') : null)
+const getElement = () => (document ? document.getElementById('app') : null);
 
 const Toasts = ({ toasts, removeToast }) => {
   if (!toasts?.length) {
-    return null
+    return null;
   }
 
   return createPortal(
@@ -80,11 +82,11 @@ const Toasts = ({ toasts, removeToast }) => {
             <p class="m-0">{toast.text}</p>
             <Icon name="close-circle-outline" />
           </div>
-        )
+        );
       })}
     </div>,
     getElement(),
-  )
-}
+  );
+};
 
-export default useToast
+export default useToast;

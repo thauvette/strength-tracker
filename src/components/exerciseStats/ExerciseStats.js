@@ -1,12 +1,12 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
 
-import ExerciseHistory from './ExerciseHistory'
-import MaxWeights from './MaxWeights'
-import Volume from './Volume'
-import Charts from './Charts'
+import ExerciseHistory from './ExerciseHistory';
+import MaxWeights from './MaxWeights';
+import Volume from './Volume';
+import Charts from './Charts';
 
-const tabs = ['history', 'PRs', 'volume', 'charts']
+const tabs = ['history', 'PRs', 'volume', 'charts'];
 
 const ExerciseStats = ({
   exerciseHistory,
@@ -14,7 +14,7 @@ const ExerciseStats = ({
   includeBwInHistory = false,
   setIncludeBwInHistory,
 }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0])
+  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   const renderView = () => {
     switch (activeTab) {
@@ -24,21 +24,21 @@ const ExerciseStats = ({
             exerciseHistory={exerciseHistory}
             includeBwInHistory={includeBwInHistory}
           />
-        )
+        );
       case 'volume':
         return (
           <Volume
             exerciseHistory={exerciseHistory}
             includeBwInHistory={includeBwInHistory}
           />
-        )
+        );
       case 'charts':
         return (
           <Charts
             exerciseHistory={exerciseHistory}
             includeBwInHistory={includeBwInHistory}
           />
-        )
+        );
       case 'history':
       default:
         return (
@@ -47,9 +47,9 @@ const ExerciseStats = ({
             onChangeSet={onChangeSet}
             includeBwInHistory={includeBwInHistory}
           />
-        )
+        );
     }
-  }
+  };
 
   return (
     <div class="px-2">
@@ -74,7 +74,7 @@ const ExerciseStats = ({
             type="checkbox"
             checked={includeBwInHistory}
             onInput={(e) => {
-              setIncludeBwInHistory(e.target.checked)
+              setIncludeBwInHistory(e.target.checked);
             }}
           />
           <p>Include body weight in stats</p>
@@ -82,7 +82,7 @@ const ExerciseStats = ({
       )}
       {renderView()}
     </div>
-  )
-}
+  );
+};
 
-export default ExerciseStats
+export default ExerciseStats;

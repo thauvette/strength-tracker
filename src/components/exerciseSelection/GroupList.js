@@ -1,5 +1,5 @@
-import { h } from 'preact'
-import ButtonList from '../buttonList/ButtonList'
+import { h } from 'preact';
+import ButtonList from '../buttonList/ButtonList';
 
 const GroupList = ({ allExercises, handleSelectGroup }) => (
   <div>
@@ -12,6 +12,6 @@ const GroupList = ({ allExercises, handleSelectGroup }) => (
         }))}
     />
   </div>
-)
+);
 
-export default GroupList
+export default GroupList;

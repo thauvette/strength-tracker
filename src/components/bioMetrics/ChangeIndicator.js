@@ -1,6 +1,6 @@
-import { h } from 'preact'
-import Icon from '../icon/Icon'
-import { formatToFixed } from '../../utilities.js/formatNumbers'
+import { h } from 'preact';
+import Icon from '../icon/Icon';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 const ChangeIndicator = ({ number }) => (
   <div class="min-w-[48px] flex justify-end">
@@ -15,6 +15,6 @@ const ChangeIndicator = ({ number }) => (
       </div>
     )}
   </div>
-)
+);
 
-export default ChangeIndicator
+export default ChangeIndicator;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks';
 
 /*
  * https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
@@ -11,30 +11,30 @@ const useIntersectObserver = ({
   continueObserving = false,
   root = null,
 }) => {
-  const [isIntersecting, setIsIntersecting] = useState(false)
+  const [isIntersecting, setIsIntersecting] = useState(false);
   useEffect(() => {
-    let observer
-    let observerRefValue = null
+    let observer;
+    let observerRefValue = null;
 
     if ((!isIntersecting || continueObserving) && ref.current) {
       observer = new IntersectionObserver(
         ([entry]) => {
-          setIsIntersecting(entry.isIntersecting)
+          setIsIntersecting(entry.isIntersecting);
         },
         { rootMargin, threshold, root },
-      )
+      );
 
-      observer.observe(ref.current)
-      observerRefValue = ref.current
+      observer.observe(ref.current);
+      observerRefValue = ref.current;
     }
 
     return () => {
       if (observerRefValue && observer) {
-        observer.unobserve(observerRefValue)
+        observer.unobserve(observerRefValue);
       }
-    }
-  }, [isIntersecting, ref, rootMargin, threshold, continueObserving, root])
-  return isIntersecting
-}
+    };
+  }, [isIntersecting, ref, rootMargin, threshold, continueObserving, root]);
+  return isIntersecting;
+};
 
-export default useIntersectObserver
+export default useIntersectObserver;

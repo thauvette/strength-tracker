@@ -1,15 +1,15 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import Counters from './counters/Counters'
-import { weeks } from '../config/weights'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import Counters from './counters/Counters';
+import { weeks } from '../config/weights';
 
 const convertWeekMath = (week) => {
-  const maxPercent = Math.max(...week.map(({ math }) => math))
+  const maxPercent = Math.max(...week.map(({ math }) => math));
   return week.map((day) => ({
     ...day,
     math: day.math / maxPercent,
-  }))
-}
+  }));
+};
 
 const maths = {
   threeByFiveAscending: convertWeekMath(weeks[0]),
@@ -37,16 +37,16 @@ const maths = {
     weeks[0][5],
     weeks[0][5],
   ]),
-}
+};
 
 const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
-  const [goal, setGoal] = useState(initialWeight || 100)
-  const [type, setType] = useState('threeByFiveAscending')
+  const [goal, setGoal] = useState(initialWeight || 100);
+  const [type, setType] = useState('threeByFiveAscending');
   const sets = maths[type].map((day, i) => ({
     reps: day.reps,
     weight: Math.round(day.math * goal),
     isWarmUp: i <= 2,
-  }))
+  }));
   return (
     <div class="px-4">
       <div class="max-w-xs">
@@ -55,7 +55,7 @@ const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
           class="w-full "
           value={type}
           onInput={(e) => {
-            setType(e.target.value)
+            setType(e.target.value);
           }}
         >
           <option value="threeByFiveAscending">3 x 5 Ascending</option>
@@ -89,13 +89,13 @@ const Plan = ({ initialWeight, updatePlanedSet, submitText = 'Save' }) => {
       <button
         class="bg-primary-900 text-white mt-4 w-full"
         onClick={() => {
-          updatePlanedSet(sets)
+          updatePlanedSet(sets);
         }}
       >
         {submitText}
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default Plan
+export default Plan;

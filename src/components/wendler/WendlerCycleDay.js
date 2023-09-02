@@ -1,6 +1,6 @@
-import { h } from 'preact'
-import { useState } from 'preact/hooks'
-import Icon from '../icon/Icon'
+import { h } from 'preact';
+import { useState } from 'preact/hooks';
+import Icon from '../icon/Icon';
 
 const WendlerCycleDay = ({
   runningSets,
@@ -10,7 +10,7 @@ const WendlerCycleDay = ({
   mainExercise,
   auxName,
 }) => {
-  const [viewInRunningOrder, setViewInRunningOrder] = useState(false)
+  const [viewInRunningOrder, setViewInRunningOrder] = useState(false);
 
   return (
     <div>
@@ -39,7 +39,7 @@ const WendlerCycleDay = ({
           <div>
             {mainSets?.length > 0 &&
               mainSets.map((set, i) => {
-                const { reps, weight, completed } = set
+                const { reps, weight, completed } = set;
 
                 return (
                   <div key={i} class="flex gap-2 items-center">
@@ -50,7 +50,7 @@ const WendlerCycleDay = ({
                       {reps} @ {weight}
                     </p>
                   </div>
-                )
+                );
               })}
           </div>
           <div class="py-4">
@@ -58,7 +58,7 @@ const WendlerCycleDay = ({
               <>
                 <p className="uppercase">Aux: {auxName}</p>
                 {auxSets.map((set, i) => {
-                  const { reps, weight, completed } = set
+                  const { reps, weight, completed } = set;
 
                   return (
                     <div key={i}>
@@ -66,7 +66,7 @@ const WendlerCycleDay = ({
                         {completed ? '✔️' : ''} {reps} @ {weight}
                       </p>
                     </div>
-                  )
+                  );
                 })}
               </>
             )}
@@ -75,21 +75,21 @@ const WendlerCycleDay = ({
             <div>
               <p className="uppercase">Additional </p>
               {additionalSets.map((set, i) => {
-                const { reps, weight, completed } = set
+                const { reps, weight, completed } = set;
                 return (
                   <div key={i}>
                     <p>
                       {completed ? '✔️' : ''} {set.exercise} {reps} @ {weight}
                     </p>
                   </div>
-                )
+                );
               })}
             </div>
           )}
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default WendlerCycleDay
+export default WendlerCycleDay;
