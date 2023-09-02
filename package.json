@@ -8,9 +8,17 @@
     "serve": "sirv build --port 8080 --cors --single",
     "dev": "preact watch",
     "lint": "eslint src",
+    "lint-fix": "eslint --fix 'src/**/*.{ts,tsx,js}'",
     "test": "jest --watch",
     "start": "preact watch",
-    "format": "prettier --write 'src/**/*{js,scss,ts,tsx,css}'"
+    "format": "prettier --write 'src/**/*{js,scss,ts,tsx,css}'",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-fix && npm run format",
+      "pre-push": "npm run lint"
+    }
   },
   "eslintConfig": {
     "extends": "preact",
@@ -26,6 +34,7 @@
     "enzyme-adapter-preact-pure": "^2.0.0",
     "eslint": "^6.0.1",
     "eslint-config-preact": "^1.1.0",
+    "husky": "^8.0.3",
     "jest": "^24.9.0",
     "jest-preset-preact": "^1.0.0",
     "lodash.chunk": "^4.2.0",
