@@ -19,8 +19,6 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
-    quotes: ['error', 'single'],
-    semi: ['error', 'always'],
     '@typescript-eslint/no-explicit-any': 0,
   },
 };
