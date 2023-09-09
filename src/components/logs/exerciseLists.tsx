@@ -14,7 +14,7 @@ type DayEntry = Exercise & SetType;
 interface Props {
   activeDayData: DayEntry[];
   isToday: boolean;
-  toggleSelectedExercise: (set: {}) => void;
+  toggleSelectedExercise: (set) => void;
 }
 
 const ExerciseLists = ({

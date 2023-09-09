@@ -15,9 +15,9 @@ const VolumeRow = ({ day }) => {
         class="p-0 w-full"
         onClick={toggleOpen}
       >
-        <div class={`flex items-center justify-between py-4`}>
+        <div class={'flex items-center justify-between py-4'}>
           <p class="text-sm">
-            {dayjs(day.day).format("MMM DD 'YY")} -{' '}
+            {dayjs(day.day).format('MMM DD \'YY')} -{' '}
             {day.workingSets || day.sets} sets - {day.workingReps} reps
           </p>
           <p>

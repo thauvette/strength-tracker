@@ -12,15 +12,15 @@ interface SetAttributes {
 }
 
 interface Props {
-  handleChanges?: (SetAttributes) => void;
+  handleChanges?: (set: SetAttributes) => void;
   reps?: number;
   weight?: number;
   isWarmUp?: boolean;
   handleRemove?: () => void;
   title?: string;
   titleClass?: string;
-  onDuplicate?: (SetAttributes) => void;
-  renderCtas?: (SetAttributes) => void;
+  onDuplicate?: () => void;
+  renderCtas?: (set: SetAttributes) => void;
   disablePlateModal?: boolean;
   barWeight?: number;
 }

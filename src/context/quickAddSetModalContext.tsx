@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { useState, createContext, useContext } from 'preact/compat';
 import dayjs from 'dayjs';
 
-import { Exercise, HydratedSet } from './db/types';
+import { Exercise, HydratedSet, SetType } from './db/types';
 import useDB from './db/db';
 import { objectStores } from './db/config';
 import Modal from '../components/modal/Modal';
@@ -37,21 +37,24 @@ export const QuickAddSetModalProvider = ({ children }) => {
       exerciseId: +id,
       data: null,
     });
-    const promises = [
-      getItem(objectStores.exercises, id),
+
+    Promise.all([
+      getItem(objectStores.exercises, id) as Promise<Exercise>,
       getSetsByDay(dayjs().format()),
-    ];
-    Promise.all(promises).then(([exerciseData, sets]) => {
+    ]).then(([exerciseData, sets]) => {
       // get the last set and make it the default for the EditableSet
-      const lastSet = sets
+      const lastSet: SetType | { created: null } = sets
         .filter((set) => set.exercise === id)
-        ?.reduce((obj, set) => {
-          if (!obj.created || obj.created < set.created) {
-            return set;
-          }
-          return obj;
-        }, {});
-      if (lastSet) {
+        ?.reduce(
+          (obj, set) => {
+            if (!obj.created || obj.created < set.created) {
+              return set;
+            }
+            return obj;
+          },
+          { created: null },
+        );
+      if (lastSet?.created) {
         setValues(lastSet);
       }
       setState((current) => ({

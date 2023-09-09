@@ -1,4 +1,6 @@
-const formatExercise = (data) => {
+import { Exercise } from '../types';
+
+const formatExercise = (data): Exercise => {
   // fix for legacy data
   const musclesWorked = Array.isArray(data.musclesWorked)
     ? data.musclesWorked

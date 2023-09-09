@@ -93,7 +93,7 @@ export const DayHistoryModalContextProvider = ({ children }) => {
                       ? group.sets.map((set) => (
                           <p key={set.created}>
                             {set.reps} @ {set.weight}{' '}
-                            {set.isWarmUp && `(warm up)`}
+                            {set.isWarmUp && '(warm up)'}
                             <span class="text-sm">
                               {' - '}
                               {dayjs(set.created).format(

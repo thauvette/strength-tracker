@@ -142,7 +142,7 @@ const Item = ({
       class={`py-2 border-b-4 ${isDragging ? 'opacity-50' : ''} `}
       onDragOver={handleDragOver}
     >
-      <div class={`flex justify-between `}>
+      <div class={'flex justify-between '}>
         <div class={`flex items-center ${isTarget ? 'pt-10' : ''}`}>
           <div
             draggable="true"

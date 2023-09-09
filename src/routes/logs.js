@@ -51,7 +51,7 @@ const Logs = ({ date }) => {
   const getData = () => {
     const promises = [
       getAllSetsHistory(),
-      getAllEntries(objectStores.bioMetrics),
+      getAllEntries('bio_metrics'),
       getAllEntries(objectStores.bioEntries),
     ];
 
@@ -217,14 +217,14 @@ const Logs = ({ date }) => {
             }
 
             return (
-              <div class={`text-center`}>
+              <div class={'text-center'}>
                 <button
                   onClick={() => selectDate(day)}
                   class={`w-full h-full ${classNames}`}
                 >
                   {day.format('D')}
                   {groupString && (
-                    <p class={`text-xs m-0`}>{groupString.join(',')}</p>
+                    <p class={'text-xs m-0'}>{groupString.join(',')}</p>
                   )}
                 </button>
               </div>

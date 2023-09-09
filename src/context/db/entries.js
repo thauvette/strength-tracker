@@ -2,9 +2,6 @@ import { objectStores } from './config.ts';
 import { fireSetRemovedEvent } from './sets';
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils.ts';
 
-export const getAllEntries = async (db, store) =>
-  await getFromCursor(db, store);
-
 export const getAllEntriesByKey = async (db, store, key, id) =>
   new Promise((resolve) => {
     const { objectStore } = openObjectStoreTransaction(db, store);

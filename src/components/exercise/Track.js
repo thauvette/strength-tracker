@@ -48,7 +48,7 @@ const Track = ({
           renderCtas={({ weight, reps, isWarmUp }) => (
             <div class="px-2">
               <button
-                class={`primary w-full`}
+                class={'primary w-full'}
                 onClick={() => {
                   submitNewSet({ weight, reps, isWarmUp });
                 }}

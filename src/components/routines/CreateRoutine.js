@@ -131,7 +131,9 @@ const CreateRoutine = ({ initialValues }) => {
       } else {
         res = await createRoutine(data);
       }
-    } catch (e) {}
+    } catch (e) {
+      // do nothing
+    }
     route(`${routes.routinesBase}/${res?.id}`);
   };
 

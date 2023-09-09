@@ -1,8 +1,6 @@
-import { PossibleStores } from './config';
-
 // BIO METRICS
 export interface BioMetric {
-  name: String;
+  name: string;
   created?: Date;
 }
 
@@ -23,7 +21,18 @@ export interface MuscleGroup {
   isPrimary: 0 | 1;
   parentGroup: number | null;
 }
-
+export interface HydratedMuscleGroup {
+  name: string;
+  isPrimary: 0 | 1;
+  parentGroup: number | null;
+  id: number;
+  secondaryGroups: {
+    name: string;
+    id: number;
+    isPrimary: 0 | 1;
+    parentGroup: number;
+  }[];
+}
 // Exercises
 export interface Exercise {
   musclesWorked: number[];
@@ -77,10 +86,12 @@ export interface Routine {
 export interface ObjectStoreEvent extends Event {
   target: IDBRequest;
 }
-
-export interface DBContextType {
-  isInitialized: boolean;
-  getAllEntries: (store: PossibleStores) => Promise<{
-    [key: number]: Exercise | BioEntry | BioMetric;
-  }>;
-}
+// TODO: add wendler cycle to this.
+export type DbStoreTypes =
+  | BioEntry
+  | BioMetric
+  | Exercise
+  | Fast
+  | MuscleGroup
+  | Routine
+  | SetType;

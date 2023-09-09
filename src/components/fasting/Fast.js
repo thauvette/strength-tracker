@@ -1,8 +1,8 @@
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import dayjs from 'dayjs';
-const duration = require('dayjs/plugin/duration');
-dayjs.extend(duration);
+import duration from 'dayjs/plugin/duration';
+
 import AnimateHeight from 'react-animate-height';
 
 import useDB from '../../context/db/db.tsx';
@@ -12,10 +12,12 @@ import Icon from '../../components/icon/Icon';
 import dateFormats from '../../config/dateFormats';
 import EditFastForm from './EditFastForm';
 
+dayjs.extend(duration);
+
 const printDiff = (data, now) => {
   const end = data.end || now;
-  const duration = dayjs.duration(dayjs(end).diff(data.start));
-  return duration.format('HH:mm:ss');
+  const dur = dayjs.duration(dayjs(end).diff(data.start));
+  return dur.format('HH:mm:ss');
 };
 
 const Fast = ({ id, data, onEdit }) => {
@@ -80,7 +82,7 @@ const Fast = ({ id, data, onEdit }) => {
     });
   };
   return (
-    <div key={id} class={`p-2 mx-2 mb-4 card`}>
+    <div key={id} class={'p-2 mx-2 mb-4 card'}>
       <div>
         <div class="flex justify-between items-center">
           <p class="text-sm">

@@ -7,13 +7,8 @@ import {
 } from 'preact/compat';
 import dayjs from 'dayjs';
 
-import {
-  getFromCursor as getFromCursorUtil,
-  openObjectStoreTransaction as openObjectStoreTransactionUtil,
-  getItem,
-} from './utils/dbUtils';
+import { getFromCursor, getItem } from './utils/dbUtils';
 import initializeDb from './initializeDb.js';
-import { objectStores } from './config';
 import {
   getWendlerExercises,
   updateWendlerItem,
@@ -21,13 +16,7 @@ import {
   createCycle,
 } from './wendler.js';
 import { createBioMetric } from './bioMetrics';
-import {
-  createEntry,
-  deleteEntry,
-  getAllEntries,
-  getAllEntriesByKey,
-  updateEntry,
-} from './entries.js';
+import { createEntry, deleteEntry, updateEntry } from './entries.js';
 import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
@@ -35,316 +24,55 @@ import {
   getSetsByDay,
 } from './sets.js';
 import { createRoutine, updateRoutine } from './routines.js';
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants.js';
-import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp.js';
-import formatExercise from './utils/formatExercise.js';
-import { Exercise, MuscleGroup, ObjectStoreEvent } from './types';
+import { getExerciseHistoryById, getExerciseOptions } from './exercises';
+import { getMuscleGroups } from './muscles';
+import { createBackup, restoreFromBackup } from './sync';
+import { SetType } from './types';
 
-const DBContext = createContext(null);
+const DBContext = createContext({
+  isInitialized: false,
+  // WENDLER
+  getWendlerCycle: (id: string) => getWendlerCycle(null, id),
+  getWendlerExercises: () => getWendlerExercises(null),
+  createCycle: (data) => createCycle(null, data),
+  updateWendlerItem: ({ id, path, value }) =>
+    updateWendlerItem(null, { id, path, value }),
+  // SETS
+  createOrUpdateLoggedSet: (id, data) =>
+    createOrUpdateLoggedSet(null, id, data),
+  deleteLoggedSet: (id) => deleteLoggedSet(null, id),
+  getAllSetsHistory: () => getAllSetsHistory(null),
+  getTodaySets: () => getSetsByDay(null, dayjs().toDate()),
+  getSetsByDay: (date: string): Promise<SetType[]> => getSetsByDay(null, date),
+  // EXERCISES
+  getExerciseOptions: () => getExerciseOptions(null),
+  getExerciseHistoryById: (id) => getExerciseHistoryById(null, id),
+  // SYNC
+  createBackup: () => createBackup(null),
+  restoreFromBackup: (entries) => restoreFromBackup(null, entries),
+  // BIO METRICS
+  createBioMetric: (name) => createBioMetric(null, name),
+  // MUSCLES
+  getMuscleGroups: () => getMuscleGroups(null),
+  // ROUTINES
+  createRoutine: (data) => createRoutine(null, data),
+  updateRoutine: (id, data) => updateRoutine(null, id, data),
+  // GENERIC + ENTRIES
+  getItem: (store, id) => getItem(null, store, id),
+  getAllEntries: (store: string) => getFromCursor(null, store),
+  deleteEntry: (store: string, id: number) => deleteEntry(null, store, id),
+  createEntry: (store, data) => createEntry(null, store, data),
+  updateEntry: (store, id, data) => updateEntry(null, store, id, data),
+});
 
 export const DBProvider = ({ children }) => {
-  const [db, setDb] = useState<IDBDatabase>(null);
+  const [db, setDb] = useState<IDBDatabase>();
 
   // INITIALIZE OUR DB
   useEffect(() => {
     initializeDb(setDb);
   }, []); // eslint-disable-line
 
-  const getFromCursor = (store) => getFromCursorUtil(db, store);
-
-  const openObjectStoreTransaction = (store) =>
-    openObjectStoreTransactionUtil(db, store);
-
-  const getExerciseOptions = () =>
-    new Promise((resolve) => {
-      // need to get exercises and muscle groups and connect
-      // then together.
-      getFromCursor(objectStores.muscleGroups).then(
-        async (muscleGroupsObject: { [key: number]: MuscleGroup }) => {
-          const exercises = await getFromCursor(objectStores.exercises);
-          const data = Object.entries(exercises || {}).reduce(
-            (obj, [exerciseId, exercise]) => {
-              const muscleGroupData = muscleGroupsObject[exercise.primaryGroup];
-              const currentGroup = obj[exercise.primaryGroup] || {
-                ...muscleGroupData,
-                id: exercise.primaryGroup,
-                items: [],
-              };
-
-              currentGroup.items.push({
-                ...exercise,
-                id: exerciseId,
-              });
-
-              return {
-                ...obj,
-                [exercise.primaryGroup]: currentGroup,
-              };
-            },
-            {},
-          );
-          return resolve(data);
-        },
-      );
-    });
-
-  const getMuscleGroups = async () => {
-    const groups = await getFromCursor(objectStores.muscleGroups);
-    return Promise.resolve(
-      Object.entries(groups || {}).reduce((obj, [id, group]) => {
-        const primaryGroupId = group.isPrimary ? id : group.parentGroup;
-
-        let currentPrimaryData = obj[primaryGroupId] || {
-          secondaryGroups: [],
-        };
-
-        if (group.isPrimary) {
-          currentPrimaryData = {
-            ...currentPrimaryData,
-            ...group,
-            id,
-          };
-        } else {
-          const groupData = {
-            ...group,
-            id,
-          };
-          currentPrimaryData.secondaryGroups.push(groupData);
-          obj[id] = groupData;
-        }
-        obj[primaryGroupId] = currentPrimaryData;
-        return obj;
-      }, {}),
-    );
-  };
-
-  const getExerciseById = (id) =>
-    new Promise((resolve, reject) => {
-      const { objectStore } = openObjectStoreTransaction(
-        objectStores.exercises,
-      );
-      const keyRange = IDBKeyRange.only(+id);
-
-      const cursorRequest = objectStore.openCursor(keyRange);
-      cursorRequest.onsuccess = (event: ObjectStoreEvent) => {
-        resolve(event?.target?.result?.value);
-      };
-      cursorRequest.onerror = (err) => {
-        reject(err);
-      };
-    });
-
-  const getExerciseHistoryById = (id) =>
-    new Promise((resolve, reject) => {
-      getExerciseById(id).then(async (exerciseResponse: Exercise) => {
-        if (!exerciseResponse) {
-          reject('404');
-        }
-        const muscleGroupData = await getFromCursor(objectStores.muscleGroups);
-
-        const primaryMuscles = [];
-        const secondaryMusclesWorked = [];
-
-        if (exerciseResponse?.musclesWorked?.length) {
-          exerciseResponse.musclesWorked.forEach((muscleId) => {
-            primaryMuscles.push({
-              ...muscleGroupData[muscleId],
-              id: muscleId,
-            });
-          });
-        }
-        if (exerciseResponse?.secondaryMusclesWorked?.length) {
-          exerciseResponse.secondaryMusclesWorked.forEach((muscleId) => {
-            secondaryMusclesWorked.push({
-              ...muscleGroupData[muscleId],
-              id: muscleId,
-            });
-          });
-        }
-        let weights;
-        let sortedKeys;
-        let weightEntries;
-
-        weights = await getAllEntriesByKey(
-          db,
-          objectStores.bioEntries,
-          'bioMetric',
-          1,
-        );
-        weightEntries = weights?.reduce(
-          (obj, item) => ({
-            ...obj,
-            [item.created]: item,
-          }),
-          {},
-        );
-
-        sortedKeys = weights
-          ?.map((item) => item.created)
-          ?.sort((a, b) => a - b);
-
-        const { objectStore } = openObjectStoreTransaction(objectStores.sets);
-
-        const results = [];
-
-        // get all sets for this exercise
-        const index = objectStore.index('exercise');
-        const keyRange = IDBKeyRange.only(+id);
-        const cursorRequest = index.openCursor(keyRange);
-        cursorRequest.onsuccess = async function (event: ObjectStoreEvent) {
-          const data = event?.target?.result?.value;
-          if (data) {
-            const result = { ...data, id: event?.target?.result?.primaryKey };
-
-            // find the closets bw record
-            const closetsKey = getClosestTimeStamp(sortedKeys, result.created);
-            const closetsRecord = closetsKey ? weightEntries[closetsKey] : null;
-
-            if (closetsRecord?.value) {
-              result.bw = closetsRecord.value;
-            }
-            results.push(result);
-            event?.target?.result.continue();
-          } else {
-            resolve({
-              ...exerciseResponse,
-              primaryGroupData:
-                muscleGroupData?.[exerciseResponse?.primaryGroup],
-              musclesWorked: primaryMuscles,
-              secondaryMusclesWorked,
-              items: results,
-            });
-          }
-        };
-      });
-    });
-
-  async function generateBackupData() {
-    const arr = [];
-    const headerItems = ['store', 'id'];
-
-    for (const storeName of Array.from(db?.objectStoreNames)) {
-      const entries = await getFromCursor(storeName);
-      if (Object.keys(entries || {}).length) {
-        Object.entries(entries).forEach(([id, data]) => {
-          const rowData: any[] = [storeName, id];
-          if (Object.keys(data || {}).length) {
-            Object.entries(data).forEach(([key, val]) => {
-              const currentIndex = headerItems.indexOf(key);
-              const position =
-                currentIndex === -1 ? headerItems.length : currentIndex;
-
-              if (currentIndex === -1) {
-                headerItems.push(key);
-              }
-
-              let formattedValue = val;
-
-              // in the case of routines and wendler cycles we have some json to deal with
-              if (
-                (storeName === objectStores.routines && key === 'days') ||
-                (storeName === objectStores.wendlerCycles &&
-                  (key === 'exerciseFormValues' || key === 'weeks'))
-              ) {
-                formattedValue = btoa(JSON.stringify(val));
-              } else if (Array.isArray(val)) {
-                formattedValue = val.join(ARRAY_SEPARATOR);
-              } else if (typeof val === 'string') {
-                formattedValue = val.replace(',', COMMA_REPLACEMENT);
-              }
-              rowData[position] = formattedValue;
-            });
-          }
-
-          arr.push(rowData.join());
-        });
-      }
-    }
-    return `${headerItems.join()}\n${arr.join('\n')}`;
-  }
-
-  const createBackup = () => {
-    generateBackupData().then((res) => {
-      const hiddenElement = document.createElement('a');
-      hiddenElement.href = `data:text/csv;charset=utf-8, ${encodeURI(res)}`;
-      hiddenElement.target = '_blank';
-      hiddenElement.download = `strength-track-${dayjs().format('YYYY-MM-DD')}`;
-      hiddenElement.click();
-    });
-  };
-
-  const clearStore = (store) =>
-    new Promise((resolve, reject) => {
-      try {
-        const objectStoreRequest = db
-          .transaction([store], 'readwrite')
-          .objectStore(store)
-          .clear();
-
-        objectStoreRequest.onsuccess = () => {
-          return resolve({ success: true, store });
-        };
-        objectStoreRequest.onerror = () =>
-          reject(`unable to clear data from ${store}`);
-      } catch (err) {
-        console.warn(err);
-        return reject(err?.message || `unable to clear data from ${store}`);
-      }
-    });
-
-  const writeItemFromBackup = (item) =>
-    new Promise((resolve, reject) => {
-      const { store, data, id } = item;
-
-      const result =
-        store === objectStores.exercises ? formatExercise(data) : data;
-
-      const objectStore = db
-        .transaction([store], 'readwrite')
-        .objectStore(store)
-        .put(result, id);
-
-      objectStore.onsuccess = () => resolve(item);
-
-      objectStore.onerror = (err) => reject(err);
-    });
-
-  const restoreFromBackup = async (entries) => {
-    try {
-      // get list of stores to clear.
-      const storeClearPromises = entries.stores.map((store) =>
-        clearStore(store)
-          .then((res) => res)
-          .catch((err) => {
-            return {
-              store,
-              error: err,
-            };
-          }),
-      );
-
-      const itemPromises = entries.items.map((item) =>
-        writeItemFromBackup(item)
-          .then((res) => res)
-          .catch((err) => {
-            return {
-              ...item,
-              error: err,
-            };
-          }),
-      );
-
-      const storesResponse = await Promise.all(storeClearPromises);
-      const itemResponses = await Promise.all(itemPromises);
-
-      return {
-        storesResponse,
-        itemResponses,
-      };
-    } catch (err) {
-      return Promise.reject(err?.message || 'Unable to restore data');
-    }
-  };
   const memoizedValue = useMemo(
     () => ({
       isInitialized: !!db,
@@ -354,11 +82,6 @@ export const DBProvider = ({ children }) => {
       createCycle: (data) => createCycle(db, data),
       updateWendlerItem: ({ id, path, value }) =>
         updateWendlerItem(db, { id, path, value }),
-      // ENTRIES
-      getAllEntries: (store) => getAllEntries(db, store),
-      deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
-      createEntry: (store, data) => createEntry(db, store, data),
-      updateEntry: (store, id, data) => updateEntry(db, store, id, data),
       // SETS
       createOrUpdateLoggedSet: (id, data) =>
         createOrUpdateLoggedSet(db, id, data),
@@ -366,18 +89,27 @@ export const DBProvider = ({ children }) => {
       getAllSetsHistory: () => getAllSetsHistory(db),
       getTodaySets: () => getSetsByDay(db, dayjs().toDate()),
       getSetsByDay: (date) => getSetsByDay(db, date),
-      getExerciseOptions,
-      getExerciseHistoryById,
-      getExerciseById,
-      createBackup,
-      restoreFromBackup,
+      // EXERCISES
+      getExerciseOptions: () => getExerciseOptions(db),
+      getExerciseHistoryById: (id) => getExerciseHistoryById(db, id),
+      // SYNC
+      createBackup: () => createBackup(db),
+      restoreFromBackup: (entries) => restoreFromBackup(db, entries),
+      // BIO METRICS
       createBioMetric: (name) => createBioMetric(db, name),
-      getMuscleGroups,
+      // MUSCLES
+      getMuscleGroups: () => getMuscleGroups(db),
+      // ROUTINES
       createRoutine: (data) => createRoutine(db, data),
       updateRoutine: (id, data) => updateRoutine(db, id, data),
+      // GENERIC + ENTRIES
       getItem: (store, id) => getItem(db, store, id),
+      getAllEntries: (store) => getFromCursor(db, store),
+      deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
+      createEntry: (store, data) => createEntry(db, store, data),
+      updateEntry: (store, id, data) => updateEntry(db, store, id, data),
     }),
-    [db], // eslint-disable-line
+    [db],
   );
 
   return (

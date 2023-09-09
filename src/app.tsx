@@ -42,7 +42,9 @@ const AppWrapper = () => {
     <>
       <div
         id="app"
-        class={`flex flex-col w-full h-full max-w-lg mx-auto relative bg-1 pb-8`}
+        class={
+          'flex flex-col w-full h-full max-w-lg mx-auto relative bg-1 pb-8'
+        }
       >
         <Menu isOpen={menuIsOpen} toggleMenu={toggleMenu} />
         <Header

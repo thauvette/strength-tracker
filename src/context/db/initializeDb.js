@@ -211,7 +211,7 @@ const initializeDb = (callback) => {
   };
 
   dbRequest.onerror = (e) => {
-    console.warn(`error:`, e);
+    console.warn('error:', e);
   };
   dbRequest.onupgradeneeded = (e) => {
     const db = e.target.result;

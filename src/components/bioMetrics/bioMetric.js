@@ -77,7 +77,9 @@ const BioMetric = ({
     let dayAverage;
     try {
       dayAverage = total / currentDayItems.length;
-    } catch (err) {}
+    } catch (err) {
+      // ignore
+    }
     return {
       ...obj,
       [dayKey]: {
