@@ -1,7 +1,6 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import { Router, Link, route } from 'preact-router';
-import dayjs from 'dayjs';
 
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
