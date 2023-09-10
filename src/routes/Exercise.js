@@ -19,16 +19,9 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 const Exercise = ({ id, remaining_path }) => {
   const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
-  const [exerciseHistory, getData] = useExerciseHistory(id);
+  const { exerciseHistory, getData, savedSet, setSavedSet } =
+    useExerciseHistory(id);
   const { updateEntry } = useDB();
-
-  // using this to prevent making a change
-  // then looking at another tab and losing that change
-  const [savedSet, setSavedSet] = useState({
-    weight: null,
-    reps: null,
-  });
-
   const { updatePlanedSet, getPlannedSets } = useSessionContext();
   const plannedSet = getPlannedSets(id);
 
@@ -45,24 +38,6 @@ const Exercise = ({ id, remaining_path }) => {
       </div>
     );
   }
-
-  const itemsArrays = Object.values(exerciseHistory?.items || {});
-  const lastIndex = Object.values(exerciseHistory?.items || {})?.length
-    ? Object.values(exerciseHistory?.items || {})?.length - 1
-    : 0;
-
-  const lastWorkOutSorted = itemsArrays?.[lastIndex]?.sort((a, b) =>
-    a.create < b.create ? -1 : 1,
-  );
-
-  const lastWorkoutFirstSet = lastWorkOutSorted?.[0] || null;
-  const heaviestSet =
-    lastWorkOutSorted?.reduce((obj, set) => {
-      if (!obj || +obj.weight < +set.weight) {
-        return set;
-      }
-      return obj;
-    }, null) || null;
 
   const toggleExerciseFavorite = () => {
     updateEntry(objectStores.exercises, id, {
@@ -130,15 +105,13 @@ const Exercise = ({ id, remaining_path }) => {
           Plan
         </Link>
       </div>
+
       <Router>
         <Track
           path={`${routes.exerciseBase}/:id`}
-          todaysHistory={
-            exerciseHistory?.items?.[dayjs().format('YYYY-MM-DD')] || []
-          }
+          todaysHistory={exerciseHistory?.todaysHistory}
           exerciseId={id}
           onAddSet={getData}
-          lastWorkoutFirstSet={lastWorkoutFirstSet}
           exerciseName={exerciseHistory?.name}
           savedSet={savedSet}
           setSavedSet={setSavedSet}
@@ -158,7 +131,7 @@ const Exercise = ({ id, remaining_path }) => {
         />
         <PlannedSets
           path={`${routes.exerciseBase}/:id/planned`}
-          lastHeavySet={heaviestSet}
+          lastHeavySet={exerciseHistory?.lastWorkout?.heaviestSet}
           onChangeCompleteSet={getData}
           plannedSet={plannedSet}
           updatePlanedSet={({ id, sets }) => {

@@ -6,7 +6,7 @@ import useExerciseHistory from '../../hooks/useExerciseHistory/useExerciseHistor
 import ExerciseStats from '../exerciseStats/ExerciseStats';
 
 const OneRepMaxInput = ({ id, info, handleInput, formErrors }) => {
-  const [exerciseHistory] = useExerciseHistory(id);
+  const { exerciseHistory } = useExerciseHistory(id);
   const oneRepMax = exerciseHistory?.eorm?.max;
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [historyModalIsOpen, setHistoryModalIsOpen] = useState(false);

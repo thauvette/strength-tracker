@@ -21,7 +21,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
     id: null,
   });
 
-  const [exerciseHistory, getData] = useExerciseHistory(
+  const { exerciseHistory, getData } = useExerciseHistory(
     exerciseHistoryModalState.id,
   );
 

@@ -25,7 +25,9 @@ const PlannedWorkout = ({
     isOpen: false,
   });
 
-  const [exerciseHistory, getData] = useExerciseHistory(exerciseModalState.id);
+  const { exerciseHistory, getData } = useExerciseHistory(
+    exerciseModalState.id,
+  );
 
   const saveSet = (set, index) => {
     setActiveSet(index + 1);
