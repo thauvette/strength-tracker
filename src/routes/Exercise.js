@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
-import { Router, Link, route } from 'preact-router';
+import { Router, route } from 'preact-router';
 
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
@@ -15,6 +15,7 @@ import EditExercise from '../components/exercise/EditExercise';
 import PlannedSets from '../components/PlannedSets';
 import Icon from '../components/icon/Icon';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ExerciseLinks from '../components/exercise/ExerciseLinks';
 
 const Exercise = ({ id, remaining_path }) => {
   const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
@@ -64,46 +65,7 @@ const Exercise = ({ id, remaining_path }) => {
         {exerciseHistory?.notes && <p>{exerciseHistory.notes}</p>}
       </div>
 
-      <div class="flex pb-4">
-        <Link
-          href={`${routes.exerciseBase}/${id}`}
-          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
-            !remaining_path ? '' : 'border-opacity-0 dark:border-opacity-0'
-          }`}
-        >
-          Track
-        </Link>
-        <Link
-          href={`${routes.exerciseBase}/${id}/history`}
-          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
-            remaining_path === 'history'
-              ? ''
-              : 'border-opacity-0 dark:border-opacity-0'
-          }`}
-        >
-          History
-        </Link>
-        <Link
-          href={`${routes.exerciseBase}/${id}/edit`}
-          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
-            remaining_path === 'edit'
-              ? ''
-              : 'border-opacity-0 dark:border-opacity-0'
-          }`}
-        >
-          Edit
-        </Link>
-        <Link
-          href={`${routes.exerciseBase}/${id}/planned`}
-          class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
-            remaining_path === 'planned'
-              ? ''
-              : 'border-opacity-0 dark:border-opacity-0'
-          }`}
-        >
-          Plan
-        </Link>
-      </div>
+      <ExerciseLinks path={remaining_path} id={id} />
 
       <Router>
         <Track
