@@ -8,12 +8,8 @@ import Charts from './Charts';
 
 const tabs = ['history', 'PRs', 'volume', 'charts'];
 
-const ExerciseStats = ({
-  exerciseHistory,
-  onChangeSet,
-  includeBwInHistory = false,
-  setIncludeBwInHistory,
-}) => {
+const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
+  const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   const renderView = () => {

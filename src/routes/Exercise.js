@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useEffect } from 'preact/hooks';
 import { Router, route } from 'preact-router';
 
 import useDB from '../context/db/db.tsx';
@@ -18,12 +18,11 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ExerciseLinks from '../components/exercise/ExerciseLinks';
 
 const Exercise = ({ id, remaining_path }) => {
-  const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
-  const { exerciseHistory, getData, savedSet, setSavedSet } =
+  const { exerciseHistory, getData, savedSet, setSavedSet, isLoading } =
     useExerciseHistory(id);
   const { updateEntry } = useDB();
-  const { updatePlanedSet, getPlannedSets } = useSessionContext();
-  const plannedSet = getPlannedSets(id);
+  const { updatePlanedSet, plannedSets } = useSessionContext();
+  const plannedSet = plannedSets?.[id];
 
   useEffect(() => {
     if (plannedSet) {
@@ -31,7 +30,7 @@ const Exercise = ({ id, remaining_path }) => {
     }
   }, []); // eslint-disable-line
 
-  if (!exerciseHistory) {
+  if (!exerciseHistory || isLoading) {
     return (
       <div class="flex justify-center">
         <LoadingSpinner />
@@ -82,8 +81,6 @@ const Exercise = ({ id, remaining_path }) => {
           path={`${routes.exerciseBase}/:id/history`}
           exerciseHistory={exerciseHistory}
           onChangeSet={getData}
-          includeBwInHistory={includeBwInHistory}
-          setIncludeBwInHistory={setIncludeBwInHistory}
         />
         <EditExercise
           path={`${routes.exerciseBase}/:id/edit`}

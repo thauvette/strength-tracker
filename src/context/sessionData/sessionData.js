@@ -1,7 +1,7 @@
-import cloneDeep from 'lodash.clonedeep';
-import set from 'lodash.set';
 import { h } from 'preact';
 import { useState, createContext, useContext } from 'preact/compat';
+import cloneDeep from 'lodash.clonedeep';
+import set from 'lodash.set';
 
 const SessionDataContext = createContext();
 
@@ -27,6 +27,7 @@ export const SessionDataProvider = ({ children }) => {
     <SessionDataContext.Provider
       value={{
         sessionState,
+        plannedSets: sessionState?.plannedSet || {},
         updatePlanedSet,
         getPlannedSets,
         startRoutine,
