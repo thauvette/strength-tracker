@@ -114,6 +114,7 @@ const EditableSet = ({
               </button>
               <input
                 class="flex-1 w-full text-center"
+                inputMode="numeric"
                 value={reps}
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
@@ -149,6 +150,7 @@ const EditableSet = ({
               <input
                 class="flex-1 w-full text-center"
                 value={weight}
+                inputMode="numeric"
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
                     setWeight(+e.target.value);
