@@ -45,6 +45,21 @@ module.exports = {
           900: '#7c2d12',
         },
       },
+
+      keyframes: {
+        'slide-down': {
+          '0%': { transform: 'translate(0, -100%)', opacity: 0 },
+          '100%': { transform: 'translate(0, 0)', opacity: 1 },
+        },
+        'slide-up': {
+          '0%': { transform: 'translate(0, 100%)', opacity: 0 },
+          '100%': { transform: 'translate(0, 0)', opacity: 1 },
+        },
+      },
+      animation: {
+        'slide-down': 'slide-down 0.25s ease-in',
+        'slide-up': 'slide-up 0.25s ease-in',
+      },
     },
   },
   variants: {

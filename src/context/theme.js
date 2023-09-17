@@ -1,6 +1,12 @@
 import { h } from 'preact';
 
-import { useEffect, useContext, createContext, useState } from 'preact/compat';
+import {
+  useEffect,
+  useContext,
+  createContext,
+  useState,
+  useCallback,
+} from 'preact/compat';
 import { LOCAL_STORAGE_THEME } from '../config/constants';
 
 const ThemeContext = createContext();
@@ -28,7 +34,7 @@ export const ThemeProvider = ({ children }) => {
     }
   }, []); // eslint-disable-line
 
-  const toggleThemeMode = () => {
+  const toggleThemeMode = useCallback(() => {
     const newMode = theme === 'light' ? 'dark' : 'light';
     setTheme(newMode);
 
@@ -42,7 +48,7 @@ export const ThemeProvider = ({ children }) => {
     } else {
       document.documentElement.classList.remove('dark');
     }
-  };
+  }, [theme]);
 
   return (
     <ThemeContext.Provider

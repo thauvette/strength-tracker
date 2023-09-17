@@ -2,7 +2,6 @@ import { h } from 'preact';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'preact/hooks';
 import { route } from 'preact-router';
-import { uniq } from 'lodash';
 
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
@@ -33,9 +32,6 @@ const Logs = ({ date }) => {
     date || dayjs().format(dateFormats.day),
   );
   const [calendarIsOpen, setCalendarIsOpen] = useState(false);
-
-  const [selectedExercise, setSelectedExercise] = useState(null);
-  const clearSelectedExercise = () => setSelectedExercise(null);
 
   const changeDate = (date) => {
     setActiveDate(date);
@@ -128,36 +124,6 @@ const Logs = ({ date }) => {
 
   const isToday = dayjs(activeDate).isSame(dayjs(), 'day');
 
-  const musclesWorked = selectedExercise
-    ? {
-        activePrimary: selectedExercise.musclesWorked,
-        activeSecondary: selectedExercise.secondaryMusclesWorked,
-      }
-    : activeDayData?.reduce(
-        (obj, set) => {
-          const activePrimary = uniq([
-            ...obj.activePrimary,
-            ...(set.musclesWorked || []),
-          ]);
-
-          const activeSecondary = uniq([
-            ...obj.activeSecondary,
-            ...(set.secondaryMusclesWorked || []),
-          ]);
-          return {
-            activePrimary,
-            activeSecondary,
-          };
-        },
-        {
-          activePrimary: [],
-          activeSecondary: [],
-        },
-      ) || {
-        activePrimary: [],
-        activeSecondary: [],
-      };
-
   return (
     <div class="px-2">
       <CalendarControls
@@ -169,21 +135,8 @@ const Logs = ({ date }) => {
       />
       {activeDayData?.length > 0 ? (
         <>
-          <LogHeader
-            activeDayData={activeDayData}
-            selectedExercise={selectedExercise}
-            clearSelectedExercise={clearSelectedExercise}
-            musclesWorked={musclesWorked}
-          />
-          <ExerciseLists
-            activeDayData={activeDayData}
-            isToday={isToday}
-            toggleSelectedExercise={(set) =>
-              setSelectedExercise(
-                selectedExercise?.exercise === set.exercise ? null : set,
-              )
-            }
-          />
+          <LogHeader activeDayData={activeDayData} />
+          <ExerciseLists activeDayData={activeDayData} isToday={isToday} />
         </>
       ) : null}
 
