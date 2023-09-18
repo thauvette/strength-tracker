@@ -14,9 +14,14 @@ type DayEntry = Exercise & SetType;
 interface Props {
   activeDayData: DayEntry[];
   isToday: boolean;
+  openExerciseModal: (id: number) => void;
 }
 
-const ExerciseLists = ({ activeDayData, isToday }: Props) => {
+const ExerciseLists = ({
+  activeDayData,
+  isToday,
+  openExerciseModal,
+}: Props) => {
   const [view, setView] = useState('groups');
   const { startRoutine } = useSessionContext();
   const { launchQuickAdd } = useQuickSetAdd();
@@ -71,6 +76,7 @@ const ExerciseLists = ({ activeDayData, isToday }: Props) => {
               quickAdd={
                 isToday ? () => launchQuickAdd(sets?.[0].exercise) : null
               }
+              openExerciseModal={openExerciseModal}
             />
           ))
         : activeDayData?.map((set) => <LogSet key={set.created} set={set} />)}

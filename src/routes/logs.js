@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { route } from 'preact-router';
 
 import useDB from '../context/db/db.tsx';
@@ -16,6 +16,8 @@ import LoadingSpinner from '../components/LoadingSpinner.js';
 import LogHeader from '../components/logs/logHeader';
 import BioMetricList from '../components/logs/bioMetricList';
 import ExerciseLists from '../components/logs/exerciseLists';
+import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
+import ExerciseHistoryModal from '../components/exerciseHistoryModal/ExerciseHistoryModal.js';
 
 // date is a query param
 const Logs = ({ date }) => {
@@ -33,6 +35,30 @@ const Logs = ({ date }) => {
   );
   const [calendarIsOpen, setCalendarIsOpen] = useState(false);
 
+  const [exerciseModalState, setExerciseModalState] = useState({
+    id: null,
+    isOpen: false,
+  });
+
+  const { exerciseHistory, getData } = useExerciseHistory(
+    exerciseModalState.id,
+  );
+  const openExerciseModal = useCallback((id) => {
+    setExerciseModalState({
+      id,
+      isOpen: true,
+    });
+  }, []);
+
+  const closeExerciseModal = useCallback(
+    () =>
+      setExerciseModalState({
+        id: null,
+        isOpen: false,
+      }),
+    [],
+  );
+
   const changeDate = (date) => {
     setActiveDate(date);
     route(`${routes.logs}?date=${date}`);
@@ -44,7 +70,7 @@ const Logs = ({ date }) => {
     }
   }, [date, activeDate]);
 
-  const getData = () => {
+  const getLogs = () => {
     const promises = [
       getAllSetsHistory(),
       getAllEntries('bio_metrics'),
@@ -91,9 +117,9 @@ const Logs = ({ date }) => {
   };
 
   useEffect(() => {
-    getData();
-    addEventListener('dbSetAdded', getData);
-    return () => removeEventListener('dbSetAdded', getData);
+    getLogs();
+    addEventListener('dbSetAdded', getLogs);
+    return () => removeEventListener('dbSetAdded', getLogs);
   }, []); // eslint-disable-line
 
   if (logState.loading) {
@@ -136,7 +162,11 @@ const Logs = ({ date }) => {
       {activeDayData?.length > 0 ? (
         <>
           <LogHeader activeDayData={activeDayData} />
-          <ExerciseLists activeDayData={activeDayData} isToday={isToday} />
+          <ExerciseLists
+            activeDayData={activeDayData}
+            isToday={isToday}
+            openExerciseModal={openExerciseModal}
+          />
         </>
       ) : null}
 
@@ -185,6 +215,15 @@ const Logs = ({ date }) => {
           }}
         />
       </Modal>
+      {exerciseModalState.isOpen &&
+        exerciseHistory?.id === exerciseModalState?.id && (
+          <ExerciseHistoryModal
+            isOpen={exerciseModalState.isOpen}
+            onRequestClose={closeExerciseModal}
+            onUpdate={getData}
+            exerciseHistory={exerciseHistory}
+          />
+        )}
     </div>
   );
 };

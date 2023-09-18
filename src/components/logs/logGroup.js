@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { Link } from 'preact-router';
 import dayjs from 'dayjs';
 import { routes } from '../../config/routes';
@@ -34,8 +34,13 @@ const renderSetsSummary = (sets) => {
   return stats.join(', ');
 };
 
-const LogGroup = ({ name, sets, quickAdd }) => {
+const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
   const [toggleIsOpen, setToggleIsOpen] = useState(false);
+
+  const id = sets[0].exercise;
+  const handleOpenExerciseModal = useCallback(() => {
+    openExerciseModal(id);
+  }, [id, openExerciseModal]);
   return (
     <div key={name} class="mb-4 card p-1 ">
       <div class="flex relative">
@@ -47,7 +52,7 @@ const LogGroup = ({ name, sets, quickAdd }) => {
 
         <div class="pl-2">
           <Link
-            href={`${routes.exerciseBase}/${sets[0].exercise}`}
+            href={`${routes.exerciseBase}/${id}`}
             ariaLabel={`go to ${name}`}
             class="font-bold capitalize pl-0 underline"
           >
@@ -80,6 +85,12 @@ const LogGroup = ({ name, sets, quickAdd }) => {
               {set.note && <p class="pl-2"> - {set.note}</p>}
             </div>
           ))}
+          <button
+            class="border border-white mt-4"
+            onClick={handleOpenExerciseModal}
+          >
+            View History
+          </button>
         </div>
       </AnimateHeight>
     </div>
