@@ -135,15 +135,13 @@ const useExerciseHistory = (id) => {
   };
 
   const cachedGet = useCallback(getData, [id]); // eslint-disable-line
-  const updateSavedSet = useCallback(
-    () => (values) => {
-      dispatch({
-        type: 'UPDATE_SAVED_SET',
-        payload: values,
-      });
-    },
-    [],
-  );
+  const updateSavedSet = (values) => {
+    dispatch({
+      type: 'UPDATE_SAVED_SET',
+      payload: values,
+    });
+  };
+
   useEffect(() => {
     dispatch({
       type: 'GET_HISTORY',
