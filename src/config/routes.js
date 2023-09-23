@@ -20,6 +20,7 @@ export const routes = {
   routinesBase: '/routines',
   routinesNew: '/routines/new',
   activeRoutine: '/routines/active',
+  workoutAnalysis: '/analysis',
 };
 
 export const menuItems = [
@@ -32,10 +33,6 @@ export const menuItems = [
     title: 'Wendler',
   },
   {
-    href: routes.settings,
-    title: 'Settings',
-  },
-  {
     href: routes.bioMetricsBase,
     title: 'Bio Metrics',
   },
@@ -46,5 +43,13 @@ export const menuItems = [
   {
     href: routes.routinesBase,
     title: 'Routines',
+  },
+  {
+    href: routes.workoutAnalysis,
+    title: 'Workout Analysis',
+  },
+  {
+    href: routes.settings,
+    title: 'Settings',
   },
 ];

@@ -104,6 +104,11 @@
     padding: 4px 8px;
     min-height: 48px;
   }
+  .dark {
+    input[type='date'] {
+      color-scheme: dark;
+    }
+  }
 
   .bg-1 {
     @apply bg-white text-primary-900 dark:bg-black dark:text-white;

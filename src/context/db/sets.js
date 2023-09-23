@@ -16,6 +16,15 @@ const fireSetAddedEvent = (set) => {
   fireSetsChangeEvent('dbSetAdded', set);
 };
 
+const formatSet = (set) => {
+  const isWarmUp =
+    typeof set.isWarmUp === 'string' ? set.isWarmUp === 'true' : !!set.isWarmUp;
+  return {
+    ...set,
+    isWarmUp,
+  };
+};
+
 export const createOrUpdateLoggedSet = (db, id, data) =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
@@ -80,11 +89,11 @@ export const getAllSetsHistory = (db) =>
       getFromCursor(db, objectStores.sets),
       getFromCursor(db, objectStores.muscleGroups),
     ]).then(([exercises, entries, muscleGroups]) => {
-      const results = Object.values(entries || {})?.reduce((obj, entry) => {
-        if (!entry.created || !entry.exercise) {
+      const results = Object.values(entries || {})?.reduce((obj, entryRaw) => {
+        if (!entryRaw.created || !entryRaw.exercise) {
           return obj;
         }
-
+        const entry = formatSet(entryRaw);
         const dateKey = entry.created
           ? dayjs(entry.created).format('YYYY-MM-DD')
           : 'lost';
@@ -105,11 +114,10 @@ export const getAllSetsHistory = (db) =>
     });
   });
 
-export const getSetsByDay = (db, day) => {
-  const todaysSets = new Promise((resolve) => {
-    const targetDay = dayjs(day);
-    const start = targetDay.startOf('day').toDate().getTime();
-    const end = targetDay.endOf('day').toDate().getTime();
+export const getSetsByDateRange = (db, startDate, endDate) => {
+  const getSets = new Promise((resolve) => {
+    const start = dayjs(startDate).startOf('day').toDate().getTime();
+    const end = dayjs(endDate).endOf('day').toDate().getTime();
     const range = IDBKeyRange.bound(start, end);
     const { objectStore, transaction } = openObjectStoreTransaction(
       db,
@@ -120,14 +128,14 @@ export const getSetsByDay = (db, day) => {
     index.openCursor(range).onsuccess = (event) => {
       const cursor = event.target.result;
       if (cursor) {
-        results.push(cursor.value);
+        results.push(formatSet(cursor.value));
         cursor.continue();
       }
     };
     transaction.oncomplete = () => resolve(results);
   });
   return Promise.all([
-    todaysSets,
+    getSets,
     getFromCursor(db, objectStores.exercises).catch((err) => console.log(err)),
   ]).then(([sets, exercises]) => {
     const result = sets.map((set) => {
@@ -140,4 +148,8 @@ export const getSetsByDay = (db, day) => {
     });
     return result;
   });
+};
+
+export const getSetsByDay = (db, day) => {
+  return getSetsByDateRange(db, day, day);
 };

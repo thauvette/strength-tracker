@@ -11,16 +11,7 @@ const NewWorkout = () => {
   const todaysExercises = uniqBy(todaysSets || [], 'exercise');
   const { getTodaySets } = useDB();
   useEffect(() => {
-    const checkToday = () => {
-      getTodaySets().then((res) => setTodaysSets(res));
-    };
-    checkToday();
-    window.addEventListener('dbSetAdded', checkToday);
-    window.addEventListener('dbSetRemoved', checkToday);
-    return () => {
-      window.removeEventListener('dbSetAdded', checkToday);
-      window.removeEventListener('dbSetRemoved', checkToday);
-    };
+    getTodaySets().then((res) => setTodaysSets(res));
   }, []); // eslint-disable-line
 
   const handleSelectExercise = (exercise) =>

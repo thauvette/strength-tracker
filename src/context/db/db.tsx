@@ -21,13 +21,13 @@ import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
   getAllSetsHistory,
-  getSetsByDay,
+  getSetsByDateRange,
 } from './sets.js';
 import { createRoutine, updateRoutine } from './routines.js';
 import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
-import { SetType } from './types';
+import { HydratedSet, SetType } from './types';
 
 const DBContext = createContext({
   isInitialized: false,
@@ -42,8 +42,14 @@ const DBContext = createContext({
     createOrUpdateLoggedSet(null, id, data),
   deleteLoggedSet: (id) => deleteLoggedSet(null, id),
   getAllSetsHistory: () => getAllSetsHistory(null),
-  getTodaySets: () => getSetsByDay(null, dayjs().toDate()),
-  getSetsByDay: (date: string): Promise<SetType[]> => getSetsByDay(null, date),
+  getTodaySets: () => {
+    const today = dayjs().toDate();
+    return getSetsByDateRange(null, today, today);
+  },
+  getSetsByDay: (date: string): Promise<SetType[]> =>
+    getSetsByDateRange(null, date, date),
+  getSetsByDateRange: (start, end): Promise<HydratedSet[]> =>
+    getSetsByDateRange(null, start, end),
   // EXERCISES
   getExerciseOptions: () => getExerciseOptions(null),
   getExerciseHistoryById: (id) => getExerciseHistoryById(null, id),
@@ -87,8 +93,14 @@ export const DBProvider = ({ children }) => {
         createOrUpdateLoggedSet(db, id, data),
       deleteLoggedSet: (id) => deleteLoggedSet(db, id),
       getAllSetsHistory: () => getAllSetsHistory(db),
-      getTodaySets: () => getSetsByDay(db, dayjs().toDate()),
-      getSetsByDay: (date) => getSetsByDay(db, date),
+      getTodaySets: () => {
+        const today = dayjs().toDate();
+        return getSetsByDateRange(db, today, today);
+      },
+      getSetsByDay: (date: string): Promise<HydratedSet[]> =>
+        getSetsByDateRange(db, date, date),
+      getSetsByDateRange: (start, end): Promise<HydratedSet[]> =>
+        getSetsByDateRange(db, start, end),
       // EXERCISES
       getExerciseOptions: () => getExerciseOptions(db),
       getExerciseHistoryById: (id) => getExerciseHistoryById(db, id),

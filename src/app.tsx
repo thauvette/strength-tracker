@@ -13,6 +13,7 @@ import Settings from './routes/Settings';
 import BioMetrics from './routes/bioMetrics';
 import Fasting from './routes/Fasting';
 import Routines from './routes/Routines';
+import WorkoutAnalysis from './routes/WorkoutAnalysis';
 
 import useDB, { DBProvider } from './context/db/db';
 import { ToastProvider } from './context/toasts/Toasts';
@@ -75,6 +76,10 @@ const AppWrapper = () => {
               <Route path={`${routes.bioCatchAll}`} component={BioMetrics} />
               <Route path={routes.fasting} component={Fasting} />
               <Route path={routes.routines} component={Routines} />
+              <Route
+                path={routes.workoutAnalysis}
+                component={WorkoutAnalysis}
+              />
             </Router>
           </div>
         ) : (
