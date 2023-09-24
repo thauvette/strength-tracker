@@ -21,6 +21,7 @@ export const routes = {
   routinesNew: '/routines/new',
   activeRoutine: '/routines/active',
   workoutAnalysis: '/analysis',
+  authentication: '/authenticate',
 };
 
 export const menuItems = [

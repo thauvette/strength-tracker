@@ -14,7 +14,7 @@ import BioMetrics from './routes/bioMetrics';
 import Fasting from './routes/Fasting';
 import Routines from './routes/Routines';
 import WorkoutAnalysis from './routes/WorkoutAnalysis';
-
+import { AuthContextProvider } from './context/supabase/auth';
 import useDB, { DBProvider } from './context/db/db';
 import { ToastProvider } from './context/toasts/Toasts';
 import useSessionContext, {
@@ -28,6 +28,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import { DayHistoryModalContextProvider } from './context/dayHistoryModalContext';
 
 import { QuickAddSetModalProvider } from './context/quickAddSetModalContext';
+import Authentication from './routes/authentication';
 
 const AppWrapper = () => {
   const { isInitialized } = useDB();
@@ -80,6 +81,7 @@ const AppWrapper = () => {
                 path={routes.workoutAnalysis}
                 component={WorkoutAnalysis}
               />
+              <Route path={routes.authentication} component={Authentication} />
             </Router>
           </div>
         ) : (
@@ -93,17 +95,19 @@ const AppWrapper = () => {
 };
 const App = () => (
   <DBProvider>
-    <ThemeProvider>
-      <ToastProvider>
-        <SessionDataProvider>
-          <DayHistoryModalContextProvider>
-            <QuickAddSetModalProvider>
-              <AppWrapper />
-            </QuickAddSetModalProvider>
-          </DayHistoryModalContextProvider>
-        </SessionDataProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <AuthContextProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <SessionDataProvider>
+            <DayHistoryModalContextProvider>
+              <QuickAddSetModalProvider>
+                <AppWrapper />
+              </QuickAddSetModalProvider>
+            </DayHistoryModalContextProvider>
+          </SessionDataProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </AuthContextProvider>
   </DBProvider>
 );
 

@@ -37,11 +37,11 @@ const Header = ({ toggleMenu, menuIsOpen, activeRoutine }: Props) => {
           </Link>
         )}
       </div>
-      <nav class="text-primary-900 dark:text-gray-50">
+      <nav class="text-primary-900 dark:text-gray-50 flex items-center gap-4">
         <Link href={routes.newWorkout}>+</Link>
         <button
           onClick={toggleMenu}
-          class={`ml-4 ${style.hamburger}
+          class={`${style.hamburger}
         ${menuIsOpen ? style.hamburgerActive : ''}`}
         >
           <div class="bg-primary-900 dark:bg-white" />
