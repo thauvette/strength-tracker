@@ -55,7 +55,7 @@ const PlannedSets = ({
                 return i === index ? res : set;
               }),
             });
-            onChangeCompleteSet();
+            onChangeCompleteSet({ reps, weight, isWarmUp });
           });
         }}
       />

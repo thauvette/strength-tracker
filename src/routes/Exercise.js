@@ -90,7 +90,10 @@ const Exercise = ({ id, remaining_path }) => {
         <PlannedSets
           path={`${routes.exerciseBase}/:id/planned`}
           lastHeavySet={exerciseHistory?.lastWorkout?.heaviestSet}
-          onChangeCompleteSet={getData}
+          onChangeCompleteSet={(set) => {
+            setSavedSet(set);
+            getData();
+          }}
           plannedSet={plannedSet}
           updatePlanedSet={({ id, sets }) => {
             updatePlanedSet({
