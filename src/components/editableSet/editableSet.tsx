@@ -99,9 +99,10 @@ const EditableSet = ({
             <p>Warm up set.</p>
           </label>
         </div>
-        <div class="flex pb-3">
-          <div class="w-1/2 px-2">
-            <p class="m-0 text-center">rep{reps > 1 ? 's' : ''}</p>
+        <div class="flex gap-4 pb-3">
+          {/* REPS  */}
+          <div class="w-1/2">
+            <p class="m-0 text-center">Rep{reps > 1 ? 's' : ''}</p>
             <div class="flex items-center">
               <button
                 disabled={reps === 0}
@@ -109,11 +110,12 @@ const EditableSet = ({
                   const newValue = +reps > 1 ? +reps - 1 : 0;
                   setReps(newValue);
                 }}
+                class="flex-1 border-1 border-gray-400 dark:border-white"
               >
                 -
               </button>
               <input
-                class="flex-1 w-full text-center"
+                class="w-[48px] text-center border-0"
                 inputMode="numeric"
                 value={reps}
                 onInput={(e: Event) => {
@@ -127,14 +129,15 @@ const EditableSet = ({
                 onClick={() => {
                   setReps(+reps + 1);
                 }}
+                class="flex-1 border-1 border-gray-400 dark:border-white"
               >
                 +
               </button>
             </div>
           </div>
-
-          <div class="w-1/2 px-2">
-            <p class="m-0 text-center">weight</p>
+          {/* WEIGHT */}
+          <div class="w-1/2">
+            <p class="m-0 text-center">Weight</p>
             <div class="flex items-center">
               <button
                 disabled={weight <= 0}
@@ -144,11 +147,12 @@ const EditableSet = ({
                     +weight > 5 ? +weight - (remainder || 5) : 0;
                   setWeight(newWeight);
                 }}
+                class="flex-1 border-1 border-gray-400 dark:border-white"
               >
                 -
               </button>
               <input
-                class="flex-1 w-full text-center"
+                class="w-[48px] text-center border-0"
                 value={weight}
                 inputMode="numeric"
                 onInput={(e: Event) => {
@@ -163,6 +167,7 @@ const EditableSet = ({
                   const newWeight = +weight + 5 - (+weight % 5);
                   setWeight(newWeight);
                 }}
+                class="flex-1 border-1 border-gray-400 dark:border-white"
               >
                 +
               </button>
