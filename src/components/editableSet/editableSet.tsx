@@ -99,18 +99,18 @@ const EditableSet = ({
             <p>Warm up set.</p>
           </label>
         </div>
-        <div class="flex gap-4 pb-3">
+        <div class="pb-3 ">
           {/* REPS  */}
-          <div class="w-1/2">
-            <p class="m-0 text-center">Rep{reps > 1 ? 's' : ''}</p>
-            <div class="flex items-center">
+          <div class="flex justify-between items-center pb-4 border-b">
+            <p class="m-0 font-bold uppercase">Rep{reps > 1 ? 's' : ''}</p>
+            <div class="flex items-center justify-end">
               <button
                 disabled={reps === 0}
                 onClick={() => {
                   const newValue = +reps > 1 ? +reps - 1 : 0;
                   setReps(newValue);
                 }}
-                class="flex-1 border-1 border-gray-400 dark:border-white"
+                class="w-[48px] h-[48px] border-1 border-gray-400 dark:border-white"
               >
                 -
               </button>
@@ -129,16 +129,33 @@ const EditableSet = ({
                 onClick={() => {
                   setReps(+reps + 1);
                 }}
-                class="flex-1 border-1 border-gray-400 dark:border-white"
+                class="w-[48px] h-[48px] border-1 border-gray-400 dark:border-white"
               >
                 +
               </button>
             </div>
           </div>
           {/* WEIGHT */}
-          <div class="w-1/2">
-            <p class="m-0 text-center">Weight</p>
-            <div class="flex items-center">
+          <div class="flex justify-between items-center py-4">
+            <div>
+              <p class="m-0 font-bold uppercase">Weight</p>
+              {disablePlateModal ? null : (
+                <div class="text-center">
+                  <button
+                    onClick={() =>
+                      setPlateModalState({
+                        isOpen: true,
+                        weight: +weight,
+                      })
+                    }
+                    class="text-xs text-left"
+                  >
+                    plates?
+                  </button>
+                </div>
+              )}
+            </div>
+            <div class="flex items-center justify-end">
               <button
                 disabled={weight <= 0}
                 onClick={() => {
@@ -147,7 +164,7 @@ const EditableSet = ({
                     +weight > 5 ? +weight - (remainder || 5) : 0;
                   setWeight(newWeight);
                 }}
-                class="flex-1 border-1 border-gray-400 dark:border-white"
+                class="w-[48px] h-[48px] border-1 border-gray-400 dark:border-white"
               >
                 -
               </button>
@@ -161,32 +178,16 @@ const EditableSet = ({
                   }
                 }}
               />
-
               <button
                 onClick={() => {
                   const newWeight = +weight + 5 - (+weight % 5);
                   setWeight(newWeight);
                 }}
-                class="flex-1 border-1 border-gray-400 dark:border-white"
+                class="w-[48px] h-[48px] border-1 border-gray-400 dark:border-white"
               >
                 +
               </button>
             </div>
-            {disablePlateModal ? null : (
-              <div class="text-center">
-                <button
-                  onClick={() =>
-                    setPlateModalState({
-                      isOpen: true,
-                      weight: +weight,
-                    })
-                  }
-                  class="text-xs"
-                >
-                  plates?
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
