@@ -98,7 +98,12 @@ export const QuickAddSetModalProvider = ({ children }) => {
                 weight={values?.weight || 0}
                 barWeight={state?.data?.barWeight}
                 renderCtas={(newValues) => (
-                  <button onClick={() => submit(newValues)}>Save</button>
+                  <button
+                    class="primary w-full"
+                    onClick={() => submit(newValues)}
+                  >
+                    Save
+                  </button>
                 )}
               />
             </div>
