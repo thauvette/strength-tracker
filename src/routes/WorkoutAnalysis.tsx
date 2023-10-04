@@ -10,7 +10,7 @@ const WorkoutAnalysis = () => {
   const today = dayjs();
   const { getSetsByDateRange, getMuscleGroups } = useDB();
   const [{ startDate, endDate }, setDates] = useState({
-    startDate: today.subtract(7, 'days').format('YYYY-MM-DD'),
+    startDate: today.subtract(6, 'days').format('YYYY-MM-DD'),
     endDate: today.format('YYYY-MM-DD'),
   });
   const [data, setData] = useState({
