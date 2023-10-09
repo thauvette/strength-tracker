@@ -6,14 +6,13 @@ import { routes } from '../../config/routes';
 import Icon from '../icon/Icon';
 import style from './style.scss';
 import dateFormats from '../../config/dateFormats';
-import { HydratedSet } from 'src/context/db/types';
 
 interface Props {
   toggleMenu: () => void;
   menuIsOpen: boolean;
-  activeRoutine?: HydratedSet[];
+  hasActiveRoutine?: boolean;
 }
-const Header = ({ toggleMenu, menuIsOpen, activeRoutine }: Props) => {
+const Header = ({ toggleMenu, menuIsOpen, hasActiveRoutine }: Props) => {
   const goHome = () => {
     route(`${routes.logs}?date=${dayjs().format(dateFormats.day)}`);
   };
@@ -27,7 +26,7 @@ const Header = ({ toggleMenu, menuIsOpen, activeRoutine }: Props) => {
         >
           <Icon name="calendar-outline" width="32" />
         </button>
-        {activeRoutine && (
+        {hasActiveRoutine && (
           <Link
             class="text-primary-900 dark:text-gray-50 ml-4"
             href={routes.activeRoutine}

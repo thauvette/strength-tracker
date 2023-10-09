@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { useState, createContext, useContext } from 'preact/compat';
 import cloneDeep from 'lodash.clonedeep';
 import set from 'lodash.set';
-import { SimpleSet } from '../../types/declaration';
+import { SimpleSet } from '../../types/types';
 
 interface SessionState {
   plannedSet?: {

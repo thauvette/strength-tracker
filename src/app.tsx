@@ -51,7 +51,7 @@ const AppWrapper = () => {
         <Header
           toggleMenu={toggleMenu}
           menuIsOpen={menuIsOpen}
-          activeRoutine={activeRoutine}
+          hasActiveRoutine={!!activeRoutine}
         />
         {isInitialized ? (
           <div class={`filter bg-1 flex-1 py-4 ${menuIsOpen ? 'blur-sm' : ''}`}>
