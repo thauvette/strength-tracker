@@ -8,7 +8,7 @@ import Charts from './Charts';
 
 const tabs = ['history', 'PRs', 'volume', 'charts'];
 
-const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
+const ExerciseStats = ({ exerciseHistory, onChangeSet, updatePlanedSet }) => {
   const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
@@ -42,6 +42,7 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
             exerciseHistory={exerciseHistory}
             onChangeSet={onChangeSet}
             includeBwInHistory={includeBwInHistory}
+            updatePlanedSet={updatePlanedSet}
           />
         );
     }

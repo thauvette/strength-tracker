@@ -12,6 +12,7 @@ const ExerciseHistoryDay = ({
   onChangeSet,
   ormTime,
   includeBwInHistory = false,
+  updatePlanedSet,
 }) => {
   const ref = useRef(null);
   const isIntersecting = useIntersectObserver({
@@ -21,12 +22,28 @@ const ExerciseHistoryDay = ({
   return (
     <div ref={ref}>
       <div class="pb-4">
-        <button
-          class="border-b-2 pb-1 "
-          onClick={() => showDayHistory(dayjs(dayKey).toDate())}
-        >
-          <p class="font-medium">{dayjs(dayKey).format('MMM DD, YYYY')}</p>
-        </button>
+        <div class="flex justify-between">
+          <button
+            class="border-b-2 pb-1 font-bold"
+            onClick={() => showDayHistory(dayjs(dayKey).toDate())}
+          >
+            <p class="font-medium">{dayjs(dayKey).format('MMM DD, YYYY')}</p>
+          </button>
+          <button
+            class="underline"
+            onClick={() => {
+              updatePlanedSet(
+                items.map((set) => ({
+                  weight: set.weight,
+                  reps: set.reps,
+                  isWarmUp: set.isWarmUp,
+                })),
+              );
+            }}
+          >
+            Repeat
+          </button>
+        </div>
 
         <div class="py-2">
           {items.map((item) => {

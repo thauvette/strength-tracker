@@ -2,11 +2,30 @@ import { h } from 'preact';
 import { useState, createContext, useContext } from 'preact/compat';
 import cloneDeep from 'lodash.clonedeep';
 import set from 'lodash.set';
+import { SimpleSet } from '../../types/declaration';
 
-const SessionDataContext = createContext();
+interface SessionState {
+  plannedSet?: {
+    [key: number]: SimpleSet[];
+  };
+  routine?: SimpleSet[];
+}
+
+interface SessionContext {
+  sessionState: SessionState;
+  plannedSets?: {
+    [key: number]: SimpleSet[];
+  };
+  updatePlanedSet: (args: { id: number; sets: SimpleSet[] }) => void;
+  getPlannedSets: (id: number) => SimpleSet[];
+  startRoutine: (sets: SimpleSet[]) => void;
+  activeRoutine: SimpleSet[] | undefined;
+}
+
+const SessionDataContext = createContext<SessionContext | null>(null);
 
 export const SessionDataProvider = ({ children }) => {
-  const [sessionState, setSessionState] = useState({});
+  const [sessionState, setSessionState] = useState<SessionState>({});
 
   const updatePlanedSet = ({ id, sets }) => {
     const currentState = cloneDeep(sessionState);

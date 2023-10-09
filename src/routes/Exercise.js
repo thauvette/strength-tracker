@@ -4,7 +4,7 @@ import { Router, route } from 'preact-router';
 
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
-import useSessionContext from '../context/sessionData/sessionData';
+import useSessionContext from '../context/sessionData/sessionData.tsx';
 import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 
 import { routes } from '../config/routes';
@@ -45,6 +45,18 @@ const Exercise = ({ id, remaining_path }) => {
       getData();
     });
   };
+
+  const handleUpdatePlanedSet = (sets) => {
+    updatePlanedSet({
+      id,
+      sets: sets?.map((set) => ({
+        ...set,
+        exerciseName: exerciseHistory?.name,
+        barWeight: exerciseHistory.barWeight,
+      })),
+    });
+  };
+
   return (
     <div>
       <div class="px-3 py-3 ">
@@ -81,6 +93,13 @@ const Exercise = ({ id, remaining_path }) => {
           path={`${routes.exerciseBase}/:id/history`}
           exerciseHistory={exerciseHistory}
           onChangeSet={getData}
+          updatePlanedSet={(sets) => {
+            handleUpdatePlanedSet(sets);
+            route(`/exercise/${id}/planned`);
+            if (typeof window !== 'undefined') {
+              window.scrollTo(0, 0);
+            }
+          }}
         />
         <EditExercise
           path={`${routes.exerciseBase}/:id/edit`}
@@ -95,15 +114,8 @@ const Exercise = ({ id, remaining_path }) => {
             getData();
           }}
           plannedSet={plannedSet}
-          updatePlanedSet={({ id, sets }) => {
-            updatePlanedSet({
-              id,
-              sets: sets?.map((set) => ({
-                ...set,
-                exerciseName: exerciseHistory?.name,
-                barWeight: exerciseHistory.barWeight,
-              })),
-            });
+          updatePlanedSet={({ sets }) => {
+            handleUpdatePlanedSet(sets);
           }}
         />
       </Router>
