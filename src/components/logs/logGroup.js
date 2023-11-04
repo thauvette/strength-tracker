@@ -7,6 +7,7 @@ import Icon from '../icon/Icon';
 import dateFormats from '../../config/dateFormats';
 
 import AnimateHeight from 'react-animate-height';
+import useSessionContext from '../../context/sessionData/sessionData';
 
 const renderSetsSummary = (sets) => {
   const stats = [];
@@ -36,7 +37,7 @@ const renderSetsSummary = (sets) => {
 
 const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
   const [toggleIsOpen, setToggleIsOpen] = useState(false);
-
+  const { addToRoutine } = useSessionContext();
   const id = sets[0].exercise;
   const handleOpenExerciseModal = useCallback(() => {
     openExerciseModal(id);
@@ -85,12 +86,31 @@ const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
               {set.note && <p class="pl-2"> - {set.note}</p>}
             </div>
           ))}
-          <button
-            class="border border-white mt-4"
-            onClick={handleOpenExerciseModal}
-          >
-            View History
-          </button>
+          <div class="flex items-center mt-4">
+            <button
+              class="border border-white "
+              onClick={handleOpenExerciseModal}
+            >
+              View History
+            </button>
+            <button
+              class="ml-auto underline"
+              onClick={() =>
+                addToRoutine(
+                  sets.map((set) => ({
+                    exercise: set.exercise,
+                    exerciseName: set.name,
+                    reps: set.reps,
+                    weight: set.weight,
+                    isWarmUp: set.isWarmUp,
+                    barWeight: set.barWeight || 45,
+                  })),
+                )
+              }
+            >
+              Add to today
+            </button>
+          </div>
         </div>
       </AnimateHeight>
     </div>
