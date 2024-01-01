@@ -7,7 +7,7 @@ import { objectStores } from '../../context/db/config.ts';
 import useDB from '../../context/db/db.tsx';
 
 const RoutineList = ({ navigateToEdit }) => {
-  const { getAllEntries, deleteEntry } = useDB();
+  const { getAllEntries, deleteEntry, duplicateRoutine } = useDB();
   const [routines, setRoutines] = useState([]);
   const deleteRoutine = (id) =>
     deleteEntry(objectStores.routines, id).then(() => getRoutines());
@@ -26,7 +26,18 @@ const RoutineList = ({ navigateToEdit }) => {
   useEffect(() => {
     getRoutines();
   }, []); // eslint-disable-line
-
+  const handleDuplicate = async (id) => {
+    try {
+      const res = await duplicateRoutine(id);
+      await getRoutines();
+      navigateToEdit({
+        ...(res.data || {}),
+        id: +res.id,
+      });
+    } catch (err) {
+      alert(err.message || 'oops');
+    }
+  };
   return (
     <div class="px-2">
       <div class="flex items-center justify-between">
@@ -52,6 +63,9 @@ const RoutineList = ({ navigateToEdit }) => {
                 <div class="flex items-center gap-2">
                   <button onClick={() => navigateToEdit(routine)}>
                     <Icon name="create-outline" />
+                  </button>
+                  <button onClick={() => handleDuplicate(+routine.id)}>
+                    <Icon name="copy-outline" />
                   </button>
                   <button onClick={() => deleteRoutine(+routine.id)}>
                     <Icon name="trash-outline" />

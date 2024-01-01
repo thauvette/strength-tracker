@@ -46,3 +46,24 @@ export const updateRoutine = (db, id, data) =>
         resolve({ ...newValue, id: e?.target?.result });
     };
   });
+
+export const duplicateRoutine = (db, id) =>
+  new Promise((resolve, reject) => {
+    const { objectStore } = openObjectStoreTransaction(
+      db,
+      objectStores.routines,
+    );
+    const request = objectStore.get(+id);
+    request.onsuccess = () => {
+      if (!request.result) {
+        return reject(new Error('unable to find entry'));
+      }
+      return resolve(
+        createRoutine(db, {
+          ...request.result,
+          name: `${request.result?.name || ''} - copy`,
+          created: new Date().getTime(),
+        }),
+      );
+    };
+  });
