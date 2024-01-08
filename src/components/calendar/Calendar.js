@@ -1,8 +1,19 @@
-import dayjs from 'dayjs';
 import { h } from 'preact';
+import dayjs from 'dayjs';
 import chunk from 'lodash.chunk';
 import { useState } from 'preact/hooks';
 import Icon from '../icon/Icon';
+
+const monthOptions = Array.from({ length: 12 }, (_, index) => {
+  return {
+    value: index,
+    label: dayjs().startOf('year').add(index, 'months').format('MMM'),
+  };
+});
+
+const currentYear = new Date().getFullYear();
+
+const years = Array.from({ length: 5 }, (_, index) => currentYear - 3 + index);
 
 const Calendar = ({ startDate, renderDay }) => {
   const [start, setStart] = useState(
@@ -38,6 +49,13 @@ const Calendar = ({ startDate, renderDay }) => {
     setStart(start.add(amount, 'month').startOf('month'));
   };
 
+  const goToMonth = (event) => {
+    setStart(start.month(+event.target.value));
+  };
+  const goToYear = (event) => {
+    setStart(start.year(+event.target.value));
+  };
+
   const printDay = (day) => {
     if (!day) return <div />;
     const isCurrentMonth = day.isSame(start, 'month');
@@ -67,7 +85,20 @@ const Calendar = ({ startDate, renderDay }) => {
           </div>
         </button>
         <div class="flex items-center justify-between">
-          <p class="font-bold">{start.format('MMM YYYY')}</p>
+          <select value={start.month()} onChange={goToMonth}>
+            {monthOptions.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <select value={start.year()} onChange={goToYear}>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>{' '}
           <button
             class="text-xl"
             onClick={() => setStart(dayjs().startOf('month'))}

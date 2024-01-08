@@ -1,7 +1,6 @@
 import { h } from 'preact';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import cloneDeep from 'lodash.clonedeep';
 import DateRangePicker from '../components/DateRangePicker';
 import useDB from '../context/db/db';
 import MuscleList from '../components/analysis/MuscleList';
@@ -16,12 +15,16 @@ const WorkoutAnalysis = () => {
   const [data, setData] = useState({
     muscleGroupings: null,
     exercises: null,
+    days: null,
+    totalSets: 0,
   });
 
   const submit = useCallback(() => {
     setData({
       muscleGroupings: null,
       exercises: null,
+      days: null,
+      totalSets: 0,
     });
 
     return Promise.all([
@@ -29,12 +32,16 @@ const WorkoutAnalysis = () => {
       getMuscleGroups(),
     ]).then(([sets, muscles]) => {
       const exercises = {};
-
+      const days = {};
       const result = sets.reduce(
         (obj, set) => {
           const exerciseId = set.exercise;
           const currentSets = exercises[exerciseId]?.sets || [];
           currentSets.push(set);
+          const dayKey = dayjs(set.created).format('YYYY-MM-DD');
+          const day = days[dayKey] || [];
+          day.push(set);
+          days[dayKey] = day;
           exercises[exerciseId] = {
             ...(set.exerciseData || {}),
             sets: currentSets,
@@ -46,8 +53,8 @@ const WorkoutAnalysis = () => {
           const primeData = muscles[primeId];
 
           // musclesWorked, secondaryMusclesWorked
-          const currentMain = cloneDeep(obj.mainMuscles);
-          const currentSecondary = cloneDeep(obj.secondaryMuscles);
+          const currentMain = { ...obj.mainMuscles };
+          const currentSecondary = { ...obj.secondaryMuscles };
           if (set.exerciseData?.musclesWorked?.length) {
             set.exerciseData.musclesWorked.forEach((muscleId) => {
               const muscleData = muscles[muscleId];
@@ -94,6 +101,8 @@ const WorkoutAnalysis = () => {
       setData({
         muscleGroupings: result,
         exercises,
+        days,
+        totalSets: sets?.length || 0,
       });
     });
 
@@ -108,6 +117,8 @@ const WorkoutAnalysis = () => {
     setData({
       muscleGroupings: null,
       exercises: null,
+      days: null,
+      totalSets: 0,
     });
   }, [startDate, endDate, submit]);
 
@@ -125,6 +136,12 @@ const WorkoutAnalysis = () => {
           onChangeDate={setDates}
         />
       </div>
+      {data?.days && (
+        <div class="text-lg form-bold mb-4">
+          <p class="">Total Workouts: {Object.keys(data.days).length}</p>
+          <p>Total sets: {data.totalSets}</p>
+        </div>
+      )}
       <MuscleList title="Muscle Groupings" data={primaryGroups} />
       <MuscleList title="Primary Targets" data={mainMuscles} />
       <MuscleList title="Secondary Targets" data={secondary} />
