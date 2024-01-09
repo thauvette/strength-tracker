@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import { HydratedSet } from '../../context/db/types';
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 interface Props {
   title: string;
@@ -10,9 +11,10 @@ interface Props {
       sets: HydratedSet[];
     };
   };
+  workingSets: number;
 }
 
-const MuscleList = ({ title, data }: Props) => {
+const MuscleList = ({ title, data, workingSets }: Props) => {
   const groups = Object.values(data || {});
 
   if (!groups.length) {
@@ -38,11 +40,11 @@ const MuscleList = ({ title, data }: Props) => {
             },
           );
           return (
-            <p
-              key={group.id}
-              class="capitalize"
-            >{`${group.name} ${group.sets.length} sets (${sets?.working.length}
-                working)`}</p>
+            <p key={group.id} class="capitalize">
+              {`${group.name} ${group.sets.length} sets (${sets?.working.length}
+                working)`}{' '}
+              - {formatToFixed((group.sets.length / workingSets) * 100)}%
+            </p>
           );
         })}
     </div>

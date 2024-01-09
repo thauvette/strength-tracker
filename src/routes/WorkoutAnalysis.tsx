@@ -16,7 +16,7 @@ const WorkoutAnalysis = () => {
     muscleGroupings: null,
     exercises: null,
     days: null,
-    totalSets: 0,
+    workingSets: 0,
   });
 
   const submit = useCallback(() => {
@@ -24,7 +24,7 @@ const WorkoutAnalysis = () => {
       muscleGroupings: null,
       exercises: null,
       days: null,
-      totalSets: 0,
+      workingSets: 0,
     });
 
     return Promise.all([
@@ -102,7 +102,7 @@ const WorkoutAnalysis = () => {
         muscleGroupings: result,
         exercises,
         days,
-        totalSets: sets?.length || 0,
+        workingSets: sets?.filter(({ isWarmUp }) => !isWarmUp)?.length || 0,
       });
     });
 
@@ -118,7 +118,7 @@ const WorkoutAnalysis = () => {
       muscleGroupings: null,
       exercises: null,
       days: null,
-      totalSets: 0,
+      workingSets: 0,
     });
   }, [startDate, endDate, submit]);
 
@@ -139,12 +139,24 @@ const WorkoutAnalysis = () => {
       {data?.days && (
         <div class="text-lg form-bold mb-4">
           <p class="">Total Workouts: {Object.keys(data.days).length}</p>
-          <p>Total sets: {data.totalSets}</p>
+          <p>Total working sets: {data.workingSets}</p>
         </div>
       )}
-      <MuscleList title="Muscle Groupings" data={primaryGroups} />
-      <MuscleList title="Primary Targets" data={mainMuscles} />
-      <MuscleList title="Secondary Targets" data={secondary} />
+      <MuscleList
+        title="Muscle Groupings"
+        data={primaryGroups}
+        workingSets={data.workingSets}
+      />
+      <MuscleList
+        title="Primary Targets"
+        data={mainMuscles}
+        workingSets={data.workingSets}
+      />
+      <MuscleList
+        title="Secondary Targets"
+        data={secondary}
+        workingSets={data.workingSets}
+      />
     </div>
   );
 };
