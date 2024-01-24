@@ -14,6 +14,7 @@ import { routes } from '../../config/routes';
 import Days from './Days';
 import Weeks from './Weeks';
 import Charts from './Charts';
+import Sync from './Sync';
 
 const BioMetric = ({
   id,
@@ -113,9 +114,9 @@ const BioMetric = ({
 
   return (
     <div class="px-2">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col">
         <h1 class="capitalize">{currentBioMetric?.name}</h1>
-        <div class="flex py-2">
+        <div class="flex flex-wrap py-2">
           <Link
             class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 ${
               !remaining_path
@@ -146,6 +147,16 @@ const BioMetric = ({
           >
             Charts
           </Link>
+          <Link
+            class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 ${
+              remaining_path === 'sync'
+                ? 'border-highlight-900 dark:border-highlight-200'
+                : 'border-transparent'
+            }`}
+            href={`${routes.bioMetricsBase}/${id}/sync`}
+          >
+            Export
+          </Link>
         </div>
       </div>
       <Router>
@@ -165,6 +176,7 @@ const BioMetric = ({
         />
         <Weeks path={`${routes.bioMetricsBase}/:id/weeks`} days={days} />
         <Charts path={`${routes.bioMetricsBase}/:id/charts`} days={days} />
+        <Sync path={`${routes.bioMetricsBase}/:id/sync`} id={+id} />
       </Router>
 
       {deleteModalState.open && (

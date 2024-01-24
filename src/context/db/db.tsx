@@ -15,7 +15,7 @@ import {
   getWendlerCycle,
   createCycle,
 } from './wendler.js';
-import { createBioMetric } from './bioMetrics';
+import { createBioMetric, getAllBioById } from './bioMetrics';
 import { createEntry, deleteEntry, updateEntry } from './entries.js';
 import {
   createOrUpdateLoggedSet,
@@ -58,6 +58,7 @@ const DBContext = createContext({
   restoreFromBackup: (entries) => restoreFromBackup(null, entries),
   // BIO METRICS
   createBioMetric: (name) => createBioMetric(null, name),
+  getAllBioById: (id) => getAllBioById(null, id),
   // MUSCLES
   getMuscleGroups: () => getMuscleGroups(null),
   // ROUTINES
@@ -110,6 +111,7 @@ export const DBProvider = ({ children }) => {
       restoreFromBackup: (entries) => restoreFromBackup(db, entries),
       // BIO METRICS
       createBioMetric: (name) => createBioMetric(db, name),
+      getAllBioById: (id) => getAllBioById(db, id),
       // MUSCLES
       getMuscleGroups: () => getMuscleGroups(db),
       // ROUTINES
