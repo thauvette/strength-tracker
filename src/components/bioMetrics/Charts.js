@@ -48,6 +48,7 @@ const Charts = ({ days }) => {
           <option value="8 weeks">8 weeks</option>
           <option value="3 months">3 months</option>
           <option value="6 months">6 months</option>
+          <option value="1 year">1 year</option>
         </select>
       </label>
       <div class="flex items-center justify-between py-4">
