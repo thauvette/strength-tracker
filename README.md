@@ -17,8 +17,6 @@ TODO: wendler first set last vs BBB and SLBBB
 
 TODO: notes for day. (maybe by workout too, allowing for multiple workouts)
 
-TODO: import/export individual exercises and bio metrics
-
 TODO: back up settings (move to indexedDb as well)
 
 TODO: Screen always on? (currently only available chrome 84)

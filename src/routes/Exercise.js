@@ -16,6 +16,7 @@ import PlannedSets from '../components/PlannedSets';
 import Icon from '../components/icon/Icon';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ExerciseLinks from '../components/exercise/ExerciseLinks';
+import Sync from '../components/exercise/Sync';
 
 const Exercise = ({ id, remaining_path }) => {
   const { exerciseHistory, getData, savedSet, setSavedSet, isLoading } =
@@ -117,6 +118,11 @@ const Exercise = ({ id, remaining_path }) => {
           updatePlanedSet={({ sets }) => {
             handleUpdatePlanedSet(sets);
           }}
+        />
+        <Sync
+          path={`${routes.exerciseBase}/:id/sync`}
+          data={exerciseHistory?.raw || []}
+          name={exerciseHistory?.name || ''}
         />
       </Router>
     </div>
