@@ -3,7 +3,11 @@ import { useState } from 'preact/hooks';
 import Modal from '../components/modal/Modal';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../config/constants';
+import {
+  ARRAY_SEPARATOR,
+  COMMA_REPLACEMENT,
+  LINE_BREAK,
+} from '../config/constants';
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
 
@@ -54,13 +58,14 @@ export default function Backups() {
                     formattedValue = value
                       .split(ARRAY_SEPARATOR)
                       ?.map((val) => (isNaN(val) ? val : +val));
-                  } else if (value.includes(COMMA_REPLACEMENT)) {
-                    // this is just a string, probably a note with a comma in it.
-                    formattedValue = value.replace(COMMA_REPLACEMENT, ',');
-                  } else if (value === 'false') {
-                    formattedValue = false;
+                  } else if (value === 'false' || value === 'true') {
+                    formattedValue = value === 'true';
                   } else {
-                    formattedValue = isNaN(value) ? value : +value;
+                    formattedValue = isNaN(value)
+                      ? value
+                          .replace(COMMA_REPLACEMENT, ',')
+                          .replace(LINE_BREAK, '\n')
+                      : +value;
                   }
 
                   data[headers[index + 2]] = formattedValue;

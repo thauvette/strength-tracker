@@ -1,5 +1,9 @@
 import dayjs from 'dayjs';
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants';
+import {
+  ARRAY_SEPARATOR,
+  COMMA_REPLACEMENT,
+  LINE_BREAK,
+} from '../../config/constants';
 import { objectStores } from './config';
 import { getFromCursor } from './utils/dbUtils';
 import formatExercise from './utils/formatExercise';
@@ -35,7 +39,9 @@ export async function generateBackupData(db: IDBDatabase) {
             } else if (Array.isArray(val)) {
               formattedValue = val.join(ARRAY_SEPARATOR);
             } else if (typeof val === 'string') {
-              formattedValue = val.replace(',', COMMA_REPLACEMENT);
+              formattedValue = val
+                .replace(/[\r\n]/gm, LINE_BREAK)
+                .replace(',', COMMA_REPLACEMENT);
             }
             rowData[position] = formattedValue;
           });
