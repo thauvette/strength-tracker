@@ -26,7 +26,13 @@ const Routine = ({ id }) => {
   }, []); // eslint-disable-line
 
   const setActiveRoutine = (sets) => {
-    startRoutine(sets);
+    startRoutine(
+      sets.map((set) => ({
+        ...set,
+        id: null,
+        savedSetId: set.id,
+      })),
+    );
     route(routes.activeRoutine);
   };
 
@@ -48,14 +54,7 @@ const Routine = ({ id }) => {
                     {day.sets?.length
                       ? day.sets.map((set, setIndex) => (
                           <p key={setIndex}>
-                            {set.exerciseName} -{' '}
-                            {set.freeForm ? (
-                              'free form'
-                            ) : (
-                              <>
-                                {set.reps} @ {set.weight}
-                              </>
-                            )}
+                            {set.exerciseName} - {set.reps} @ {set.weight}
                           </p>
                         ))
                       : null}
