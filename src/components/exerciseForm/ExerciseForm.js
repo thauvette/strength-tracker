@@ -5,7 +5,7 @@ import { objectStores } from '../../context/db/config.ts';
 
 import exerciseTypes from '../../config/exerciseTypes';
 import MuscleGroupsCheckList from './MuscleGroupsCheckList';
-import Accordion from '../accordion/accordion';
+import Accordion from '../accordion/accordion.tsx';
 
 import useToast from '../../context/toasts/Toasts';
 import Counters from '../counters/Counters';

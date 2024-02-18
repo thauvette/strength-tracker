@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
-import DraggableList from './async/DraggableList';
+import EditableSetList from './EditableSetList';
 
 const ReorderForm = ({
   items = [],
@@ -8,13 +8,23 @@ const ReorderForm = ({
   allowEditAllWeeks,
   hideAllWeeksCheckbox,
 }) => {
-  const [order, setOrder] = useState(
-    Array.from({ length: items.length }, (_, i) => i),
+  const [sets, setSets] = useState(
+    items.map((item, index) => ({
+      ...item,
+      exerciseName: item.exercise,
+      exerciseId: item.primaryId,
+      id: item.wendlerId,
+      orignalIndex: index,
+    })),
   );
   const [updateAllWeeks, setUpdateAllWeeks] = useState(allowEditAllWeeks);
 
   const submit = () => {
-    onSave({ newOrder: order, updateAllWeeks });
+    onSave({
+      newOrder: sets.map((set) => set.orignalIndex),
+      updateAllWeeks,
+      newSets: sets,
+    });
   };
 
   return (
@@ -33,16 +43,7 @@ const ReorderForm = ({
           )}
         </label>
       )}
-
-      <DraggableList
-        items={items}
-        onReorderEnd={(newOrder) => {
-          setOrder(newOrder);
-        }}
-        renderItem={({ setIndex }) => <p>{items[setIndex]?.label}</p>}
-        initialOrder={order}
-      />
-
+      <EditableSetList sets={sets} setSets={setSets} />
       <div class="flex pt-4">
         <button class="w-full bg-primary-900 text-white" onClick={submit}>
           Save

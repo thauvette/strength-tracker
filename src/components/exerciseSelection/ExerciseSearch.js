@@ -73,29 +73,30 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
       );
     }
     return (
-      <>
-        <div>
-          <button onClick={() => setActiveGroupId('')}>← Back</button>
-        </div>
-        <ExercisesByGroup
-          group={activeGroup}
-          searchText={searchText}
-          handleSelectExercise={handleSelectExercise}
-        />
-      </>
+      <ExercisesByGroup
+        group={activeGroup}
+        searchText={searchText}
+        handleSelectExercise={handleSelectExercise}
+      />
     );
   };
 
   return (
     <div class="h-full flex flex-col">
+      {(showNewExerciseForm || !!activeGroup) && (
+        <div>
+          <button
+            onClick={() => {
+              setActiveGroupId('');
+              setShowNewExerciseForm(false);
+            }}
+          >
+            ← Back
+          </button>
+        </div>
+      )}
       <div class="p-2 pb-4 border-b-4 flex items-end justify-between">
-        {showNewExerciseForm ? (
-          <div>
-            <button onClick={() => setShowNewExerciseForm(false)}>
-              ← Return
-            </button>
-          </div>
-        ) : (
+        {showNewExerciseForm ? null : (
           <>
             <label>
               <p>Search</p>

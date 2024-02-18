@@ -13,6 +13,7 @@ const ExerciseHistoryDay = ({
   ormTime,
   includeBwInHistory = false,
   updatePlanedSet,
+  reuseCta,
 }) => {
   const ref = useRef(null);
   const isIntersecting = useIntersectObserver({
@@ -41,7 +42,7 @@ const ExerciseHistoryDay = ({
               );
             }}
           >
-            Repeat
+            {reuseCta || 'Repeat'}
           </button>
         </div>
 

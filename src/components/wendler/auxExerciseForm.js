@@ -66,9 +66,9 @@ const AuxExerciseForm = ({
       </label>
       <p class="text-sm mb-2">*each week can be further customized</p>
 
-      <div class="flex items-center">
+      <div>
         <button onClick={() => setExercise(null)}>← Back</button>
-        <h2 class="capitalize">{exercise?.name}</h2>
+        <h2 class="capitalize text-center">{exercise?.name}</h2>
       </div>
 
       {sets.map((setValues, index) => {
