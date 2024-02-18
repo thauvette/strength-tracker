@@ -7,6 +7,7 @@ const ExerciseHistory = ({
   onChangeSet,
   includeBwInHistory,
   updatePlanedSet,
+  reuseCta,
 }) => (
   <>
     {exerciseHistory?.items &&
@@ -22,6 +23,7 @@ const ExerciseHistory = ({
             ormTime={exerciseHistory?.eorm?.time}
             includeBwInHistory={includeBwInHistory}
             updatePlanedSet={updatePlanedSet}
+            reuseCta={reuseCta}
           />
         ))
     ) : (

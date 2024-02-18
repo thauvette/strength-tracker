@@ -82,6 +82,9 @@
     &.primary {
       @apply bg-highlight-600 text-white font-bold;
     }
+    &.secondary {
+      @apply bg-gray-600 text-white;
+    }
   }
 
   .card {

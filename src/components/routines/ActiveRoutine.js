@@ -3,13 +3,12 @@ import useSessionContext from '../../context/sessionData/sessionData';
 import PlannedWorkout from '../PlannedWorkout';
 import useDB from '../../context/db/db.tsx';
 
-// TODO: - freeForm sets
-// TODO - UX all the way through from creating routines
 const ActiveRoutine = () => {
   const { activeRoutine, startRoutine } = useSessionContext();
-  const { createOrUpdateLoggedSet } = useDB();
+  const { createOrUpdateLoggedSet, updateSingleRoutineSet } = useDB();
 
   const onUpdateSet = (set, index) => {
+    const { dayId, routineId, routineSetId } = set;
     createOrUpdateLoggedSet(set.id, {
       weight: set.weight,
       reps: set.reps,
@@ -20,9 +19,13 @@ const ActiveRoutine = () => {
       const currentSets = [...activeRoutine];
 
       currentSets[index] = {
+        ...set,
         ...res,
-        exerciseName: set.exerciseName,
       };
+
+      if (dayId && routineId && routineSetId) {
+        updateSingleRoutineSet(+routineId, dayId, set);
+      }
       startRoutine(currentSets);
     });
   };

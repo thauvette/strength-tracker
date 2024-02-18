@@ -1,13 +1,12 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import ExerciseSearch from '../exerciseSelection/ExerciseSearch';
-import Icon from '../icon/Icon';
 import useDB from '../../context/db/db.tsx';
 import { formatHistory } from '../../hooks/useExerciseHistory/utils';
 import AddExerciseTabs from './AddExerciseTabs';
 import LoadingSpinner from '../LoadingSpinner';
 
-const AddExerciseForm = ({ submit }) => {
+const AddExerciseForm = ({ submit, addFromHistroy }) => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [addedSets, setAddedSets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,17 +29,6 @@ const AddExerciseForm = ({ submit }) => {
     setIsLoading(false);
   };
   const handleSubmit = () => {
-    if (!addedSets?.length) {
-      submit([
-        {
-          exerciseId: selectedExercise.id,
-          exerciseName: selectedExercise.name,
-          freeForm: true,
-        },
-      ]);
-      return;
-    }
-
     submit(
       addedSets.map((set) => ({
         ...set,
@@ -52,7 +40,7 @@ const AddExerciseForm = ({ submit }) => {
   if (selectedExercise) {
     return (
       <div>
-        <div class="border-b-1 flex items center">
+        <div class="border-b-1">
           <button
             onClick={() => {
               setSelectedExercise(null);
@@ -64,22 +52,13 @@ const AddExerciseForm = ({ submit }) => {
           <p class="text-xl capitalize font-bold text-center flex-1">
             {selectedExercise?.name}
           </p>
-          <div>
-            {addedSets?.length ? (
-              <button onClick={handleSubmit}>
-                <div class="flex items-center">
-                  <Icon name="save-outline" />
-                  <p class="ml-1">Save</p>
-                </div>
-              </button>
-            ) : null}
-          </div>
         </div>
         <AddExerciseTabs
           selectedExercise={selectedExercise}
-          submit={submit}
+          submit={handleSubmit}
           addedSets={addedSets}
           setAddedSets={setAddedSets}
+          addFromHistroy={addFromHistroy}
         />
       </div>
     );

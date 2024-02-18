@@ -47,6 +47,42 @@ export const updateRoutine = (db, id, data) =>
     };
   });
 
+export const updateSingleRoutineSet = (db, id, dayId, set) =>
+  new Promise((_, reject) => {
+    const { objectStore } = openObjectStoreTransaction(
+      db,
+      objectStores.routines,
+    );
+    const request = objectStore.get(+id);
+    request.onsuccess = () => {
+      if (!request.result) {
+        reject(new Error('unable to find entry'));
+      }
+      const current = {
+        ...request.result,
+        days: request.result?.days?.map((day) =>
+          day.id === dayId
+            ? {
+                ...day,
+                sets: day.sets?.map((currentSet) =>
+                  currentSet.routineSetId === set.routineSetId
+                    ? {
+                        exercise: set.exercise,
+                        exerciseName: set.exerciseName,
+                        reps: set.reps,
+                        routineSetId: set.routineSetId,
+                        weight: set.weight,
+                      }
+                    : currentSet,
+                ),
+              }
+            : day,
+        ),
+      };
+      return updateRoutine(db, id, current);
+    };
+  });
+
 export const duplicateRoutine = (db, id) =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(

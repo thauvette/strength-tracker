@@ -23,7 +23,12 @@ import {
   getAllSetsHistory,
   getSetsByDateRange,
 } from './sets.js';
-import { createRoutine, duplicateRoutine, updateRoutine } from './routines.js';
+import {
+  createRoutine,
+  duplicateRoutine,
+  updateRoutine,
+  updateSingleRoutineSet,
+} from './routines.js';
 import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
@@ -64,6 +69,8 @@ const DBContext = createContext({
   // ROUTINES
   createRoutine: (data) => createRoutine(null, data),
   updateRoutine: (id, data) => updateRoutine(null, id, data),
+  updateSingleRoutineSet: (id, dayId, set) =>
+    updateSingleRoutineSet(null, id, dayId, set),
   duplicateRoutine: (id) => duplicateRoutine(null, id),
   // GENERIC + ENTRIES
   getItem: (store, id) => getItem(null, store, id),
@@ -117,6 +124,8 @@ export const DBProvider = ({ children }) => {
       // ROUTINES
       createRoutine: (data) => createRoutine(db, data),
       updateRoutine: (id, data) => updateRoutine(db, id, data),
+      updateSingleRoutineSet: (id, dayId, set) =>
+        updateSingleRoutineSet(db, id, dayId, set),
       duplicateRoutine: (id) => duplicateRoutine(db, id),
       // GENERIC + ENTRIES
       getItem: (store, id) => getItem(db, store, id),
