@@ -7,29 +7,24 @@ import { objectStores } from '../../context/db/config.ts';
 import useDB from '../../context/db/db.tsx';
 
 const RoutineList = ({ navigateToEdit }) => {
-  const { getAllEntries, deleteEntry, duplicateRoutine } = useDB();
+  const { deleteEntry, duplicateRoutine, getRoutines } = useDB();
   const [routines, setRoutines] = useState([]);
   const deleteRoutine = (id) =>
-    deleteEntry(objectStores.routines, id).then(() => getRoutines());
+    deleteEntry(objectStores.routines, id).then(() => getRoutineList());
 
-  const getRoutines = () => {
-    getAllEntries(objectStores.routines).then((res) => {
-      setRoutines(
-        Object.entries(res || {}).map(([id, routine]) => ({
-          id,
-          ...routine,
-        })),
-      );
+  const getRoutineList = () => {
+    getRoutines().then((res) => {
+      setRoutines(res);
     });
   };
 
   useEffect(() => {
-    getRoutines();
+    getRoutineList();
   }, []); // eslint-disable-line
   const handleDuplicate = async (id) => {
     try {
       const res = await duplicateRoutine(id);
-      await getRoutines();
+      await getRoutineList();
       navigateToEdit({
         ...(res.data || {}),
         id: +res.id,

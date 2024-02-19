@@ -26,6 +26,7 @@ import {
 import {
   createRoutine,
   duplicateRoutine,
+  getRoutines,
   updateRoutine,
   updateSingleRoutineSet,
 } from './routines.js';
@@ -67,6 +68,7 @@ const DBContext = createContext({
   // MUSCLES
   getMuscleGroups: () => getMuscleGroups(null),
   // ROUTINES
+  getRoutines: () => getRoutines(null),
   createRoutine: (data) => createRoutine(null, data),
   updateRoutine: (id, data) => updateRoutine(null, id, data),
   updateSingleRoutineSet: (id, dayId, set) =>
@@ -122,6 +124,7 @@ export const DBProvider = ({ children }) => {
       // MUSCLES
       getMuscleGroups: () => getMuscleGroups(db),
       // ROUTINES
+      getRoutines: () => getRoutines(db),
       createRoutine: (data) => createRoutine(db, data),
       updateRoutine: (id, data) => updateRoutine(db, id, data),
       updateSingleRoutineSet: (id, dayId, set) =>

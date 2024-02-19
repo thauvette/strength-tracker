@@ -11,9 +11,8 @@ interface Props {
 const CreateRouteDaySets = ({ sets, setSets, handleSave }: Props) => {
   const musclesWorked = sets.reduce(
     (obj, set) => {
-      const primary = set?.musclesWorked?.map((muscle) => muscle.id) || [];
-      const secondary =
-        set?.secondaryMusclesWorked?.map((muscle) => muscle.id) || [];
+      const primary = set?.musclesWorked || [];
+      const secondary = set?.secondaryMusclesWorked || [];
 
       return {
         activePrimary: [...obj.activePrimary, ...primary],
@@ -29,7 +28,7 @@ const CreateRouteDaySets = ({ sets, setSets, handleSave }: Props) => {
   return (
     <div>
       <EditableSetList sets={sets} setSets={setSets} />
-      <div class="pb-4 px-4 max-w-[256px] mx-auto">
+      <div class="pb-4 px-4 max-w-[10rem] mx-auto">
         <Body {...musclesWorked} />
       </div>
       <div class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto">

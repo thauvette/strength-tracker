@@ -17,7 +17,7 @@ const Routines = () => {
         ...day,
         sets: day.sets.map((set) => ({
           ...set,
-          id: set.routineSetId,
+          id: set.routineSetId || set.id,
         })),
       })),
     });

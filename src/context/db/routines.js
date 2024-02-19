@@ -1,6 +1,7 @@
 import get from 'lodash.get';
 import { objectStores } from './config.ts';
-import { openObjectStoreTransaction } from './utils/dbUtils.ts';
+import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils.ts';
+import { getExerciseById } from './exercises';
 
 export const createRoutine = (db, data) =>
   new Promise((resolve) => {
@@ -104,3 +105,52 @@ export const duplicateRoutine = (db, id) =>
       );
     };
   });
+
+export const getRoutines = async (db) => {
+  try {
+    const result = await getFromCursor(db, objectStores.routines);
+
+    // get every exercise id in all routines.
+    const exerciseIds = Object.values(result || {}).reduce((arr, routine) => {
+      const routineExerciseIds = routine.days.reduce((routineArr, day) => {
+        const dayExerciseIds = Array.from(
+          new Set(day?.sets?.map(({ exercise }) => +exercise) || []),
+        );
+
+        return Array.from(new Set([...routineArr, ...dayExerciseIds]));
+      }, []);
+
+      return Array.from(new Set([...arr, ...routineExerciseIds]));
+    }, []);
+    const promiseList = exerciseIds.map((id) =>
+      getExerciseById(db, id).then((res) => ({
+        id,
+        ...res,
+      })),
+    );
+    return Promise.all(promiseList).then((responses) =>
+      Object.entries(result || {}).map(([id, routine]) => ({
+        ...routine,
+        id: +id,
+        days:
+          routine.days?.map((day) => ({
+            ...day,
+            sets:
+              day?.sets?.map((set) => {
+                const exerciseData = responses.find(
+                  ({ id }) => +id === +set.exercise,
+                );
+                return {
+                  ...set,
+                  musclesWorked: exerciseData?.musclesWorked || [],
+                  secondaryMusclesWorked:
+                    exerciseData?.secondaryMusclesWorked || [],
+                };
+              }) || [],
+          })) || [],
+      })),
+    );
+  } catch (err) {
+    throw new Error(err?.message || 'error getting routines');
+  }
+};

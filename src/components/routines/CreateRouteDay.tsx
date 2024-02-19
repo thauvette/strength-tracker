@@ -36,6 +36,9 @@ const CreateRouteDay = ({ dayId, days, updateDay }: Props) => {
       ...newSets.map((set) => ({
         ...set,
         id: set.id || generateRandomId(),
+        musclesWorked: set?.musclesWorked?.map(({ id }) => +id) || [],
+        secondaryMusclesWorked:
+          set?.secondaryMusclesWorked?.map(({ id }) => +id) || [],
       })),
     ]);
     route(`${routes.routinesNew}/${dayId}/`);

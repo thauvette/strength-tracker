@@ -14,8 +14,8 @@ export type Set = {
   id: string;
   exerciseId: number;
   exerciseName: string;
-  musclesWorked?: { id: number }[];
-  secondaryMusclesWorked?: { id: number }[];
+  musclesWorked?: number[];
+  secondaryMusclesWorked?: number[];
   // TODO: include notes in routine sets
 };
 interface Props {
