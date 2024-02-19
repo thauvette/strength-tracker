@@ -40,7 +40,9 @@ const Logs = ({ date }) => {
     isOpen: false,
   });
 
-  const { exerciseHistory } = useExerciseHistory(exerciseModalState.id);
+  const { exerciseHistory, getData } = useExerciseHistory(
+    exerciseModalState.id,
+  );
   const openExerciseModal = useCallback((id) => {
     setExerciseModalState({
       id,
@@ -219,6 +221,10 @@ const Logs = ({ date }) => {
             isOpen={exerciseModalState.isOpen}
             onRequestClose={closeExerciseModal}
             exerciseHistory={exerciseHistory}
+            onUpdate={() => {
+              getLogs();
+              getData();
+            }}
           />
         )}
     </div>

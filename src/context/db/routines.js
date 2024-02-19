@@ -65,7 +65,8 @@ export const updateSingleRoutineSet = (db, id, dayId, set) =>
             ? {
                 ...day,
                 sets: day.sets?.map((currentSet) =>
-                  currentSet.routineSetId === set.routineSetId
+                  currentSet.routineSetId === set.routineSetId ||
+                  currentSet.id === set.routineSetId // legacy routines have id
                     ? {
                         exercise: set.exercise,
                         exerciseName: set.exerciseName,
