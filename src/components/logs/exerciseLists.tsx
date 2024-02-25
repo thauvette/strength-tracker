@@ -4,17 +4,15 @@ import { route } from 'preact-router';
 
 import useSessionContext from '../../context/sessionData/sessionData';
 import { routes } from '../../config/routes';
-import { Exercise, SetType } from '../../context/db/types';
-import LogGroup from './logGroup';
+import { LogsSet } from '../../context/db/types';
+import LogGroup from './LogGroup';
 import LogSet from './logSet';
 import useQuickSetAdd from '../../context/quickAddSetModalContext';
 
-type DayEntry = Exercise & SetType;
-
 interface Props {
-  activeDayData: DayEntry[];
+  activeDayData: LogsSet[];
   isToday: boolean;
-  openExerciseModal: (id: number) => void;
+  openExerciseModal?: (id: number) => void;
 }
 
 const ExerciseLists = ({
@@ -26,10 +24,12 @@ const ExerciseLists = ({
   const { startRoutine } = useSessionContext();
   const { launchQuickAdd } = useQuickSetAdd();
 
-  const sortedDayData = activeDayData.reduce((obj, exercise) => {
+  const sortedDayData: {
+    [key: string]: LogsSet[];
+  } = activeDayData.reduce((obj, exercise) => {
     const key = exercise.name;
 
-    const currentExerciseSets = obj[key] || [];
+    const currentExerciseSets: LogsSet[] = obj[key] || [];
     currentExerciseSets.push(exercise);
     return {
       ...obj,
@@ -68,17 +68,31 @@ const ExerciseLists = ({
         )}
       </div>
       {view === 'groups'
-        ? Object.entries(sortedDayData).map(([name, sets]) => (
-            <LogGroup
-              key={name}
-              name={name}
-              sets={sets}
-              quickAdd={
-                isToday ? () => launchQuickAdd(sets?.[0].exercise) : null
-              }
-              openExerciseModal={openExerciseModal}
-            />
-          ))
+        ? Object.entries(sortedDayData).map(([name, sets]) => {
+            const lastSet = sets[sets.length - 1];
+            return (
+              <LogGroup
+                key={name}
+                name={name}
+                sets={sets}
+                quickAdd={
+                  isToday
+                    ? () =>
+                        launchQuickAdd({
+                          id: sets?.[0]?.exercise,
+                          exerciseName: name,
+                          initialValues: {
+                            weight: lastSet.weight,
+                            reps: lastSet.reps,
+                            isWarmUp: !!lastSet.isWarmUp,
+                          },
+                        })
+                    : null
+                }
+                openExerciseModal={openExerciseModal}
+              />
+            );
+          })
         : activeDayData?.map((set) => <LogSet key={set.created} set={set} />)}
     </>
   );

@@ -169,9 +169,7 @@ const BioMetric = ({
               currentBioMetric?.items?.[currentBioMetric?.items.length - 1]
                 ?.value || '',
           }}
-          handleAddEntry={(data) => {
-            handleAddEntry(data);
-          }}
+          handleAddEntry={handleAddEntry}
           name={currentBioMetric?.name}
         />
         <Weeks path={`${routes.bioMetricsBase}/:id/weeks`} days={days} />

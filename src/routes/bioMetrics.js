@@ -45,6 +45,7 @@ const BioMetrics = () => {
     createEntry(objectStores.bioEntries, {
       bioMetric: +bioMetricId,
       ...data,
+      date: new Date(data.date).getTime(),
     }).then(() => {
       fetchBioMetrics();
     });

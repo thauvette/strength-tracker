@@ -54,7 +54,7 @@ const DateRangePicker = ({ startDate, endDate, onChangeDate }: Props) => {
       <Modal isOpen={!!focusedDate} onRequestClose={() => setFocusedDate(null)}>
         <div onMouseLeave={() => setHoverDate('')}>
           <Calendar
-            startDate={startDate}
+            startDate={dayjs(startDate).toDate()}
             renderDay={(day) => {
               // disabled state, selected state
               const isDisabled = day.isAfter(dayjs(), 'days');

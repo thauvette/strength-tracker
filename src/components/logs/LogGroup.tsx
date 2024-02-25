@@ -8,6 +8,7 @@ import dateFormats from '../../config/dateFormats';
 
 import AnimateHeight from 'react-animate-height';
 import useSessionContext from '../../context/sessionData/sessionData';
+import { LogsSet } from '../../context/db/types';
 
 const renderSetsSummary = (sets) => {
   const stats = [];
@@ -35,7 +36,14 @@ const renderSetsSummary = (sets) => {
   return stats.join(', ');
 };
 
-const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
+interface Props {
+  name: string;
+  sets: LogsSet[];
+  quickAdd: () => void;
+  openExerciseModal?: (id: number) => void;
+}
+
+const LogGroup = ({ name, sets, quickAdd, openExerciseModal }: Props) => {
   const [toggleIsOpen, setToggleIsOpen] = useState(false);
   const { addToRoutine } = useSessionContext();
   const id = sets[0].exercise;
@@ -43,7 +51,7 @@ const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
     openExerciseModal(id);
   }, [id, openExerciseModal]);
   return (
-    <div key={name} class="mb-4 card p-1 ">
+    <div class="mb-4 card p-1 ">
       <div class="flex relative">
         {quickAdd && (
           <button class="text-2xl pr-2" onClick={quickAdd}>
@@ -54,7 +62,7 @@ const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
         <div class="pl-2">
           <Link
             href={`${routes.exerciseBase}/${id}`}
-            ariaLabel={`go to ${name}`}
+            aria-label={`go to ${name}`}
             class="font-bold capitalize pl-0 underline"
           >
             {name}
@@ -87,12 +95,15 @@ const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
             </div>
           ))}
           <div class="flex items-center mt-4">
-            <button
-              class="border border-white "
-              onClick={handleOpenExerciseModal}
-            >
-              View History
-            </button>
+            {openExerciseModal && (
+              <button
+                class="border border-white "
+                onClick={handleOpenExerciseModal}
+              >
+                View History
+              </button>
+            )}
+
             <button
               class="ml-auto underline"
               onClick={() =>

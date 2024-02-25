@@ -23,7 +23,7 @@ const BioMetricForm = ({
     e.preventDefault();
     submit({
       value,
-      date: dayjs(`${date}T${time}:00`).format(),
+      date: dayjs(`${date}T${time}:00`).toDate().getTime(),
     });
     fireToast({
       text: `${name} added`,

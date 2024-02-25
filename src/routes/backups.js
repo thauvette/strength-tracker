@@ -1,5 +1,7 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
+import dayjs from 'dayjs';
+
 import Modal from '../components/modal/Modal';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -52,6 +54,11 @@ export default function Backups() {
                     } catch (e) {
                       formattedValue = [];
                     }
+                  } else if (
+                    items[0] === objectStores.bioEntries &&
+                    headers[index + 2] === 'date'
+                  ) {
+                    formattedValue = dayjs(value).toDate().getTime();
                   } else if (value.includes(ARRAY_SEPARATOR)) {
                     // this is an array.
                     // we'll split it and then turn numbers back to numbers as they are probably tied to other ids.

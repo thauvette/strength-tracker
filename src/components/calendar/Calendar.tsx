@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import chunk from 'lodash.chunk';
 import { useState } from 'preact/hooks';
 import Icon from '../icon/Icon';
@@ -15,7 +15,13 @@ const currentYear = new Date().getFullYear();
 
 const years = Array.from({ length: 5 }, (_, index) => currentYear - 3 + index);
 
-const Calendar = ({ startDate, renderDay }) => {
+interface Props {
+  startDate: Date;
+  renderDay?: (day: Dayjs, isCurrentMonth: boolean) => void;
+  onMonthChange?: (args: { target: Dayjs }) => void;
+}
+
+const Calendar = ({ startDate, renderDay, onMonthChange }: Props) => {
   const [start, setStart] = useState(
     dayjs(startDate || new Date()).startOf('month'),
   );
@@ -46,14 +52,26 @@ const Calendar = ({ startDate, renderDay }) => {
   const weeks = chunk([...paddingStart, ...days, ...paddingEnd], 7);
 
   const changeMonth = (amount) => {
-    setStart(start.add(amount, 'month').startOf('month'));
+    const target = start.add(amount, 'month').startOf('month');
+    setStart(target);
+    if (onMonthChange) {
+      onMonthChange({ target });
+    }
   };
 
   const goToMonth = (event) => {
-    setStart(start.month(+event.target.value));
+    const target = start.month(+event.target.value);
+    setStart(target);
+    if (onMonthChange) {
+      onMonthChange({ target });
+    }
   };
   const goToYear = (event) => {
-    setStart(start.year(+event.target.value));
+    const target = start.year(+event.target.value);
+    setStart(target);
+    if (onMonthChange) {
+      onMonthChange({ target });
+    }
   };
 
   const printDay = (day) => {
@@ -78,7 +96,7 @@ const Calendar = ({ startDate, renderDay }) => {
         <button
           class="text-xl"
           onClick={() => changeMonth(-1)}
-          ariaLabel="previous month"
+          aria-label="previous month"
         >
           <div class="flex items-center">
             <Icon name="arrow-back-outline" />
@@ -102,7 +120,7 @@ const Calendar = ({ startDate, renderDay }) => {
           <button
             class="text-xl"
             onClick={() => setStart(dayjs().startOf('month'))}
-            ariaLabel="jump to today"
+            aria-label="jump to today"
           >
             <div class="flex items-center">
               <Icon name="calendar-outline" />
@@ -112,7 +130,7 @@ const Calendar = ({ startDate, renderDay }) => {
         <button
           class="text-xl"
           onClick={() => changeMonth(1)}
-          ariaLabel="next month"
+          aria-label="next month"
         >
           <div class="flex items-center">
             <Icon name="arrow-forward-outline" />

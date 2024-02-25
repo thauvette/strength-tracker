@@ -15,14 +15,17 @@ import {
   getWendlerCycle,
   createCycle,
 } from './wendler.js';
-import { createBioMetric, getAllBioById } from './bioMetrics';
+import {
+  createBioMetric,
+  getAllBioById,
+  getBioEntriesByDateRange,
+} from './bioMetrics';
 import { createEntry, deleteEntry, updateEntry } from './entries.js';
 import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
-  getAllSetsHistory,
   getSetsByDateRange,
-} from './sets.js';
+} from './sets';
 import {
   createRoutine,
   duplicateRoutine,
@@ -33,7 +36,6 @@ import {
 import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
-import { HydratedSet, SetType } from './types';
 
 const DBContext = createContext({
   isInitialized: false,
@@ -47,14 +49,12 @@ const DBContext = createContext({
   createOrUpdateLoggedSet: (id, data) =>
     createOrUpdateLoggedSet(null, id, data),
   deleteLoggedSet: (id) => deleteLoggedSet(null, id),
-  getAllSetsHistory: () => getAllSetsHistory(null),
   getTodaySets: () => {
     const today = dayjs().toDate();
     return getSetsByDateRange(null, today, today);
   },
-  getSetsByDay: (date: string): Promise<SetType[]> =>
-    getSetsByDateRange(null, date, date),
-  getSetsByDateRange: (start, end): Promise<HydratedSet[]> =>
+  getSetsByDay: (date: Date) => getSetsByDateRange(null, date, date),
+  getSetsByDateRange: (start: Date, end: Date) =>
     getSetsByDateRange(null, start, end),
   // EXERCISES
   getExerciseOptions: () => getExerciseOptions(null),
@@ -65,6 +65,8 @@ const DBContext = createContext({
   // BIO METRICS
   createBioMetric: (name) => createBioMetric(null, name),
   getAllBioById: (id) => getAllBioById(null, id),
+  getBioEntriesByDateRange: (startDate: string, endDate: string) =>
+    getBioEntriesByDateRange(null, startDate, endDate),
   // MUSCLES
   getMuscleGroups: () => getMuscleGroups(null),
   // ROUTINES
@@ -103,15 +105,12 @@ export const DBProvider = ({ children }) => {
       createOrUpdateLoggedSet: (id, data) =>
         createOrUpdateLoggedSet(db, id, data),
       deleteLoggedSet: (id) => deleteLoggedSet(db, id),
-      getAllSetsHistory: () => getAllSetsHistory(db),
       getTodaySets: () => {
         const today = dayjs().toDate();
         return getSetsByDateRange(db, today, today);
       },
-      getSetsByDay: (date: string): Promise<HydratedSet[]> =>
-        getSetsByDateRange(db, date, date),
-      getSetsByDateRange: (start, end): Promise<HydratedSet[]> =>
-        getSetsByDateRange(db, start, end),
+      getSetsByDay: (date: Date) => getSetsByDateRange(db, date, date),
+      getSetsByDateRange: (start, end) => getSetsByDateRange(db, start, end),
       // EXERCISES
       getExerciseOptions: () => getExerciseOptions(db),
       getExerciseHistoryById: (id) => getExerciseHistoryById(db, id),
@@ -121,6 +120,8 @@ export const DBProvider = ({ children }) => {
       // BIO METRICS
       createBioMetric: (name) => createBioMetric(db, name),
       getAllBioById: (id) => getAllBioById(db, id),
+      getBioEntriesByDateRange: (startDate: string, endDate: string) =>
+        getBioEntriesByDateRange(db, startDate, endDate),
       // MUSCLES
       getMuscleGroups: () => getMuscleGroups(db),
       // ROUTINES

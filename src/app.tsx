@@ -6,7 +6,6 @@ import { Router, Route } from 'preact-router';
 import { routes } from './config/routes';
 import Exercise from './routes/Exercise';
 import Backups from './routes/backups';
-import Logs from './routes/logs';
 import Wendler from './routes/Wendler';
 import NewWorkout from './routes/newWorkout';
 import Settings from './routes/Settings';
@@ -28,6 +27,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import { DayHistoryModalContextProvider } from './context/dayHistoryModalContext';
 
 import { QuickAddSetModalProvider } from './context/quickAddSetModalContext';
+import Home from './routes/Home';
 
 const AppWrapper = () => {
   const { isInitialized } = useDB();
@@ -58,7 +58,7 @@ const AppWrapper = () => {
             <Router onChange={closeMenu}>
               <Route
                 path={`${routes.logs}:optional?/:params?`}
-                component={Logs}
+                component={Home}
               />
               <Route
                 path={`${routes.wendlerBase}/:remaining_path*`}

@@ -11,6 +11,10 @@ export interface BioEntry {
   value: number;
 }
 
+export interface HydradedBioEntry extends BioEntry {
+  name: string;
+}
+
 export interface BioEntriesResponse {
   [key: number]: BioEntry;
 }
@@ -52,12 +56,26 @@ export interface SetType {
   updated: number;
   weight: number;
   isWarmUp: boolean;
+  id: number;
+  note?: string;
 }
 
 export interface HydratedSet extends SetType {
   bw?: number;
   exerciseData: Exercise;
   id: number;
+}
+
+export interface LogsSet extends HydratedSet {
+  primaryMuscles: MuscleGroup[];
+  secondaryMuscles: MuscleGroup[];
+  primaryMuscleGroup: MuscleGroup;
+  name: string;
+  musclesWorked: number[];
+  barWeight: number;
+  secondaryMusclesWorked: number[];
+  primaryGroup: number;
+  type: string;
 }
 
 export interface Fast {

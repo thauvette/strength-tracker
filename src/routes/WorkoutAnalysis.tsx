@@ -28,7 +28,7 @@ const WorkoutAnalysis = () => {
     });
 
     return Promise.all([
-      getSetsByDateRange(startDate, endDate),
+      getSetsByDateRange(dayjs(startDate).toDate(), dayjs(endDate).toDate()),
       getMuscleGroups(),
     ]).then(([sets, muscles]) => {
       const exercises = {};
