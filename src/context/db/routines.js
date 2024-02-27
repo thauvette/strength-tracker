@@ -74,6 +74,7 @@ export const updateSingleRoutineSet = (db, id, dayId, set) =>
                         reps: set.reps,
                         routineSetId: set.routineSetId,
                         weight: set.weight,
+                        isWarmUp: !!set.isWarmUp,
                       }
                     : currentSet,
                 ),

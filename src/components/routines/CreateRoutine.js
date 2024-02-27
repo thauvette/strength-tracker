@@ -67,6 +67,7 @@ const CreateRoutine = ({ initialValues }) => {
             exercise: set.exerciseId,
             exerciseName: set.exerciseName,
             routineSetId: set.id,
+            isWarmUp: set.isWarmUp,
           })) || [],
       })),
     };

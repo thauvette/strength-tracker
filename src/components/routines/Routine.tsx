@@ -56,6 +56,9 @@ const Routine = ({ id }) => {
                     ? day.sets.map((set, setIndex) => (
                         <p key={setIndex}>
                           {set.exerciseName} - {set.reps} @ {set.weight}
+                          {set.isWarmUp && (
+                            <span class="text-xs"> (warm up)</span>
+                          )}
                         </p>
                       ))
                     : null}

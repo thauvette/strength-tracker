@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 
 import Modal from '../modal/Modal';
 import Plates from '../plates/plates';
@@ -38,6 +38,7 @@ const EditableSet = ({
   disablePlateModal,
   barWeight,
 }: Props) => {
+  const isMounted = useRef(false);
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
     isOpen: false,
@@ -62,12 +63,16 @@ const EditableSet = ({
     : 45;
 
   useEffect(() => {
-    if (handleChanges) {
-      handleChanges({
-        reps,
-        weight,
-        isWarmUp,
-      });
+    if (isMounted.current && handleChanges) {
+      if (handleChanges) {
+        handleChanges({
+          reps,
+          weight,
+          isWarmUp,
+        });
+      }
+    } else {
+      isMounted.current = true;
     }
   }, [reps, weight, isWarmUp]); // eslint-disable-line
 

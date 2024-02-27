@@ -23,6 +23,32 @@ interface Props {
   setSets: (sets: Set[]) => void;
 }
 
+const OrderItem = ({ set }: { set: Set }) => {
+  const y = useMotionValue(0);
+  const boxShadow = useRaisedShadow(y);
+  return (
+    <Reorder.Item value={set} style={{ y, boxShadow, cursor: 'grab' }}>
+      <div class="card mb-2 p-2 rounded-none">
+        <div className="flex">
+          <div class="flex flex-wrap items-center gap-2">
+            <Icon name="reorder-two-outline" width="12" />
+            <p class="capitalize font-bold text-sm">
+              {set.exerciseName}
+              {' - '}
+            </p>
+            <p class="capitalize font-bold text-sm">
+              {set.reps} @ {set.weight}
+            </p>
+            {set.isWarmUp ? (
+              <p class="text-xs font-normal"> (warm up)</p>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </Reorder.Item>
+  );
+};
+
 const SetItem = ({
   set,
   handleRemove,
@@ -35,8 +61,6 @@ const SetItem = ({
   handleDuplicateSet: (set: Set) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const y = useMotionValue(0);
-  const boxShadow = useRaisedShadow(y);
 
   const toggleOpen = useCallback(() => {
     setIsOpen(!isOpen);
@@ -47,7 +71,7 @@ const SetItem = ({
   }, [set.id, handleRemove]);
 
   return (
-    <Reorder.Item value={set} style={{ y, boxShadow, cursor: 'grab' }}>
+    <div>
       <div class="card mb-2 p-2 rounded-none">
         <div className="flex">
           <div class="flex flex-wrap items-center gap-2">
@@ -101,11 +125,12 @@ const SetItem = ({
           </div>
         </AnimateHeight>
       </div>
-    </Reorder.Item>
+    </div>
   );
 };
 
 const EditableSetList = ({ sets, setSets }: Props) => {
+  const [isReordering, setIsReordering] = useState(false);
   const handleEditSet = (set: Set) => {
     setSets(
       sets.map((currentSet) => (set.id === currentSet.id ? set : currentSet)),
@@ -128,25 +153,49 @@ const EditableSetList = ({ sets, setSets }: Props) => {
 
   return (
     <div>
+      <div class="py-4 flex items-center gap-2">
+        <button
+          onClick={() => setIsReordering(false)}
+          class={`${isReordering ? '' : 'bg-highlight-600'}`}
+        >
+          Edit Sets
+        </button>
+        <button
+          onClick={() => setIsReordering(true)}
+          class={`${isReordering ? 'bg-highlight-600' : ''}`}
+        >
+          Reorder Sets
+        </button>
+      </div>
       {sets.length ? (
         <div class="mb-4">
           <div class="px-4 ">
-            <Reorder.Group
-              axis="y"
-              values={sets}
-              onReorder={setSets}
-              style={{ position: 'relative' }}
-            >
-              {sets.map((item) => (
-                <SetItem
-                  set={item}
-                  key={item.id}
-                  handleEditSet={handleEditSet}
-                  handleRemove={handleRemoveSet}
-                  handleDuplicateSet={handleDuplicateSet}
-                />
-              ))}
-            </Reorder.Group>
+            {isReordering ? (
+              <div class="pl-4">
+                <Reorder.Group
+                  axis="y"
+                  values={sets}
+                  onReorder={setSets}
+                  style={{ position: 'relative' }}
+                >
+                  {sets.map((item) => (
+                    <OrderItem set={item} key={item.id} />
+                  ))}
+                </Reorder.Group>
+              </div>
+            ) : (
+              <div>
+                {sets.map((item) => (
+                  <SetItem
+                    set={item}
+                    key={item.id}
+                    handleEditSet={handleEditSet}
+                    handleRemove={handleRemoveSet}
+                    handleDuplicateSet={handleDuplicateSet}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ) : (
