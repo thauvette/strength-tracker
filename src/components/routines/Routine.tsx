@@ -3,18 +3,20 @@ import { route } from 'preact-router';
 import { useEffect, useState } from 'preact/hooks';
 import Accordion from '../accordion/accordion';
 import { routes } from '../../config/routes';
-import { objectStores } from '../../context/db/config';
 import useDB from '../../context/db/db';
 import useSessionContext from '../../context/sessionData/sessionData';
+import Body from '../async/body';
 
 const Routine = ({ id }) => {
   const [routine, setRoutine] = useState(null);
   const [error, setError] = useState(null);
-  const { getItem } = useDB();
+  const [analysisDay, setAnalysisDay] = useState('all');
+
+  const { getRoutine: getDbRoutine } = useDB();
   const { startRoutine } = useSessionContext();
 
   const getRoutine = () => {
-    getItem(objectStores.routines, id)
+    getDbRoutine(+id)
       .then((res) => {
         setRoutine(res);
       })
@@ -24,6 +26,52 @@ const Routine = ({ id }) => {
   useEffect(() => {
     getRoutine();
   }, []); // eslint-disable-line
+
+  const musclesWorked =
+    analysisDay === 'all'
+      ? routine?.days?.reduce(
+          (obj, { sets }) => {
+            const musclesWorks = sets
+              .map((set) => set.musclesWorked || [])
+              .flat();
+
+            const secondary = sets
+              .map((set) => set.secondaryMusclesWorked || [])
+              .flat();
+
+            return {
+              activePrimary: Array.from(
+                new Set([...obj.activePrimary, ...musclesWorks]),
+              ),
+              activeSecondary: Array.from(
+                new Set([...obj.activeSecondary, ...secondary]),
+              ),
+            };
+          },
+          {
+            activePrimary: [],
+            activeSecondary: [],
+          },
+        )
+      : routine.days?.[analysisDay]?.sets?.reduce(
+          (obj, set) => {
+            return {
+              activePrimary: Array.from(
+                new Set([...obj.activePrimary, ...(set.musclesWorked || [])]),
+              ),
+              activeSecondary: Array.from(
+                new Set([
+                  ...obj.activeSecondary,
+                  ...(set.secondaryMusclesWorked || []),
+                ]),
+              ),
+            };
+          },
+          {
+            activePrimary: [],
+            activeSecondary: [],
+          },
+        );
 
   const setActiveRoutine = (sets, dayId) => {
     startRoutine(
@@ -44,11 +92,13 @@ const Routine = ({ id }) => {
   if (error) {
     return <p>{error}</p>;
   }
+
   return (
     <div class="px-2">
       <h1 class="capitalize mb-4">{routine.name}</h1>
-      {routine.days?.length
-        ? routine.days.map((day, i) => (
+      {routine.days?.length ? (
+        <div>
+          {routine.days.map((day, i) => (
             <div key={i} class="bg-1 border rounded-md mb-4">
               <Accordion title={day.name} titleClass="font-bold">
                 <div class="px-4 pt-2 pb-4">
@@ -71,8 +121,32 @@ const Routine = ({ id }) => {
                 </div>
               </Accordion>
             </div>
-          ))
-        : null}
+          ))}
+          <div>
+            <p>Analysis</p>
+            <select
+              value={analysisDay}
+              class="w-full"
+              onInput={(event) => {
+                if (event.target instanceof HTMLSelectElement) {
+                  setAnalysisDay(event.target.value);
+                }
+              }}
+            >
+              <option value="all">All days</option>
+
+              {routine?.days.map((day, index) => (
+                <option key={index} value={index}>
+                  {day.name}
+                </option>
+              ))}
+            </select>
+            <div class="pt-8 max-w-[15rem] mx-auto">
+              <Body {...musclesWorked} />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

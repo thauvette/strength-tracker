@@ -50,7 +50,7 @@ const RoutineList = ({ navigateToEdit }) => {
                 class="flex items-center justify-between bg-1 border rounded-md p-4 mb-2"
               >
                 <Link
-                  class="block capitalize"
+                  class="block capitalize flex-1"
                   href={`${routes.routinesBase}/${routine.id}`}
                 >
                   {routine.name || 'ROUTINE'}
