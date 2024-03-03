@@ -23,9 +23,14 @@ const Routines = () => {
     });
     route(routes.routinesNew);
   };
+  const scrollTop = () => {
+    if (window !== undefined) {
+      window.scrollTo(0, 0);
+    }
+  };
   return (
     <div>
-      <Router>
+      <Router onChange={scrollTop}>
         <Route
           component={CreateRoutine}
           path={`${routes.routinesNew}/:remaining_path*`}
