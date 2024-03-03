@@ -165,6 +165,7 @@ const formatRoutines = async (
                 musclesWorked: exerciseData?.musclesWorked || [],
                 secondaryMusclesWorked:
                   exerciseData?.secondaryMusclesWorked || [],
+                barWeight: exerciseData?.barWeight || 45,
               };
             }) || [],
         })) || [],

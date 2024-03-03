@@ -94,9 +94,11 @@ export interface Routine {
     sets: {
       exercise: number;
       exerciseName: string;
-      id: string;
+      id?: number;
+      routineSetId?: string;
       reps: number;
       weight: number;
+      barWeight: number;
     }[];
   }[];
 }
