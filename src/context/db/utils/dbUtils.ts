@@ -6,6 +6,7 @@ import {
   Fast,
   HydratedSet,
   MuscleGroup,
+  Routine,
 } from './../types';
 import { ObjectStoreEvent } from '../types';
 import formatExercise from './formatExercise';
@@ -49,7 +50,7 @@ export function getFromCursor(
 export function getFromCursor(
   db: IDBDatabase,
   store: 'routines',
-): Promise<{ [key: number]: any }>;
+): Promise<{ [key: number]: Routine }>;
 export function getFromCursor(
   db: IDBDatabase,
   store: 'wendler_cycles',

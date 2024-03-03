@@ -37,7 +37,7 @@ export const getExerciseOptions = (db: IDBDatabase) =>
     );
   });
 
-export const getExerciseById = (db, id) =>
+export const getExerciseById = (db: IDBDatabase, id: number) =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(
       db,

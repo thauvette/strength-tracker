@@ -3,12 +3,15 @@ import { Link } from 'preact-router';
 import { useEffect, useState } from 'preact/hooks';
 import Icon from '../icon/Icon';
 import { routes } from '../../config/routes';
-import { objectStores } from '../../context/db/config.ts';
-import useDB from '../../context/db/db.tsx';
+import { objectStores } from '../../context/db/config';
+import useDB from '../../context/db/db';
+import Modal from '../modal/Modal';
 
 const RoutineList = ({ navigateToEdit }) => {
   const { deleteEntry, duplicateRoutine, getRoutines } = useDB();
   const [routines, setRoutines] = useState([]);
+  const [markedRoutineId, setMarkedRoutineId] = useState<number | null>(null);
+
   const deleteRoutine = (id) =>
     deleteEntry(objectStores.routines, id).then(() => getRoutineList());
 
@@ -62,7 +65,7 @@ const RoutineList = ({ navigateToEdit }) => {
                   <button onClick={() => handleDuplicate(+routine.id)}>
                     <Icon name="copy-outline" />
                   </button>
-                  <button onClick={() => deleteRoutine(+routine.id)}>
+                  <button onClick={() => setMarkedRoutineId(+routine.id)}>
                     <Icon name="trash-outline" />
                   </button>
                 </div>
@@ -70,6 +73,32 @@ const RoutineList = ({ navigateToEdit }) => {
             ))
           : null}
       </div>
+      <Modal
+        isOpen={!!markedRoutineId}
+        onRequestClose={() => setMarkedRoutineId(null)}
+      >
+        <div>
+          <h1>Are you sure?</h1>
+          <p>Delete this routine?</p>
+          <div class="flex flex-wrap gap-4 pt-4">
+            <button
+              class="warning flex-1"
+              onClick={() => {
+                deleteRoutine(markedRoutineId);
+                setMarkedRoutineId(null);
+              }}
+            >
+              Yes, delete it
+            </button>
+            <button
+              class="btn secondary flex-1"
+              onClick={() => setMarkedRoutineId(null)}
+            >
+              No, keep it.
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

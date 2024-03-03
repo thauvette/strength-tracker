@@ -127,7 +127,7 @@ const Home = ({ date }: Props) => {
   }, [activeDate, logState, getSetsByDateRange, getBioEntriesByDateRange]);
 
   useEffect(() => {
-    const checkItOut = (event: CustomEvent) => {
+    const addSet = (event: CustomEvent) => {
       dispatch({
         type: 'ADD_SINGLE_SET',
         payload: {
@@ -136,8 +136,8 @@ const Home = ({ date }: Props) => {
         },
       });
     };
-    addEventListener('dbSetAdded', checkItOut);
-    return () => removeEventListener('dbSetAdded', checkItOut);
+    addEventListener('dbSetAdded', addSet);
+    return () => removeEventListener('dbSetAdded', addSet);
   }, []);
 
   const { loading, data, bioEntries } = logState?.[activeDate] || {};

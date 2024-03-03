@@ -33,7 +33,7 @@ import {
   getRoutines,
   updateRoutine,
   updateSingleRoutineSet,
-} from './routines.js';
+} from './routines';
 import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
