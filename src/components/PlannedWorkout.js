@@ -80,6 +80,7 @@ const PlannedWorkout = ({
                   weight={weight}
                   isWarmUp={isWarmUp}
                   barWeight={barWeight}
+                  largeText
                   renderCtas={({ reps, weight, isWarmUp }) => {
                     return (
                       <div>

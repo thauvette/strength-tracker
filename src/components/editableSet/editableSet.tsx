@@ -23,6 +23,7 @@ interface Props {
   renderCtas?: (set: SetAttributes) => void;
   disablePlateModal?: boolean;
   barWeight?: number;
+  largeText?: boolean;
 }
 
 const EditableSet = ({
@@ -37,6 +38,7 @@ const EditableSet = ({
   renderCtas,
   disablePlateModal,
   barWeight,
+  largeText = false,
 }: Props) => {
   const isMounted = useRef(false);
   const [plateModalState, setPlateModalState] = useState({
@@ -107,7 +109,7 @@ const EditableSet = ({
         <div class="pb-3 ">
           {/* REPS  */}
           <div class="flex justify-between items-center pb-4 border-b">
-            <p class="m-0 font-bold uppercase">Rep{reps > 1 ? 's' : ''}</p>
+            <p class="m-0 font-bold uppercase">Reps</p>
             <div class="flex items-center justify-end">
               <button
                 disabled={reps === 0}
@@ -120,9 +122,16 @@ const EditableSet = ({
                 -
               </button>
               <input
-                class="w-[48px] text-center border-0"
+                class={`w-[72px] text-center border-0 ${
+                  largeText ? 'text-2xl' : ''
+                }`}
                 inputMode="numeric"
                 value={reps}
+                onClick={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    event.target.select();
+                  }
+                }}
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
                     setReps(+e.target.value);
@@ -174,12 +183,19 @@ const EditableSet = ({
                 -
               </button>
               <input
-                class="w-[48px] text-center border-0"
+                class={`w-[72px] text-center border-0 ${
+                  largeText ? 'text-2xl' : ''
+                }`}
                 value={weight}
                 inputMode="numeric"
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
                     setWeight(+e.target.value);
+                  }
+                }}
+                onClick={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    event.target.select();
                   }
                 }}
               />
