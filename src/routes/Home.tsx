@@ -87,8 +87,8 @@ const Home = ({ date }: Props) => {
     route(`${routes.logs}?date=${date}`);
   };
   useEffect(() => {
-    if (date && date !== activeDate) {
-      changeDate(date);
+    if (date !== activeDate) {
+      changeDate(date ? date : dayjs().format('YYYY-MM-DD'));
     }
   }, [date, activeDate]);
 
