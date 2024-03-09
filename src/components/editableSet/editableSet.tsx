@@ -134,7 +134,8 @@ const EditableSet = ({
                 }}
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
-                    setReps(+e.target.value);
+                    const formatted = e.target.value.replace(/[^\d.]/g, '');
+                    setReps(+formatted);
                   }
                 }}
               />
@@ -190,7 +191,8 @@ const EditableSet = ({
                 inputMode="numeric"
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
-                    setWeight(+e.target.value);
+                    const formatted = e.target.value.replace(/[^\d.]/g, '');
+                    setWeight(+formatted);
                   }
                 }}
                 onClick={(event) => {
