@@ -58,7 +58,15 @@ export default function Backups() {
                     items[0] === objectStores.bioEntries &&
                     headers[index + 2] === 'date'
                   ) {
-                    formattedValue = dayjs(value).toDate().getTime();
+                    const parsed = +value;
+                    if (!Number.isNaN(parsed)) {
+                      formattedValue = parsed;
+                    } else {
+                      // validate this is a date.
+                      formattedValue = dayjs(value).isValid()
+                        ? dayjs(value).toDate().getTime()
+                        : '';
+                    }
                   } else if (value.includes(ARRAY_SEPARATOR)) {
                     // this is an array.
                     // we'll split it and then turn numbers back to numbers as they are probably tied to other ids.
