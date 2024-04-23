@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import DateRangePicker from '../components/DateRangePicker';
 import useDB from '../context/db/db';
 import MuscleList from '../components/analysis/MuscleList';
+import formatAnalysis from '../utilities.js/formatAnalysis';
 
 const WorkoutAnalysis = () => {
   const today = dayjs();
@@ -31,73 +32,7 @@ const WorkoutAnalysis = () => {
       getSetsByDateRange(dayjs(startDate).toDate(), dayjs(endDate).toDate()),
       getMuscleGroups(),
     ]).then(([sets, muscles]) => {
-      const exercises = {};
-      const days = {};
-      const result = sets.reduce(
-        (obj, set) => {
-          const exerciseId = set.exercise;
-          const currentSets = exercises[exerciseId]?.sets || [];
-          currentSets.push(set);
-          const dayKey = dayjs(set.created).format('YYYY-MM-DD');
-          const day = days[dayKey] || [];
-          day.push(set);
-          days[dayKey] = day;
-          exercises[exerciseId] = {
-            ...(set.exerciseData || {}),
-            sets: currentSets,
-          };
-
-          const primeId = set?.exerciseData?.primaryGroup;
-          const currentPrimeSets = obj.primaryGroups[primeId]?.sets || [];
-          currentPrimeSets.push(set);
-          const primeData = muscles[primeId];
-
-          // musclesWorked, secondaryMusclesWorked
-          const currentMain = { ...obj.mainMuscles };
-          const currentSecondary = { ...obj.secondaryMuscles };
-          if (set.exerciseData?.musclesWorked?.length) {
-            set.exerciseData.musclesWorked.forEach((muscleId) => {
-              const muscleData = muscles[muscleId];
-              const currentMainSets = currentMain?.[muscleId]?.sets || [];
-              currentMainSets.push(set);
-              currentMain[muscleId] = {
-                ...muscleData,
-                sets: currentMainSets,
-              };
-            });
-          }
-          if (set.exerciseData?.secondaryMusclesWorked?.length) {
-            set.exerciseData.secondaryMusclesWorked.forEach((muscleId) => {
-              const muscleData = muscles[muscleId];
-              const currentSecondarySets =
-                currentSecondary?.[muscleId]?.sets || [];
-              currentSecondarySets.push(set);
-              currentSecondary[muscleId] = {
-                ...muscleData,
-                sets: currentSecondarySets,
-              };
-            });
-          }
-
-          return {
-            ...obj,
-            primaryGroups: {
-              ...obj.primaryGroups,
-              [primeId]: {
-                ...(primeData || {}),
-                sets: currentPrimeSets,
-              },
-            },
-            mainMuscles: currentMain,
-            secondaryMuscles: currentSecondary,
-          };
-        },
-        {
-          primaryGroups: {},
-          mainMuscles: {},
-          secondaryMuscles: {},
-        },
-      );
+      const { exercises, days, result } = formatAnalysis(sets, muscles);
       setData({
         muscleGroupings: result,
         exercises,
@@ -134,6 +69,7 @@ const WorkoutAnalysis = () => {
           startDate={startDate}
           endDate={endDate}
           onChangeDate={setDates}
+          useLogs
         />
       </div>
       {data?.days && (
