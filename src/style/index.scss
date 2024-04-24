@@ -113,6 +113,12 @@
     }
   }
 
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   .bg-1 {
     @apply bg-white text-primary-900 dark:bg-black dark:text-white;
   }
