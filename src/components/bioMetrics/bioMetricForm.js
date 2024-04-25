@@ -38,6 +38,7 @@ const BioMetricForm = ({
           class="w-2/4"
           value={value}
           type="number"
+          step="0.01"
           onInput={(e) => setValue(e.target.value)}
           placeholder={name || ''}
         />
