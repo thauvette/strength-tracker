@@ -10,13 +10,9 @@ import {
 
 import Icon from '../../components/icon/Icon';
 
-import './toasts.scss';
-
 import generateRandomId from '../../utilities.js/generateRandomId';
 
 const ToastContext = createContext();
-
-// types: success, error, warn??
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
@@ -75,7 +71,7 @@ const Toasts = ({ toasts, removeToast }) => {
         return (
           <div
             key={toast.id}
-            class={` toast ${toast.type || 'success'}`}
+            class={`flex items-center justify-between shadow-md mb-2 bg-green-600 text-white p-2 rounded-md`}
             role="button"
             onClick={() => removeToast(toasts, toast)}
           >
