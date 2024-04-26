@@ -46,7 +46,7 @@
     "lodash.set": "^4.3.2",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
-    "postcss": "^8.4.21",
+    "postcss": "^8.4.38",
     "preact-cli": "^3.5.0",
     "prettier": "^2.7.1",
     "react-animate-height": "^3.1.0",
