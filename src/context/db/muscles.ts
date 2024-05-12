@@ -1,8 +1,12 @@
 import { objectStores } from './config';
+import { MuscleGroup } from './types';
 import { getFromCursor } from './utils/dbUtils';
 
 export const getMuscleGroups = async (db) => {
-  const groups = await getFromCursor(db, objectStores.muscleGroups);
+  const groups = await getFromCursor<MuscleGroup>(
+    db,
+    objectStores.muscleGroups,
+  );
   return Promise.resolve(
     Object.entries(groups || {}).reduce((obj, [id, group]) => {
       const primaryGroupId = group.isPrimary ? id : group.parentGroup;

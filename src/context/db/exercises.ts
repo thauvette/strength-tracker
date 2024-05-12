@@ -10,7 +10,7 @@ export const getExerciseOptions = (db: IDBDatabase) =>
     // then together.
     getFromCursor(db, 'muscle_groups').then(
       async (muscleGroupsObject: { [key: number]: MuscleGroup }) => {
-        const exercises = await getFromCursor(db, 'exercises');
+        const exercises = await getFromCursor<Exercise>(db, 'exercises');
         const data = Object.entries(exercises || {}).reduce(
           (obj, [exerciseId, exercise]) => {
             const muscleGroupData = muscleGroupsObject[exercise.primaryGroup];
@@ -60,7 +60,10 @@ export const getExerciseHistoryById = (db, id) =>
       if (!exerciseResponse) {
         reject('404');
       }
-      const muscleGroupData = await getFromCursor(db, 'muscle_groups');
+      const muscleGroupData = await getFromCursor<MuscleGroup>(
+        db,
+        'muscle_groups',
+      );
 
       const primaryMuscles = [];
       const secondaryMusclesWorked = [];
