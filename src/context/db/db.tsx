@@ -80,7 +80,7 @@ const DBContext = createContext({
   duplicateRoutine: (id) => duplicateRoutine(null, id),
   // GENERIC + ENTRIES
   getItem: (store, id) => getItem(null, store, id),
-  getAllEntries: (store: string) => getFromCursor(null, store),
+  getAllEntries: <Type,>(store: string) => getFromCursor<Type>(null, store),
   deleteEntry: (store: string, id: number) => deleteEntry(null, store, id),
   createEntry: (store, data) => createEntry(null, store, data),
   updateEntry: (store, id, data) => updateEntry(null, store, id, data),
@@ -136,7 +136,7 @@ export const DBProvider = ({ children }) => {
       duplicateRoutine: (id) => duplicateRoutine(db, id),
       // GENERIC + ENTRIES
       getItem: (store, id) => getItem(db, store, id),
-      getAllEntries: (store) => getFromCursor(db, store),
+      getAllEntries: <Type,>(store: string) => getFromCursor<Type>(db, store),
       deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
       createEntry: (store, data) => createEntry(db, store, data),
       updateEntry: (store, id, data) => updateEntry(db, store, id, data),
