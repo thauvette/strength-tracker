@@ -2,11 +2,13 @@ import { h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import { Link } from 'preact-router';
 import dayjs from 'dayjs';
+import AnimateHeight from 'react-animate-height';
+
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 import { routes } from '../../config/routes';
 import Icon from '../icon/Icon';
 import dateFormats from '../../config/dateFormats';
 
-import AnimateHeight from 'react-animate-height';
 import useSessionContext from '../../context/sessionData/sessionData';
 import { LogsSet } from '../../context/db/types';
 
@@ -18,10 +20,10 @@ const renderSetsSummary = (sets) => {
   const working = workingSets.length;
   stats.push(`${working} working`);
 
-  const workingVol = workingSets.reduce(
-    (num, set) => num + set.reps * set.weight,
-    0,
+  const workingVol = formatToFixed(
+    workingSets.reduce((num, set) => num + set.reps * set.weight, 0),
   );
+
   const volText = workingVol ? `total vol ${workingVol} ` : '';
   if (volText) {
     stats.push(volText);
