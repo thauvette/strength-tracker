@@ -92,10 +92,10 @@ export const deleteLoggedSet = (db, id) =>
 const getDataAndAugmentSet = (db, set) =>
   Promise.all([
     getFromCursor(db, objectStores.exercises).catch((err) =>
-      console.log(err),
+      console.warn(err),
     ) as Promise<{ [key: string]: Exercise }>,
     getFromCursor(db, objectStores.muscleGroups).catch((err) =>
-      console.log(err),
+      console.warn(err),
     ) as Promise<{ [key: string]: MuscleGroup }>,
   ]).then(([exercises, muscleGroups]) =>
     augmentSetData(set, exercises, muscleGroups),
@@ -158,10 +158,10 @@ export const getSetsByDateRange = (
   return Promise.all([
     getSets,
     getFromCursor(db, objectStores.exercises).catch((err) =>
-      console.log(err),
+      console.warn(err),
     ) as Promise<{ [key: string]: Exercise }>,
     getFromCursor(db, objectStores.muscleGroups).catch((err) =>
-      console.log(err),
+      console.warn(err),
     ) as Promise<{ [key: string]: MuscleGroup }>,
   ]).then(([sets, exercises, muscleGroups]) => {
     const result = sets.map((set) =>

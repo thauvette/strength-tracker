@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 
 interface Props {
   id: number;
-  data: any;
+  data: unknown;
 }
 
 interface State {
@@ -268,6 +268,7 @@ const Sync = ({ id }: Props) => {
           </button>
         </div>
       )}
+      {/* eslint-disable-next-line */}
       <a class="hidden" ref={downloadBtnRef} target="_blank" />
     </div>
   );

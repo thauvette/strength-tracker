@@ -7,6 +7,7 @@ module.exports = {
     'preact',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:jsx-a11y/recommended',
   ],
   globals: {
     Atomics: 'readonly',
@@ -19,6 +20,10 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
-    '@typescript-eslint/no-explicit-any': 0,
+    'no-console': ['error', { allow: ['warn'] }],
+    'id-length': [
+      'error',
+      { exceptions: ['i', 'j', 'e', '_', 'a', 'b', 'x', 'y'] },
+    ],
   },
 };

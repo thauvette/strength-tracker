@@ -79,15 +79,14 @@ const Toasts = ({ toasts, removeToast }) => {
     <div class="fixed bottom-0 pt-4 left-2 right-2 z-20">
       {toasts.map((toast) => {
         return (
-          <div
+          <button
             key={toast.id}
-            class={`flex items-center justify-between shadow-md mb-2 bg-green-600 text-white p-2 rounded-md`}
-            role="button"
+            class={`flex items-center justify-between shadow-md mb-2 bg-green-600 text-white p-2 rounded-md text-sm w-full`}
             onClick={() => removeToast(toasts, toast)}
           >
             <p class="m-0">{toast.text}</p>
             <Icon name="close-circle-outline" />
-          </div>
+          </button>
         );
       })}
     </div>,

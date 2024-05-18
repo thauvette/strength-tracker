@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import { h } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import * as d3 from 'd3';

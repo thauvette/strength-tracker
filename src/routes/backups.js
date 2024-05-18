@@ -104,7 +104,7 @@ export default function Backups() {
         // pass this to DB to create entries.
         setUploadedData(result);
       } catch (err) {
-        console.log(err);
+        console.warn(err);
       }
     };
     reader.readAsText(file);

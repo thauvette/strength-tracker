@@ -16,7 +16,7 @@ export async function generateBackupData(db: IDBDatabase) {
     const entries = await getFromCursor(db, storeName);
     if (Object.keys(entries || {}).length) {
       Object.entries(entries).forEach(([id, data]) => {
-        const rowData: any[] = [storeName, id];
+        const rowData: unknown[] = [storeName, id];
         if (Object.keys(data || {}).length) {
           Object.entries(data).forEach(([key, val]) => {
             const currentIndex = headerItems.indexOf(key);

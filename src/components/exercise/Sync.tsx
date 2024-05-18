@@ -138,6 +138,7 @@ const Sync = ({ data, name }: Props) => {
       >
         Export CSV
       </button>
+      {/* eslint-disable-next-line */}
       <a class="hidden" ref={downloadBtnRef} target="_blank" />
     </div>
   );

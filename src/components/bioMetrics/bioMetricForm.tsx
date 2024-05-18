@@ -4,22 +4,32 @@ import dayjs from 'dayjs';
 import dateFormats from '../../config/dateFormats';
 import useToast from '../../context/toasts/Toasts';
 
+interface Props {
+  initialValues: {
+    [key: string]: number;
+  };
+  submit: (args: { value: number; date: number }) => void;
+  name: string;
+  submitText?: string;
+  renderCtas?: (args: { submit: (e: Event) => void }) => void;
+}
+
 const BioMetricForm = ({
   initialValues,
   submit,
   name,
   submitText = 'Add +',
   renderCtas = null,
-}) => {
+}: Props) => {
   const [date, setDate] = useState(
     initialValues?.date || dayjs().format(dateFormats.day),
   );
   const [time, setTime] = useState(
     initialValues?.time || dayjs().format(dateFormats.time),
   );
-  const [value, setValue] = useState(initialValues?.value || '');
+  const [value, setValue] = useState(initialValues?.value || null);
   const { fireToast } = useToast();
-  const handleAddEntry = (e) => {
+  const handleAddEntry = (e: Event) => {
     e.preventDefault();
     submit({
       value,
@@ -36,10 +46,14 @@ const BioMetricForm = ({
         <p class="w-2/4 capitalize">{name}</p>
         <input
           class="w-2/4"
-          value={value}
+          value={value ?? 0}
           type="number"
           step="0.01"
-          onInput={(e) => setValue(e.target.value)}
+          onInput={(e) => {
+            if (e.target instanceof HTMLInputElement) {
+              setValue(+e.target.value);
+            }
+          }}
           placeholder={name || ''}
         />
       </label>
@@ -50,7 +64,9 @@ const BioMetricForm = ({
           type="date"
           value={date}
           onInput={(e) => {
-            setDate(e.target.value);
+            if (e.target instanceof HTMLInputElement) {
+              setDate(e.target.value);
+            }
           }}
           placeholder="date"
         />
@@ -61,7 +77,9 @@ const BioMetricForm = ({
           class="w-2/4"
           type="time"
           onInput={(e) => {
-            setTime(e.target.value);
+            if (e.target instanceof HTMLInputElement) {
+              setTime(e.target.value);
+            }
           }}
           value={time}
           placeholder="time"

@@ -129,7 +129,7 @@ const useExerciseHistory = (id) => {
         return result;
       })
       .catch((err) => {
-        console.log(err);
+        console.warn(err);
         throw err;
       });
   };
