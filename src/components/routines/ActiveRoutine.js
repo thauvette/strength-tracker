@@ -37,7 +37,6 @@ const ActiveRoutine = () => {
     <div class="px-2">
       <PlannedWorkout
         sets={activeRoutine}
-        onUpdateSet={onUpdateSet}
         onSaveSet={onSaveSet}
         showHistoryInSets
         showLinkToExercise
