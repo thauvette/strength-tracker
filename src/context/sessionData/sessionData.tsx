@@ -1,7 +1,11 @@
 import { h } from 'preact';
-import { useState, createContext, useContext } from 'preact/compat';
-import cloneDeep from 'lodash.clonedeep';
-import set from 'lodash.set';
+import {
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+  useCallback,
+} from 'preact/compat';
 import { SimpleSet } from '../../types/types';
 import useToast from '../toasts/Toasts';
 
@@ -13,15 +17,13 @@ interface SessionState {
 }
 
 interface SessionContext {
-  sessionState: SessionState;
-  plannedSets?: {
-    [key: number]: SimpleSet[];
-  };
-  updatePlanedSet: (args: { id: number; sets: SimpleSet[] }) => void;
-  getPlannedSets: (id: number) => SimpleSet[];
-  startRoutine: (sets: SimpleSet[]) => void;
   activeRoutine: SimpleSet[] | undefined;
   addToRoutine: (sets: SimpleSet[]) => void;
+  getPlannedSets: (id: number) => SimpleSet[];
+  hasActiveRoutine: boolean;
+  startRoutine: (sets: SimpleSet[]) => void;
+  updatePlanedSet: (set: SimpleSet, index: number) => void;
+  updatePlanedSets: (args: { id: number; sets: SimpleSet[] }) => void;
 }
 
 const SessionDataContext = createContext<SessionContext | null>(null);
@@ -30,45 +32,78 @@ export const SessionDataProvider = ({ children }) => {
   const { fireToast } = useToast();
   const [sessionState, setSessionState] = useState<SessionState>({});
 
-  const updatePlanedSet = ({ id, sets }) => {
-    const currentState = cloneDeep(sessionState);
-    set(currentState, ['plannedSet', id], sets);
-    setSessionState(currentState);
-  };
+  const updatePlanedSets = useCallback(({ id, sets }) => {
+    setSessionState((current) => ({
+      ...current,
+      plannedSet: {
+        ...(current.plannedSet || {}),
+        [id]: sets,
+      },
+    }));
+  }, []);
 
-  const getPlannedSets = (id) => sessionState?.plannedSet?.[id] || null;
+  const getPlannedSets = useCallback(
+    (id: number) => sessionState?.plannedSet?.[id] || null,
+    [sessionState?.plannedSet],
+  );
 
-  const startRoutine = (sets) => {
-    setSessionState({
-      ...sessionState,
+  const startRoutine = useCallback((sets: SimpleSet[]) => {
+    setSessionState((current) => ({
+      ...current,
       routine: sets,
-    });
-  };
-  const addToRoutine = (sets) => {
-    const currentSets = sessionState?.routine || [];
-    setSessionState({
-      ...sessionState,
-      routine: [...currentSets, ...sets],
-    });
-    fireToast({ text: `${sets?.length || 0} sets added to today's routine` });
-  };
+    }));
+  }, []);
+
+  const addToRoutine = useCallback(
+    (sets: SimpleSet[]) => {
+      setSessionState((current) => ({
+        ...current,
+        routine: [...(current?.routine || []), ...sets],
+      }));
+      fireToast({ text: `${sets?.length || 0} sets added to today's routine` });
+    },
+    [fireToast],
+  );
+
+  const activeRoutine = useMemo(
+    () => sessionState?.routine,
+    [sessionState?.routine],
+  );
+
+  const updatePlanedSet = useCallback((set: SimpleSet, index: number) => {
+    setSessionState((prevState) => ({
+      ...prevState,
+      routine:
+        prevState?.routine?.map((currentSet, currentIndex) =>
+          currentIndex === index ? set : currentSet,
+        ) || [],
+    }));
+  }, []);
+
   return (
     <SessionDataContext.Provider
       value={{
-        sessionState,
-        plannedSets: sessionState?.plannedSet || {},
-        updatePlanedSet,
-        getPlannedSets,
-        startRoutine,
-        activeRoutine: sessionState?.routine,
+        activeRoutine,
         addToRoutine,
-        // TODO: remove from routine
+        getPlannedSets,
+        hasActiveRoutine: !!activeRoutine,
+        startRoutine,
+        updatePlanedSets,
+        updatePlanedSet,
       }}
     >
       {children}
     </SessionDataContext.Provider>
   );
 };
-const useSessionContext = () => useContext(SessionDataContext);
+const useSessionContext = () => {
+  const context = useContext(SessionDataContext);
+  if (!context) {
+    throw new Error(
+      'useSessionContext must be inside SessionDataContextProvider',
+    );
+  }
+  return context;
+};
 
 export default useSessionContext;

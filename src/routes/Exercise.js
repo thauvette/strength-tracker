@@ -22,8 +22,8 @@ const Exercise = ({ id, remaining_path }) => {
   const { exerciseHistory, getData, savedSet, setSavedSet, isLoading } =
     useExerciseHistory(id);
   const { updateEntry } = useDB();
-  const { updatePlanedSet, plannedSets } = useSessionContext();
-  const plannedSet = plannedSets?.[id];
+  const { updatePlanedSets, getPlannedSets } = useSessionContext();
+  const plannedSet = getPlannedSets(id);
 
   useEffect(() => {
     if (plannedSet) {
@@ -48,7 +48,7 @@ const Exercise = ({ id, remaining_path }) => {
   };
 
   const handleUpdatePlanedSet = (sets) => {
-    updatePlanedSet({
+    updatePlanedSets({
       id,
       sets: sets?.map((set) => ({
         ...set,

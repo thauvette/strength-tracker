@@ -16,9 +16,7 @@ import WorkoutAnalysis from './routes/WorkoutAnalysis';
 
 import useDB, { DBProvider } from './context/db/db';
 import { ToastProvider } from './context/toasts/Toasts';
-import useSessionContext, {
-  SessionDataProvider,
-} from './context/sessionData/sessionData';
+import { SessionDataProvider } from './context/sessionData/sessionData';
 import { ThemeProvider } from './context/theme';
 
 import Header from './components/header/Header';
@@ -31,13 +29,11 @@ import Home from './routes/Home';
 
 const AppWrapper = () => {
   const { isInitialized } = useDB();
-  const { activeRoutine } = useSessionContext();
-
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const toggleMenu = useCallback(
-    () => setMenuIsOpen(!menuIsOpen),
-    [menuIsOpen],
+    () => setMenuIsOpen((prevState) => !prevState),
+    [],
   );
 
   const closeMenu = useCallback(() => setMenuIsOpen(false), []);
@@ -48,11 +44,7 @@ const AppWrapper = () => {
       class={'flex flex-col w-full h-full max-w-lg mx-auto relative bg-1 pb-8'}
     >
       <Menu isOpen={menuIsOpen} toggleMenu={toggleMenu} />
-      <Header
-        toggleMenu={toggleMenu}
-        menuIsOpen={menuIsOpen}
-        hasActiveRoutine={!!activeRoutine}
-      />
+      <Header toggleMenu={toggleMenu} menuIsOpen={menuIsOpen} />
       {isInitialized ? (
         <div class={`filter bg-1 flex-1 py-4 ${menuIsOpen ? 'blur-sm' : ''}`}>
           <Router onChange={closeMenu}>
@@ -65,9 +57,7 @@ const AppWrapper = () => {
               component={Wendler}
             />
             <Route path={routes.exercise} component={Exercise} />
-
             <Route path={routes.backups} component={Backups} />
-
             <Route
               path={`${routes.newWorkout}/:remaining_path*`}
               component={NewWorkout}
