@@ -4,7 +4,7 @@ import PlannedWorkout from '../PlannedWorkout';
 import useDB from '../../context/db/db.tsx';
 
 const ActiveRoutine = () => {
-  const { activeRoutine, startRoutine } = useSessionContext();
+  const { activeRoutine, startRoutine, updatePlanedSet } = useSessionContext();
   const { createOrUpdateLoggedSet, updateSingleRoutineSet } = useDB();
 
   const onSaveSet = (set, index) => {
@@ -33,11 +33,13 @@ const ActiveRoutine = () => {
   if (!activeRoutine?.length) {
     return <p>No active routine</p>;
   }
+
   return (
     <div class="px-2">
       <PlannedWorkout
         sets={activeRoutine}
         onSaveSet={onSaveSet}
+        onUpdateSet={updatePlanedSet}
         showHistoryInSets
         showLinkToExercise
       />

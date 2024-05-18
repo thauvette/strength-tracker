@@ -22,6 +22,7 @@ interface SessionContext {
   getPlannedSets: (id: number) => SimpleSet[];
   hasActiveRoutine: boolean;
   startRoutine: (sets: SimpleSet[]) => void;
+  updatePlanedSet: (set: SimpleSet, index: number) => void;
   updatePlanedSets: (args: { id: number; sets: SimpleSet[] }) => void;
 }
 
@@ -69,6 +70,16 @@ export const SessionDataProvider = ({ children }) => {
     [sessionState?.routine],
   );
 
+  const updatePlanedSet = useCallback((set: SimpleSet, index: number) => {
+    setSessionState((prevState) => ({
+      ...prevState,
+      routine:
+        prevState?.routine?.map((currentSet, currentIndex) =>
+          currentIndex === index ? set : currentSet,
+        ) || [],
+    }));
+  }, []);
+
   return (
     <SessionDataContext.Provider
       value={{
@@ -78,6 +89,7 @@ export const SessionDataProvider = ({ children }) => {
         hasActiveRoutine: !!activeRoutine,
         startRoutine,
         updatePlanedSets,
+        updatePlanedSet,
       }}
     >
       {children}

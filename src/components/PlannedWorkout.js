@@ -10,6 +10,7 @@ import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 const PlannedWorkout = ({
   sets,
   onSaveSet,
+  onUpdateSet,
   showHistoryInSets,
   showLinkToExercise,
 }) => {
@@ -84,9 +85,19 @@ const PlannedWorkout = ({
                   isWarmUp={isWarmUp}
                   barWeight={barWeight}
                   largeText
-                  handleChanges={(args) => {
-                    console.log(args, i);
-                  }}
+                  handleChanges={
+                    onUpdateSet
+                      ? (args) => {
+                          onUpdateSet(
+                            {
+                              ...set,
+                              ...args,
+                            },
+                            i,
+                          );
+                        }
+                      : null
+                  }
                   renderCtas={({ reps, weight, isWarmUp }) => {
                     return (
                       <div>
