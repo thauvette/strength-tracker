@@ -7,7 +7,7 @@ const ActiveRoutine = () => {
   const { activeRoutine, startRoutine } = useSessionContext();
   const { createOrUpdateLoggedSet, updateSingleRoutineSet } = useDB();
 
-  const onUpdateSet = (set, index) => {
+  const onSaveSet = (set, index) => {
     const { dayId, routineId, routineSetId } = set;
     createOrUpdateLoggedSet(set.id, {
       weight: set.weight,
@@ -38,6 +38,7 @@ const ActiveRoutine = () => {
       <PlannedWorkout
         sets={activeRoutine}
         onUpdateSet={onUpdateSet}
+        onSaveSet={onSaveSet}
         showHistoryInSets
         showLinkToExercise
       />

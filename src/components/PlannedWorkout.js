@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { Link } from 'preact-router';
-import { useState } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import EditableSet from './editableSet/editableSet.tsx';
 import ExerciseHistoryModal from './exerciseHistoryModal/ExerciseHistoryModal';
 import Icon from './icon/Icon';
@@ -9,7 +9,7 @@ import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 
 const PlannedWorkout = ({
   sets,
-  onUpdateSet,
+  onSaveSet,
   showHistoryInSets,
   showLinkToExercise,
 }) => {
@@ -31,21 +31,24 @@ const PlannedWorkout = ({
 
   const saveSet = (set, index) => {
     setActiveSet(index + 1);
-    onUpdateSet(set, index);
+    onSaveSet(set, index);
   };
 
-  const openExerciseModal = (id) => {
+  const openExerciseModal = useCallback((id) => {
     setExerciseModalState({
       id,
       isOpen: true,
     });
-  };
+  }, []);
 
-  const closeExerciseModal = () =>
-    setExerciseModalState({
-      id: null,
-      isOpen: false,
-    });
+  const closeExerciseModal = useCallback(
+    () =>
+      setExerciseModalState({
+        id: null,
+        isOpen: false,
+      }),
+    [],
+  );
 
   return (
     <div>
@@ -81,6 +84,9 @@ const PlannedWorkout = ({
                   isWarmUp={isWarmUp}
                   barWeight={barWeight}
                   largeText
+                  handleChanges={(args) => {
+                    console.log(args, i);
+                  }}
                   renderCtas={({ reps, weight, isWarmUp }) => {
                     return (
                       <div>

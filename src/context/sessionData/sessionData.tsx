@@ -22,7 +22,7 @@ interface SessionContext {
   getPlannedSets: (id: number) => SimpleSet[];
   hasActiveRoutine: boolean;
   startRoutine: (sets: SimpleSet[]) => void;
-  updatePlanedSet: (args: { id: number; sets: SimpleSet[] }) => void;
+  updatePlanedSets: (args: { id: number; sets: SimpleSet[] }) => void;
 }
 
 const SessionDataContext = createContext<SessionContext | null>(null);
@@ -31,7 +31,7 @@ export const SessionDataProvider = ({ children }) => {
   const { fireToast } = useToast();
   const [sessionState, setSessionState] = useState<SessionState>({});
 
-  const updatePlanedSet = useCallback(({ id, sets }) => {
+  const updatePlanedSets = useCallback(({ id, sets }) => {
     setSessionState((current) => ({
       ...current,
       plannedSet: {
@@ -77,7 +77,7 @@ export const SessionDataProvider = ({ children }) => {
         getPlannedSets,
         hasActiveRoutine: !!activeRoutine,
         startRoutine,
-        updatePlanedSet,
+        updatePlanedSets,
       }}
     >
       {children}

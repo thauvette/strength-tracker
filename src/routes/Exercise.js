@@ -22,7 +22,7 @@ const Exercise = ({ id, remaining_path }) => {
   const { exerciseHistory, getData, savedSet, setSavedSet, isLoading } =
     useExerciseHistory(id);
   const { updateEntry } = useDB();
-  const { updatePlanedSet, getPlannedSets } = useSessionContext();
+  const { updatePlanedSets, getPlannedSets } = useSessionContext();
   const plannedSet = getPlannedSets(id);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const Exercise = ({ id, remaining_path }) => {
   };
 
   const handleUpdatePlanedSet = (sets) => {
-    updatePlanedSet({
+    updatePlanedSets({
       id,
       sets: sets?.map((set) => ({
         ...set,
