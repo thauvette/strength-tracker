@@ -12,16 +12,26 @@ import Icon from '../../components/icon/Icon';
 
 import generateRandomId from '../../utilities.js/generateRandomId';
 
-const ToastContext = createContext();
+interface Toast {
+  text: string;
+  id?: string;
+}
+
+interface ToastContext {
+  fireToast: (args: { text: string }) => void;
+}
+
+const ToastContext = createContext<ToastContext | null>(null);
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
-  const fireToast = useCallback(
-    (toast) => {
-      setToasts([...toasts, { ...toast, id: generateRandomId() }]);
-    },
-    [toasts],
-  );
+  const fireToast = useCallback((toast: Toast) => {
+    setToasts((prevState) => [
+      ...prevState,
+      { ...toast, id: generateRandomId() },
+    ]);
+  }, []);
+
   const removeToast = (activeToasts, toast) => {
     setToasts(
       activeToasts.filter((activeToast) => activeToast.id !== toast.id),
