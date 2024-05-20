@@ -37,6 +37,8 @@ import {
 import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
+import { objectStores } from './config';
+import { Exercise } from './types';
 
 const DBContext = createContext({
   isInitialized: false,
@@ -60,6 +62,8 @@ const DBContext = createContext({
   // EXERCISES
   getExerciseOptions: () => getExerciseOptions(null),
   getExerciseHistoryById: (id) => getExerciseHistoryById(null, id),
+  getExercise: (id: number) =>
+    getItem<Exercise>(null, objectStores.exercises, id),
   // SYNC
   createBackup: () => createBackup(null),
   restoreFromBackup: (entries) => restoreFromBackup(null, entries),
@@ -116,6 +120,8 @@ export const DBProvider = ({ children }) => {
       // EXERCISES
       getExerciseOptions: () => getExerciseOptions(db),
       getExerciseHistoryById: (id) => getExerciseHistoryById(db, id),
+      getExercise: (id: number) =>
+        getItem<Exercise>(db, objectStores.exercises, id),
       // SYNC
       createBackup: () => createBackup(db),
       restoreFromBackup: (entries) => restoreFromBackup(db, entries),

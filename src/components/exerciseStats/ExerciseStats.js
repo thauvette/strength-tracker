@@ -71,7 +71,7 @@ const ExerciseStats = ({
           </button>
         ))}
       </div>
-      {exerciseHistory.type === 'bwr' && setIncludeBwInHistory && (
+      {exerciseHistory?.type === 'bwr' && setIncludeBwInHistory && (
         <label class="flex gap-2 items-center">
           <input
             type="checkbox"

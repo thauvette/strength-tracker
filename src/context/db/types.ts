@@ -47,6 +47,8 @@ export interface Exercise {
   updated: number | undefined;
   created: number | undefined;
   barWeight?: number | undefined;
+  notes?: string;
+  isFavorite?: boolean;
 }
 
 export interface SetType {

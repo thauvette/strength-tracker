@@ -1,11 +1,11 @@
 import { h } from 'preact';
-import { PropsWithChildren, useState } from 'preact/compat';
+import { PropsWithChildren, ReactNode, useState } from 'preact/compat';
 import AnimateHeight from 'react-animate-height';
 import Icon from '../icon/Icon';
 
 interface Props extends PropsWithChildren {
   openByDefault?: boolean;
-  title: string;
+  title: string | ReactNode;
   titleClass?: string;
   smallIcon?: boolean;
   headerClassName?: string;

@@ -1,17 +1,33 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
-import useDB from '../../context/db/db.tsx';
-import { objectStores } from '../../context/db/config.ts';
+import useDB from '../../context/db/db';
+import { objectStores } from '../../context/db/config';
 
 import exerciseTypes from '../../config/exerciseTypes';
 import MuscleGroupsCheckList from './MuscleGroupsCheckList';
-import Accordion from '../accordion/accordion.tsx';
+import Accordion from '../accordion/accordion';
 
 import useToast from '../../context/toasts/Toasts';
 import Counters from '../counters/Counters';
 import Body from '../async/body';
+import { MuscleGroup } from '../../context/db/types';
 
-const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
+interface Props {
+  initialValues: {
+    name?: string;
+    primaryGroup: number;
+    musclesWorked: number[];
+    secondaryMusclesWorked: number[];
+    notes: string;
+    barWeight?: number;
+    exerciseType: string;
+  };
+  title?: string;
+  id?: number;
+  onSubmit: (res: unknown) => void;
+}
+
+const ExerciseForm = ({ onSubmit, initialValues, id = null, title }: Props) => {
   const { createEntry, getMuscleGroups, updateEntry } = useDB();
   const { fireToast } = useToast();
   const [primaryGroupOptions, setPrimaryGroupOptions] = useState([]);
@@ -26,7 +42,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
   });
 
   const getData = () => {
-    getMuscleGroups().then((res) => {
+    getMuscleGroups().then((res: { [key: string]: MuscleGroup }) => {
       setPrimaryGroupOptions(
         Object.values(res || {})
           .filter((option) => !!option.isPrimary)
@@ -74,8 +90,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
     });
   };
 
-  const formIsValid = formData.name.length && formData.primaryGroup;
-
+  const formIsValid = !!(formData.name.length && formData.primaryGroup);
   return !primaryGroupOptions ? (
     <p>Loading</p>
   ) : (
@@ -88,12 +103,14 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
             class="w-full"
             type="text"
             value={formData.name}
-            onInput={(e) =>
-              setFormData({
-                ...formData,
-                name: e.target.value,
-              })
-            }
+            onInput={(e) => {
+              if (e.target instanceof HTMLInputElement) {
+                setFormData({
+                  ...formData,
+                  name: e.target.value,
+                });
+              }
+            }}
           />
         </label>
       </div>
@@ -104,12 +121,14 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
             class="w-full"
             type="text"
             value={formData.notes}
-            onInput={(e) =>
-              setFormData({
-                ...formData,
-                notes: e.target.value,
-              })
-            }
+            onInput={(e) => {
+              if (e.target instanceof HTMLInputElement) {
+                setFormData({
+                  ...formData,
+                  notes: e.target.value,
+                });
+              }
+            }}
           />
         </label>
       </div>
@@ -120,12 +139,14 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
           <select
             class="w-full"
             value={formData.type}
-            onInput={(e) =>
-              setFormData({
-                ...formData,
-                type: e.target.value,
-              })
-            }
+            onInput={(e) => {
+              if (e.target instanceof HTMLInputElement) {
+                setFormData({
+                  ...formData,
+                  type: e.target.value,
+                });
+              }
+            }}
           >
             {exerciseTypes.map((type) => (
               <option key={type.id} value={type.id}>
@@ -146,12 +167,14 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }) => {
           <select
             class="w-full"
             value={formData.primaryGroup}
-            onInput={(e) =>
-              setFormData({
-                ...formData,
-                primaryGroup: e.target.value,
-              })
-            }
+            onInput={(e) => {
+              if (e.target instanceof HTMLSelectElement) {
+                setFormData({
+                  ...formData,
+                  primaryGroup: e.target.value,
+                });
+              }
+            }}
           >
             <option value="">Select Primary Group</option>
             {primaryGroupOptions.map((option) => (

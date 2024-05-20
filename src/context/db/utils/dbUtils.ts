@@ -42,7 +42,11 @@ export function getFromCursor<Type>(
   });
 }
 
-export const getItem = (db: IDBDatabase, store: string, id: number) =>
+export const getItem = <Type>(
+  db: IDBDatabase,
+  store: string,
+  id: number,
+): Promise<Type> =>
   new Promise((resolve, reject) => {
     if (!store) {
       reject('store is required');
