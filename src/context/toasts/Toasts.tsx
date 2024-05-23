@@ -15,10 +15,11 @@ import generateRandomId from '../../utilities.js/generateRandomId';
 interface Toast {
   text: string;
   id?: string;
+  type?: 'error' | 'success';
 }
 
 interface ToastContext {
-  fireToast: (args: { text: string }) => void;
+  fireToast: (args: { text: string; type?: 'error' | 'success' }) => void;
 }
 
 const ToastContext = createContext<ToastContext | null>(null);
@@ -81,7 +82,9 @@ const Toasts = ({ toasts, removeToast }) => {
         return (
           <button
             key={toast.id}
-            class={`flex items-center justify-between shadow-md mb-2 bg-green-600 text-white p-2 rounded-md text-sm w-full`}
+            class={`flex items-center justify-between shadow-md mb-2 text-white p-2 rounded-md text-sm w-full ${
+              toast.type === 'error' ? 'bg-red-600 ' : 'bg-green-600 '
+            }`}
             onClick={() => removeToast(toasts, toast)}
           >
             <p class="m-0">{toast.text}</p>

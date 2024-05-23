@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import dayjs from 'dayjs';
 import dateFormats from '../../config/dateFormats';
 import useToast from '../../context/toasts/Toasts';
@@ -21,18 +21,34 @@ const BioMetricForm = ({
   submitText = 'Add +',
   renderCtas = null,
 }: Props) => {
+  const valueInputRef = useRef(null);
   const [date, setDate] = useState(
     initialValues?.date || dayjs().format(dateFormats.day),
   );
   const [time, setTime] = useState(
     initialValues?.time || dayjs().format(dateFormats.time),
   );
-  const [value, setValue] = useState(initialValues?.value || null);
+  const [value, setValue] = useState<number | string | null>(
+    initialValues?.value || null,
+  );
+
   const { fireToast } = useToast();
+
   const handleAddEntry = (e: Event) => {
     e.preventDefault();
+    if (valueInputRef.current) {
+      valueInputRef.current.blur();
+    }
+    if (isNaN(+value)) {
+      fireToast({
+        text: 'Error: value must be a number',
+        type: 'error',
+      });
+      throw new Error('Not a number');
+    }
+
     submit({
-      value,
+      value: +value,
       date: dayjs(`${date}T${time}:00`).toDate().getTime(),
     });
     fireToast({
@@ -45,13 +61,13 @@ const BioMetricForm = ({
       <label class="flex items-center py-1">
         <p class="w-2/4 capitalize">{name}</p>
         <input
+          ref={valueInputRef}
           class="w-2/4"
           value={value ?? 0}
-          type="number"
-          step="0.01"
+          inputMode="numeric"
           onInput={(e) => {
             if (e.target instanceof HTMLInputElement) {
-              setValue(+e.target.value);
+              setValue(e.target.value);
             }
           }}
           placeholder={name || ''}
