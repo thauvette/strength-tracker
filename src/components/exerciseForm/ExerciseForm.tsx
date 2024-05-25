@@ -140,7 +140,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }: Props) => {
             class="w-full"
             value={formData.type}
             onInput={(e) => {
-              if (e.target instanceof HTMLInputElement) {
+              if (e.target instanceof HTMLSelectElement) {
                 setFormData({
                   ...formData,
                   type: e.target.value,
