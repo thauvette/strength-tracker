@@ -78,7 +78,10 @@ const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
         path={`${routes.exerciseBase}/:id/edit`}
         component={EditExercise}
         exercise={exercise}
-        onEdit={getExerciseDeatils}
+        onEdit={() => {
+          getExerciseDeatils();
+          getData();
+        }}
         id={+id}
       />
       <Route

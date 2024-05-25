@@ -37,7 +37,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }: Props) => {
     musclesWorked: initialValues?.musclesWorked || [],
     secondaryMusclesWorked: initialValues?.secondaryMusclesWorked || [],
     notes: initialValues?.notes || '',
-    type: 'wr',
+    type: initialValues?.exerciseType || 'wr',
     barWeight: initialValues?.barWeight || 45,
   });
 
