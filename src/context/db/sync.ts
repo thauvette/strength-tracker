@@ -100,7 +100,17 @@ const writeItemFromBackup = (db, item) =>
     objectStore.onerror = (err) => reject(err);
   });
 
-export const restoreFromBackup = async (db, entries) => {
+export const restoreFromBackup = async (
+  db: IDBDatabase,
+  entries: {
+    stores: string[];
+    items: {
+      store: string;
+      data: unknown;
+      id: number;
+    }[];
+  },
+) => {
   try {
     // get list of stores to clear.
     const storeClearPromises = entries.stores.map((store) =>

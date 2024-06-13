@@ -39,16 +39,34 @@ export interface HydratedMuscleGroup {
 }
 // Exercises
 export interface Exercise {
+  barWeight?: number | undefined;
+  created?: number | undefined;
+  isFavorite?: boolean;
   musclesWorked: number[];
   name: string;
+  notes?: string;
   primaryGroup: number;
   secondaryMusclesWorked: number[];
   type: string;
   updated: number | undefined;
-  created: number | undefined;
+}
+
+export interface ExerciseHistory {
   barWeight?: number | undefined;
-  notes?: string;
   isFavorite?: boolean;
+  musclesWorked: MuscleGroup[];
+  name: string;
+  notes?: string;
+  primaryGroup: number;
+  secondaryMusclesWorked: MuscleGroup[];
+  type: string;
+  updated: number;
+  items: SetType[];
+}
+
+export interface ExerciseOptions extends MuscleGroup {
+  id: number;
+  items: Exercise[];
 }
 
 export interface SetType {
@@ -87,9 +105,24 @@ export interface Fast {
   updated: number;
 }
 
+export interface CreateRoutineBody {
+  name: string;
+  days: {
+    id: string;
+    name: string;
+    sets: {
+      id: string;
+      exercise: number;
+      reps: number;
+      weight: number;
+    }[];
+  };
+}
+
 export interface Routine {
   created: number;
   name: string;
+  id: number;
   days: {
     id: string;
     name: string;

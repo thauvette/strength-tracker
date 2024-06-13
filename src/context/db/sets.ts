@@ -1,7 +1,13 @@
 import dayjs from 'dayjs';
 import { objectStores } from './config';
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils';
-import { Exercise, LogsSet, MuscleGroup, SetType } from './types.js';
+import {
+  Exercise,
+  HydratedSet,
+  LogsSet,
+  MuscleGroup,
+  SetType,
+} from './types.js';
 
 const fireSetsChangeEvent = (name, set) => {
   const customEvent = new CustomEvent(name, {
@@ -26,7 +32,17 @@ const formatSet = (set) => {
   };
 };
 
-export const createOrUpdateLoggedSet = (db, id, data) =>
+export const createOrUpdateLoggedSet = (
+  db: IDBDatabase,
+  id: number,
+  data: {
+    exercise: number;
+    reps: number;
+    weight: number;
+    isWarmUp?: boolean;
+    notes?: string;
+  },
+): Promise<HydratedSet> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
     if (!id) {

@@ -3,10 +3,37 @@ import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 export const formatHistory = ({ items, includeBwInHistory = false }) => {
   let eorm;
+  const volumes = {};
   const formattedHistory = items?.length
     ? items.reduce((obj, item) => {
         const dayKey = dayjs(item.created).format('YYYY-MM-DD');
         const items = obj?.[dayKey] || [];
+
+        const totalVolume = volumes?.[dayKey]?.totalVolume ?? 0;
+        const workingVolume = volumes?.[dayKey]?.workingVol ?? 0;
+        const workingSets = volumes?.[dayKey]?.workingSets ?? 0;
+        const workingReps = volumes?.[dayKey]?.workingReps ?? 0;
+        const isWorkingSet = !item.isWarmUp;
+        const itemVol = item.weight * item.reps;
+        const totalSets = volumes?.[dayKey]?.totalSets ?? 0;
+        const totalReps = volumes?.[dayKey]?.totalReps ?? 0;
+        const maxWeight = Math.max(
+          volumes?.[dayKey]?.maxWeight ?? 0,
+          item.weight,
+        );
+
+        volumes[dayKey] = {
+          totalVolume: formatToFixed(totalVolume + itemVol),
+          workingVol: isWorkingSet
+            ? formatToFixed(workingVolume + itemVol)
+            : formatToFixed(workingVolume),
+          workingSets: isWorkingSet ? workingSets + 1 : workingSets,
+          workingReps: isWorkingSet ? workingReps + +item.reps : workingReps,
+          totalSets: totalSets + 1,
+          totalReps: totalReps + +item.reps,
+          maxWeight,
+        };
+
         const estOneRepMax = (
           +item.weight * +item.reps * 0.033 +
           +item.weight
@@ -48,6 +75,7 @@ export const formatHistory = ({ items, includeBwInHistory = false }) => {
 
   return {
     items: formattedHistory,
+    volumeByDay: volumes,
     eorm,
     lastWorkoutFirstSet,
     lastWorkoutHeaviestSet: heaviestSet,

@@ -90,6 +90,7 @@ const useExerciseHistory = (id) => {
           },
           todaysHistory:
             formattedHistory.items?.[dayjs().format('YYYY-MM-DD')] || [],
+          volumeByDay: formattedHistory.volumeByDay,
         };
 
         if (isNewId) {

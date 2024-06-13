@@ -3,10 +3,9 @@ import { useState } from 'preact/hooks';
 
 import ExerciseHistory from './ExerciseHistory';
 import MaxWeights from './MaxWeights';
-import Volume from './Volume';
 import Charts from './Charts';
 
-const tabs = ['history', 'PRs', 'volume', 'charts'];
+const tabs = ['history', 'PRs', 'charts'];
 
 const ExerciseStats = ({
   exerciseHistory,
@@ -22,13 +21,6 @@ const ExerciseStats = ({
       case 'PRs':
         return (
           <MaxWeights
-            exerciseHistory={exerciseHistory}
-            includeBwInHistory={includeBwInHistory}
-          />
-        );
-      case 'volume':
-        return (
-          <Volume
             exerciseHistory={exerciseHistory}
             includeBwInHistory={includeBwInHistory}
           />

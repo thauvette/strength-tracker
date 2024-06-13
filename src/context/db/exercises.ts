@@ -8,7 +8,7 @@ export const getExerciseOptions = (db: IDBDatabase) =>
   new Promise((resolve) => {
     // need to get exercises and muscle groups and connect
     // then together.
-    getFromCursor(db, 'muscle_groups').then(
+    getFromCursor<MuscleGroup>(db, 'muscle_groups').then(
       async (muscleGroupsObject: { [key: number]: MuscleGroup }) => {
         const exercises = await getFromCursor<Exercise>(db, 'exercises');
         const data = Object.entries(exercises || {}).reduce(
@@ -54,7 +54,7 @@ export const getExerciseById = (db: IDBDatabase, id: number) =>
     };
   });
 
-export const getExerciseHistoryById = (db, id) =>
+export const getExerciseHistoryById = (db: IDBDatabase, id: number) =>
   new Promise((resolve, reject) => {
     getExerciseById(db, id).then(async (exerciseResponse: Exercise) => {
       if (!exerciseResponse) {

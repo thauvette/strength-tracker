@@ -1,15 +1,17 @@
 import { h } from 'preact';
 import { Link } from 'preact-router';
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import Icon from '../icon/Icon';
 import { routes } from '../../config/routes';
 import { objectStores } from '../../context/db/config';
 import useDB from '../../context/db/db';
 import Modal from '../modal/Modal';
+import { Routine } from '../../context/db/types';
+import useOnMount from '../../hooks/useOnMount';
 
 const RoutineList = ({ navigateToEdit }) => {
   const { deleteEntry, duplicateRoutine, getRoutines } = useDB();
-  const [routines, setRoutines] = useState([]);
+  const [routines, setRoutines] = useState<Routine[]>([]);
   const [markedRoutineId, setMarkedRoutineId] = useState<number | null>(null);
 
   const deleteRoutine = (id) =>
@@ -21,9 +23,8 @@ const RoutineList = ({ navigateToEdit }) => {
     });
   };
 
-  useEffect(() => {
-    getRoutineList();
-  }, []); // eslint-disable-line
+  useOnMount(getRoutineList);
+
   const handleDuplicate = async (id) => {
     try {
       const res = await duplicateRoutine(id);

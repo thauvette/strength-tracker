@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useState,
-  createContext,
-  useContext,
-  useMemo,
-} from 'preact/compat';
+import { useState, createContext, useContext, useMemo } from 'preact/compat';
 import dayjs from 'dayjs';
 
 import { getFromCursor, getItem } from './utils/dbUtils';
@@ -38,7 +32,11 @@ import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
 import { objectStores } from './config';
-import { Exercise } from './types';
+import {
+  Exercise,
+  // IDBContext
+} from './types';
+import useOnMount from '../../hooks/useOnMount';
 
 const DBContext = createContext({
   isInitialized: false,
@@ -48,9 +46,18 @@ const DBContext = createContext({
   createCycle: (data) => createCycle(null, data),
   updateWendlerItem: ({ id, path, value }) =>
     updateWendlerItem(null, { id, path, value }),
+
   // SETS
-  createOrUpdateLoggedSet: (id, data) =>
-    createOrUpdateLoggedSet(null, id, data),
+  createOrUpdateLoggedSet: (
+    id: number,
+    data: {
+      exercise: number;
+      reps: number;
+      weight: number;
+      isWarmUp?: boolean;
+      notes?: string;
+    },
+  ) => createOrUpdateLoggedSet(null, id, data),
   deleteLoggedSet: (id) => deleteLoggedSet(null, id),
   getTodaySets: () => {
     const today = dayjs().toDate();
@@ -91,12 +98,12 @@ const DBContext = createContext({
 });
 
 export const DBProvider = ({ children }) => {
-  const [db, setDb] = useState<IDBDatabase>();
+  const [db, setDb] = useState<IDBDatabase | null>();
 
   // INITIALIZE OUR DB
-  useEffect(() => {
+  useOnMount(() => {
     initializeDb(setDb);
-  }, []); // eslint-disable-line
+  });
 
   const memoizedValue = useMemo(
     () => ({
@@ -156,5 +163,9 @@ export const DBProvider = ({ children }) => {
 };
 
 export default function useDB() {
-  return useContext(DBContext);
+  const context = useContext(DBContext);
+  if (!context) {
+    throw new Error('useDB must be inside DBContextProvider');
+  }
+  return context;
 }
