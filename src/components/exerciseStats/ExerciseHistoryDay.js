@@ -34,8 +34,8 @@ const ExerciseHistoryDay = ({
   const toggleOpen = () => setIsOpen((current) => !current);
   return (
     <div ref={ref} class="card mb-4">
-      <div class={`p-2  ${isOpen ? '' : ''}`}>
-        <button class="text-left" onClick={() => toggleOpen()}>
+      <div class="p-1">
+        <button class="text-left w-full" onClick={() => toggleOpen()}>
           <div class={'w-full  text-sm text-left flex'}>
             <p
               class="text-base text-left pl-0 font-bold"
@@ -51,15 +51,15 @@ const ExerciseHistoryDay = ({
           <div>
             <p class="text-sm font-medium">Working stats:</p>
             {volume && (
-              <p class="text-sm">
+              <p class="text-sm whitespace-normal">
                 {volume?.workingSets} sets, {volume.workingReps} reps,{' '}
                 {volume.maxWeight} max weight, {volume?.workingVol}
                 vol.{' '}
                 {volumeDiff !== null && (
-                  <span class="text-sm">
+                  <>
                     ({volumeDiff > 0 ? '+' : ''}
                     {formatToFixed(volumeDiff)})
-                  </span>
+                  </>
                 )}
               </p>
             )}
