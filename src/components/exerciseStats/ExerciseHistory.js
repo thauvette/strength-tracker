@@ -6,26 +6,42 @@ const ExerciseHistory = ({
   exerciseHistory,
   onChangeSet,
   includeBwInHistory,
-}) => (
-  <>
-    {exerciseHistory?.items &&
-    Object.keys(exerciseHistory?.items)?.length > 0 ? (
-      Object.entries(exerciseHistory.items)
-        .sort(([aKey], [bKey]) => (dayjs(aKey).isAfter(bKey) ? -1 : 1))
-        .map(([dayKey, items]) => (
-          <ExerciseHistoryDay
-            key={dayKey}
-            items={items}
-            onChangeSet={onChangeSet}
-            dayKey={dayKey}
-            ormTime={exerciseHistory?.eorm?.time}
-            includeBwInHistory={includeBwInHistory}
-          />
-        ))
-    ) : (
-      <p>No history found</p>
-    )}
-  </>
-);
+  updatePlanedSet,
+  reuseCta,
+}) => {
+  const sortedHistory = Object.entries(exerciseHistory?.items || {}).sort(
+    ([aKey], [bKey]) => (dayjs(aKey).isAfter(bKey) ? -1 : 1),
+  );
+
+  return (
+    <>
+      {sortedHistory?.length ? (
+        sortedHistory.map(([dayKey, items], index) => {
+          const volume = exerciseHistory?.volumeByDay?.[dayKey];
+          const previousVolume =
+            exerciseHistory?.volumeByDay?.[sortedHistory[index + 1]?.[0]];
+
+          return (
+            <ExerciseHistoryDay
+              key={dayKey}
+              items={items}
+              onChangeSet={onChangeSet}
+              dayKey={dayKey}
+              ormTime={exerciseHistory?.eorm?.time}
+              includeBwInHistory={includeBwInHistory}
+              updatePlanedSet={updatePlanedSet}
+              reuseCta={reuseCta}
+              volume={volume}
+              previousVolume={previousVolume}
+              openByDefault={!index}
+            />
+          );
+        })
+      ) : (
+        <p>No history found</p>
+      )}
+    </>
+  );
+};
 
 export default ExerciseHistory;

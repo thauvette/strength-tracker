@@ -12,9 +12,7 @@ const Days = ({
   <div class="py-4">
     <BioMetricForm
       initialValues={initialFormValues}
-      submit={(data) => {
-        handleAddEntry(data);
-      }}
+      submit={handleAddEntry}
       name={name}
       submitText="Add New +"
     />

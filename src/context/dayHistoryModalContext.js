@@ -25,7 +25,7 @@ export const DayHistoryModalContextProvider = ({ children }) => {
       data: null,
       day: null,
     });
-    getSetsByDay(date).then((res) => {
+    getSetsByDay(dayjs(date).toDate()).then((res) => {
       setState({
         isOpen: true,
         isLoading: false,

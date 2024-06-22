@@ -1,12 +1,11 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { Router, Route } from 'preact-router';
 // ROUTES
 // Code-splitting is automated for `routes` directory
 import { routes } from './config/routes';
 import Exercise from './routes/Exercise';
 import Backups from './routes/backups';
-import Logs from './routes/logs';
 import Wendler from './routes/Wendler';
 import NewWorkout from './routes/newWorkout';
 import Settings from './routes/Settings';
@@ -17,9 +16,7 @@ import WorkoutAnalysis from './routes/WorkoutAnalysis';
 import { AuthContextProvider } from './context/supabase/auth';
 import useDB, { DBProvider } from './context/db/db';
 import { ToastProvider } from './context/toasts/Toasts';
-import useSessionContext, {
-  SessionDataProvider,
-} from './context/sessionData/sessionData';
+import { SessionDataProvider } from './context/sessionData/sessionData';
 import { ThemeProvider } from './context/theme';
 
 import Header from './components/header/Header';
@@ -29,16 +26,18 @@ import { DayHistoryModalContextProvider } from './context/dayHistoryModalContext
 
 import { QuickAddSetModalProvider } from './context/quickAddSetModalContext';
 import Authentication from './routes/authentication';
+import Home from './routes/Home';
 
 const AppWrapper = () => {
   const { isInitialized } = useDB();
-
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
-  const toggleMenu = () => setMenuIsOpen(!menuIsOpen);
-  const closeMenu = () => setMenuIsOpen(false);
+  const toggleMenu = useCallback(
+    () => setMenuIsOpen((prevState) => !prevState),
+    [],
+  );
 
-  const { activeRoutine } = useSessionContext();
+  const closeMenu = useCallback(() => setMenuIsOpen(false), []);
 
   return (
     <>
@@ -49,17 +48,13 @@ const AppWrapper = () => {
         }
       >
         <Menu isOpen={menuIsOpen} toggleMenu={toggleMenu} />
-        <Header
-          toggleMenu={toggleMenu}
-          menuIsOpen={menuIsOpen}
-          activeRoutine={activeRoutine}
-        />
+        <Header toggleMenu={toggleMenu} menuIsOpen={menuIsOpen} />
         {isInitialized ? (
           <div class={`filter bg-1 flex-1 py-4 ${menuIsOpen ? 'blur-sm' : ''}`}>
             <Router onChange={closeMenu}>
               <Route
                 path={`${routes.logs}:optional?/:params?`}
-                component={Logs}
+                component={Home}
               />
               <Route
                 path={`${routes.wendlerBase}/:remaining_path*`}

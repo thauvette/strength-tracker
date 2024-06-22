@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import { h } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import * as d3 from 'd3';
@@ -15,7 +16,8 @@ const margins = {
   left: 16,
 };
 
-const LineChart = ({ data, dateFormat, renderTooltip }) => {
+// renderTooltipText needs to return an array of text
+const LineChart = ({ data, dateFormat, renderTooltipText }) => {
   const { theme } = useTheme();
 
   const containerRef = useRef(null);
@@ -24,35 +26,34 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
   const [mean, setMean] = useState(null);
   const [bookends, setBookends] = useState([]);
   const [containerWidth, setContainerWidth] = useState(null);
-  const tooltipRef = useRef(null);
-
-  const [selectedData, setSelectedData] = useState(null);
 
   const drawLine = async () => {
     const { width, height } = containerRef.current.getBoundingClientRect();
 
     const innerWidth = width - margins.left - margins.right;
     const innerHeight = height - margins.top - margins.bottom;
-
-    const root = d3
-      .select(chartCanvasRef.current)
-      .attr('width', width)
-      .attr('height', height);
-
-    root.selectAll('*').remove();
-    setSelectedData(null);
-    const svg = root
-      .append('g')
-      .attr('transform', `translate(${margins.left}, ${margins.top})`);
     const x = d3.scaleTime().range([0, innerWidth]);
     const y = d3.scaleLinear().range([innerHeight, 0]);
-
     const yMin = d3.min(data, (d) => d.y);
     const yMax = d3.max(data, (d) => d.y);
     const xMin = d3.min(data, (d) => d.x);
     const xMax = d3.max(data, (d) => d.x);
     x.domain([xMin, xMax]);
     y.domain([yMin - yMin * 0.05, yMax + yMax * 0.05]);
+
+    const root = d3
+      .select(chartCanvasRef.current)
+      .attr('width', width)
+      .attr('height', height)
+      .on('mousemove', pointerMoved)
+      .on('mouseleave', () => {
+        tooltip.style('display', 'none');
+      });
+
+    root.selectAll('*').remove();
+    const svg = root
+      .append('g')
+      .attr('transform', `translate(${margins.left}, ${margins.top})`);
 
     const valueLine = d3
       .line()
@@ -163,12 +164,73 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
       .attr('cy', (d) => y(d.y))
       .attr('r', 6)
       .attr('fill', 'transparent')
-      .attr('transform', `translate(${margins.left}, 0)`)
-      .on('click', (e, d) => {
-        setSelectedData(d);
-        tooltipRef.current.style.top = `${y(d.y) - margins.top - 20}px`;
-        tooltipRef.current.style.left = `${x(d.x)}px`;
-      });
+      .attr('transform', `translate(${margins.left}, 0)`);
+
+    const tooltip = svg.append('g');
+
+    function pointerMoved(event) {
+      const bisectDate = d3.bisector((d) => {
+        return d.x;
+      }).center;
+      const mouseDate = x.invert(d3.pointer(event)[0] - 32);
+      const i = bisectDate(
+        data.sort((a, b) => a.x - b.x),
+        mouseDate,
+      );
+      tooltip.style('display', null);
+      tooltip.attr(
+        'transform',
+        `translate(${x(data[i]?.x || 0) + 16},${y(data[i]?.y || 0)})`,
+      );
+
+      const path = tooltip
+        .selectAll('path')
+        // eslint-disable-next-line no-sparse-arrays
+        .data([,])
+        .join('path')
+        .attr('fill', 'white')
+        .attr('stroke', 'black');
+
+      const text = tooltip
+        .selectAll('text')
+        // eslint-disable-next-line no-sparse-arrays
+        .data([,])
+        .join('text')
+        .call((text) =>
+          text
+            .selectAll('tspan')
+            .data(
+              renderTooltipText
+                ? renderTooltipText(data[i])
+                : [dayjs(data[i].x).format('MMM DD'), data[i].y.toFixed(2)],
+            )
+            .join('tspan')
+            .attr('x', 0)
+            .attr('y', (_, i) => `${i * 1.1}em`)
+            .attr('font-weight', (_, i) => (i ? null : 'bold'))
+            .text((d) => d)
+            .attr('x'),
+        );
+      size(text, path, x(data[i]?.x));
+    }
+    function size(text, path, x) {
+      const { y, width: w, height: h } = text.node().getBBox();
+      const offset =
+        x + w / 2 - innerWidth > 0
+          ? x + w / 2 - innerWidth
+          : x - w / 2 + margins.left < 0
+          ? x - w / 2 + margins.left
+          : 0;
+      text.attr('transform', `translate(${-w / 2 - offset},${y - h + 8})`);
+      path.attr(
+        'd',
+        `M${-w / 2 - 10},5H${w / 2 + 10},v${h + 20},h-${
+          w / 2 + 5 - offset
+        }l -5,5,l -5 -5,h${-w / 2 - 5 - offset}`,
+      );
+      path.attr('transform', `translate(${-offset}, ${-2 * h + h - 36})`);
+    }
+
     setRange([yMin, yMax]);
     setMean(average);
   };
@@ -205,29 +267,6 @@ const LineChart = ({ data, dateFormat, renderTooltip }) => {
           width={containerWidth}
           height={containerWidth * 0.6}
         />
-        <div
-          onClick={() => {
-            setSelectedData(null);
-          }}
-          ref={tooltipRef}
-          class={`absolute bg-black bg-opacity-50 p-2
-            transform -translate-y-1/2 rounded-md
-          ${selectedData ? '' : 'hidden'}`}
-        >
-          {selectedData && (
-            <>
-              {renderTooltip ? (
-                renderTooltip(selectedData)
-              ) : (
-                <>
-                  <p class="text-white text-center">
-                    {formatToFixed(selectedData?.y)}
-                  </p>
-                </>
-              )}
-            </>
-          )}
-        </div>
       </div>
       <div class="py-4">
         {bookends?.length ? (

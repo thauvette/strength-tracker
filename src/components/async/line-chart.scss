@@ -1,6 +1,7 @@
 .lineChart {
   &.darkChart {
     svg {
+      overflow: visible;
       g {
         .line {
           stroke: #fff;

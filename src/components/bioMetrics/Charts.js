@@ -1,11 +1,12 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
+import dayjs from 'dayjs';
 import LineChart from '../async/LineChart';
 import { renderData } from './utils';
 import Icon from '../../components/icon/Icon';
 
 const Charts = ({ days }) => {
-  const [chartSpan, setChartSpan] = useState('all');
+  const [chartSpan, setChartSpan] = useState('6 weeks');
   const [chartGrouping, setChartGrouping] = useState('day');
 
   const [activeChunk, setActiveChunk] = useState(0);
@@ -48,6 +49,7 @@ const Charts = ({ days }) => {
           <option value="8 weeks">8 weeks</option>
           <option value="3 months">3 months</option>
           <option value="6 months">6 months</option>
+          <option value="1 year">1 year</option>
         </select>
       </label>
       <div class="flex items-center justify-between py-4">
@@ -86,6 +88,11 @@ const Charts = ({ days }) => {
             key={`${chartSpan}-${activeChunk}-${chartGrouping}`}
             dateFormat={data?.[activeChunk]?.dateFormat}
             data={data?.[activeChunk]?.items}
+            renderTooltipText={(data) =>
+              data
+                ? [dayjs(data.x).format("MMM DD 'YY"), data.y.toFixed(2)]
+                : []
+            }
           />
         </div>
       )}

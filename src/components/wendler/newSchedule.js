@@ -49,7 +49,7 @@ const NewSchedule = ({ onSubmit, initialValues }) => {
           ...(lastWeights || {}),
         });
       })
-      .catch((e) => console.log(e))
+      .catch((e) => console.warn(e))
       .finally(() => setLoading(false));
   }, [getWendlerExercises, getAllEntries, initialValues]);
 

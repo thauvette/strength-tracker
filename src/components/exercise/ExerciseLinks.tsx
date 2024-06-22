@@ -35,6 +35,14 @@ const ExerciseLinks = ({ path, id }: { path: string; id: number }) => (
     >
       Plan
     </Link>
+    <Link
+      href={`${routes.exerciseBase}/${id}/sync`}
+      class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${
+        path === 'sync' ? '' : 'border-opacity-0 dark:border-opacity-0'
+      }`}
+    >
+      Export
+    </Link>
   </div>
 );
 

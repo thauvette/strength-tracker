@@ -1,9 +1,0 @@
-.menu {
-  transform: translate(0, calc(-100%));
-  z-index: 1;
-  transition: all 0.25s ease;
-
-  &.active {
-    transform: translate(0, 54px);
-  }
-}

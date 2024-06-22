@@ -5,9 +5,16 @@ import ExerciseStats from '../exerciseStats/ExerciseStats';
 import Plan from '../Plan';
 import EditableSet from '../editableSet/editableSet.tsx';
 import generateRandomId from '../../utilities.js/generateRandomId';
-import Accordion from '../accordion/accordion';
+import Icon from '../icon/Icon.js';
+import EditableSetList from '../EditableSetList.tsx';
 
-const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
+const AddExerciseTabs = ({
+  selectedExercise,
+  addedSets,
+  setAddedSets,
+  submit,
+  addFromHistroy,
+}) => {
   const [view, setView] = useState('add');
 
   const views = {
@@ -24,7 +31,17 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
                 onClick={() =>
                   setAddedSets([
                     ...addedSets,
-                    { weight, reps, isWarmUp, id: generateRandomId() },
+                    {
+                      weight,
+                      reps,
+                      isWarmUp,
+                      id: generateRandomId(),
+                      exerciseId: selectedExercise.id,
+                      exerciseName: selectedExercise.name,
+                      musclesWorked: selectedExercise.musclesWorked,
+                      secondaryMusclesWorked:
+                        selectedExercise.secondaryMusclesWorked,
+                    },
                   ])
                 }
               >
@@ -57,6 +74,10 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
               ...newSets.map((set) => ({
                 ...set,
                 id: generateRandomId(),
+                exerciseId: selectedExercise.id,
+                exerciseName: selectedExercise.name,
+                musclesWorked: selectedExercise.musclesWorked,
+                secondaryMusclesWorked: selectedExercise.secondaryMusclesWorked,
               })),
             ])
           }
@@ -66,13 +87,23 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
     ),
     history: (
       <div>
-        <ExerciseStats exerciseHistory={selectedExercise} />
+        <ExerciseStats
+          exerciseHistory={selectedExercise}
+          updatePlanedSet={(newSets) => {
+            addFromHistroy(
+              newSets.map((set) => ({
+                ...set,
+                exerciseId: +selectedExercise.id,
+                exerciseName: selectedExercise.name,
+                musclesWorked: selectedExercise.musclesWorked,
+                secondaryMusclesWorked: selectedExercise.secondaryMusclesWorked,
+              })),
+            );
+          }}
+          reuseCta="Add Sets"
+        />
       </div>
     ),
-  };
-
-  const removeSet = (id) => {
-    setAddedSets(addedSets.filter((set) => set.id !== id));
   };
 
   return (
@@ -80,43 +111,16 @@ const AddExerciseTabs = ({ selectedExercise, addedSets, setAddedSets }) => {
       <div class="w-full overflow-y-hidden py-4 ">
         {addedSets?.length ? (
           <div class="pt-4 pb-2 border-b mb-4">
-            {addedSets.map((set, i) => (
-              <div key={set.id} class="border mb-2">
-                <Accordion title={`Set ${i + 1} - ${set.reps} @ ${set.weight}`}>
-                  <EditableSet
-                    title={null}
-                    weight={set.weight || 0}
-                    reps={set.reps || 0}
-                    isWarmUp={!!set.isWarmUp}
-                    handleRemove={() => removeSet(set.id)}
-                    handleChanges={({ reps, weight, isWarmUp }) => {
-                      setAddedSets(
-                        addedSets.map((addedSet, setIndex) =>
-                          setIndex === i
-                            ? {
-                                ...addedSet,
-                                reps,
-                                weight,
-                                isWarmUp,
-                              }
-                            : addedSet,
-                        ),
-                      );
-                    }}
-                    onDuplicate={() =>
-                      setAddedSets([
-                        ...addedSets,
-                        { ...set, id: generateRandomId() },
-                      ])
-                    }
-                    disablePlateModal
-                  />
-                </Accordion>
+            <p>Added sets:</p>
+            <EditableSetList sets={addedSets} setSets={setAddedSets} />
+            <button onClick={submit} class="w-full primary my-4">
+              <div class="flex items-center justify-center">
+                <Icon name="save-outline" />
+                <p class="ml-1">Save Sets</p>
               </div>
-            ))}
+            </button>
           </div>
         ) : null}
-
         <div class="flex overscroll-x-auto">
           <button
             class={`px-2 py-1 text-xs bg-blue-100 text-gray-800 border-0 border-b-2 border-blue-900 rounded-none ${

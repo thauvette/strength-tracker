@@ -16,6 +16,7 @@ const initializeDb = (callback) => {
   let requiresBioMetrics = false;
   let requiresExerciseGroupRefactor = false;
   let requiresMuscleGroupUpdate = false;
+  let requiresBioMetricDateUpdate = false;
   dbRequest.onsuccess = async (e) => {
     const database = e.target.result;
     const exerciseTransaction = database.transaction(
@@ -206,6 +207,23 @@ const initializeDb = (callback) => {
         });
       });
     }
+    if (requiresBioMetricDateUpdate) {
+      // get every bioEntry and change the format of the date
+      getFromCursorUtil(database, objectStores.bioEntries).then(async (res) => {
+        const entryStore = database
+          .transaction(objectStores.bioEntries, 'readwrite')
+          .objectStore(objectStores.bioEntries);
+        Object.entries(res || {}).forEach(([id, entry]) => {
+          entryStore.put(
+            {
+              ...entry,
+              date: new Date(entry.date).getTime(),
+            },
+            +id,
+          );
+        });
+      });
+    }
 
     callback(dbRequest.result);
   };
@@ -289,6 +307,9 @@ const initializeDb = (callback) => {
     if (e.oldVersion < 8) {
       // updating muscle groups.
       requiresMuscleGroupUpdate = true;
+    }
+    if (e.oldVersion < 9) {
+      requiresBioMetricDateUpdate = true;
     }
   };
 };

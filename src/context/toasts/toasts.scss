@@ -1,6 +1,0 @@
-.toast {
-  @apply flex items-center justify-between shadow-md mb-2;
-  &.success {
-    @apply bg-green-600 text-white p-2 rounded-md;
-  }
-}

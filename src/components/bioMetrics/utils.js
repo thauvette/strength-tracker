@@ -150,6 +150,8 @@ export const renderData = ({ days, timeSpan, chartGrouping }) => {
       return chunkByRange(dataArray, 6, 'months');
     case '3 months':
       return chunkByRange(dataArray, 3, 'months');
+    case '1 year':
+      return chunkByRange(dataArray, 1, 'years');
     default:
       return null;
   }

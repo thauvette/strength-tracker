@@ -4,7 +4,7 @@ import { route } from 'preact-router';
 import set from 'lodash.set';
 import cloneDeep from 'lodash.clonedeep';
 import get from 'lodash.get';
-import Accordion from '../accordion/accordion';
+import Accordion from '../accordion/accordion.tsx';
 import Modal from '../modal/Modal';
 
 import AuxExerciseForm from './auxExerciseForm';
@@ -304,15 +304,47 @@ export default function Preview({ initialValues }) {
             </div>
             <ReorderForm
               items={editOrderModalState.items}
-              onSave={({ newOrder, updateAllWeeks }) => {
+              onSave={({ newOrder, updateAllWeeks, newSets }) => {
                 if (!newOrder) {
                   return closeReorderModal();
                 }
-
                 const weeks = updateAllWeeks
                   ? [1, 2, 3]
                   : [editOrderModalState.targetWeek];
                 const clonedPreview = cloneDeep(preview);
+
+                // updating the set values (reps/sets etc)
+                newSets.forEach((newSet) => {
+                  if (
+                    newSet.wendlerGroup === 'main' ||
+                    newSet.wendlerGroup === 'aux'
+                  ) {
+                    // only update target week for main and aux lifts
+                    set(
+                      clonedPreview,
+                      [
+                        editOrderModalState.targetWeek, // week
+                        editOrderModalState.mainLift, // day
+                        newSet.wendlerGroup, // group
+                        newSet.wendlerId, // setId
+                      ],
+                      newSet,
+                    );
+                  } else {
+                    weeks.forEach((week) => {
+                      set(
+                        clonedPreview,
+                        [
+                          week,
+                          editOrderModalState.mainLift,
+                          newSet.wendlerGroup,
+                          newSet.id,
+                        ],
+                        newSet,
+                      );
+                    });
+                  }
+                });
 
                 weeks.forEach((week) => {
                   const currentSets = get(
@@ -320,6 +352,7 @@ export default function Preview({ initialValues }) {
                     [week, editOrderModalState.mainLift, 'runningSets'],
                     [],
                   );
+
                   const newOrderSets = newOrder.map((num) => currentSets[num]);
 
                   set(
@@ -328,7 +361,7 @@ export default function Preview({ initialValues }) {
                     newOrderSets,
                   );
                 });
-
+                // week-day-group-setId
                 setPreview(clonedPreview);
                 closeReorderModal();
               }}

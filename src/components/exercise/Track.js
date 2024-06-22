@@ -14,6 +14,7 @@ const Track = ({
   setSavedSet,
   barWeight,
 }) => {
+  // we need add set, edit set, today's history
   const { createOrUpdateLoggedSet } = useDB();
   const { fireToast } = useToast();
 

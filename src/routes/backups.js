@@ -1,9 +1,15 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
+import dayjs from 'dayjs';
+
 import Modal from '../components/modal/Modal';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../config/constants';
+import {
+  ARRAY_SEPARATOR,
+  COMMA_REPLACEMENT,
+  LINE_BREAK,
+} from '../config/constants';
 import useDB from '../context/db/db.tsx';
 import { objectStores } from '../context/db/config.ts';
 
@@ -48,19 +54,33 @@ export default function Backups() {
                     } catch (e) {
                       formattedValue = [];
                     }
+                  } else if (
+                    items[0] === objectStores.bioEntries &&
+                    headers[index + 2] === 'date'
+                  ) {
+                    const parsed = +value;
+                    if (!Number.isNaN(parsed)) {
+                      formattedValue = parsed;
+                    } else {
+                      // validate this is a date.
+                      formattedValue = dayjs(value).isValid()
+                        ? dayjs(value).toDate().getTime()
+                        : '';
+                    }
                   } else if (value.includes(ARRAY_SEPARATOR)) {
                     // this is an array.
                     // we'll split it and then turn numbers back to numbers as they are probably tied to other ids.
                     formattedValue = value
                       .split(ARRAY_SEPARATOR)
                       ?.map((val) => (isNaN(val) ? val : +val));
-                  } else if (value.includes(COMMA_REPLACEMENT)) {
-                    // this is just a string, probably a note with a comma in it.
-                    formattedValue = value.replace(COMMA_REPLACEMENT, ',');
-                  } else if (value === 'false') {
-                    formattedValue = false;
+                  } else if (value === 'false' || value === 'true') {
+                    formattedValue = value === 'true';
                   } else {
-                    formattedValue = isNaN(value) ? value : +value;
+                    formattedValue = isNaN(value)
+                      ? value
+                          .replace(COMMA_REPLACEMENT, ',')
+                          .replace(LINE_BREAK, '\n')
+                      : +value;
                   }
 
                   data[headers[index + 2]] = formattedValue;
@@ -84,7 +104,7 @@ export default function Backups() {
         // pass this to DB to create entries.
         setUploadedData(result);
       } catch (err) {
-        console.log(err);
+        console.warn(err);
       }
     };
     reader.readAsText(file);

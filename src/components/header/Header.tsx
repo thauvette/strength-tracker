@@ -1,33 +1,26 @@
 import { h } from 'preact';
 import { Link } from 'preact-router/match';
-import { route } from 'preact-router';
-import dayjs from 'dayjs';
 import { routes } from '../../config/routes';
 import Icon from '../icon/Icon';
 import style from './style.scss';
-import dateFormats from '../../config/dateFormats';
-import { HydratedSet } from 'src/context/db/types';
+import useSessionContext from '../../context/sessionData/sessionData';
 
 interface Props {
   toggleMenu: () => void;
   menuIsOpen: boolean;
-  activeRoutine?: HydratedSet[];
 }
-const Header = ({ toggleMenu, menuIsOpen, activeRoutine }: Props) => {
-  const goHome = () => {
-    route(`${routes.logs}?date=${dayjs().format(dateFormats.day)}`);
-  };
-
+const Header = ({ toggleMenu, menuIsOpen }: Props) => {
+  const { hasActiveRoutine } = useSessionContext();
   return (
     <header class="flex items-center justify-between px-4 h-14 bg-2 z-20">
       <div class="flex items-center">
-        <button
+        <Link
           class="text-primary-900 dark:text-gray-50 text-3xl"
-          onClick={goHome}
+          href={routes.logs}
         >
           <Icon name="calendar-outline" width="32" />
-        </button>
-        {activeRoutine && (
+        </Link>
+        {hasActiveRoutine && (
           <Link
             class="text-primary-900 dark:text-gray-50 ml-4"
             href={routes.activeRoutine}
@@ -41,8 +34,8 @@ const Header = ({ toggleMenu, menuIsOpen, activeRoutine }: Props) => {
         <Link href={routes.newWorkout}>+</Link>
         <button
           onClick={toggleMenu}
-          class={`${style.hamburger}
-        ${menuIsOpen ? style.hamburgerActive : ''}`}
+          class={`ml-4 ${style.hamburger}
+          ${menuIsOpen ? style.hamburgerActive : ''}`}
         >
           <div class="bg-primary-900 dark:bg-white" />
           <div class="bg-primary-900 dark:bg-white" />

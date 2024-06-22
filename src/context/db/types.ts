@@ -11,6 +11,10 @@ export interface BioEntry {
   value: number;
 }
 
+export interface HydradedBioEntry extends BioEntry {
+  name: string;
+}
+
 export interface BioEntriesResponse {
   [key: number]: BioEntry;
 }
@@ -35,14 +39,34 @@ export interface HydratedMuscleGroup {
 }
 // Exercises
 export interface Exercise {
+  barWeight?: number | undefined;
+  created?: number | undefined;
+  isFavorite?: boolean;
   musclesWorked: number[];
   name: string;
+  notes?: string;
   primaryGroup: number;
   secondaryMusclesWorked: number[];
   type: string;
   updated: number | undefined;
-  created: number | undefined;
+}
+
+export interface ExerciseHistory {
   barWeight?: number | undefined;
+  isFavorite?: boolean;
+  musclesWorked: MuscleGroup[];
+  name: string;
+  notes?: string;
+  primaryGroup: number;
+  secondaryMusclesWorked: MuscleGroup[];
+  type: string;
+  updated: number;
+  items: SetType[];
+}
+
+export interface ExerciseOptions extends MuscleGroup {
+  id: number;
+  items: Exercise[];
 }
 
 export interface SetType {
@@ -52,12 +76,26 @@ export interface SetType {
   updated: number;
   weight: number;
   isWarmUp: boolean;
+  id: number;
+  note?: string;
 }
 
 export interface HydratedSet extends SetType {
   bw?: number;
   exerciseData: Exercise;
   id: number;
+}
+
+export interface LogsSet extends HydratedSet {
+  primaryMuscles: MuscleGroup[];
+  secondaryMuscles: MuscleGroup[];
+  primaryMuscleGroup: MuscleGroup;
+  name: string;
+  musclesWorked: number[];
+  barWeight: number;
+  secondaryMusclesWorked: number[];
+  primaryGroup: number;
+  type: string;
 }
 
 export interface Fast {
@@ -67,18 +105,35 @@ export interface Fast {
   updated: number;
 }
 
+export interface CreateRoutineBody {
+  name: string;
+  days: {
+    id: string;
+    name: string;
+    sets: {
+      id: string;
+      exercise: number;
+      reps: number;
+      weight: number;
+    }[];
+  };
+}
+
 export interface Routine {
   created: number;
   name: string;
+  id: number;
   days: {
     id: string;
     name: string;
     sets: {
       exercise: number;
       exerciseName: string;
-      id: string;
+      id?: number;
+      routineSetId?: string;
       reps: number;
       weight: number;
+      barWeight: number;
     }[];
   }[];
 }

@@ -3,12 +3,16 @@ import { useState } from 'preact/hooks';
 
 import ExerciseHistory from './ExerciseHistory';
 import MaxWeights from './MaxWeights';
-import Volume from './Volume';
 import Charts from './Charts';
 
-const tabs = ['history', 'PRs', 'volume', 'charts'];
+const tabs = ['history', 'PRs', 'charts'];
 
-const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
+const ExerciseStats = ({
+  exerciseHistory,
+  onChangeSet,
+  updatePlanedSet,
+  reuseCta,
+}) => {
   const [includeBwInHistory, setIncludeBwInHistory] = useState(false);
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
@@ -17,13 +21,6 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
       case 'PRs':
         return (
           <MaxWeights
-            exerciseHistory={exerciseHistory}
-            includeBwInHistory={includeBwInHistory}
-          />
-        );
-      case 'volume':
-        return (
-          <Volume
             exerciseHistory={exerciseHistory}
             includeBwInHistory={includeBwInHistory}
           />
@@ -42,6 +39,8 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
             exerciseHistory={exerciseHistory}
             onChangeSet={onChangeSet}
             includeBwInHistory={includeBwInHistory}
+            updatePlanedSet={updatePlanedSet}
+            reuseCta={reuseCta}
           />
         );
     }
@@ -64,7 +63,7 @@ const ExerciseStats = ({ exerciseHistory, onChangeSet }) => {
           </button>
         ))}
       </div>
-      {exerciseHistory.type === 'bwr' && setIncludeBwInHistory && (
+      {exerciseHistory?.type === 'bwr' && setIncludeBwInHistory && (
         <label class="flex gap-2 items-center">
           <input
             type="checkbox"

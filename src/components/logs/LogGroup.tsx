@@ -2,11 +2,15 @@ import { h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import { Link } from 'preact-router';
 import dayjs from 'dayjs';
+import AnimateHeight from 'react-animate-height';
+
+import { formatToFixed } from '../../utilities.js/formatNumbers';
 import { routes } from '../../config/routes';
 import Icon from '../icon/Icon';
 import dateFormats from '../../config/dateFormats';
 
-import AnimateHeight from 'react-animate-height';
+import useSessionContext from '../../context/sessionData/sessionData';
+import { LogsSet } from '../../context/db/types';
 
 const renderSetsSummary = (sets) => {
   const stats = [];
@@ -16,10 +20,10 @@ const renderSetsSummary = (sets) => {
   const working = workingSets.length;
   stats.push(`${working} working`);
 
-  const workingVol = workingSets.reduce(
-    (num, set) => num + set.reps * set.weight,
-    0,
+  const workingVol = formatToFixed(
+    workingSets.reduce((num, set) => num + set.reps * set.weight, 0),
   );
+
   const volText = workingVol ? `total vol ${workingVol} ` : '';
   if (volText) {
     stats.push(volText);
@@ -34,15 +38,22 @@ const renderSetsSummary = (sets) => {
   return stats.join(', ');
 };
 
-const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
-  const [toggleIsOpen, setToggleIsOpen] = useState(false);
+interface Props {
+  name: string;
+  sets: LogsSet[];
+  quickAdd: () => void;
+  openExerciseModal?: (id: number) => void;
+}
 
+const LogGroup = ({ name, sets, quickAdd, openExerciseModal }: Props) => {
+  const [toggleIsOpen, setToggleIsOpen] = useState(false);
+  const { addToRoutine } = useSessionContext();
   const id = sets[0].exercise;
   const handleOpenExerciseModal = useCallback(() => {
     openExerciseModal(id);
   }, [id, openExerciseModal]);
   return (
-    <div key={name} class="mb-4 card p-1 ">
+    <div class="mb-4 card p-1 ">
       <div class="flex relative">
         {quickAdd && (
           <button class="text-2xl pr-2" onClick={quickAdd}>
@@ -53,7 +64,7 @@ const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
         <div class="pl-2">
           <Link
             href={`${routes.exerciseBase}/${id}`}
-            ariaLabel={`go to ${name}`}
+            aria-label={`go to ${name}`}
             class="font-bold capitalize pl-0 underline"
           >
             {name}
@@ -85,12 +96,34 @@ const LogGroup = ({ name, sets, quickAdd, openExerciseModal }) => {
               {set.note && <p class="pl-2"> - {set.note}</p>}
             </div>
           ))}
-          <button
-            class="border border-white mt-4"
-            onClick={handleOpenExerciseModal}
-          >
-            View History
-          </button>
+          <div class="flex items-center mt-4">
+            {openExerciseModal && (
+              <button
+                class="border border-white "
+                onClick={handleOpenExerciseModal}
+              >
+                View History
+              </button>
+            )}
+
+            <button
+              class="ml-auto underline"
+              onClick={() =>
+                addToRoutine(
+                  sets.map((set) => ({
+                    exercise: set.exercise,
+                    exerciseName: set.name,
+                    reps: set.reps,
+                    weight: set.weight,
+                    isWarmUp: set.isWarmUp,
+                    barWeight: set.barWeight || 45,
+                  })),
+                )
+              }
+            >
+              Add to today
+            </button>
+          </div>
         </div>
       </AnimateHeight>
     </div>

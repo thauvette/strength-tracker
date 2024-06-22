@@ -1,12 +1,4 @@
 import { objectStores } from './../config';
-import {
-  BioEntry,
-  BioMetric,
-  Exercise,
-  Fast,
-  HydratedSet,
-  MuscleGroup,
-} from './../types';
 import { ObjectStoreEvent } from '../types';
 import formatExercise from './formatExercise';
 
@@ -25,47 +17,10 @@ export const openObjectStoreTransaction = (
   };
 };
 
-// https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'bio_metrics',
-): Promise<{ [key: number]: BioMetric }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'bio_metric_entries',
-): Promise<{ [key: number]: BioEntry }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'exercises',
-): Promise<{ [key: number]: Exercise }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'fasting',
-): Promise<{ [key: number]: Fast }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'muscle_groups',
-): Promise<{ [key: number]: MuscleGroup }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'routines',
-): Promise<{ [key: number]: any }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'wendler_cycles',
-): Promise<{ [key: number]: any }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: 'sets',
-): Promise<{ [key: number]: HydratedSet }>;
-export function getFromCursor(
+export function getFromCursor<Type>(
   db: IDBDatabase,
   store: string,
-): Promise<{ [key: number]: any }>;
-export function getFromCursor(
-  db: IDBDatabase,
-  store: string,
-): Promise<{ [key: number]: any }> {
+): Promise<{ [key: string]: Type }> {
   return new Promise((resolve, reject) => {
     const { transaction, objectStore } = openObjectStoreTransaction(db, store);
     const results = {};
@@ -87,7 +42,11 @@ export function getFromCursor(
   });
 }
 
-export const getItem = (db: IDBDatabase, store: string, id: number) =>
+export const getItem = <Type>(
+  db: IDBDatabase,
+  store: string,
+  id: number,
+): Promise<Type> =>
   new Promise((resolve, reject) => {
     if (!store) {
       reject('store is required');

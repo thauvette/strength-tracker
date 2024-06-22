@@ -1,18 +1,28 @@
 import { h } from 'preact';
-import { useState } from 'preact/compat';
+import { PropsWithChildren, ReactNode, useState } from 'preact/compat';
 import AnimateHeight from 'react-animate-height';
 import Icon from '../icon/Icon';
+
+interface Props extends PropsWithChildren {
+  openByDefault?: boolean;
+  title: string | ReactNode;
+  titleClass?: string;
+  smallIcon?: boolean;
+  headerClassName?: string;
+  headerIcon?: string;
+  containerClass?: string;
+}
 
 export default function Accordion({
   openByDefault = false,
   title,
   children,
   titleClass = '',
-  smallIcon,
-  headerClassName,
+  smallIcon = false,
+  headerClassName = '',
   headerIcon,
   containerClass = '',
-}) {
+}: Props) {
   const [isOpen, setIsOpen] = useState(openByDefault);
 
   return (

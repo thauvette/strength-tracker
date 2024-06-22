@@ -87,10 +87,11 @@ const WendlerCycles = ({ navigateToEdit }) => {
       open: false,
     });
 
-  const handleDelete = () => {
-    deleteEntry(objectStores.wendlerCycles, confirmDeleteModalState.id).then(
-      (res) => setWorkouts(res),
-    );
+  const handleDelete = async () => {
+    await deleteEntry(objectStores.wendlerCycles, confirmDeleteModalState.id);
+    const result = { ...workouts };
+    delete result?.[confirmDeleteModalState.id];
+    setWorkouts(result);
     handleCloseConfirmDeleteModal();
   };
 

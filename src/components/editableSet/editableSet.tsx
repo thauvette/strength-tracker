@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 
 import Modal from '../modal/Modal';
 import Plates from '../plates/plates';
@@ -23,6 +23,7 @@ interface Props {
   renderCtas?: (set: SetAttributes) => void;
   disablePlateModal?: boolean;
   barWeight?: number;
+  largeText?: boolean;
 }
 
 const EditableSet = ({
@@ -37,7 +38,9 @@ const EditableSet = ({
   renderCtas,
   disablePlateModal,
   barWeight,
+  largeText = false,
 }: Props) => {
+  const isMounted = useRef(false);
   const [plateModalState, setPlateModalState] = useState({
     weight: initialWeight,
     isOpen: false,
@@ -62,12 +65,16 @@ const EditableSet = ({
     : 45;
 
   useEffect(() => {
-    if (handleChanges) {
-      handleChanges({
-        reps,
-        weight,
-        isWarmUp,
-      });
+    if (isMounted.current && handleChanges) {
+      if (handleChanges) {
+        handleChanges({
+          reps,
+          weight,
+          isWarmUp,
+        });
+      }
+    } else {
+      isMounted.current = true;
     }
   }, [reps, weight, isWarmUp]); // eslint-disable-line
 
@@ -102,7 +109,7 @@ const EditableSet = ({
         <div class="pb-3 ">
           {/* REPS  */}
           <div class="flex justify-between items-center pb-4 border-b">
-            <p class="m-0 font-bold uppercase">Rep{reps > 1 ? 's' : ''}</p>
+            <p class="m-0 font-bold uppercase">Reps</p>
             <div class="flex items-center justify-end">
               <button
                 disabled={reps === 0}
@@ -115,12 +122,20 @@ const EditableSet = ({
                 -
               </button>
               <input
-                class="w-[48px] text-center border-0"
+                class={`w-[72px] text-center border-0 ${
+                  largeText ? 'text-2xl' : ''
+                }`}
                 inputMode="numeric"
                 value={reps}
+                onClick={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    event.target.select();
+                  }
+                }}
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
-                    setReps(+e.target.value);
+                    const formatted = e.target.value.replace(/[^\d.]/g, '');
+                    setReps(+formatted);
                   }
                 }}
               />
@@ -169,12 +184,20 @@ const EditableSet = ({
                 -
               </button>
               <input
-                class="w-[48px] text-center border-0"
+                class={`w-[72px] text-center border-0 ${
+                  largeText ? 'text-2xl' : ''
+                }`}
                 value={weight}
                 inputMode="numeric"
                 onInput={(e: Event) => {
                   if (e.target instanceof HTMLInputElement) {
-                    setWeight(+e.target.value);
+                    const formatted = e.target.value.replace(/[^\d.]/g, '');
+                    setWeight(+formatted);
+                  }
+                }}
+                onClick={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    event.target.select();
                   }
                 }}
               />

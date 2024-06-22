@@ -1,6 +1,6 @@
 import { objectStores } from './config.ts';
 import { fireSetRemovedEvent } from './sets';
-import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils.ts';
+import { openObjectStoreTransaction } from './utils/dbUtils.ts';
 
 export const getAllEntriesByKey = async (db, store, key, id) =>
   new Promise((resolve) => {
@@ -27,16 +27,14 @@ export const deleteEntry = (db, store, id) =>
       .transaction([store], 'readwrite')
       .objectStore(store)
       .delete(+id);
-    request.onsuccess = async function () {
-      try {
-        const remainingData = await getFromCursor(db, store);
-        if (store === objectStores.sets) {
-          fireSetRemovedEvent({ id });
-        }
-        resolve(remainingData);
-      } catch (e) {
-        reject(new Error(e.message || 'something went wrong? '));
+    request.onsuccess = function () {
+      if (store === objectStores.sets) {
+        fireSetRemovedEvent({ id });
       }
+      return resolve(true);
+    };
+    request.onerror = function () {
+      return reject('error deleting item');
     };
   });
 export const updateEntry = (db, store, id, data) =>

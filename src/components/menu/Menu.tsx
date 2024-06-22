@@ -3,8 +3,6 @@ import { route } from 'preact-router';
 import { menuItems, routes } from '../../config/routes';
 import useTheme from '../../context/theme';
 import LinkList from '../linkList/LinkList';
-
-import styles from './menu.module.scss';
 import useAuthContext from '../../context/supabase/auth';
 
 type Props = {
@@ -18,8 +16,8 @@ const Menu = ({ isOpen, toggleMenu }: Props) => {
 
   return (
     <div
-      class={`${styles.menu} fixed inset-0 bg-1 bg-opacity-80 z-10 ${
-        isOpen ? styles.active : ''
+      class={`transition z-[1] fixed inset-0 bg-1 bg-opacity-80 z-10 transform ${
+        isOpen ? ` translate-y-[54px]` : '-translate-y-full'
       }`}
     >
       <div class="max-w-lg mx-auto flex flex-col pb-[64px] h-full">

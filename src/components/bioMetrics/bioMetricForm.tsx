@@ -1,8 +1,18 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import dayjs from 'dayjs';
 import dateFormats from '../../config/dateFormats';
 import useToast from '../../context/toasts/Toasts';
+
+interface Props {
+  initialValues: {
+    [key: string]: number;
+  };
+  submit: (args: { value: number; date: number }) => void;
+  name: string;
+  submitText?: string;
+  renderCtas?: (args: { submit: (e: Event) => void }) => void;
+}
 
 const BioMetricForm = ({
   initialValues,
@@ -10,20 +20,36 @@ const BioMetricForm = ({
   name,
   submitText = 'Add +',
   renderCtas = null,
-}) => {
+}: Props) => {
+  const valueInputRef = useRef(null);
   const [date, setDate] = useState(
     initialValues?.date || dayjs().format(dateFormats.day),
   );
   const [time, setTime] = useState(
     initialValues?.time || dayjs().format(dateFormats.time),
   );
-  const [value, setValue] = useState(initialValues?.value || '');
+  const [value, setValue] = useState<number | string | null>(
+    initialValues?.value || null,
+  );
+
   const { fireToast } = useToast();
-  const handleAddEntry = (e) => {
+
+  const handleAddEntry = (e: Event) => {
     e.preventDefault();
+    if (valueInputRef.current) {
+      valueInputRef.current.blur();
+    }
+    if (isNaN(+value)) {
+      fireToast({
+        text: 'Error: value must be a number',
+        type: 'error',
+      });
+      throw new Error('Not a number');
+    }
+
     submit({
-      value,
-      date: dayjs(`${date}T${time}:00`).format(),
+      value: +value,
+      date: dayjs(`${date}T${time}:00`).toDate().getTime(),
     });
     fireToast({
       text: `${name} added`,
@@ -35,9 +61,15 @@ const BioMetricForm = ({
       <label class="flex items-center py-1">
         <p class="w-2/4 capitalize">{name}</p>
         <input
+          ref={valueInputRef}
           class="w-2/4"
-          value={value}
-          onInput={(e) => setValue(e.target.value)}
+          value={value ?? 0}
+          inputMode="numeric"
+          onInput={(e) => {
+            if (e.target instanceof HTMLInputElement) {
+              setValue(e.target.value);
+            }
+          }}
           placeholder={name || ''}
         />
       </label>
@@ -48,7 +80,9 @@ const BioMetricForm = ({
           type="date"
           value={date}
           onInput={(e) => {
-            setDate(e.target.value);
+            if (e.target instanceof HTMLInputElement) {
+              setDate(e.target.value);
+            }
           }}
           placeholder="date"
         />
@@ -59,7 +93,9 @@ const BioMetricForm = ({
           class="w-2/4"
           type="time"
           onInput={(e) => {
-            setTime(e.target.value);
+            if (e.target instanceof HTMLInputElement) {
+              setTime(e.target.value);
+            }
           }}
           value={time}
           placeholder="time"

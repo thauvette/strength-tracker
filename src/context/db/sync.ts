@@ -1,5 +1,9 @@
 import dayjs from 'dayjs';
-import { ARRAY_SEPARATOR, COMMA_REPLACEMENT } from '../../config/constants';
+import {
+  ARRAY_SEPARATOR,
+  COMMA_REPLACEMENT,
+  LINE_BREAK,
+} from '../../config/constants';
 import { objectStores } from './config';
 import { getFromCursor } from './utils/dbUtils';
 import formatExercise from './utils/formatExercise';
@@ -12,7 +16,7 @@ export async function generateBackupData(db: IDBDatabase) {
     const entries = await getFromCursor(db, storeName);
     if (Object.keys(entries || {}).length) {
       Object.entries(entries).forEach(([id, data]) => {
-        const rowData: any[] = [storeName, id];
+        const rowData: unknown[] = [storeName, id];
         if (Object.keys(data || {}).length) {
           Object.entries(data).forEach(([key, val]) => {
             const currentIndex = headerItems.indexOf(key);
@@ -35,7 +39,9 @@ export async function generateBackupData(db: IDBDatabase) {
             } else if (Array.isArray(val)) {
               formattedValue = val.join(ARRAY_SEPARATOR);
             } else if (typeof val === 'string') {
-              formattedValue = val.replace(',', COMMA_REPLACEMENT);
+              formattedValue = val
+                .replace(/[\r\n]/gm, LINE_BREAK)
+                .replace(',', COMMA_REPLACEMENT);
             }
             rowData[position] = formattedValue;
           });
@@ -94,7 +100,17 @@ const writeItemFromBackup = (db, item) =>
     objectStore.onerror = (err) => reject(err);
   });
 
-export const restoreFromBackup = async (db, entries) => {
+export const restoreFromBackup = async (
+  db: IDBDatabase,
+  entries: {
+    stores: string[];
+    items: {
+      store: string;
+      data: unknown;
+      id: number;
+    }[];
+  },
+) => {
   try {
     // get list of stores to clear.
     const storeClearPromises = entries.stores.map((store) =>

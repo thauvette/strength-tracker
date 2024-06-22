@@ -57,7 +57,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
       try {
         await deleteLoggedSet(setData?.setId);
       } catch (err) {
-        console.log(err);
+        console.warn(err);
       }
     } else {
       try {
@@ -69,7 +69,7 @@ export default function WendlerWorkout({ id, week, mainLift }) {
         });
         setId = res?.id;
       } catch (err) {
-        console.log(err);
+        console.warn(err);
       }
     }
     return setId;

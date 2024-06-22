@@ -1,30 +1,42 @@
 import { h } from 'preact';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 import { renderChartData } from './utils';
 import LineChart from '../async/LineChart';
 import Icon from '../icon/Icon';
 import { formatToFixed } from '../../utilities.js/formatNumbers';
-import dayjs from 'dayjs';
+
+const altChartTypes = {
+  maxWeight: {
+    label: 'Max Weight',
+    chartLabel: 'Max Weight',
+  },
+  maxEORM: {
+    label: 'Estimated One Rep Max',
+    chartLabel: 'ORM',
+  },
+  maxSingleSetVol: {
+    label: 'Single Set Vol',
+    chartLabel: 'SSV',
+  },
+};
 
 const renderTooltipData = ({ chartType, activeData }) => {
   if (chartType === 'vol') {
-    return (
-      <div class="text-white text-center">
-        <p>{dayjs(activeData.x).format('MMM DD')}</p>
-        <p>{activeData?.data?.filter((item) => !item.isWarmUp)?.length} sets</p>
-        <p>vol: {formatToFixed(activeData.y)}</p>
-      </div>
-    );
+    return [
+      dayjs(activeData.x).format('MMM DD'),
+      `${activeData?.data?.filter((item) => !item.isWarmUp)?.length} sets`,
+      `vol: ${formatToFixed(activeData.y)}`,
+    ];
   }
 
-  return (
-    <div>
-      <p class="text-white text-center">{formatToFixed(activeData.y)}</p>
-      <p>reps: {activeData?.[chartType]?.reps}</p>
-      <p>weight: {activeData?.[chartType]?.weight}</p>
-      <p>bw: {activeData?.[chartType]?.bw}</p>
-    </div>
-  );
+  return [
+    `${dayjs(activeData.x).format("MMM DD 'YY")}`,
+    `${altChartTypes[chartType].chartLabel}: ${formatToFixed(activeData.y)}`,
+    `reps: ${activeData?.[chartType]?.reps}`,
+    `weight: ${activeData?.[chartType]?.weight}`,
+    `bw: ${activeData?.[chartType]?.bw}`,
+  ];
 };
 
 const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
@@ -61,9 +73,11 @@ const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
             value={chartType}
           >
             <option value="vol">Volume</option>
-            <option value="maxWeight">Max Weight</option>
-            <option value="maxEORM">Estimated One Rep Max</option>
-            <option value="maxSingleSetVol">Single Set Vol</option>
+            {Object.entries(altChartTypes).map(([key, { label }]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -123,7 +137,7 @@ const Charts = ({ exerciseHistory, includeBwInHistory = false }) => {
               includeBwInHistory ? '1' : '2'
             }`}
             data={chartData}
-            renderTooltip={(activeData) =>
+            renderTooltipText={(activeData) =>
               renderTooltipData({ chartType, activeData })
             }
             dateFormat={data?.[activeChunk]?.dateFormat}

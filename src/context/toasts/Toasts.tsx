@@ -10,22 +10,29 @@ import {
 
 import Icon from '../../components/icon/Icon';
 
-import './toasts.scss';
-
 import generateRandomId from '../../utilities.js/generateRandomId';
 
-const ToastContext = createContext();
+interface Toast {
+  text: string;
+  id?: string;
+  type?: 'error' | 'success';
+}
 
-// types: success, error, warn??
+interface ToastContext {
+  fireToast: (args: { text: string; type?: 'error' | 'success' }) => void;
+}
+
+const ToastContext = createContext<ToastContext | null>(null);
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
-  const fireToast = useCallback(
-    (toast) => {
-      setToasts([...toasts, { ...toast, id: generateRandomId() }]);
-    },
-    [toasts],
-  );
+  const fireToast = useCallback((toast: Toast) => {
+    setToasts((prevState) => [
+      ...prevState,
+      { ...toast, id: generateRandomId() },
+    ]);
+  }, []);
+
   const removeToast = (activeToasts, toast) => {
     setToasts(
       activeToasts.filter((activeToast) => activeToast.id !== toast.id),
@@ -73,15 +80,16 @@ const Toasts = ({ toasts, removeToast }) => {
     <div class="fixed bottom-0 pt-4 left-2 right-2 z-20">
       {toasts.map((toast) => {
         return (
-          <div
+          <button
             key={toast.id}
-            class={` toast ${toast.type || 'success'}`}
-            role="button"
+            class={`flex items-center justify-between shadow-md mb-2 text-white p-2 rounded-md text-sm w-full ${
+              toast.type === 'error' ? 'bg-red-600 ' : 'bg-green-600 '
+            }`}
             onClick={() => removeToast(toasts, toast)}
           >
             <p class="m-0">{toast.text}</p>
             <Icon name="close-circle-outline" />
-          </div>
+          </button>
         );
       })}
     </div>,
