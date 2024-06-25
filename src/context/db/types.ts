@@ -84,6 +84,7 @@ export interface HydratedSet extends SetType {
   bw?: number;
   exerciseData: Exercise;
   id: number;
+  name?: string;
 }
 
 export interface LogsSet extends HydratedSet {
