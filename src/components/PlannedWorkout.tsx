@@ -3,19 +3,29 @@ import { Link } from 'preact-router';
 import { useCallback, useState } from 'preact/hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import EditableSet from './editableSet/editableSet.tsx';
+import EditableSet from './editableSet/editableSet';
 import ExerciseHistoryModal from './exerciseHistoryModal/ExerciseHistoryModal';
 import Icon from './icon/Icon';
 import { routes } from '../config/routes';
 import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 import useToast from '../context/toasts/Toasts';
+import { HydratedSet } from '../context/db/types';
+
+interface Props {
+  sets: HydratedSet[];
+  onSaveSet: (set: HydratedSet, index: number) => void;
+  onUpdateSet?: (set: HydratedSet, index: number) => void;
+  showHistoryInSets?: boolean;
+  showLinkToExercise?: boolean;
+}
+
 const PlannedWorkout = ({
   sets,
   onSaveSet,
   onUpdateSet,
   showHistoryInSets,
   showLinkToExercise,
-}) => {
+}: Props) => {
   const { fireToast } = useToast();
   const firstIncompleteSet = sets
     .map(({ created }) => created)
@@ -29,7 +39,7 @@ const PlannedWorkout = ({
     isOpen: false,
   });
 
-  const { exerciseHistory, getData } = useExerciseHistory(
+  const { exerciseHistory, getData, isLoading } = useExerciseHistory(
     exerciseModalState.id,
   );
 
@@ -50,10 +60,10 @@ const PlannedWorkout = ({
 
   const closeExerciseModal = useCallback(
     () =>
-      setExerciseModalState({
-        id: null,
+      setExerciseModalState((current) => ({
+        ...current,
         isOpen: false,
-      }),
+      })),
     [],
   );
 
@@ -82,7 +92,7 @@ const PlannedWorkout = ({
               onClick={() => setActiveSet(i === activeSet ? null : i)}
             >
               <div class="flex flex-wrap items-center">
-                {created && <Icon name="checkmark-outline" width={28} />}
+                {created && <Icon name="checkmark-outline" width={'28'} />}
                 <p class="capitalize  text-left">{exerciseName}</p>
                 <p class="ml-auto">
                   {reps} @ {weight}
@@ -120,9 +130,12 @@ const PlannedWorkout = ({
                       return (
                         <div>
                           <button
-                            onClick={() =>
-                              saveSet({ ...set, reps, weight, isWarmUp }, i)
-                            }
+                            onClick={() => {
+                              saveSet({ ...set, reps, weight, isWarmUp }, i);
+                              if (exerciseHistory?.id === set?.exercise) {
+                                getData();
+                              }
+                            }}
                             class="primary w-full"
                           >
                             {created ? 'Update' : 'Save'}
@@ -155,15 +168,14 @@ const PlannedWorkout = ({
           </div>
         );
       })}
-      {exerciseModalState.isOpen &&
-        exerciseHistory?.id === exerciseModalState?.id && (
-          <ExerciseHistoryModal
-            isOpen={exerciseModalState.isOpen}
-            onRequestClose={closeExerciseModal}
-            onUpdate={getData}
-            exerciseHistory={exerciseHistory}
-          />
-        )}
+
+      <ExerciseHistoryModal
+        isOpen={exerciseModalState.isOpen}
+        onRequestClose={closeExerciseModal}
+        onUpdate={getData}
+        exerciseHistory={exerciseHistory}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

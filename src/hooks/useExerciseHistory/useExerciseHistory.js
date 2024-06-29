@@ -148,7 +148,7 @@ const useExerciseHistory = (id) => {
       type: 'GET_HISTORY',
     });
     cachedGet(true);
-  }, [id]); // eslint-disable-line
+  }, [id, cachedGet]);
 
   return {
     exerciseHistory: state.exerciseHistory,
