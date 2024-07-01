@@ -27,12 +27,12 @@ const MaxWeights = ({ exerciseHistory, includeBwInHistory }) => {
 
 const MaxWeightRow = ({ set, includeBwInHistory }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { daysHistory } = set;
+  const { daysWithPr } = set;
 
   return (
     <div class="border-b-4">
       <button
-        disabled={!daysHistory?.length}
+        disabled={!daysWithPr?.length}
         class="p-0 w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -49,26 +49,35 @@ const MaxWeightRow = ({ set, includeBwInHistory }) => {
       </button>
       <AnimateHeight height={isOpen ? 'auto' : 0}>
         <div class="pb-4">
-          {daysHistory?.length > 0
-            ? daysHistory.map((daysSet) => {
-                const weight = includeBwInHistory
-                  ? formatToFixed(
-                      +daysSet.weight + (daysSet.bw ? +daysSet.bw : 0),
-                    )
-                  : daysSet.weight;
-                return (
-                  <p
-                    key={daysSet.created}
-                    class={
-                      set.weight === weight
-                        ? 'bg-blue-200 dark:bg-blue-900'
-                        : ''
-                    }
-                  >
-                    {daysSet.reps} @ {weight}
-                  </p>
-                );
-              })
+          {daysWithPr?.length
+            ? daysWithPr.map(({ day, sets }) => (
+                <div key={day}>
+                  <p class="font-bold">{dayjs(day).format('DD MMM YYYY')}</p>
+                  <div class="pl-2">
+                    {sets.map((daySet) => {
+                      const weight = includeBwInHistory
+                        ? formatToFixed(
+                            +daySet.weight + (daySet.bw ? +daySet.bw : 0),
+                          )
+                        : daySet.weight;
+                      return (
+                        <div
+                          key={daySet.created}
+                          class={
+                            +set.weight === weight && +set.reps === +daySet.reps
+                              ? 'bg-blue-900'
+                              : ''
+                          }
+                        >
+                          <p>
+                            {daySet.reps} @ {weight}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
             : null}
         </div>
       </AnimateHeight>

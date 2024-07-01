@@ -101,8 +101,8 @@ export const formatPrs = ({ items, includeBwInHistory, formattedHistory }) => {
       }, {})
     : {};
 
-  return Object.values(maxes)
-    .map((set, index) => {
+  return Object.entries(maxes)
+    .map(([repCount, set], index) => {
       const dayKey = dayjs(set.created).format('YYYY-MM-DD');
       // if any weight after is greater don't include set
       const remaining = Object.values(maxes).slice(index + 1);
@@ -114,11 +114,37 @@ export const formatPrs = ({ items, includeBwInHistory, formattedHistory }) => {
       if (isNotHeaviest) {
         return null;
       }
+
       return {
         ...set,
         displayWeight: set.weight,
         date: set.created,
         daysHistory: formattedHistory?.[dayKey],
+        daysWithPr: Object.entries(formattedHistory || {}).reduce(
+          (arr, [dayKey, sets]) => {
+            if (
+              sets.some((daySet) => {
+                if (includeBwInHistory) {
+                  return (
+                    formatToFixed(
+                      +daySet.weight + (daySet.bw ? +daySet.bw : 0),
+                    ) === set.weight && +set.reps === +daySet.reps
+                  );
+                }
+                return (
+                  daySet.weight === set.weight && daySet.reps === +repCount
+                );
+              })
+            ) {
+              arr.push({
+                day: dayKey,
+                sets,
+              });
+            }
+            return arr;
+          },
+          [],
+        ),
       };
     })
     .filter((set) => !!set);
