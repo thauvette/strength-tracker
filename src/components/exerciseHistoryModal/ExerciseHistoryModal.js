@@ -19,16 +19,14 @@ const ExerciseHistoryModal = ({
     ) : (
       <>
         <div class="border-b-2 pb-2 mb-2">
-          <div class="flex items-center justify-between  mb-4">
+          <div class="flex gap-2 mb-4">
             <h1 class="capitalize">{exerciseHistory?.name}</h1>
             {onRequestClose && (
-              <button
-                onClick={onRequestClose}
-                ariLabel="dismiss"
-                class="text-3xl"
-              >
-                <Icon name="close-circle-outline" />
-              </button>
+              <div class="ml-auto">
+                <button onClick={onRequestClose} ariLabel="dismiss">
+                  <Icon name="close-circle-outline" width="28" />
+                </button>
+              </div>
             )}
           </div>
           {exerciseHistory?.notes && <p>{exerciseHistory.notes}</p>}
