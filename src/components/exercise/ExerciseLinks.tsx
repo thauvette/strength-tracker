@@ -2,7 +2,7 @@ import { Link } from 'preact-router';
 import { routes } from '../../config/routes';
 
 const ExerciseLinks = ({ path, id }: { path: string; id: number }) => (
-  <div class="flex pb-4">
+  <div class="flex pb-4 overflow-x-auto">
     <Link
       href={`${routes.exerciseBase}/${id}`}
       class={`px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 no-underline border-b-4 border-highlight-900 dark:border-highlight-200 ${

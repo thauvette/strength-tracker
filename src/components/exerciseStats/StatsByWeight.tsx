@@ -66,11 +66,11 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
           <Accordion
             key={key}
             containerClass="card mb-2"
+            titleClass="text-left"
             title={
               <>
-                <p>
-                  Weight: {key}. {text}
-                </p>
+                Weight: {key}.<br />
+                <span class="text-sm">{text}</span>
               </>
             }
           >
@@ -78,7 +78,7 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
               {sortedData?.length
                 ? sortedData.map((data) => (
                     <Accordion
-                      containerClass="px-4 text-sm border-b"
+                      containerClass="text-sm border-b"
                       key={data.date}
                       title={
                         <p class="text-sm">

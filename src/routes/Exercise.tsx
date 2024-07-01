@@ -69,7 +69,7 @@ const Exercise = ({ id, remaining_path }) => {
 
   return (
     <div>
-      <div class="px-3 py-3 ">
+      <div class="p-3">
         <div class="flex items-center justify-between">
           <h1 class="capitalize">{exercise?.name}</h1>
 
