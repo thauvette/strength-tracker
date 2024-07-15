@@ -31,6 +31,7 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
             sets: currentSets,
             minReps,
             maxReps: Math.max(...reps),
+            totalReps: set.reps + (current?.totalReps || 0),
             date: day,
             totalVolume: currentSets.reduce((num, { weight, reps }) => {
               return num + weight * reps;
@@ -48,7 +49,8 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
     },
     {},
   );
-  const orderedKeys = Object.keys(setAnalysis).reverse();
+
+  const orderedKeys = Object.keys(setAnalysis).sort((a, b) => +b - +a);
 
   return (
     <div>
@@ -74,32 +76,24 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
               </>
             }
           >
-            <div>
+            <div class="divide-y">
               {sortedData?.length
                 ? sortedData.map((data) => (
-                    <Accordion
-                      containerClass="text-sm border-b"
-                      key={data.date}
-                      title={
-                        <p class="text-sm">
-                          {dayjs(data.date).format('MMM DD YYYY')}:{' '}
-                          {data.sets.length} sets @ {data.minReps}+ reps
+                    <div key={data.date} class="p-2">
+                      <div class="flex justify-between">
+                        <p class="font-bold">
+                          {dayjs(data.date).format("MMM DD 'YY")}
                         </p>
-                      }
-                    >
-                      <div key={data.date} className="px-4">
-                        <p>Volume: {data.totalVolume}</p>
-                        {data.sets
-                          .sort(
-                            (current, next) => current.created - next.created,
-                          )
-                          .map((set) => (
-                            <p key={set.created}>
-                              {set.reps} @ {set.weight}
-                            </p>
-                          ))}
+                        <p>vol: {data.totalVolume}</p>
                       </div>
-                    </Accordion>
+                      <p>
+                        {data.sets.length} sets{' @ '}
+                        {data.sets.map(({ reps }) => reps).join(', ')}
+                        {' for '}
+                        {data.totalReps} reps
+                        <br />
+                      </p>
+                    </div>
                   ))
                 : null}
             </div>

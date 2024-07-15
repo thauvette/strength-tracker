@@ -4,7 +4,6 @@ import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
 
-import styles from './line-chart.scss';
 import { formatToFixed } from '../../utilities.js/formatNumbers';
 
 import useTheme from '../../context/theme';
@@ -43,6 +42,7 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
 
     const root = d3
       .select(chartCanvasRef.current)
+      .attr('class', 'overflow-visible')
       .attr('width', width)
       .attr('height', height)
       .on('mousemove', pointerMoved)
@@ -68,7 +68,7 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
     svg
       .append('g')
       .attr('transform', `translate(${margins.left},${innerHeight})`)
-      .attr('class', `${styles.axis} ${styles.xAxis}`)
+      .attr('class', `text-black dark:text-white`)
       .call(
         d3
           .axisBottom(x)
@@ -85,7 +85,7 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
     // Add the Y Axis
     svg
       .append('g')
-      .attr('class', `${styles.axis}`)
+      .attr('class', `text-gray-500 dark:text-gray-50`)
       .call(
         d3
           .axisLeft(y)
@@ -95,7 +95,6 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
       )
       .attr('transform', `translate(${margins.left}, 0)`)
       .append('text')
-      .attr('class', styles.text)
       .attr('y', 6)
       .attr('dy', '0.71em')
       .attr('text-anchor', 'end')
@@ -105,8 +104,10 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
     // THE MEAN
     const average = d3.mean(data, (d) => d.y);
     svg
+      .append('g')
+      .attr('class', 'text-blue-900')
       .append('line')
-      .attr('class', styles.meanLine)
+      .attr('class', 'stroke-blue-900 dark:stroke-blue-100')
       .attr('x1', 0)
       .attr('y1', y(average)) // y position of the first end of the line
       .attr('x2', innerWidth)
@@ -120,7 +121,7 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
     if (firstEntry?.y && lastEntry?.y) {
       svg
         .append('line')
-        .attr('class', styles.timeLine)
+        .attr('class', 'stroke-highlight-400')
         .attr('x1', x(xMin))
         .attr('x2', x(xMax))
         .attr('y1', y(firstEntry?.y))
@@ -137,7 +138,7 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
     svg
       .append('path')
       .data([data])
-      .attr('class', styles.line)
+      .attr('class', 'stroke-purple-900  dark:stroke-white fill-none')
       .attr('d', valueLine)
       .attr('transform', `translate(${margins.left}, 0)`);
 
@@ -258,9 +259,7 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
   }, [containerWidth, theme]); // eslint-disable-line
 
   return (
-    <div
-      class={`${styles.lineChart} ${theme === 'dark' ? styles.darkChart : ''}`}
-    >
+    <div>
       <div ref={containerRef} class="relative">
         <svg
           ref={chartCanvasRef}
@@ -268,18 +267,18 @@ const LineChart = ({ data, dateFormat, renderTooltipText }) => {
           height={containerWidth * 0.6}
         />
       </div>
-      <div class="py-4">
+      <div class="py-4 text-purple-900 dark:text-purple-100 text-center">
         {bookends?.length ? (
-          <p class="text-center text-highlight-400">
+          <p className="text-highlight-400">
             {formatToFixed(bookends[0])} to {formatToFixed(bookends[1])}
           </p>
         ) : null}
         {range?.length ? (
-          <p class="text-center">
+          <p>
             min: {formatToFixed(range[0])} - max: {formatToFixed(range[1])}
           </p>
         ) : null}
-        <p class="text-center text-blue-400 dark:text-blue-100">
+        <p class="text-purple-900  dark:text-white">
           Average {formatToFixed(mean)}
         </p>
       </div>
