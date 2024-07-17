@@ -76,7 +76,9 @@ const DateRangePicker = ({
             </div>
           ) : (
             <Calendar
-              startDate={dayjs(startDate).toDate()}
+              startDate={
+                startDate ? dayjs(startDate).toDate() : dayjs().toDate()
+              }
               renderDay={(day) => {
                 // disabled state, selected state
                 const isDisabled = day.isAfter(dayjs(), 'days');
