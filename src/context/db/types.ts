@@ -153,3 +153,61 @@ export type DbStoreTypes =
   | MuscleGroup
   | Routine
   | SetType;
+
+// TODO: fix the anys and unknowns
+export interface IDBContext {
+  isInitialized: false;
+  // WENDLER
+  getWendlerCycle: (id: string) => Promise<any>;
+  getWendlerExercises: () => Promise<any>;
+  createCycle: (data) => Promise<any>;
+  updateWendlerItem: ({ id, path, value }) => Promise<any>;
+  // SETS
+  createOrUpdateLoggedSet: (
+    id: number,
+    data: {
+      exercise: number;
+      reps: number;
+      weight: number;
+      isWarmUp?: boolean;
+      notes?: string;
+    },
+  ) => Promise<HydratedSet>;
+  deleteLoggedSet: (id) => Promise<boolean>;
+  getTodaySets: () => Promise<LogsSet[]>;
+  getSetsByDay: (date: Date) => Promise<LogsSet[]>;
+  getSetsByDateRange: (start: Date, end: Date) => Promise<LogsSet[]>;
+  // EXERCISES
+  getExerciseOptions: () => Promise<{
+    [key: string]: MuscleGroup & {
+      items: Exercise[];
+    };
+  }>;
+  getExerciseHistoryById: (id) => Promise<unknown>;
+  getExercise: (id: number) => Promise<unknown>;
+  // SYNC
+  createBackup: () => Promise<unknown>;
+  restoreFromBackup: (entries) => Promise<unknown>;
+  // BIO METRICS
+  createBioMetric: (name) => Promise<BioMetric>;
+  getAllBioById: (id) => Promise<unknown>;
+  getBioEntriesByDateRange: (
+    startDate: string,
+    endDate: string,
+  ) => Promise<unknown>;
+  // MUSCLES
+  getMuscleGroups: () => Promise<unknown>;
+  // ROUTINES
+  getRoutines: () => Promise<unknown>;
+  getRoutine: (id: number) => Promise<unknown>;
+  createRoutine: (data) => Promise<unknown>;
+  updateRoutine: (id, data) => Promise<unknown>;
+  updateSingleRoutineSet: (id, dayId, set) => Promise<unknown>;
+  duplicateRoutine: (id) => Promise<unknown>;
+  // GENERIC + ENTRIES
+  getItem: (store, id) => Promise<unknown>;
+  getAllEntries: <Type>(store: string) => Promise<Type>;
+  deleteEntry: (store: string, id: number) => Promise<unknown>;
+  createEntry: (store, data) => Promise<unknown>;
+  updateEntry: (store, id, data) => Promise<unknown>;
+}
