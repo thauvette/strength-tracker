@@ -158,10 +158,10 @@ export type DbStoreTypes =
 export interface IDBContext {
   isInitialized: false;
   // WENDLER
-  getWendlerCycle: (id: string) => Promise<any>;
-  getWendlerExercises: () => Promise<any>;
-  createCycle: (data) => Promise<any>;
-  updateWendlerItem: ({ id, path, value }) => Promise<any>;
+  getWendlerCycle: (id: string) => Promise<unknown>;
+  getWendlerExercises: () => Promise<unknown>;
+  createCycle: (data) => Promise<unknown>;
+  updateWendlerItem: ({ id, path, value }) => Promise<unknown>;
   // SETS
   createOrUpdateLoggedSet: (
     id: number,
