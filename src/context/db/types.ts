@@ -201,12 +201,15 @@ export interface IDBContext {
   // MUSCLES
   getMuscleGroups: () => Promise<unknown>;
   // ROUTINES
-  getRoutines: () => Promise<unknown>;
+  getRoutines: () => Promise<Routine[]>;
   getRoutine: (id: number) => Promise<unknown>;
   createRoutine: (data) => Promise<unknown>;
   updateRoutine: (id, data) => Promise<unknown>;
   updateSingleRoutineSet: (id, dayId, set) => Promise<unknown>;
-  duplicateRoutine: (id) => Promise<unknown>;
+  duplicateRoutine: (id) => Promise<{
+    data: Routine;
+    id: number;
+  }>;
   // GENERIC + ENTRIES
   getItem: (store, id) => Promise<unknown>;
   getAllEntries: <Type>(store: string) => Promise<{ [key: string]: Type }>;
