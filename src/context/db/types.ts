@@ -58,6 +58,9 @@ export interface ExerciseHistory {
   name: string;
   notes?: string;
   primaryGroup: number;
+  primaryGroupData?: {
+    name: string;
+  };
   secondaryMusclesWorked: MuscleGroup[];
   type: string;
   updated: number;
@@ -156,7 +159,7 @@ export type DbStoreTypes =
 
 // TODO: fix the anys and unknowns
 export interface IDBContext {
-  isInitialized: false;
+  isInitialized: boolean;
   // WENDLER
   getWendlerCycle: (id: string) => Promise<unknown>;
   getWendlerExercises: () => Promise<unknown>;
@@ -183,10 +186,10 @@ export interface IDBContext {
       items: Exercise[];
     };
   }>;
-  getExerciseHistoryById: (id) => Promise<unknown>;
+  getExerciseHistoryById: (id) => Promise<ExerciseHistory>;
   getExercise: (id: number) => Promise<unknown>;
   // SYNC
-  createBackup: () => Promise<unknown>;
+  createBackup: () => void;
   restoreFromBackup: (entries) => Promise<unknown>;
   // BIO METRICS
   createBioMetric: (name) => Promise<BioMetric>;
@@ -194,7 +197,7 @@ export interface IDBContext {
   getBioEntriesByDateRange: (
     startDate: string,
     endDate: string,
-  ) => Promise<unknown>;
+  ) => Promise<HydradedBioEntry[]>;
   // MUSCLES
   getMuscleGroups: () => Promise<unknown>;
   // ROUTINES
@@ -206,7 +209,7 @@ export interface IDBContext {
   duplicateRoutine: (id) => Promise<unknown>;
   // GENERIC + ENTRIES
   getItem: (store, id) => Promise<unknown>;
-  getAllEntries: <Type>(store: string) => Promise<Type>;
+  getAllEntries: <Type>(store: string) => Promise<{ [key: string]: Type }>;
   deleteEntry: (store: string, id: number) => Promise<unknown>;
   createEntry: (store, data) => Promise<unknown>;
   updateEntry: (store, id, data) => Promise<unknown>;

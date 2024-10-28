@@ -10,6 +10,7 @@ import EditExercise from './EditExercise';
 import PlannedSets from '../PlannedSets';
 import Sync from './Sync';
 import useOnMount from '../../hooks/useOnMount';
+import { SimpleSet } from '../../types/types';
 
 interface Props {
   id: number;
@@ -19,7 +20,9 @@ interface Props {
 const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
   const { exerciseHistory, getData, savedSet, setSavedSet, isLoading } =
     useExerciseHistory(id);
-  const { updatePlanedSets, getPlannedSets } = useSessionContext();
+  const { updatePlanedSets, getPlannedSets, addToRoutine } =
+    useSessionContext();
+
   const plannedSets = getPlannedSets(+id);
 
   const onMount = () => {
@@ -38,6 +41,17 @@ const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
         barWeight: exercise?.barWeight,
       })),
     });
+  };
+
+  const handleAddToDay = (sets: SimpleSet[]) => {
+    addToRoutine(
+      sets.map((set) => ({
+        ...set,
+        exerciseName: exercise?.name,
+        barWeight: exercise?.barWeight,
+        exercise: id,
+      })),
+    );
   };
 
   if (isLoading) {
@@ -95,6 +109,9 @@ const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
         plannedSet={plannedSets}
         updatePlanedSet={({ sets }) => {
           handleUpdatePlanedSet(sets);
+        }}
+        addToToday={(newSets) => {
+          handleAddToDay(newSets);
         }}
       />
       <Route

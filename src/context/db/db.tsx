@@ -35,7 +35,7 @@ import { objectStores } from './config';
 import { Exercise, IDBContext } from './types';
 import useOnMount from '../../hooks/useOnMount';
 
-const DBContext = createContext<IDBContext | { isInitialized: boolean }>(null);
+const DBContext = createContext<IDBContext>(null);
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState<IDBDatabase | null>();
