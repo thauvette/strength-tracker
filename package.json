@@ -12,7 +12,8 @@
     "test": "jest --watch",
     "start": "preact watch",
     "format": "prettier --write 'src/**/*{js,scss,ts,tsx,css}'",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "ts": "tsc"
   },
   "husky": {
     "hooks": {
