@@ -11,6 +11,7 @@ const PlannedSets = ({
   updatePlanedSet,
   plannedSet,
   lastHeavySet,
+  addToToday = null,
 }) => {
   const { createOrUpdateLoggedSet } = useDB();
   if (!plannedSet) {
@@ -32,6 +33,7 @@ const PlannedSets = ({
               sets,
             })
           }
+          addToToday={addToToday}
         />
       </>
     );

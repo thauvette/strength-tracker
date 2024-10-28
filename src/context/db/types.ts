@@ -58,6 +58,9 @@ export interface ExerciseHistory {
   name: string;
   notes?: string;
   primaryGroup: number;
+  primaryGroupData?: {
+    name: string;
+  };
   secondaryMusclesWorked: MuscleGroup[];
   type: string;
   updated: number;
@@ -153,3 +156,61 @@ export type DbStoreTypes =
   | MuscleGroup
   | Routine
   | SetType;
+
+// TODO: fix the anys and unknowns
+export interface IDBContext {
+  isInitialized: boolean;
+  // WENDLER
+  getWendlerCycle: (id: string) => Promise<unknown>;
+  getWendlerExercises: () => Promise<unknown>;
+  createCycle: (data) => Promise<unknown>;
+  updateWendlerItem: ({ id, path, value }) => Promise<unknown>;
+  // SETS
+  createOrUpdateLoggedSet: (
+    id: number,
+    data: {
+      exercise: number;
+      reps: number;
+      weight: number;
+      isWarmUp?: boolean;
+      notes?: string;
+    },
+  ) => Promise<HydratedSet>;
+  deleteLoggedSet: (id) => Promise<boolean>;
+  getTodaySets: () => Promise<LogsSet[]>;
+  getSetsByDay: (date: Date) => Promise<LogsSet[]>;
+  getSetsByDateRange: (start: Date, end: Date) => Promise<LogsSet[]>;
+  // EXERCISES
+  getExerciseOptions: () => Promise<{
+    [key: string]: MuscleGroup & {
+      items: Exercise[];
+    };
+  }>;
+  getExerciseHistoryById: (id) => Promise<ExerciseHistory>;
+  getExercise: (id: number) => Promise<unknown>;
+  // SYNC
+  createBackup: () => void;
+  restoreFromBackup: (entries) => Promise<unknown>;
+  // BIO METRICS
+  createBioMetric: (name) => Promise<BioMetric>;
+  getAllBioById: (id) => Promise<unknown>;
+  getBioEntriesByDateRange: (
+    startDate: string,
+    endDate: string,
+  ) => Promise<HydradedBioEntry[]>;
+  // MUSCLES
+  getMuscleGroups: () => Promise<unknown>;
+  // ROUTINES
+  getRoutines: () => Promise<unknown>;
+  getRoutine: (id: number) => Promise<unknown>;
+  createRoutine: (data) => Promise<unknown>;
+  updateRoutine: (id, data) => Promise<unknown>;
+  updateSingleRoutineSet: (id, dayId, set) => Promise<unknown>;
+  duplicateRoutine: (id) => Promise<unknown>;
+  // GENERIC + ENTRIES
+  getItem: (store, id) => Promise<unknown>;
+  getAllEntries: <Type>(store: string) => Promise<{ [key: string]: Type }>;
+  deleteEntry: (store: string, id: number) => Promise<unknown>;
+  createEntry: (store, data) => Promise<unknown>;
+  updateEntry: (store, id, data) => Promise<unknown>;
+}

@@ -1,10 +1,21 @@
 import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp';
 import { objectStores } from './config';
 import { getAllEntriesByKey } from './entries';
-import { Exercise, MuscleGroup, ObjectStoreEvent } from './types';
+import {
+  Exercise,
+  ExerciseHistory,
+  MuscleGroup,
+  ObjectStoreEvent,
+} from './types';
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils';
 
-export const getExerciseOptions = (db: IDBDatabase) =>
+export const getExerciseOptions = (
+  db: IDBDatabase,
+): Promise<{
+  [key: string]: MuscleGroup & {
+    items: Exercise[];
+  };
+}> =>
   new Promise((resolve) => {
     // need to get exercises and muscle groups and connect
     // then together.
@@ -37,7 +48,10 @@ export const getExerciseOptions = (db: IDBDatabase) =>
     );
   });
 
-export const getExerciseById = (db: IDBDatabase, id: number) =>
+export const getExerciseById = (
+  db: IDBDatabase,
+  id: number,
+): Promise<Exercise> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(
       db,
@@ -54,7 +68,10 @@ export const getExerciseById = (db: IDBDatabase, id: number) =>
     };
   });
 
-export const getExerciseHistoryById = (db: IDBDatabase, id: number) =>
+export const getExerciseHistoryById = (
+  db: IDBDatabase,
+  id: number,
+): Promise<ExerciseHistory> =>
   new Promise((resolve, reject) => {
     getExerciseById(db, id).then(async (exerciseResponse: Exercise) => {
       if (!exerciseResponse) {

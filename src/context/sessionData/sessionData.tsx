@@ -6,24 +6,32 @@ import {
   useMemo,
   useCallback,
 } from 'preact/compat';
-import { SimpleSet } from '../../types/types';
 import useToast from '../toasts/Toasts';
 
 interface SessionState {
   plannedSet?: {
-    [key: number]: SimpleSet[];
+    [key: number]: RoutineSet[];
   };
-  routine?: SimpleSet[];
+  routine?: RoutineSet[];
 }
 
 interface SessionContext {
-  activeRoutine: SimpleSet[] | undefined;
-  addToRoutine: (sets: SimpleSet[]) => void;
-  getPlannedSets: (id: number) => SimpleSet[];
+  activeRoutine: RoutineSet[] | undefined;
+  addToRoutine: (sets: RoutineSet[]) => void;
+  getPlannedSets: (id: number) => RoutineSet[];
   hasActiveRoutine: boolean;
-  startRoutine: (sets: SimpleSet[]) => void;
-  updatePlanedSet: (set: SimpleSet, index: number) => void;
-  updatePlanedSets: (args: { id: number; sets: SimpleSet[] }) => void;
+  startRoutine: (sets: RoutineSet[]) => void;
+  updatePlanedSet: (set: RoutineSet, index: number) => void;
+  updatePlanedSets: (args: { id: number; sets: RoutineSet[] }) => void;
+}
+
+interface RoutineSet {
+  reps: number;
+  weight: number;
+  isWarmUp: boolean;
+  barWeight?: number;
+  exercise: number;
+  exerciseName: string;
 }
 
 const SessionDataContext = createContext<SessionContext | null>(null);
@@ -47,7 +55,7 @@ export const SessionDataProvider = ({ children }) => {
     [sessionState?.plannedSet],
   );
 
-  const startRoutine = useCallback((sets: SimpleSet[]) => {
+  const startRoutine = useCallback((sets: RoutineSet[]) => {
     setSessionState((current) => ({
       ...current,
       routine: sets,
@@ -55,7 +63,7 @@ export const SessionDataProvider = ({ children }) => {
   }, []);
 
   const addToRoutine = useCallback(
-    (sets: SimpleSet[]) => {
+    (sets: RoutineSet[]) => {
       setSessionState((current) => ({
         ...current,
         routine: [...(current?.routine || []), ...sets],
@@ -70,7 +78,7 @@ export const SessionDataProvider = ({ children }) => {
     [sessionState?.routine],
   );
 
-  const updatePlanedSet = useCallback((set: SimpleSet, index: number) => {
+  const updatePlanedSet = useCallback((set: RoutineSet, index: number) => {
     setSessionState((prevState) => ({
       ...prevState,
       routine:

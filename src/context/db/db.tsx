@@ -32,70 +32,10 @@ import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
 import { objectStores } from './config';
-import {
-  Exercise,
-  // IDBContext
-} from './types';
+import { Exercise, IDBContext } from './types';
 import useOnMount from '../../hooks/useOnMount';
 
-const DBContext = createContext({
-  isInitialized: false,
-  // WENDLER
-  getWendlerCycle: (id: string) => getWendlerCycle(null, id),
-  getWendlerExercises: () => getWendlerExercises(null),
-  createCycle: (data) => createCycle(null, data),
-  updateWendlerItem: ({ id, path, value }) =>
-    updateWendlerItem(null, { id, path, value }),
-
-  // SETS
-  createOrUpdateLoggedSet: (
-    id: number,
-    data: {
-      exercise: number;
-      reps: number;
-      weight: number;
-      isWarmUp?: boolean;
-      notes?: string;
-    },
-  ) => createOrUpdateLoggedSet(null, id, data),
-  deleteLoggedSet: (id) => deleteLoggedSet(null, id),
-  getTodaySets: () => {
-    const today = dayjs().toDate();
-    return getSetsByDateRange(null, today, today);
-  },
-  getSetsByDay: (date: Date) => getSetsByDateRange(null, date, date),
-  getSetsByDateRange: (start: Date, end: Date) =>
-    getSetsByDateRange(null, start, end),
-  // EXERCISES
-  getExerciseOptions: () => getExerciseOptions(null),
-  getExerciseHistoryById: (id) => getExerciseHistoryById(null, id),
-  getExercise: (id: number) =>
-    getItem<Exercise>(null, objectStores.exercises, id),
-  // SYNC
-  createBackup: () => createBackup(null),
-  restoreFromBackup: (entries) => restoreFromBackup(null, entries),
-  // BIO METRICS
-  createBioMetric: (name) => createBioMetric(null, name),
-  getAllBioById: (id) => getAllBioById(null, id),
-  getBioEntriesByDateRange: (startDate: string, endDate: string) =>
-    getBioEntriesByDateRange(null, startDate, endDate),
-  // MUSCLES
-  getMuscleGroups: () => getMuscleGroups(null),
-  // ROUTINES
-  getRoutines: () => getRoutines(null),
-  getRoutine: (id: number) => getRoutine(null, id),
-  createRoutine: (data) => createRoutine(null, data),
-  updateRoutine: (id, data) => updateRoutine(null, id, data),
-  updateSingleRoutineSet: (id, dayId, set) =>
-    updateSingleRoutineSet(null, id, dayId, set),
-  duplicateRoutine: (id) => duplicateRoutine(null, id),
-  // GENERIC + ENTRIES
-  getItem: (store, id) => getItem(null, store, id),
-  getAllEntries: <Type,>(store: string) => getFromCursor<Type>(null, store),
-  deleteEntry: (store: string, id: number) => deleteEntry(null, store, id),
-  createEntry: (store, data) => createEntry(null, store, data),
-  updateEntry: (store, id, data) => updateEntry(null, store, id, data),
-});
+const DBContext = createContext<IDBContext>(null);
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState<IDBDatabase | null>();

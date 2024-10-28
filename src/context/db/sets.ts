@@ -94,7 +94,7 @@ export const createOrUpdateLoggedSet = (
     }
   });
 
-export const deleteLoggedSet = (db, id) =>
+export const deleteLoggedSet = (db, id): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
     const deleteRequest = objectStore.delete(id);
@@ -102,7 +102,9 @@ export const deleteLoggedSet = (db, id) =>
       fireSetRemovedEvent({ id });
       return resolve(true);
     };
-    deleteRequest.onerror = () => reject('unable to delete item');
+    deleteRequest.onerror = () => {
+      return reject('unable to delete item');
+    };
   });
 
 const getDataAndAugmentSet = (db, set) =>
