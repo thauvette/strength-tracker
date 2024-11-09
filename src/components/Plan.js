@@ -92,7 +92,7 @@ const Plan = ({
         </p>
       ))}
       <button
-        class="bg-primary-900 text-white mt-4 w-full"
+        class="primary mt-4 w-full"
         onClick={() => {
           updatePlanedSet(sets);
         }}
@@ -105,8 +105,9 @@ const Plan = ({
             onClick={() => {
               addToToday(sets);
             }}
+            class="secondary w-full"
           >
-            Add to today
+            + Add to today
           </button>
         </div>
       ) : null}

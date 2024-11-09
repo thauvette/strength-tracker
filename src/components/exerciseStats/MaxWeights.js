@@ -50,7 +50,7 @@ const MaxWeightRow = ({ set, includeBwInHistory }) => {
       <AnimateHeight height={isOpen ? 'auto' : 0}>
         <div class="pb-4">
           {daysWithPr?.length
-            ? daysWithPr.map(({ day, sets }) => (
+            ? daysWithPr.reverse().map(({ day, sets }) => (
                 <div key={day}>
                   <p class="font-bold">{dayjs(day).format('DD MMM YYYY')}</p>
                   <div class="pl-2">
