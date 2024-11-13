@@ -25,13 +25,14 @@ interface SessionContext {
   updatePlanedSets: (args: { id: number; sets: RoutineSet[] }) => void;
 }
 
-interface RoutineSet {
-  reps: number;
-  weight: number;
-  isWarmUp: boolean;
+export interface RoutineSet {
   barWeight?: number;
   exercise: number;
   exerciseName: string;
+  isWarmUp: boolean;
+  reps: number;
+  weight: number;
+  created?: number;
 }
 
 const SessionDataContext = createContext<SessionContext | null>(null);

@@ -1,18 +1,33 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import ExerciseSearch from '../exerciseSelection/ExerciseSearch';
-import useDB from '../../context/db/db.tsx';
-import { formatHistory } from '../../hooks/useExerciseHistory/utils';
+import useDB from '../../context/db/db';
+import { Exercise, Set } from '../../context/db/types';
+import { formatHistory } from '../../hooks/useExerciseHistory/utils.js';
 import AddExerciseTabs from './AddExerciseTabs';
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner.js';
 
-const AddExerciseForm = ({ submit, addFromHistroy }) => {
+export interface SubmittedSet extends Set {
+  dayId: string;
+  routineId: string;
+  routineSetId: string;
+  id?: number;
+  exerciseName: string;
+}
+
+interface Props {
+  submit: (sets: SubmittedSet[]) => void;
+  addFromHistory: (sets: SubmittedSet[]) => void;
+}
+
+// TODO: do we need both of these submits?
+const AddExerciseForm = ({ submit, addFromHistory }: Props) => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [addedSets, setAddedSets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { getExerciseHistoryById } = useDB();
 
-  const selectExercise = async (exercise) => {
+  const selectExercise = async (exercise: Exercise) => {
     setIsLoading(true);
     const data = await getExerciseHistoryById(+exercise.id);
 
@@ -32,7 +47,7 @@ const AddExerciseForm = ({ submit, addFromHistroy }) => {
     submit(
       addedSets.map((set) => ({
         ...set,
-        exerciseId: selectedExercise.id,
+        exercise: selectedExercise.id,
         exerciseName: selectedExercise.name,
       })),
     );
@@ -58,7 +73,7 @@ const AddExerciseForm = ({ submit, addFromHistroy }) => {
           submit={handleSubmit}
           addedSets={addedSets}
           setAddedSets={setAddedSets}
-          addFromHistroy={addFromHistroy}
+          addFromHistory={addFromHistory}
         />
       </div>
     );
@@ -67,7 +82,10 @@ const AddExerciseForm = ({ submit, addFromHistroy }) => {
   return (
     <div class="relative">
       <ExerciseSearch
-        handleSelectExercise={(exercise) => selectExercise(exercise)}
+        handleSelectExercise={(exercise: Exercise) => {
+          console.log(exercise);
+          setSelectedExercise(exercise);
+        }}
       />
       {isLoading && (
         <div class="absolute inset-0 flex pt-40 justify-center">

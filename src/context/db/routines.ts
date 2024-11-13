@@ -30,7 +30,11 @@ export const createRoutine = (
     };
   });
 
-export const updateRoutine = (db, id, data) =>
+export const updateRoutine = (
+  db: IDBDatabase,
+  id: number,
+  data: Partial<Routine>,
+): Promise<Routine> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(
       db,

@@ -2,6 +2,7 @@ import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp';
 import { objectStores } from './config';
 import { getAllEntriesByKey } from './entries';
 import {
+  BioEntry,
   Exercise,
   ExerciseHistory,
   MuscleGroup,
@@ -33,7 +34,7 @@ export const getExerciseOptions = (
 
             currentGroup.items.push({
               ...exercise,
-              id: exerciseId,
+              id: +exerciseId,
             });
 
             return {
@@ -61,7 +62,11 @@ export const getExerciseById = (
 
     const cursorRequest = objectStore.openCursor(keyRange);
     cursorRequest.onsuccess = (event: ObjectStoreEvent) => {
-      resolve(event?.target?.result?.value);
+      resolve({
+        ...(event?.target?.result?.value || {}),
+        barWeight: event?.target?.result?.value?.barWeight ?? 45,
+        id: event?.target?.result.primaryKey,
+      });
     };
     cursorRequest.onerror = (err) => {
       reject(err);
@@ -102,7 +107,7 @@ export const getExerciseHistoryById = (
         });
       }
 
-      const weights = await getAllEntriesByKey(
+      const weights = await getAllEntriesByKey<BioEntry>(
         db,
         objectStores.bioEntries,
         'bioMetric',
@@ -121,9 +126,7 @@ export const getExerciseHistoryById = (
         ?.sort((a, b) => a - b);
 
       const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
-
       const results = [];
-
       // get all sets for this exercise
       const index = objectStore.index('exercise');
       const keyRange = IDBKeyRange.only(+id);

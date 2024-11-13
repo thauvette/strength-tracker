@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
-import { LogsSet } from './../context/db/types';
-const formatAnalysis = (sets: LogsSet[], muscles) => {
+import { AugmentedDataSet, MuscleGroup } from '../context/db/types';
+
+const formatAnalysis = (
+  sets: AugmentedDataSet[],
+  muscles: { [key: string]: MuscleGroup },
+) => {
   const exercises = {};
   const days = {};
   const result = sets.reduce(

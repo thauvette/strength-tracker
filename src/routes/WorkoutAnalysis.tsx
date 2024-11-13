@@ -20,7 +20,7 @@ const WorkoutAnalysis = () => {
     workingSets: 0,
   });
 
-  const submit = useCallback(() => {
+  const submit = useCallback(async () => {
     setData({
       muscleGroupings: null,
       exercises: null,
@@ -28,10 +28,12 @@ const WorkoutAnalysis = () => {
       workingSets: 0,
     });
 
-    return Promise.all([
-      getSetsByDateRange(dayjs(startDate).toDate(), dayjs(endDate).toDate()),
-      getMuscleGroups(),
-    ]).then(([sets, muscles]) => {
+    try {
+      const [sets, muscles] = await Promise.all([
+        getSetsByDateRange(dayjs(startDate).toDate(), dayjs(endDate).toDate()),
+        getMuscleGroups(),
+      ]);
+
       const { exercises, days, result } = formatAnalysis(sets, muscles);
       setData({
         muscleGroupings: result,
@@ -39,14 +41,15 @@ const WorkoutAnalysis = () => {
         days,
         workingSets: sets?.filter(({ isWarmUp }) => !isWarmUp)?.length || 0,
       });
-    });
-
+    } catch (err) {
+      console.warn(err);
+    }
     // get sets in range
   }, [startDate, endDate]); // eslint-disable-line
 
   useEffect(() => {
     if (startDate && endDate) {
-      submit();
+      void submit();
       return;
     }
     setData({

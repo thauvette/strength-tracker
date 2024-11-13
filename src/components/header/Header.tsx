@@ -3,14 +3,12 @@ import { Link } from 'preact-router/match';
 import { routes } from '../../config/routes';
 import Icon from '../icon/Icon';
 import style from './style.scss';
-import useSessionContext from '../../context/sessionData/sessionData';
 
 interface Props {
   toggleMenu: () => void;
   menuIsOpen: boolean;
 }
 const Header = ({ toggleMenu, menuIsOpen }: Props) => {
-  const { hasActiveRoutine } = useSessionContext();
   return (
     <header class="flex items-center justify-between px-4 h-14 bg-2 z-20">
       <div class="flex items-center">
@@ -20,15 +18,13 @@ const Header = ({ toggleMenu, menuIsOpen }: Props) => {
         >
           <Icon name="calendar-outline" width="32" />
         </Link>
-        {hasActiveRoutine && (
-          <Link
-            class="text-primary-900 dark:text-gray-50 ml-4"
-            href={routes.activeRoutine}
-            aria-label="today's routine"
-          >
-            <Icon name="barbell-outline" width="28" />
-          </Link>
-        )}
+        <Link
+          class="text-primary-900 dark:text-gray-50 ml-4"
+          href={routes.activeRoutine}
+          aria-label="today's routine"
+        >
+          <Icon name="barbell-outline" width="28" />
+        </Link>
       </div>
       <nav class="text-primary-900 dark:text-gray-50">
         <Link href={routes.newWorkout}>+</Link>

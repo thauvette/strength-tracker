@@ -14,7 +14,7 @@ import {
   getAllBioById,
   getBioEntriesByDateRange,
 } from './bioMetrics';
-import { createEntry, deleteEntry, updateEntry } from './entries.js';
+import { createEntry, deleteEntry, updateEntry } from './entries';
 import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
@@ -32,7 +32,7 @@ import { getExerciseHistoryById, getExerciseOptions } from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
 import { objectStores } from './config';
-import { Exercise, IDBContext } from './types';
+import { Exercise, IDBContext, Routine, Set } from './types';
 import useOnMount from '../../hooks/useOnMount';
 
 const DBContext = createContext<IDBContext>(null);
@@ -51,48 +51,55 @@ export const DBProvider = ({ children }) => {
       // WENDLER
       getWendlerCycle: (id: string) => getWendlerCycle(db, id),
       getWendlerExercises: () => getWendlerExercises(db),
-      createCycle: (data) => createCycle(db, data),
+      createCycle: (data: unknown) => createCycle(db, data),
       updateWendlerItem: ({ id, path, value }) =>
         updateWendlerItem(db, { id, path, value }),
       // SETS
-      createOrUpdateLoggedSet: (id, data) =>
+      createOrUpdateLoggedSet: (id: number, data: Set) =>
         createOrUpdateLoggedSet(db, id, data),
-      deleteLoggedSet: (id) => deleteLoggedSet(db, id),
+      deleteLoggedSet: (id: number) => deleteLoggedSet(db, id),
       getTodaySets: () => {
         const today = dayjs().toDate();
         return getSetsByDateRange(db, today, today);
       },
       getSetsByDay: (date: Date) => getSetsByDateRange(db, date, date),
-      getSetsByDateRange: (start, end) => getSetsByDateRange(db, start, end),
+      getSetsByDateRange: (start: Date, end: Date) =>
+        getSetsByDateRange(db, start, end),
       // EXERCISES
       getExerciseOptions: () => getExerciseOptions(db),
-      getExerciseHistoryById: (id) => getExerciseHistoryById(db, id),
+      getExerciseHistoryById: (id: number) => getExerciseHistoryById(db, id),
       getExercise: (id: number) =>
         getItem<Exercise>(db, objectStores.exercises, id),
       // SYNC
       createBackup: () => createBackup(db),
-      restoreFromBackup: (entries) => restoreFromBackup(db, entries),
+      restoreFromBackup: (entries: {
+        stores: string[];
+        items: { store: string; data: unknown; id: number }[];
+      }) => restoreFromBackup(db, entries),
       // BIO METRICS
-      createBioMetric: (name) => createBioMetric(db, name),
-      getAllBioById: (id) => getAllBioById(db, id),
+      createBioMetric: (name: string) => createBioMetric(db, name),
+      getAllBioById: (id: number) => getAllBioById(db, id),
       getBioEntriesByDateRange: (startDate: string, endDate: string) =>
         getBioEntriesByDateRange(db, startDate, endDate),
       // MUSCLES
       getMuscleGroups: () => getMuscleGroups(db),
       // ROUTINES
       getRoutines: () => getRoutines(db),
-      getRoutine: (id) => getRoutine(db, id),
-      createRoutine: (data) => createRoutine(db, data),
-      updateRoutine: (id, data) => updateRoutine(db, id, data),
-      updateSingleRoutineSet: (id, dayId, set) =>
+      getRoutine: (id: number) => getRoutine(db, id),
+      createRoutine: (data: Routine) => createRoutine(db, data),
+      updateRoutine: (id: number, data: Partial<Routine>) =>
+        updateRoutine(db, id, data),
+      updateSingleRoutineSet: (id: number, dayId: string, set: Set) =>
         updateSingleRoutineSet(db, id, dayId, set),
-      duplicateRoutine: (id) => duplicateRoutine(db, id),
+      duplicateRoutine: (id: number) => duplicateRoutine(db, id),
       // GENERIC + ENTRIES
-      getItem: (store, id) => getItem(db, store, id),
+      getItem: (store: string, id: number) => getItem(db, store, id),
       getAllEntries: <Type,>(store: string) => getFromCursor<Type>(db, store),
       deleteEntry: (store: string, id: number) => deleteEntry(db, store, id),
-      createEntry: (store, data) => createEntry(db, store, data),
-      updateEntry: (store, id, data) => updateEntry(db, store, id, data),
+      createEntry: (store: string, data: unknown) =>
+        createEntry(db, store, data),
+      updateEntry: (store: string, id: number, data: unknown) =>
+        updateEntry(db, store, id, data),
     }),
     [db],
   );

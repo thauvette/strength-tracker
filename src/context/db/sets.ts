@@ -2,9 +2,10 @@ import dayjs from 'dayjs';
 import { objectStores } from './config';
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils';
 import {
+  AugmentedDataSet,
+  DbStoredSet,
   Exercise,
-  HydratedSet,
-  LogsSet,
+  Set,
   MuscleGroup,
   SetType,
 } from './types.js';
@@ -35,17 +36,12 @@ const formatSet = (set) => {
 export const createOrUpdateLoggedSet = (
   db: IDBDatabase,
   id: number,
-  data: {
-    exercise: number;
-    reps: number;
-    weight: number;
-    isWarmUp?: boolean;
-    notes?: string;
-  },
-): Promise<HydratedSet> =>
+  data: Set,
+): Promise<AugmentedDataSet> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
     if (!id) {
+      // TODO: validate data, some entries have extra junk.
       const addRequest = objectStore.add({
         ...data,
         exercise: +data.exercise,
@@ -107,7 +103,7 @@ export const deleteLoggedSet = (db, id): Promise<boolean> =>
     };
   });
 
-const getDataAndAugmentSet = (db, set) =>
+const getDataAndAugmentSet = (db: IDBDatabase, set: DbStoredSet) =>
   Promise.all([
     getFromCursor(db, objectStores.exercises).catch((err) =>
       console.warn(err),
@@ -120,10 +116,10 @@ const getDataAndAugmentSet = (db, set) =>
   );
 
 const augmentSetData = (
-  set: SetType,
+  set: DbStoredSet,
   exercises: { [key: string]: Exercise },
   muscleGroups: { [key: string]: MuscleGroup },
-) => {
+): AugmentedDataSet => {
   const exercise = exercises?.[set?.exercise];
   const primaryMuscles = exercise?.musclesWorked?.map(
     (id) => muscleGroups?.[id],
@@ -147,11 +143,11 @@ const augmentSetData = (
   };
 };
 
-export const getSetsByDateRange = (
+export const getSetsByDateRange = async (
   db: IDBDatabase,
   startDate: Date,
   endDate: Date,
-): Promise<LogsSet[]> => {
+): Promise<AugmentedDataSet[]> => {
   const getSets: Promise<SetType[]> = new Promise((resolve) => {
     const start = dayjs(startDate).startOf('day').toDate().getTime();
     const end = dayjs(endDate).endOf('day').toDate().getTime();
@@ -173,22 +169,18 @@ export const getSetsByDateRange = (
     };
     transaction.oncomplete = () => resolve(results);
   });
-  return Promise.all([
-    getSets,
-    getFromCursor(db, objectStores.exercises).catch((err) =>
-      console.warn(err),
-    ) as Promise<{ [key: string]: Exercise }>,
-    getFromCursor(db, objectStores.muscleGroups).catch((err) =>
-      console.warn(err),
-    ) as Promise<{ [key: string]: MuscleGroup }>,
-  ]).then(([sets, exercises, muscleGroups]) => {
-    const result = sets.map((set) =>
-      augmentSetData(set, exercises, muscleGroups),
-    );
-    return result;
-  });
-};
-
-export const getSetsByDay = (db, day) => {
-  return getSetsByDateRange(db, day, day);
+  try {
+    const [sets, exercises, muscleGroups] = await Promise.all([
+      getSets,
+      getFromCursor(db, objectStores.exercises).catch((err) =>
+        console.warn(err),
+      ) as Promise<{ [key: string]: Exercise }>,
+      getFromCursor(db, objectStores.muscleGroups).catch((err) =>
+        console.warn(err),
+      ) as Promise<{ [key: string]: MuscleGroup }>,
+    ]);
+    return sets.map((set) => augmentSetData(set, exercises, muscleGroups));
+  } catch (err) {
+    console.warn(err);
+  }
 };

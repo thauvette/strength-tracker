@@ -9,7 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import useDB from '../context/db/db';
 import ExerciseLists from '../components/logs/exerciseLists';
 import LogHeader from '../components/logs/logHeader';
-import { HydradedBioEntry, LogsSet } from '../context/db/types';
+import { AugmentedDataSet, HydratedBioEntry } from '../context/db/types';
 import Modal from '../components/modal/Modal';
 import LogsCalendar from '../components/LogsCalendar/LogsCalendar';
 
@@ -20,9 +20,9 @@ interface Props {
 interface LogState {
   [key: string]: {
     loading: boolean;
-    data: LogsSet[];
+    data: AugmentedDataSet[];
     bioEntries: {
-      [key: string]: HydradedBioEntry;
+      [key: string]: HydratedBioEntry;
     };
   };
 }
@@ -31,9 +31,9 @@ interface ReducerActions {
   type: string;
   payload: {
     date: string;
-    data?: LogsSet[];
-    bioEntries?: { [key: string]: HydradedBioEntry[] };
-    set?: LogsSet;
+    data?: AugmentedDataSet[];
+    bioEntries?: { [key: string]: HydratedBioEntry[] };
+    set?: AugmentedDataSet;
   };
 }
 

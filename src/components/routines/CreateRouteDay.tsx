@@ -67,7 +67,7 @@ const CreateRouteDay = ({ dayId, days, updateDay }: Props) => {
           path={`${`${routes.routinesNew}/:dayId/add`}`}
           component={AddExerciseForm}
           submit={handleAddSets}
-          addFromHistroy={handleAddSets}
+          addFromHistory={handleAddSets}
         />
       </Router>
     </div>

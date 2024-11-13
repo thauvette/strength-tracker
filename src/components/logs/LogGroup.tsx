@@ -10,9 +10,9 @@ import Icon from '../icon/Icon';
 import dateFormats from '../../config/dateFormats';
 
 import useSessionContext from '../../context/sessionData/sessionData';
-import { LogsSet } from '../../context/db/types';
+import { AugmentedDataSet } from '../../context/db/types';
 
-const renderSetsSummary = (sets) => {
+const renderSetsSummary = (sets: AugmentedDataSet[]) => {
   const stats = [];
   const total = sets?.length;
   stats.push(`${total} set${total > 1 ? 's' : ''}`);
@@ -40,7 +40,7 @@ const renderSetsSummary = (sets) => {
 
 interface Props {
   name: string;
-  sets: LogsSet[];
+  sets: AugmentedDataSet[];
   quickAdd: () => void;
   openExerciseModal?: (id: number) => void;
 }

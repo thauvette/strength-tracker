@@ -5,7 +5,7 @@ import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils';
 import {
   BioEntry,
   BioMetric,
-  HydradedBioEntry,
+  HydratedBioEntry,
   ObjectStoreEvent,
 } from './types';
 
@@ -100,7 +100,7 @@ export const getBioEntriesByDateRange = async (
   db,
   startDate,
   endDate,
-): Promise<HydradedBioEntry[]> => {
+): Promise<HydratedBioEntry[]> => {
   try {
     const bioMetrics: { [key: string]: BioMetric } = await getFromCursor(
       db,
