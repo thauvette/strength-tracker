@@ -83,8 +83,7 @@ const AddExerciseForm = ({ submit, addFromHistory }: Props) => {
     <div class="relative">
       <ExerciseSearch
         handleSelectExercise={(exercise: Exercise) => {
-          console.log(exercise);
-          setSelectedExercise(exercise);
+          void selectExercise(exercise);
         }}
       />
       {isLoading && (
