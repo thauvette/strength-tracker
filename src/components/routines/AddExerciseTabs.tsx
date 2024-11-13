@@ -84,7 +84,6 @@ const AddExerciseTabs = ({
     history: (
       <div>
         <ExerciseStats
-          {/* ts-ignore */}
           exerciseHistory={selectedExercise}
           updatePlanedSet={(newSets: AugmentedDataSet[]) => {
             addFromHistory(
