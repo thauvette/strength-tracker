@@ -104,7 +104,7 @@ const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
         lastHeavySet={exerciseHistory?.lastWorkout?.heaviestSet}
         onChangeCompleteSet={(set) => {
           setSavedSet(set);
-          getData();
+          void getData();
         }}
         plannedSet={plannedSets}
         updatePlanedSet={({ sets }) => {

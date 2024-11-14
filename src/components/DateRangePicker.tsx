@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useState } from 'preact/hooks';
 import dateFormats from '../config/dateFormats';
 import Modal from './modal/Modal';
@@ -25,7 +25,7 @@ const DateRangePicker = ({
 }: Props) => {
   const [focusedDate, setFocusedDate] = useState<'start' | 'end' | null>(null);
   const [hoverDate, setHoverDate] = useState('');
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Dayjs) => {
     if (focusedDate === 'start') {
       onChangeDate({
         startDate: date.format('YYYY-MM-DD'),
@@ -36,8 +36,8 @@ const DateRangePicker = ({
 
     const endIsBeforeStart = date.isBefore(dayjs(startDate), 'days');
     onChangeDate({
-      startDate: endIsBeforeStart ? date : startDate,
-      endDate: endIsBeforeStart ? '' : date,
+      startDate: endIsBeforeStart ? date.format('YYYY-MM-DD') : startDate,
+      endDate: endIsBeforeStart ? '' : date.format('YYYY-MM-DD'),
     });
     setFocusedDate(endIsBeforeStart ? 'end' : null);
   };

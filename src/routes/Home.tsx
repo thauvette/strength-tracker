@@ -82,7 +82,7 @@ const Home = ({ date }: Props) => {
   );
   const [calendarIsOpen, setCalendarIsOpen] = useState(false);
   const [logState, dispatch] = useReducer(logsReducer, {});
-  const changeDate = (date) => {
+  const changeDate = (date: string) => {
     setActiveDate(date);
     route(`${routes.logs}?date=${date}`);
   };

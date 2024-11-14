@@ -191,7 +191,7 @@ export interface IDBContext {
   createCycle: (data: unknown) => Promise<unknown>;
   updateWendlerItem: ({ id, path, value }) => Promise<unknown>;
   // SETS
-  createOrUpdateLoggedSet: (id: number, data: Set) => Promise<AugmentedDataSet>;
+  createOrUpdateLoggedSet: (id: number, data: Set) => Promise<Set>;
   deleteLoggedSet: (id: number) => Promise<boolean>;
   getTodaySets: () => Promise<AugmentedDataSet[]>;
   getSetsByDay: (date: Date) => Promise<AugmentedDataSet[]>;

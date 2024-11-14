@@ -32,6 +32,7 @@ export interface RoutineSet {
   isWarmUp: boolean;
   reps: number;
   weight: number;
+  id?: number;
   created?: number;
 }
 

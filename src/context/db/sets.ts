@@ -37,29 +37,31 @@ export const createOrUpdateLoggedSet = (
   db: IDBDatabase,
   id: number,
   data: Set,
-): Promise<AugmentedDataSet> =>
+): Promise<Set> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
+
+    const reqBody = {
+      exercise: +data.exercise,
+      isWarmUp: !!data.isWarmUp,
+      reps: data.reps,
+      weight: data.weight,
+    };
+
     if (!id) {
-      // TODO: validate data, some entries have extra junk.
       const addRequest = objectStore.add({
-        ...data,
-        exercise: +data.exercise,
+        ...reqBody,
         created: new Date().getTime(),
       });
       addRequest.onerror = (e) => console.warn(e);
       addRequest.onsuccess = (event) => {
         if (event.target instanceof IDBRequest) {
           const result = {
-            ...data,
-            exercise: +data.exercise,
-            created: new Date().getTime(),
+            ...reqBody,
             id: event?.target?.result,
           };
-          return getDataAndAugmentSet(db, result).then((res) => {
-            fireSetAddedEvent(res);
-            return resolve(res);
-          });
+          fireSetAddedEvent(result);
+          return resolve(result);
         }
       };
     } else {
@@ -70,7 +72,7 @@ export const createOrUpdateLoggedSet = (
         }
         const newValue = {
           ...request.result,
-          ...data,
+          ...reqBody,
           updated: new Date().getTime(),
         };
         const requestUpdate = objectStore.put(newValue, +id);
@@ -80,10 +82,8 @@ export const createOrUpdateLoggedSet = (
         requestUpdate.onsuccess = (e) => {
           if (e.target instanceof IDBRequest) {
             const result = { ...newValue, id: e?.target?.result };
-            return getDataAndAugmentSet(db, result).then((res) => {
-              fireSetAddedEvent(res);
-              return resolve(res);
-            });
+            fireSetAddedEvent(result);
+            return resolve(result);
           }
         };
       };
@@ -103,17 +103,17 @@ export const deleteLoggedSet = (db, id): Promise<boolean> =>
     };
   });
 
-const getDataAndAugmentSet = (db: IDBDatabase, set: DbStoredSet) =>
-  Promise.all([
-    getFromCursor(db, objectStores.exercises).catch((err) =>
-      console.warn(err),
-    ) as Promise<{ [key: string]: Exercise }>,
-    getFromCursor(db, objectStores.muscleGroups).catch((err) =>
-      console.warn(err),
-    ) as Promise<{ [key: string]: MuscleGroup }>,
-  ]).then(([exercises, muscleGroups]) =>
-    augmentSetData(set, exercises, muscleGroups),
-  );
+// const getDataAndAugmentSet = (db: IDBDatabase, set: DbStoredSet) =>
+//   Promise.all([
+//     getFromCursor(db, objectStores.exercises).catch((err) =>
+//       console.warn(err),
+//     ) as Promise<{ [key: string]: Exercise }>,
+//     getFromCursor(db, objectStores.muscleGroups).catch((err) =>
+//       console.warn(err),
+//     ) as Promise<{ [key: string]: MuscleGroup }>,
+//   ]).then(([exercises, muscleGroups]) =>
+//     augmentSetData(set, exercises, muscleGroups),
+//   );
 
 const augmentSetData = (
   set: DbStoredSet,
