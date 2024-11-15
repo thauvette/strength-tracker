@@ -41,8 +41,6 @@ const CreateRoutineDayList = ({
   submit,
 }: Props) => {
   const exerciseIds = getUniqueExerciseIds(days);
-
-  // TODO: hook to augment set data.
   const exerciseData = useAugmentSetData({ exerciseIds });
   const musclesWorked = Object.values(exerciseData || {}).reduce<{
     activePrimary: number[];
