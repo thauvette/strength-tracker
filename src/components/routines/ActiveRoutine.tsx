@@ -12,8 +12,9 @@ const ActiveRoutine = () => {
 
   const { createOrUpdateLoggedSet, updateSingleRoutineSet } = useDB();
   const [addExerciseModalIsOpen, setAddExerciseModalIsOpen] = useState(false);
-
+  console.log(activeRoutine);
   const onSaveSet = (set: SubmittedSet, index: number) => {
+    console.log(set);
     const { dayId, routineId, routineSetId } = set;
     createOrUpdateLoggedSet(set.id, {
       weight: set.weight,
@@ -21,6 +22,7 @@ const ActiveRoutine = () => {
       exercise: set.exercise,
       isWarmUp: set.isWarmUp,
     }).then((res) => {
+      console.log(res);
       // add the id to the matching set
       const currentSets = [...activeRoutine];
       currentSets[index] = {

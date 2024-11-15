@@ -7,7 +7,7 @@ import EditableSet from '../editableSet/editableSet';
 import generateRandomId from '../../utilities.js/generateRandomId.js';
 import Icon from '../icon/Icon.js';
 import EditableSetList from '../EditableSetList';
-import { AugmentedDataSet } from '../../context/db/types';
+import { RoutineSet } from '../../types/types';
 
 const AddExerciseTabs = ({
   selectedExercise,
@@ -36,7 +36,7 @@ const AddExerciseTabs = ({
                       weight,
                       reps,
                       isWarmUp,
-                      id: generateRandomId(),
+                      routineSetId: generateRandomId(),
                       exercise: selectedExercise.id,
                       exerciseName: selectedExercise.name,
                     },
@@ -66,12 +66,12 @@ const AddExerciseTabs = ({
         )}
         <Plan
           initialWeight={selectedExercise?.lastWorkoutHeaviestSet?.weight}
-          updatePlanedSet={(newSets: AugmentedDataSet[]) =>
+          updatePlanedSet={(newSets: RoutineSet[]) =>
             setAddedSets([
               ...addedSets,
               ...newSets.map((set) => ({
                 ...set,
-                id: generateRandomId(),
+                routineSetId: generateRandomId(),
                 exercise: selectedExercise.id,
                 exerciseName: selectedExercise.name,
               })),
@@ -85,14 +85,13 @@ const AddExerciseTabs = ({
       <div>
         <ExerciseStats
           exerciseHistory={selectedExercise}
-          updatePlanedSet={(newSets: AugmentedDataSet[]) => {
+          updatePlanedSet={(newSets: RoutineSet[]) => {
             addFromHistory(
               newSets.map((set) => ({
                 ...set,
                 exercise: +selectedExercise.id,
                 exerciseName: selectedExercise.name,
-                musclesWorked: selectedExercise.musclesWorked,
-                secondaryMusclesWorked: selectedExercise.secondaryMusclesWorked,
+                routineSetId: generateRandomId(),
               })),
             );
           }}

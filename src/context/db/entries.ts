@@ -10,7 +10,6 @@ export const getAllEntriesByKey = async <Type>(
 ): Promise<Type[]> =>
   new Promise((resolve) => {
     const { objectStore } = openObjectStoreTransaction(db, store);
-
     const index = objectStore.index(key);
     const keyRange = IDBKeyRange.only(+id);
     const cursorRequest = index.openCursor(keyRange);

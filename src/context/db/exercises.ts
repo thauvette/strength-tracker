@@ -77,36 +77,8 @@ export const getExerciseHistoryById = (
   db: IDBDatabase,
   id: number,
 ): Promise<ExerciseHistory> =>
-  new Promise((resolve, reject) => {
-    getExerciseById(db, id).then(async (exerciseResponse: Exercise) => {
-      if (!exerciseResponse) {
-        reject('404');
-      }
-      const muscleGroupData = await getFromCursor<MuscleGroup>(
-        db,
-        'muscle_groups',
-      );
-
-      const primaryMuscles = [];
-      const secondaryMusclesWorked = [];
-
-      if (exerciseResponse?.musclesWorked?.length) {
-        exerciseResponse.musclesWorked.forEach((muscleId) => {
-          primaryMuscles.push({
-            ...muscleGroupData[muscleId],
-            id: muscleId,
-          });
-        });
-      }
-      if (exerciseResponse?.secondaryMusclesWorked?.length) {
-        exerciseResponse.secondaryMusclesWorked.forEach((muscleId) => {
-          secondaryMusclesWorked.push({
-            ...muscleGroupData[muscleId],
-            id: muscleId,
-          });
-        });
-      }
-
+  new Promise((resolve) => {
+    getAugmentedExercise(db, id).then(async (exerciseResponse) => {
       const weights = await getAllEntriesByKey<BioEntry>(
         db,
         objectStores.bioEntries,
@@ -148,12 +120,47 @@ export const getExerciseHistoryById = (
         } else {
           resolve({
             ...exerciseResponse,
-            primaryGroupData: muscleGroupData?.[exerciseResponse?.primaryGroup],
-            musclesWorked: primaryMuscles,
-            secondaryMusclesWorked,
             items: results,
           });
         }
       };
     });
   });
+
+export const getAugmentedExercise = async (db: IDBDatabase, id: number) => {
+  try {
+    const exerciseResponse = await getExerciseById(db, id);
+    if (!exerciseResponse) {
+      throw new Error('404');
+    }
+    const muscleGroupData = await getFromCursor<MuscleGroup>(
+      db,
+      'muscle_groups',
+    );
+    const musclesWorked =
+      exerciseResponse.musclesWorked?.map((id) => ({
+        ...(muscleGroupData?.[id] || null),
+        id,
+      })) || [];
+    const secondaryMusclesWorked =
+      exerciseResponse.secondaryMusclesWorked?.map((id) => ({
+        ...(muscleGroupData?.[id] || null),
+        id,
+      })) || [];
+
+    return {
+      ...exerciseResponse,
+      primaryMuscleIds: exerciseResponse.musclesWorked || [],
+      secondaryMuscleIds: exerciseResponse.secondaryMusclesWorked || [],
+      musclesWorked,
+      secondaryMusclesWorked,
+      primaryGroupData: muscleGroupData?.[exerciseResponse?.primaryGroup],
+    };
+  } catch (err) {
+    let message = 'oops';
+    if (err instanceof Error) {
+      message = err.message;
+    }
+    throw new Error(message);
+  }
+};

@@ -49,15 +49,17 @@ export const createOrUpdateLoggedSet = (
     };
 
     if (!id) {
+      const created = new Date().getTime();
       const addRequest = objectStore.add({
         ...reqBody,
-        created: new Date().getTime(),
+        created,
       });
       addRequest.onerror = (e) => console.warn(e);
       addRequest.onsuccess = (event) => {
         if (event.target instanceof IDBRequest) {
           const result = {
             ...reqBody,
+            created,
             id: event?.target?.result,
           };
           fireSetAddedEvent(result);

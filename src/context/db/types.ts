@@ -1,4 +1,6 @@
 // BIO METRICS
+import { RoutineSet } from '../../types/types';
+
 export interface BioMetric {
   name: string;
   created?: Date;
@@ -65,6 +67,21 @@ export interface Exercise {
   type: string;
   updated?: number;
   id: number;
+}
+
+export interface AugmentedExercise {
+  barWeight?: number;
+  created?: number;
+  id: number;
+  musclesWorked: MuscleGroup[];
+  name: string;
+  primaryGroup: number;
+  primaryGroupData: MuscleGroup;
+  primaryMuscleIds: number[];
+  secondaryMuscleIds: number[];
+  secondaryMusclesWorked: MuscleGroup[];
+  type: string;
+  updated?: number;
 }
 
 export interface ExerciseHistory {
@@ -145,37 +162,19 @@ export interface LogsSet extends HydratedSet {
   type: string;
 }
 
-// export interface CreateRoutineBody {
-//   name: string;
-//   days: {
-//     id: string;
-//     name: string;
-//     sets: {
-//       id: string;
-//       exercise: number;
-//       reps: number;
-//       weight: number;
-//     }[];
-//   };
-// }
-
-export interface Routine {
-  created: number;
+export interface RoutineDay {
+  id: string;
   name: string;
+  sets: RoutineSet[];
+}
+export interface CreateRoutineBody {
+  name: string;
+  days: RoutineDay[];
+}
+
+export interface Routine extends CreateRoutineBody {
+  created: number;
   id: number;
-  days: {
-    id: string;
-    name: string;
-    sets: {
-      exercise: number;
-      exerciseName: string;
-      id?: number;
-      routineSetId?: string;
-      reps: number;
-      weight: number;
-      barWeight: number;
-    }[];
-  }[];
 }
 
 export interface ObjectStoreEvent extends Event {
@@ -203,7 +202,8 @@ export interface IDBContext {
     };
   }>;
   getExerciseHistoryById: (id: number) => Promise<ExerciseHistory>;
-  getExercise: (id: number) => Promise<unknown>;
+  getExercise: (id: number) => Promise<Exercise>;
+  getAugmentedExercise: (id: number) => Promise<AugmentedExercise>;
   // SYNC
   createBackup: () => void;
   restoreFromBackup: (entries: unknown) => Promise<unknown>;
@@ -220,12 +220,18 @@ export interface IDBContext {
   }>;
   // ROUTINES
   getRoutines: () => Promise<Routine[]>;
-  getRoutine: (id: number) => Promise<unknown>;
-  createRoutine: (data: Routine) => Promise<{
+  getRoutine: (id: number) => Promise<Routine>;
+  createRoutine: (data: CreateRoutineBody) => Promise<{
     data: Routine;
     id: number;
   }>;
-  updateRoutine: (id: number, data: Partial<Routine>) => Promise<Routine>;
+  updateRoutine: (
+    id: number,
+    data: Partial<Routine>,
+  ) => Promise<{
+    id: number;
+    data: Routine;
+  }>;
   updateSingleRoutineSet: (
     id: number,
     dayId: string,

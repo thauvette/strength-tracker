@@ -1,25 +1,21 @@
 import { h } from 'preact';
 import { Router, Route, route, Link } from 'preact-router';
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { routes } from '../../config/routes';
 import AddExerciseForm from './AddExerciseForm';
-import generateRandomId from '../../utilities.js/generateRandomId';
-import { Set } from '../EditableSetList';
 import CreateRouteDaySets from './CreateRoutineDaySets';
+import { RoutineDay } from '../../context/db/types';
+import { RoutineSet } from '../../types/types';
 
 interface Props {
   dayId: string;
-  days: {
-    name: string;
-    id: string;
-    sets: Set[];
-  }[];
-  updateDay: (dayId: string, sets: Set[]) => void;
+  days: RoutineDay[];
+  updateDay: (dayId: string, sets: RoutineSet[]) => void;
 }
 
 const CreateRouteDay = ({ dayId, days, updateDay }: Props) => {
   const day = days.find(({ id }) => id === dayId);
-  const [sets, setSets] = useState(day?.sets || []);
+  const [sets, setSets] = useState<RoutineSet[]>(day?.sets || []);
 
   useEffect(() => {
     if (!day) {
@@ -30,19 +26,13 @@ const CreateRouteDay = ({ dayId, days, updateDay }: Props) => {
     updateDay(dayId, sets);
   };
 
-  const handleAddSets = (newSets) => {
-    setSets([
-      ...sets,
-      ...newSets.map((set) => ({
-        ...set,
-        id: set.id || generateRandomId(),
-        musclesWorked: set?.musclesWorked?.map(({ id }) => +id) || [],
-        secondaryMusclesWorked:
-          set?.secondaryMusclesWorked?.map(({ id }) => +id) || [],
-      })),
-    ]);
-    route(`${routes.routinesNew}/${dayId}/`);
-  };
+  const handleAddSets = useCallback(
+    (newSets: RoutineSet[]) => {
+      setSets((current) => [...current, ...newSets]);
+      route(`${routes.routinesNew}/${dayId}/`);
+    },
+    [dayId],
+  );
 
   return (
     <div class="px-2">

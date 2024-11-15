@@ -52,6 +52,7 @@ const AddExerciseForm = ({ submit, addFromHistory }: Props) => {
       })),
     );
   };
+
   if (selectedExercise) {
     return (
       <div>

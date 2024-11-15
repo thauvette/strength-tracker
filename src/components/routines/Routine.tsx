@@ -78,7 +78,7 @@ const Routine = ({ id }) => {
       sets.map((set) => ({
         ...set,
         id: null,
-        routineSetId: set.routineSetId || set.id, // legacy routines have set.id but shouldn't
+        routineSetId: set.routineSetId,
         routineId: +id,
         dayId,
       })),

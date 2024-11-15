@@ -63,7 +63,7 @@ const Exercise = ({ id, remaining_path }) => {
     updateEntry(objectStores.exercises, id, {
       isFavorite: !exercise?.isFavorite,
     }).finally(() => {
-      getExerciseDeatils();
+      void getExerciseDeatils();
     });
   };
 

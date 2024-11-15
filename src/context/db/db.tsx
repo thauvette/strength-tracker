@@ -28,12 +28,17 @@ import {
   updateRoutine,
   updateSingleRoutineSet,
 } from './routines';
-import { getExerciseHistoryById, getExerciseOptions } from './exercises';
+import {
+  getAugmentedExercise,
+  getExerciseHistoryById,
+  getExerciseOptions,
+} from './exercises';
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
 import { objectStores } from './config';
 import { Exercise, IDBContext, Routine, Set } from './types';
 import useOnMount from '../../hooks/useOnMount';
+import { RoutineSet } from '../../types/types';
 
 const DBContext = createContext<IDBContext>(null);
 
@@ -70,6 +75,7 @@ export const DBProvider = ({ children }) => {
       getExerciseHistoryById: (id: number) => getExerciseHistoryById(db, id),
       getExercise: (id: number) =>
         getItem<Exercise>(db, objectStores.exercises, id),
+      getAugmentedExercise: (id: number) => getAugmentedExercise(db, id),
       // SYNC
       createBackup: () => createBackup(db),
       restoreFromBackup: (entries: {
@@ -89,7 +95,7 @@ export const DBProvider = ({ children }) => {
       createRoutine: (data: Routine) => createRoutine(db, data),
       updateRoutine: (id: number, data: Partial<Routine>) =>
         updateRoutine(db, id, data),
-      updateSingleRoutineSet: (id: number, dayId: string, set: Set) =>
+      updateSingleRoutineSet: (id: number, dayId: string, set: RoutineSet) =>
         updateSingleRoutineSet(db, id, dayId, set),
       duplicateRoutine: (id: number) => duplicateRoutine(db, id),
       // GENERIC + ENTRIES

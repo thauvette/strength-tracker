@@ -2,6 +2,10 @@
 
 This is just a little personal project I started to try making a PWA using indexedDB. It is a work in progress.
 
+TODO: reduce what is stored in DB and make hooks, (useQuery maybe?) to hydrate content from other stores 
+
+TODO: review and test ALLL routines. 
+
 <!-- prettier-ignore -->
 TODO: Edit exercises
     - add exercise types

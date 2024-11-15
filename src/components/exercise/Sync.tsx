@@ -78,10 +78,9 @@ const Sync = ({ data, name }: Props) => {
       )
       .join('\n');
 
-    const href = `data:text/csv;charset=utf-8, ${encodeURI(
+    downloadBtnRef.current.href = `data:text/csv;charset=utf-8, ${encodeURI(
       `${headers}\n${csv}`,
     )}`;
-    downloadBtnRef.current.href = href;
     downloadBtnRef.current.download = `${name} export`;
     downloadBtnRef.current.click();
   };

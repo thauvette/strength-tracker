@@ -3,17 +3,37 @@ import { useState } from 'preact/hooks';
 import { Route, Router, route } from 'preact-router';
 
 import generateRandomId from '../../utilities.js/generateRandomId';
-import useDB from '../../context/db/db.tsx';
+import useDB from '../../context/db/db';
 
 import { routes } from '../../config/routes';
-import CreateRoutineDayList from './CreateRoutineDayList.tsx';
-import CreateRouteDay from './CreateRouteDay.tsx';
+import CreateRoutineDayList from './CreateRoutineDayList';
+import CreateRouteDay from './CreateRouteDay';
+import { RoutineSet } from '../../types/types';
+import { Routine, RoutineDay } from '../../context/db/types';
+
+const formatSetForStorage = (set: RoutineSet) => ({
+  exercise: set.exercise,
+  exerciseName: set.exerciseName,
+  isWarmUp: set.isWarmUp,
+  reps: set.reps,
+  routineSetId: set.routineSetId ?? generateRandomId(),
+  weight: set.weight,
+  // barWeight needed OR, removed and added to hook
+});
 
 const CreateRoutine = ({ initialValues }) => {
   const { createRoutine, updateRoutine } = useDB();
-  const [routineName, setRoutineName] = useState(initialValues?.name || '');
-  const [days, setDays] = useState(
-    initialValues?.days?.map((day) => ({
+  const [routineName, setRoutineName] = useState<string>(
+    initialValues?.name || '',
+  );
+  const [days, setDays] = useState<
+    {
+      name: string;
+      id: string;
+      sets: RoutineSet[];
+    }[]
+  >(
+    initialValues?.days?.map((day: RoutineDay) => ({
       ...day,
       sets:
         day?.sets?.map((set) => ({
@@ -40,7 +60,8 @@ const CreateRoutine = ({ initialValues }) => {
       },
     ]);
   };
-  const updateDayName = (id, value) => {
+
+  const updateDayName = (id: string, value: string) => {
     setDays(
       days.map((day) =>
         id === day.id
@@ -52,26 +73,26 @@ const CreateRoutine = ({ initialValues }) => {
       ),
     );
   };
-  const removeDay = (id) => setDays(days.filter((day) => day.id !== id));
+  const removeDay = (id: string) =>
+    setDays(days.filter((day) => day.id !== id));
 
   const submit = async () => {
     const data = {
       name: routineName,
-      days: days.map((day) => ({
-        name: day.name,
-        id: day.id,
-        sets:
-          day.sets?.map((set) => ({
-            weight: set.weight,
-            reps: set.reps,
-            exercise: set.exerciseId,
-            exerciseName: set.exerciseName,
-            routineSetId: set.id,
-            isWarmUp: set.isWarmUp,
-          })) || [],
-      })),
+      days: days.map(
+        (day: { name: string; id: string; sets: RoutineSet[] }) => ({
+          name: day.name,
+          id: day.id,
+          sets: day.sets?.map((set) => formatSetForStorage(set)) || [],
+        }),
+      ),
     };
-    let res;
+    let res:
+      | {
+          id: number;
+          data: Routine;
+        }
+      | undefined;
     try {
       if (initialValues?.id) {
         res = await updateRoutine(initialValues.id, data);
@@ -81,16 +102,18 @@ const CreateRoutine = ({ initialValues }) => {
     } catch (e) {
       // do nothing
     }
-    route(`${routes.routinesBase}/${res?.id}`);
+    if (res?.id) {
+      route(`${routes.routinesBase}/${res?.id}`);
+    }
   };
 
-  const updateDaySets = (dayId, sets) => {
+  const updateDaySets = (dayId: string, sets: RoutineSet[]) => {
     setDays(
       days.map((day) => {
         if (day.id === dayId) {
           return {
             ...day,
-            sets,
+            sets: sets.map((set) => formatSetForStorage(set)),
           };
         }
         return day;

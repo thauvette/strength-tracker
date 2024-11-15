@@ -9,7 +9,7 @@ import Icon from './icon/Icon';
 import { routes } from '../config/routes';
 import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 import useToast from '../context/toasts/Toasts';
-import { RoutineSet } from '../context/sessionData/sessionData';
+import { RoutineSet } from '../types/types';
 
 interface Props {
   sets: RoutineSet[];

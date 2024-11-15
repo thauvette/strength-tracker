@@ -66,7 +66,7 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
         {isIntersecting && (
           <button
             onClick={() => handleToggleDrawerContent('note')}
-            ariaLabel="view notes"
+            aria-label="view notes"
           >
             <div class="flex items-center text-highlight-900 dark:text-highlight-100">
               <Icon
@@ -83,7 +83,7 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
         {isIntersecting && (
           <div class="flex items-center">
             <button
-              ariaLabel="view stats"
+              aria-label="view stats"
               onClick={() => handleToggleDrawerContent('stats')}
             >
               <div class="flex items-center">
@@ -91,7 +91,7 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
               </div>
             </button>
             <button
-              ariaLabel="delete set"
+              aria-label="delete set"
               onClick={() => handleToggleDrawerContent('delete')}
             >
               <div class="flex items-center">
@@ -100,7 +100,7 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
             </button>
             <button
               onClick={() => handleToggleDrawerContent('edit')}
-              ariaLabel="edit set"
+              aria-label="edit set"
             >
               <div class="flex items-center">
                 <Icon name="create-outline" />
@@ -122,8 +122,8 @@ const SetRow = ({ set, onChangeSet, isIntersecting = true }) => {
                 closeDrawer();
               }}
               closeDrawer={closeDrawer}
-              handleUpdateSet={({ weight, reps, id, isWarmUp }) => {
-                updateExistingSet({
+              handleUpdateSet={async ({ weight, reps, id, isWarmUp }) => {
+                await updateExistingSet({
                   weight,
                   reps,
                   id,
