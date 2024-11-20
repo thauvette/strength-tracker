@@ -2,6 +2,7 @@ import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp';
 import { objectStores } from './config';
 import { getAllEntriesByKey } from './entries';
 import {
+  AugmentedExercise,
   BioEntry,
   Exercise,
   ExerciseHistory,
@@ -127,7 +128,10 @@ export const getExerciseHistoryById = (
     });
   });
 
-export const getAugmentedExercise = async (db: IDBDatabase, id: number) => {
+export const getAugmentedExercise = async (
+  db: IDBDatabase,
+  id: number,
+): Promise<AugmentedExercise> => {
   try {
     const exerciseResponse = await getExerciseById(db, id);
     if (!exerciseResponse) {

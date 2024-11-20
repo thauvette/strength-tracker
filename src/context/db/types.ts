@@ -69,6 +69,7 @@ export interface Exercise {
   id: number;
 }
 
+// replace AugmentedExercise with AugmentedDataSet
 export interface AugmentedExercise {
   barWeight?: number;
   created?: number;
@@ -119,15 +120,15 @@ export interface DbStoredSet {
 }
 
 export interface AugmentedDataSet extends DbStoredSet {
-  exerciseData: Exercise;
-  primaryMuscles: MuscleGroup[];
-  primaryMuscleGroup: MuscleGroup;
-  secondaryMuscles: MuscleGroup[];
-  name: string;
-  musclesWorked: number[];
   barWeight: number;
-  secondaryMusclesWorked: number[];
+  exerciseData: Exercise;
+  musclesWorked: number[];
+  name: string;
   primaryGroup: number;
+  primaryMuscleGroup: MuscleGroup;
+  primaryMuscles: MuscleGroup[];
+  secondaryMuscles: MuscleGroup[];
+  secondaryMusclesWorked: number[];
   type: string;
 }
 
@@ -195,6 +196,7 @@ export interface IDBContext {
   getTodaySets: () => Promise<AugmentedDataSet[]>;
   getSetsByDay: (date: Date) => Promise<AugmentedDataSet[]>;
   getSetsByDateRange: (start: Date, end: Date) => Promise<AugmentedDataSet[]>;
+  getDataAndAugmentSet: (set: DbStoredSet) => Promise<AugmentedDataSet[]>;
   // EXERCISES
   getExerciseOptions: () => Promise<{
     [key: string]: MuscleGroup & {

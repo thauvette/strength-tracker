@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import dayjs, { Dayjs } from 'dayjs';
-import chunk from 'lodash.chunk';
+import { chunk } from 'lodash';
 import { useState } from 'preact/hooks';
 import Icon from '../icon/Icon';
 

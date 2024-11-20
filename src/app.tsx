@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import { Router, Route } from 'preact-router';
+
 // ROUTES
 // Code-splitting is automated for `routes` directory
 import { routes } from './config/routes';

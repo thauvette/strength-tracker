@@ -1,6 +1,5 @@
 import { useState } from 'preact/hooks';
-import set from 'lodash.set';
-import get from 'lodash.get';
+import { set, get } from 'lodash';
 import { LOCAL_STORAGE_PLATE_SETTINGS } from '../config/constants';
 
 export const defaultPlates = [

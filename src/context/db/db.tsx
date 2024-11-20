@@ -18,6 +18,7 @@ import { createEntry, deleteEntry, updateEntry } from './entries';
 import {
   createOrUpdateLoggedSet,
   deleteLoggedSet,
+  getDataAndAugmentSet,
   getSetsByDateRange,
 } from './sets';
 import {
@@ -36,7 +37,7 @@ import {
 import { getMuscleGroups } from './muscles';
 import { createBackup, restoreFromBackup } from './sync';
 import { objectStores } from './config';
-import { Exercise, IDBContext, Routine, Set } from './types';
+import { DbStoredSet, Exercise, IDBContext, Routine, Set } from './types';
 import useOnMount from '../../hooks/useOnMount';
 import { RoutineSet } from '../../types/types';
 
@@ -44,7 +45,6 @@ const DBContext = createContext<IDBContext>(null);
 
 export const DBProvider = ({ children }) => {
   const [db, setDb] = useState<IDBDatabase | null>();
-
   // INITIALIZE OUR DB
   useOnMount(() => {
     initializeDb(setDb);
@@ -70,6 +70,7 @@ export const DBProvider = ({ children }) => {
       getSetsByDay: (date: Date) => getSetsByDateRange(db, date, date),
       getSetsByDateRange: (start: Date, end: Date) =>
         getSetsByDateRange(db, start, end),
+      getDataAndAugmentSet: (set: DbStoredSet) => getDataAndAugmentSet(db, set),
       // EXERCISES
       getExerciseOptions: () => getExerciseOptions(db),
       getExerciseHistoryById: (id: number) => getExerciseHistoryById(db, id),

@@ -1,9 +1,8 @@
 import { h } from 'preact';
 import { useState } from 'preact/compat';
 import { route } from 'preact-router';
-import set from 'lodash.set';
-import cloneDeep from 'lodash.clonedeep';
-import get from 'lodash.get';
+import { set, cloneDeep, get } from 'lodash';
+
 import Accordion from '../accordion/accordion.tsx';
 import Modal from '../modal/Modal';
 

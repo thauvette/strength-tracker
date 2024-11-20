@@ -17,7 +17,6 @@ interface Props {
 
 const LogHeader = ({ activeDayData }: Props) => {
   const [selectedExercise, setSelectedExercise] = useState<string>('');
-
   const times = activeDayData?.map((item) => item.created) || [];
   const earliestSet = times?.length ? Math.min(...times) : null;
   const lasSet = times?.length ? Math.max(...times) : null;

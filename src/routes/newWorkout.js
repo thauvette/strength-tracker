@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { Link, route } from 'preact-router';
-import uniqBy from 'lodash.uniqby';
+import { uniqBy } from 'lodash';
 import ExerciseSearch from '../components/exerciseSelection/ExerciseSearch';
 import { routes } from '../config/routes';
 import { useEffect, useState } from 'preact/hooks';

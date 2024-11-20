@@ -1,8 +1,7 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import { Link } from 'preact-router';
-
-import get from 'lodash.get';
+import { get } from 'lodash';
 import Accordion from '../../components/accordion/accordion.tsx';
 import useDB from '../../context/db/db.tsx';
 import WendlerCycleDay from './WendlerCycleDay';

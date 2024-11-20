@@ -1,4 +1,4 @@
-import set from 'lodash.set';
+import { set } from 'lodash';
 import { objectStores } from './config.ts';
 import { openObjectStoreTransaction } from './utils/dbUtils.ts';
 

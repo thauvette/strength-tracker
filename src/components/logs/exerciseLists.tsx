@@ -77,7 +77,7 @@ const ExerciseLists = ({
                 sets={sets}
                 quickAdd={
                   isToday
-                    ? () =>
+                    ? () => {
                         launchQuickAdd({
                           id: sets?.[0]?.exercise,
                           exerciseName: name,
@@ -86,7 +86,8 @@ const ExerciseLists = ({
                             reps: lastSet.reps,
                             isWarmUp: !!lastSet.isWarmUp,
                           },
-                        })
+                        });
+                      }
                     : null
                 }
                 openExerciseModal={openExerciseModal}

@@ -1,7 +1,7 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import dayjs from 'dayjs';
-import cloneDeep from 'lodash.clonedeep';
+import { cloneDeep } from 'lodash';
 import Router from 'preact-router';
 import { Link } from 'preact-router/match';
 

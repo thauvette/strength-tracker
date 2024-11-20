@@ -12,6 +12,7 @@ import LogHeader from '../components/logs/logHeader';
 import { AugmentedDataSet, HydratedBioEntry } from '../context/db/types';
 import Modal from '../components/modal/Modal';
 import LogsCalendar from '../components/LogsCalendar/LogsCalendar';
+import { getAugmentedExercise } from '../context/db/exercises';
 
 interface Props {
   date?: string;
@@ -60,7 +61,7 @@ const logsReducer = (state: LogState = {}, action: ReducerActions) => {
       return {
         ...state,
         [action.payload.date]: {
-          ...(state[action.payload.date], {}),
+          ...(state[action.payload.date] || {}),
           data: [
             ...(state[action.payload.date]?.data || []),
             action.payload.set,
@@ -75,7 +76,8 @@ const logsReducer = (state: LogState = {}, action: ReducerActions) => {
 };
 
 const Home = ({ date }: Props) => {
-  const { getSetsByDateRange, getBioEntriesByDateRange } = useDB();
+  const { getSetsByDateRange, getBioEntriesByDateRange, getDataAndAugmentSet } =
+    useDB();
 
   const [activeDate, setActiveDate] = useState(
     date || dayjs().format('YYYY-MM-DD'),
@@ -127,22 +129,26 @@ const Home = ({ date }: Props) => {
   }, [activeDate, logState, getSetsByDateRange, getBioEntriesByDateRange]);
 
   useEffect(() => {
-    const addSet = (event: CustomEvent) => {
+    const addSet = async (event: CustomEvent) => {
+      const data = await getDataAndAugmentSet(event.detail);
       dispatch({
         type: 'ADD_SINGLE_SET',
         payload: {
           date: dayjs(event.detail.created).format('YYYY-MM-DD'),
-          set: event.detail,
+          set: {
+            ...event.detail,
+            ...(data || {}),
+          },
         },
       });
     };
     addEventListener('dbSetAdded', addSet);
     return () => removeEventListener('dbSetAdded', addSet);
-  }, []);
+  }, [getDataAndAugmentSet]);
 
   const { loading, data, bioEntries } = logState?.[activeDate] || {};
   const isToday = dayjs(activeDate).isSame(dayjs(), 'day');
-  const stepByDate = (amount) =>
+  const stepByDate = (amount: number) =>
     changeDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day));
 
   return (
