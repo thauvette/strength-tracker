@@ -7,6 +7,8 @@ import {
 import { objectStores } from './config';
 import { getFromCursor } from './utils/dbUtils';
 import formatExercise from './utils/formatExercise';
+import { fillSet, formatSet } from './sets';
+import { pickBy } from 'lodash';
 
 export async function generateBackupData(db: IDBDatabase) {
   const arr = [];
@@ -54,7 +56,7 @@ export async function generateBackupData(db: IDBDatabase) {
   return `${headerItems.join()}\n${arr.join('\n')}`;
 }
 
-export const createBackup = (db) => {
+export const createBackup = (db: IDBDatabase) => {
   generateBackupData(db).then((res) => {
     const hiddenElement = document.createElement('a');
     hiddenElement.href = `data:text/csv;charset=utf-8, ${encodeURI(res)}`;
@@ -64,7 +66,7 @@ export const createBackup = (db) => {
   });
 };
 
-const clearStore = (db, store) =>
+const clearStore = (db: IDBDatabase, store: string) =>
   new Promise((resolve, reject) => {
     try {
       const objectStoreRequest = db
@@ -83,12 +85,23 @@ const clearStore = (db, store) =>
     }
   });
 
-const writeItemFromBackup = (db, item) =>
+const writeItemFromBackup = (
+  db: IDBDatabase,
+  item: {
+    id: number;
+    store: string;
+    data: { [key: string]: unknown };
+  },
+) =>
   new Promise((resolve, reject) => {
     const { store, data, id } = item;
 
     const result =
-      store === objectStores.exercises ? formatExercise(data) : data;
+      store === objectStores.exercises
+        ? formatExercise(data)
+        : store === objectStores.sets
+        ? pickBy(formatSet(fillSet(data)), (value) => value !== undefined)
+        : data;
 
     const objectStore = db
       .transaction([store], 'readwrite')
@@ -106,7 +119,7 @@ export const restoreFromBackup = async (
     stores: string[];
     items: {
       store: string;
-      data: unknown;
+      data: { [key: string]: unknown };
       id: number;
     }[];
   },

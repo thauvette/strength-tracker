@@ -81,7 +81,11 @@ export const DBProvider = ({ children }) => {
       createBackup: () => createBackup(db),
       restoreFromBackup: (entries: {
         stores: string[];
-        items: { store: string; data: unknown; id: number }[];
+        items: {
+          store: string;
+          data: { [key: string]: unknown };
+          id: number;
+        }[];
       }) => restoreFromBackup(db, entries),
       // BIO METRICS
       createBioMetric: (name: string) => createBioMetric(db, name),

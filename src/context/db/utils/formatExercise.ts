@@ -1,16 +1,14 @@
-import { DBExercise, Exercise } from '../types';
-
-const formatExercise = (data: DBExercise): Exercise => {
+const formatExercise = (data: { [key: string]: unknown }) => {
   // fix for legacy data
-  const musclesWorked = Array.isArray(data.musclesWorked)
+  const musclesWorked = Array.isArray(data?.musclesWorked)
     ? data.musclesWorked
-    : !data.musclesWorked
+    : !data?.musclesWorked
     ? []
     : [data.musclesWorked];
 
-  const secondaryMusclesWorked = Array.isArray(data.secondaryMusclesWorked)
+  const secondaryMusclesWorked = Array.isArray(data?.secondaryMusclesWorked)
     ? data.secondaryMusclesWorked
-    : !data.secondaryMusclesWorked
+    : !data?.secondaryMusclesWorked
     ? []
     : [data.secondaryMusclesWorked];
 

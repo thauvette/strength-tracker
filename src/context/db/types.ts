@@ -44,17 +44,17 @@ export interface MuscleGroup {
 //   }[];
 // }
 // Exercises
-export interface DBExercise {
-  created: number;
-  updated?: number;
-  name: string;
-  primaryGroup: number;
-  musclesWorked: number[];
-  secondaryMusclesWorked: number[];
-  type: string;
-  barWeight: number;
-  id: number;
-}
+// export interface DBExercise {
+//   created: number;
+//   updated?: number;
+//   name: string;
+//   primaryGroup: number;
+//   musclesWorked: number[];
+//   secondaryMusclesWorked: number[];
+//   type: string;
+//   barWeight: number;
+//   id: number;
+// }
 export interface Exercise {
   barWeight?: number | undefined;
   created?: number | undefined;
@@ -191,12 +191,12 @@ export interface IDBContext {
   createCycle: (data: unknown) => Promise<unknown>;
   updateWendlerItem: ({ id, path, value }) => Promise<unknown>;
   // SETS
-  createOrUpdateLoggedSet: (id: number, data: Set) => Promise<Set>;
+  createOrUpdateLoggedSet: (id: number, data: Set) => Promise<DbStoredSet>;
   deleteLoggedSet: (id: number) => Promise<boolean>;
   getTodaySets: () => Promise<AugmentedDataSet[]>;
   getSetsByDay: (date: Date) => Promise<AugmentedDataSet[]>;
   getSetsByDateRange: (start: Date, end: Date) => Promise<AugmentedDataSet[]>;
-  getDataAndAugmentSet: (set: DbStoredSet) => Promise<AugmentedDataSet[]>;
+  getDataAndAugmentSet: (set: DbStoredSet) => Promise<AugmentedDataSet>;
   // EXERCISES
   getExerciseOptions: () => Promise<{
     [key: string]: MuscleGroup & {
@@ -208,7 +208,14 @@ export interface IDBContext {
   getAugmentedExercise: (id: number) => Promise<AugmentedExercise>;
   // SYNC
   createBackup: () => void;
-  restoreFromBackup: (entries: unknown) => Promise<unknown>;
+  restoreFromBackup: (entries: {
+    stores: string[];
+    items: {
+      store: string;
+      data: { [key: string]: unknown };
+      id: number;
+    }[];
+  }) => Promise<unknown>;
   // BIO METRICS
   createBioMetric: (name: string) => Promise<BioMetric>;
   getAllBioById: (id: number) => Promise<unknown>;

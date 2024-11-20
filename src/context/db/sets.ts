@@ -38,7 +38,7 @@ const allowedFields = [
   'weight',
 ];
 
-const formatSet = (set: Partial<DbStoredSet>) => {
+export const formatSet = (set: Partial<DbStoredSet>) => {
   const isWarmUp =
     typeof set.isWarmUp === 'string' ? set.isWarmUp === 'true' : !!set.isWarmUp;
   return pick(
@@ -50,7 +50,7 @@ const formatSet = (set: Partial<DbStoredSet>) => {
   );
 };
 
-const fillSet = (
+export const fillSet = (
   set: Partial<DbStoredSet & { id?: number | null }>,
 ): DbStoredSet & { id: number | null } => ({
   created: set.created,
