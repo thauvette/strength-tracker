@@ -12,7 +12,6 @@ import LogHeader from '../components/logs/logHeader';
 import { AugmentedDataSet, HydratedBioEntry } from '../context/db/types';
 import Modal from '../components/modal/Modal';
 import LogsCalendar from '../components/LogsCalendar/LogsCalendar';
-import { getAugmentedExercise } from '../context/db/exercises';
 
 interface Props {
   date?: string;

@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 
 interface Props {
   id: number;
-  data: unknown;
 }
 
 interface State {
