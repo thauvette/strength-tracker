@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { useState } from 'preact/hooks';
 import Accordion from '../accordion/accordion';
 import { HydratedSet } from '../../context/db/types';
+import useDayHistoryContext from '../../context/dayHistoryModalContext';
 
 interface Props {
   // TODO: exerciseHistory interface needs to be declared in that hook.
@@ -12,45 +13,63 @@ interface Props {
   };
 }
 
-const StatsByWeight = ({ exerciseHistory }: Props) => {
-  const [sortBy, setSortBy] = useState<'best' | 'date'>('best');
-  const setAnalysis = Object.entries(exerciseHistory?.items || {}).reduce(
-    (obj, [day, sets]) => {
-      const setsByWeight = sets.reduce((setObj, set) => {
-        if (set.isWarmUp) {
-          return setObj;
-        }
-        const current = setObj[set.weight];
-        const currentSets = current?.sets || [];
-        currentSets.push(set);
-        const reps = currentSets.map((set) => set.reps);
-        const minReps = Math.min(...reps);
-        return {
-          ...setObj,
-          [set.weight]: {
-            ...(current || {}),
-            weight: set.weight,
-            sets: currentSets,
-            minReps,
-            maxReps: Math.max(...reps),
-            totalReps: set.reps + (current?.totalReps || 0),
-            date: day,
-            totalVolume: currentSets.reduce((num, { weight, reps }) => {
-              return num + weight * reps;
-            }, 0),
-          },
-        };
-      }, {});
-      Object.entries(setsByWeight || {}).forEach(([weight, stats]) => {
-        const current = obj[weight] || [];
-        current.push(stats);
-        obj[weight] = current;
-      });
+interface AnalysisDay {
+  weight: number;
+  date: string;
+  minReps: number;
+  maxReps: number;
+  totalReps: number;
+  totalVolume: number;
+  sets: HydratedSet[];
+}
 
-      return obj;
-    },
-    {},
-  );
+interface SetAnalysis {
+  [key: string]: AnalysisDay[];
+}
+
+const StatsByWeight = ({ exerciseHistory }: Props) => {
+  const { showDayHistory } = useDayHistoryContext();
+
+  const [sortBy, setSortBy] = useState<'best' | 'date'>('best');
+
+  const setAnalysis: SetAnalysis = Object.entries(
+    exerciseHistory?.items || {},
+  ).reduce((obj: SetAnalysis, [day, sets]) => {
+    const setsByWeight = sets.reduce<{
+      [key: string]: AnalysisDay;
+    }>((setObj, set) => {
+      if (set.isWarmUp) {
+        return setObj;
+      }
+      const current = setObj[set.weight];
+      const currentSets = current?.sets || [];
+      currentSets.push(set);
+      const reps = currentSets.map((set) => set.reps);
+      const minReps = Math.min(...reps);
+      return {
+        ...setObj,
+        [set.weight]: {
+          ...(current || {}),
+          weight: set.weight,
+          sets: currentSets,
+          minReps,
+          maxReps: Math.max(...reps),
+          totalReps: set.reps + (current?.totalReps || 0),
+          date: day,
+          totalVolume: currentSets.reduce((num: number, { weight, reps }) => {
+            return num + weight * reps;
+          }, 0),
+        },
+      };
+    }, {});
+    Object.entries(setsByWeight).forEach(([weight, stats]) => {
+      const current = obj[weight] || [];
+      current.push(stats);
+      obj[weight] = current;
+    });
+
+    return obj;
+  }, {});
 
   const orderedKeys = Object.keys(setAnalysis).sort((a, b) => +b - +a);
 
@@ -64,12 +83,12 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
           }
           return dayjs(next.date).isBefore(dayjs(current.date)) ? -1 : 1;
         });
-        const best = sortedData.reduce((obj, day) => {
+        const best: AnalysisDay = sortedData.reduce<AnalysisDay>((obj, day) => {
           if (!obj.totalVolume || day.totalVolume > obj.totalVolume) {
             return day;
           }
           return obj;
-        }, {});
+        }, sortedData[0]);
         const text = best
           ? `Best: ${best.sets.length} sets @ ${best.minReps}+ reps`
           : null;
@@ -111,16 +130,20 @@ const StatsByWeight = ({ exerciseHistory }: Props) => {
                   ? sortedData.map((data) => (
                       <div key={data.date} class="p-2">
                         <div class="flex justify-between">
-                          <p class="font-bold">
+                          <button
+                            class="font-bold"
+                            onClick={() => showDayHistory(data.date)}
+                            className={'text-left underline pl-0'}
+                          >
                             {dayjs(data.date).format("MMM DD 'YY")}
-                          </p>
+                          </button>
                           <p>vol: {data.totalVolume}</p>
                         </div>
                         <p>
                           {data.sets.length} sets{' @ '}
                           {data.sets.map(({ reps }) => reps).join(', ')}
                           {' for '}
-                          {data.totalReps} reps
+                          {data.totalReps} total reps
                           <br />
                         </p>
                       </div>

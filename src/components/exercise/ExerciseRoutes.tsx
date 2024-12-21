@@ -15,9 +15,9 @@ import { SimpleSet } from '../../types/types';
 interface Props {
   id: number;
   exercise: Exercise;
-  getExerciseDeatils: () => void;
+  getExerciseDetails: () => void;
 }
-const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
+const ExerciseRoutes = ({ id, exercise, getExerciseDetails }: Props) => {
   const { exerciseHistory, getData, savedSet, setSavedSet, isLoading } =
     useExerciseHistory(id);
   const { updatePlanedSets, getPlannedSets, addToRoutine } =
@@ -93,7 +93,7 @@ const ExerciseRoutes = ({ id, exercise, getExerciseDeatils }: Props) => {
         component={EditExercise}
         exercise={exercise}
         onEdit={() => {
-          getExerciseDeatils();
+          getExerciseDetails();
           void getData();
         }}
         id={+id}

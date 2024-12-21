@@ -33,7 +33,7 @@ const ExerciseHistory = ({
               reuseCta={reuseCta}
               volume={volume}
               previousVolume={previousVolume}
-              openByDefault={!index}
+              openByDefault={index < 3}
             />
           );
         })

@@ -23,7 +23,7 @@ const Exercise = ({ id, remaining_path }) => {
     error: null,
   });
 
-  const getExerciseDeatils = async () => {
+  const getExerciseDetails = async () => {
     let error = null;
     let data = null;
 
@@ -42,7 +42,7 @@ const Exercise = ({ id, remaining_path }) => {
     });
   };
 
-  useOnMount(getExerciseDeatils);
+  useOnMount(getExerciseDetails);
 
   const { data: exercise, error, loading } = exerciseState;
   if (error) {
@@ -65,7 +65,7 @@ const Exercise = ({ id, remaining_path }) => {
     updateEntry(objectStores.exercises, id, {
       isFavorite: !exercise?.isFavorite,
     }).finally(() => {
-      void getExerciseDeatils();
+      void getExerciseDetails();
     });
   };
 
@@ -93,7 +93,7 @@ const Exercise = ({ id, remaining_path }) => {
       <ExerciseRoutes
         id={+id}
         exercise={exercise}
-        getExerciseDeatils={getExerciseDeatils}
+        getExerciseDetails={getExerciseDetails}
       />
     </div>
   );
