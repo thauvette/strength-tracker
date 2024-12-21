@@ -1,4 +1,6 @@
 // BIO METRICS
+import { RoutineSet } from '../../types/types';
+
 export interface BioMetric {
   name: string;
   created?: Date;
@@ -11,12 +13,8 @@ export interface BioEntry {
   value: number;
 }
 
-export interface HydradedBioEntry extends BioEntry {
+export interface HydratedBioEntry extends BioEntry {
   name: string;
-}
-
-export interface BioEntriesResponse {
-  [key: number]: BioEntry;
 }
 
 // MUSCLE GROUPS
@@ -24,20 +22,39 @@ export interface MuscleGroup {
   name: string;
   isPrimary: 0 | 1;
   parentGroup: number | null;
-}
-export interface HydratedMuscleGroup {
-  name: string;
-  isPrimary: 0 | 1;
-  parentGroup: number | null;
   id: number;
-  secondaryGroups: {
+  secondaryGroups?: {
     name: string;
-    id: number;
     isPrimary: 0 | 1;
     parentGroup: number;
+    id: number;
   }[];
 }
+
+// export interface HydratedMuscleGroup {
+//   name: string;
+//   isPrimary: 0 | 1;
+//   parentGroup: number | null;
+//   id: number;
+//   secondaryGroups: {
+//     name: string;
+//     id: number;
+//     isPrimary: 0 | 1;
+//     parentGroup: number;
+//   }[];
+// }
 // Exercises
+// export interface DBExercise {
+//   created: number;
+//   updated?: number;
+//   name: string;
+//   primaryGroup: number;
+//   musclesWorked: number[];
+//   secondaryMusclesWorked: number[];
+//   type: string;
+//   barWeight: number;
+//   id: number;
+// }
 export interface Exercise {
   barWeight?: number | undefined;
   created?: number | undefined;
@@ -48,7 +65,24 @@ export interface Exercise {
   primaryGroup: number;
   secondaryMusclesWorked: number[];
   type: string;
-  updated: number | undefined;
+  updated?: number;
+  id: number;
+}
+
+// replace AugmentedExercise with AugmentedDataSet
+export interface AugmentedExercise {
+  barWeight?: number;
+  created?: number;
+  id: number;
+  musclesWorked: MuscleGroup[];
+  name: string;
+  primaryGroup: number;
+  primaryGroupData: MuscleGroup;
+  primaryMuscleIds: number[];
+  secondaryMuscleIds: number[];
+  secondaryMusclesWorked: MuscleGroup[];
+  type: string;
+  updated?: number;
 }
 
 export interface ExerciseHistory {
@@ -63,13 +97,39 @@ export interface ExerciseHistory {
   };
   secondaryMusclesWorked: MuscleGroup[];
   type: string;
-  updated: number;
+  updated?: number;
   items: SetType[];
 }
 
-export interface ExerciseOptions extends MuscleGroup {
-  id: number;
-  items: Exercise[];
+export interface Set {
+  reps: number;
+  weight: number;
+  exercise: number;
+  isWarmUp: boolean;
+  note?: string;
+}
+
+export interface DbStoredSet {
+  reps: number;
+  weight: number;
+  created: number;
+  exercise: number;
+  updated?: number;
+  isWarmUp?: boolean;
+  note?: string;
+}
+
+export interface AugmentedDataSet extends DbStoredSet {
+  barWeight: number;
+  exerciseData: Exercise;
+  musclesWorked: number[];
+  name: string;
+  primaryGroup: number;
+  primaryMuscleGroup: MuscleGroup;
+  primaryMuscles: MuscleGroup[];
+  secondaryMuscles: MuscleGroup[];
+  secondaryMusclesWorked: number[];
+  type: string;
 }
 
 export interface SetType {
@@ -86,7 +146,6 @@ export interface SetType {
 export interface HydratedSet extends SetType {
   bw?: number;
   exerciseData: Exercise;
-  id: number;
   name?: string;
   exerciseName?: string;
   barWeight?: number;
@@ -104,116 +163,97 @@ export interface LogsSet extends HydratedSet {
   type: string;
 }
 
-export interface Fast {
-  created: number;
-  start: number;
-  end: number;
-  updated: number;
+export interface RoutineDay {
+  id: string;
+  name: string;
+  sets: RoutineSet[];
 }
-
 export interface CreateRoutineBody {
   name: string;
-  days: {
-    id: string;
-    name: string;
-    sets: {
-      id: string;
-      exercise: number;
-      reps: number;
-      weight: number;
-    }[];
-  };
+  days: RoutineDay[];
 }
 
-export interface Routine {
+export interface Routine extends CreateRoutineBody {
   created: number;
-  name: string;
   id: number;
-  days: {
-    id: string;
-    name: string;
-    sets: {
-      exercise: number;
-      exerciseName: string;
-      id?: number;
-      routineSetId?: string;
-      reps: number;
-      weight: number;
-      barWeight: number;
-    }[];
-  }[];
 }
 
 export interface ObjectStoreEvent extends Event {
   target: IDBRequest;
 }
-// TODO: add wendler cycle to this.
-export type DbStoreTypes =
-  | BioEntry
-  | BioMetric
-  | Exercise
-  | Fast
-  | MuscleGroup
-  | Routine
-  | SetType;
 
-// TODO: fix the anys and unknowns
+// TODO: fix the any's and unknowns
 export interface IDBContext {
   isInitialized: boolean;
   // WENDLER
   getWendlerCycle: (id: string) => Promise<unknown>;
   getWendlerExercises: () => Promise<unknown>;
-  createCycle: (data) => Promise<unknown>;
+  createCycle: (data: unknown) => Promise<unknown>;
   updateWendlerItem: ({ id, path, value }) => Promise<unknown>;
   // SETS
-  createOrUpdateLoggedSet: (
-    id: number,
-    data: {
-      exercise: number;
-      reps: number;
-      weight: number;
-      isWarmUp?: boolean;
-      notes?: string;
-    },
-  ) => Promise<HydratedSet>;
-  deleteLoggedSet: (id) => Promise<boolean>;
-  getTodaySets: () => Promise<LogsSet[]>;
-  getSetsByDay: (date: Date) => Promise<LogsSet[]>;
-  getSetsByDateRange: (start: Date, end: Date) => Promise<LogsSet[]>;
+  createOrUpdateLoggedSet: (id: number, data: Set) => Promise<DbStoredSet>;
+  deleteLoggedSet: (id: number) => Promise<boolean>;
+  getTodaySets: () => Promise<AugmentedDataSet[]>;
+  getSetsByDay: (date: Date) => Promise<AugmentedDataSet[]>;
+  getSetsByDateRange: (start: Date, end: Date) => Promise<AugmentedDataSet[]>;
+  getDataAndAugmentSet: (set: DbStoredSet) => Promise<AugmentedDataSet>;
   // EXERCISES
   getExerciseOptions: () => Promise<{
     [key: string]: MuscleGroup & {
       items: Exercise[];
     };
   }>;
-  getExerciseHistoryById: (id) => Promise<ExerciseHistory>;
-  getExercise: (id: number) => Promise<unknown>;
+  getExerciseHistoryById: (id: number) => Promise<ExerciseHistory>;
+  getExercise: (id: number) => Promise<Exercise>;
+  getAugmentedExercise: (id: number) => Promise<AugmentedExercise>;
   // SYNC
   createBackup: () => void;
-  restoreFromBackup: (entries) => Promise<unknown>;
+  restoreFromBackup: (entries: {
+    stores: string[];
+    items: {
+      store: string;
+      data: { [key: string]: unknown };
+      id: number;
+    }[];
+  }) => Promise<unknown>;
   // BIO METRICS
-  createBioMetric: (name) => Promise<BioMetric>;
-  getAllBioById: (id) => Promise<unknown>;
+  createBioMetric: (name: string) => Promise<BioMetric>;
+  getAllBioById: (id: number) => Promise<unknown>;
   getBioEntriesByDateRange: (
     startDate: string,
     endDate: string,
-  ) => Promise<HydradedBioEntry[]>;
+  ) => Promise<HydratedBioEntry[]>;
   // MUSCLES
-  getMuscleGroups: () => Promise<unknown>;
+  getMuscleGroups: () => Promise<{
+    [key: string]: MuscleGroup;
+  }>;
   // ROUTINES
   getRoutines: () => Promise<Routine[]>;
-  getRoutine: (id: number) => Promise<unknown>;
-  createRoutine: (data) => Promise<unknown>;
-  updateRoutine: (id, data) => Promise<unknown>;
-  updateSingleRoutineSet: (id, dayId, set) => Promise<unknown>;
-  duplicateRoutine: (id) => Promise<{
+  getRoutine: (id: number) => Promise<Routine>;
+  createRoutine: (data: CreateRoutineBody) => Promise<{
+    data: Routine;
+    id: number;
+  }>;
+  updateRoutine: (
+    id: number,
+    data: Partial<Routine>,
+  ) => Promise<{
+    id: number;
+    data: Routine;
+  }>;
+  updateSingleRoutineSet: (
+    id: number,
+    dayId: string,
+    set: Set,
+  ) => Promise<unknown>;
+  duplicateRoutine: (id: number) => Promise<{
     data: Routine;
     id: number;
   }>;
   // GENERIC + ENTRIES
-  getItem: (store, id) => Promise<unknown>;
+  getItem: (store: string, id: number) => Promise<unknown>;
   getAllEntries: <Type>(store: string) => Promise<{ [key: string]: Type }>;
   deleteEntry: (store: string, id: number) => Promise<unknown>;
-  createEntry: (store, data) => Promise<unknown>;
-  updateEntry: (store, id, data) => Promise<unknown>;
+  createEntry: (store: string, data: unknown) => Promise<unknown>;
+  updateEntry: (store: string, id: number, data: unknown) => Promise<unknown>;
 }

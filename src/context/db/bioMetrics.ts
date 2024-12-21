@@ -1,11 +1,11 @@
-import get from 'lodash.get';
+import { get } from 'lodash';
 import dayjs from 'dayjs';
 import { objectStores } from './config';
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils';
 import {
   BioEntry,
   BioMetric,
-  HydradedBioEntry,
+  HydratedBioEntry,
   ObjectStoreEvent,
 } from './types';
 
@@ -100,7 +100,7 @@ export const getBioEntriesByDateRange = async (
   db,
   startDate,
   endDate,
-): Promise<HydradedBioEntry[]> => {
+): Promise<HydratedBioEntry[]> => {
   try {
     const bioMetrics: { [key: string]: BioMetric } = await getFromCursor(
       db,

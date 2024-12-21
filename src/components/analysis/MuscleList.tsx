@@ -68,9 +68,9 @@ const MuscleList = ({ title, data, workingSets }: Props) => {
               containerClass="card mb-2"
               title={
                 <p>
-                  {`${group.name} ${group.sets.length} sets (${sets?.working.length}
+                  {`${group.name} ${group.sets.length} sets (${sets.working.length}
               working)`}{' '}
-                  - {formatToFixed((group.sets.length / workingSets) * 100)}%
+                  - {formatToFixed((sets.working.length / workingSets) * 100)}%
                 </p>
               }
             >

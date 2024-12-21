@@ -15,12 +15,12 @@ import { MuscleGroup } from '../../context/db/types';
 interface Props {
   initialValues: {
     name?: string;
-    primaryGroup: number;
-    musclesWorked: number[];
-    secondaryMusclesWorked: number[];
-    notes: string;
+    primaryGroup?: number;
+    musclesWorked?: number[];
+    secondaryMusclesWorked?: number[];
+    notes?: string;
     barWeight?: number;
-    exerciseType: string;
+    exerciseType?: string;
   };
   title?: string;
   id?: number;

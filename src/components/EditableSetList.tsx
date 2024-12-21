@@ -6,24 +6,14 @@ import { useCallback, useState } from 'preact/hooks';
 import Icon from './icon/Icon';
 import AnimateHeight from 'react-animate-height';
 import generateRandomId from '../utilities.js/generateRandomId';
+import { RoutineSet } from '../types/types';
 
-export type Set = {
-  reps: number;
-  weight: number;
-  isWarmUp: boolean;
-  id: string;
-  exerciseId: number;
-  exerciseName: string;
-  musclesWorked?: number[];
-  secondaryMusclesWorked?: number[];
-  // TODO: include notes in routine sets
-};
 interface Props {
-  sets: Set[];
-  setSets: (sets: Set[]) => void;
+  sets: RoutineSet[];
+  setSets: (sets: RoutineSet[]) => void;
 }
 
-const OrderItem = ({ set }: { set: Set }) => {
+const OrderItem = ({ set }: { set: RoutineSet }) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   return (
@@ -55,10 +45,10 @@ const SetItem = ({
   handleEditSet,
   handleDuplicateSet,
 }: {
-  set: Set;
+  set: RoutineSet;
   handleRemove: (id: string) => void;
-  handleEditSet: (set: Set) => void;
-  handleDuplicateSet: (set: Set) => void;
+  handleEditSet: (set: RoutineSet) => void;
+  handleDuplicateSet: (set: RoutineSet) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -67,8 +57,8 @@ const SetItem = ({
   }, [isOpen]);
 
   const removeSet = useCallback(() => {
-    handleRemove(set.id);
-  }, [set.id, handleRemove]);
+    handleRemove(set.routineSetId);
+  }, [set.routineSetId, handleRemove]);
 
   return (
     <div>
@@ -131,22 +121,26 @@ const SetItem = ({
 
 const EditableSetList = ({ sets, setSets }: Props) => {
   const [isReordering, setIsReordering] = useState(false);
-  const handleEditSet = (set: Set) => {
+  const handleEditSet = (set: RoutineSet) => {
     setSets(
-      sets.map((currentSet) => (set.id === currentSet.id ? set : currentSet)),
+      sets.map((currentSet) =>
+        set.routineSetId === currentSet.routineSetId ? set : currentSet,
+      ),
     );
   };
 
   const handleRemoveSet = (id: string) => {
-    setSets(sets.filter((set) => set.id !== id));
+    setSets(sets.filter((set) => set.routineSetId !== id));
   };
 
-  const handleDuplicateSet = (duplicate) => {
+  const handleDuplicateSet = (duplicate: RoutineSet) => {
     const current = [...sets];
-    const index = sets.findIndex((set) => set.id === duplicate.id);
+    const index = sets.findIndex(
+      (set) => set.routineSetId === duplicate.routineSetId,
+    );
     current.splice(index + 1, 0, {
       ...duplicate,
-      id: generateRandomId(),
+      routineSetId: generateRandomId(),
     });
     setSets(current);
   };
@@ -179,7 +173,7 @@ const EditableSetList = ({ sets, setSets }: Props) => {
                   style={{ position: 'relative' }}
                 >
                   {sets.map((item) => (
-                    <OrderItem set={item} key={item.id} />
+                    <OrderItem set={item} key={item.routineSetId} />
                   ))}
                 </Reorder.Group>
               </div>
@@ -188,7 +182,7 @@ const EditableSetList = ({ sets, setSets }: Props) => {
                 {sets.map((item) => (
                   <SetItem
                     set={item}
-                    key={item.id}
+                    key={item.routineSetId}
                     handleEditSet={handleEditSet}
                     handleRemove={handleRemoveSet}
                     handleDuplicateSet={handleDuplicateSet}

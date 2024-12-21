@@ -85,7 +85,7 @@ const RoutineList = ({ navigateToEdit }) => {
             <button
               class="warning flex-1"
               onClick={() => {
-                deleteRoutine(markedRoutineId);
+                void deleteRoutine(markedRoutineId);
                 setMarkedRoutineId(null);
               }}
             >

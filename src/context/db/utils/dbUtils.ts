@@ -29,8 +29,14 @@ export function getFromCursor<Type>(
       if (cursor) {
         results[cursor.key] =
           store === objectStores.exercises
-            ? formatExercise(cursor.value)
-            : cursor.value;
+            ? formatExercise({
+                ...cursor.value,
+                id: +cursor.key,
+              })
+            : {
+                ...cursor.value,
+                id: +cursor.key,
+              };
         cursor.continue();
       }
     };
@@ -63,7 +69,10 @@ export const getItem = <Type>(
     };
     request.onsuccess = (event: ObjectStoreEvent) => {
       if (event.target.result) {
-        resolve(event.target.result);
+        resolve({
+          ...event.target.result,
+          id,
+        });
       } else {
         reject('not found');
       }

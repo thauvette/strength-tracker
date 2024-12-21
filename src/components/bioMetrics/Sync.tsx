@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 
 interface Props {
   id: number;
-  data: unknown;
 }
 
 interface State {
@@ -167,8 +166,7 @@ const Sync = ({ id }: Props) => {
           return `${key},${data?.average || ''}`;
         })
         .join('\n');
-      const averagesCsv = `date,average ${state.data.name}\n${averagesData}`;
-      return averagesCsv;
+      return `date,average ${state.data.name}\n${averagesData}`;
     }
 
     const headers = ['date', state.data.name].join(',');
@@ -191,8 +189,9 @@ const Sync = ({ id }: Props) => {
 
   const handleExport = () => {
     const data = renderDownLoadData();
-    const href = `data:text/csv;charset=utf-8, ${encodeURI(data)}`;
-    downloadBtnRef.current.href = href;
+    downloadBtnRef.current.href = `data:text/csv;charset=utf-8, ${encodeURI(
+      data,
+    )}`;
     downloadBtnRef.current.download = `${state.data.name}${
       exportType === 'averages' ? ' (averages)' : ''
     } export`;

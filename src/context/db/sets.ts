@@ -1,69 +1,96 @@
 import dayjs from 'dayjs';
+import { pick } from 'lodash';
 import { objectStores } from './config';
 import { getFromCursor, openObjectStoreTransaction } from './utils/dbUtils';
 import {
+  AugmentedDataSet,
+  DbStoredSet,
   Exercise,
-  HydratedSet,
-  LogsSet,
+  Set,
   MuscleGroup,
   SetType,
 } from './types.js';
 
-const fireSetsChangeEvent = (name, set) => {
+const fireSetsChangeEvent = (
+  name: string,
+  set: DbStoredSet | { id: number },
+) => {
   const customEvent = new CustomEvent(name, {
     detail: set,
   });
   dispatchEvent(customEvent);
 };
-export const fireSetRemovedEvent = (set) => {
+export const fireSetRemovedEvent = (set: { id: number }) => {
   fireSetsChangeEvent('dbSetRemoved', set);
 };
 
-const fireSetAddedEvent = (set) => {
+const fireSetAddedEvent = (set: DbStoredSet) => {
   fireSetsChangeEvent('dbSetAdded', set);
 };
 
-const formatSet = (set) => {
+const allowedFields = [
+  'created',
+  'exercise',
+  'isWarmUp',
+  'note',
+  'reps',
+  'updated',
+  'weight',
+];
+
+export const formatSet = (set: Partial<DbStoredSet>) => {
   const isWarmUp =
     typeof set.isWarmUp === 'string' ? set.isWarmUp === 'true' : !!set.isWarmUp;
-  return {
-    ...set,
-    isWarmUp,
-  };
+  return pick(
+    {
+      ...set,
+      isWarmUp,
+    },
+    allowedFields,
+  );
 };
 
-export const createOrUpdateLoggedSet = (
+export const fillSet = (
+  set: Partial<DbStoredSet & { id?: number | null }>,
+): DbStoredSet & { id: number | null } => ({
+  created: set.created,
+  exercise: set.exercise,
+  isWarmUp: !!set.isWarmUp,
+  note: set.note ?? '',
+  reps: set.reps ?? 0,
+  updated: set.updated,
+  weight: set.weight ?? 0,
+  id: set.id ?? null,
+});
+
+export const createOrUpdateLoggedSet = async (
   db: IDBDatabase,
   id: number,
-  data: {
-    exercise: number;
-    reps: number;
-    weight: number;
-    isWarmUp?: boolean;
-    notes?: string;
-  },
-): Promise<HydratedSet> =>
+  data: Partial<Set>,
+): Promise<DbStoredSet> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
     if (!id) {
-      const addRequest = objectStore.add({
+      const created = new Date().getTime();
+      const reqBody = formatSet({
         ...data,
-        exercise: +data.exercise,
-        created: new Date().getTime(),
+        reps: data.reps,
+        weight: data.weight,
+        exercise: data.exercise,
+        isWarmUp: !!data.isWarmUp,
+        note: data.note ?? '',
+        created,
       });
+      const addRequest = objectStore.add(reqBody);
       addRequest.onerror = (e) => console.warn(e);
       addRequest.onsuccess = (event) => {
         if (event.target instanceof IDBRequest) {
           const result = {
-            ...data,
-            exercise: +data.exercise,
-            created: new Date().getTime(),
+            ...reqBody,
             id: event?.target?.result,
           };
-          return getDataAndAugmentSet(db, result).then((res) => {
-            fireSetAddedEvent(res);
-            return resolve(res);
-          });
+          fireSetAddedEvent(fillSet(result));
+          return resolve(fillSet(result));
         }
       };
     } else {
@@ -72,11 +99,11 @@ export const createOrUpdateLoggedSet = (
         if (!request.result) {
           reject(new Error('unable to find entry'));
         }
-        const newValue = {
+        const newValue = formatSet({
           ...request.result,
           ...data,
           updated: new Date().getTime(),
-        };
+        });
         const requestUpdate = objectStore.put(newValue, +id);
         requestUpdate.onerror = () => reject('unable to update entry');
 
@@ -84,17 +111,18 @@ export const createOrUpdateLoggedSet = (
         requestUpdate.onsuccess = (e) => {
           if (e.target instanceof IDBRequest) {
             const result = { ...newValue, id: e?.target?.result };
-            return getDataAndAugmentSet(db, result).then((res) => {
-              fireSetAddedEvent(res);
-              return resolve(res);
-            });
+            fireSetAddedEvent(fillSet(result));
+            return resolve(fillSet(result));
           }
         };
       };
     }
   });
 
-export const deleteLoggedSet = (db, id): Promise<boolean> =>
+export const deleteLoggedSet = (
+  db: IDBDatabase,
+  id: number,
+): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
     const deleteRequest = objectStore.delete(id);
@@ -107,7 +135,7 @@ export const deleteLoggedSet = (db, id): Promise<boolean> =>
     };
   });
 
-const getDataAndAugmentSet = (db, set) =>
+export const getDataAndAugmentSet = (db: IDBDatabase, set: DbStoredSet) =>
   Promise.all([
     getFromCursor(db, objectStores.exercises).catch((err) =>
       console.warn(err),
@@ -120,10 +148,10 @@ const getDataAndAugmentSet = (db, set) =>
   );
 
 const augmentSetData = (
-  set: SetType,
+  set: DbStoredSet,
   exercises: { [key: string]: Exercise },
   muscleGroups: { [key: string]: MuscleGroup },
-) => {
+): AugmentedDataSet => {
   const exercise = exercises?.[set?.exercise];
   const primaryMuscles = exercise?.musclesWorked?.map(
     (id) => muscleGroups?.[id],
@@ -147,11 +175,11 @@ const augmentSetData = (
   };
 };
 
-export const getSetsByDateRange = (
+export const getSetsByDateRange = async (
   db: IDBDatabase,
   startDate: Date,
   endDate: Date,
-): Promise<LogsSet[]> => {
+): Promise<AugmentedDataSet[]> => {
   const getSets: Promise<SetType[]> = new Promise((resolve) => {
     const start = dayjs(startDate).startOf('day').toDate().getTime();
     const end = dayjs(endDate).endOf('day').toDate().getTime();
@@ -166,29 +194,25 @@ export const getSetsByDateRange = (
       if (event.target instanceof IDBRequest) {
         const cursor = event.target.result;
         if (cursor) {
-          results.push(formatSet(cursor.value));
+          results.push(cursor.value);
           cursor.continue();
         }
       }
     };
     transaction.oncomplete = () => resolve(results);
   });
-  return Promise.all([
-    getSets,
-    getFromCursor(db, objectStores.exercises).catch((err) =>
-      console.warn(err),
-    ) as Promise<{ [key: string]: Exercise }>,
-    getFromCursor(db, objectStores.muscleGroups).catch((err) =>
-      console.warn(err),
-    ) as Promise<{ [key: string]: MuscleGroup }>,
-  ]).then(([sets, exercises, muscleGroups]) => {
-    const result = sets.map((set) =>
-      augmentSetData(set, exercises, muscleGroups),
-    );
-    return result;
-  });
-};
-
-export const getSetsByDay = (db, day) => {
-  return getSetsByDateRange(db, day, day);
+  try {
+    const [sets, exercises, muscleGroups] = await Promise.all([
+      getSets,
+      getFromCursor(db, objectStores.exercises).catch((err) =>
+        console.warn(err),
+      ) as Promise<{ [key: string]: Exercise }>,
+      getFromCursor(db, objectStores.muscleGroups).catch((err) =>
+        console.warn(err),
+      ) as Promise<{ [key: string]: MuscleGroup }>,
+    ]);
+    return sets.map((set) => augmentSetData(set, exercises, muscleGroups));
+  } catch (err) {
+    console.warn(err);
+  }
 };

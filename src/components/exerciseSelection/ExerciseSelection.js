@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import uniqBy from 'lodash.uniqby';
+import { uniqBy } from 'lodash';
 import ButtonList from '../buttonList/ButtonList';
 import GroupList from './GroupList';
 import { useMemo } from 'preact/hooks';

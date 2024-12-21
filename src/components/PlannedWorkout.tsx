@@ -9,12 +9,12 @@ import Icon from './icon/Icon';
 import { routes } from '../config/routes';
 import useExerciseHistory from '../hooks/useExerciseHistory/useExerciseHistory';
 import useToast from '../context/toasts/Toasts';
-import { HydratedSet } from '../context/db/types';
+import { RoutineSet } from '../types/types';
 
 interface Props {
-  sets: HydratedSet[];
-  onSaveSet: (set: HydratedSet, index: number) => void;
-  onUpdateSet?: (set: HydratedSet, index: number) => void;
+  sets: RoutineSet[];
+  onSaveSet: (set: RoutineSet, index: number) => void;
+  onUpdateSet?: (set: RoutineSet, index: number) => void;
   showHistoryInSets?: boolean;
   showLinkToExercise?: boolean;
 }
@@ -43,7 +43,7 @@ const PlannedWorkout = ({
     exerciseModalState.id,
   );
 
-  const saveSet = (set, index) => {
+  const saveSet = (set: RoutineSet, index: number) => {
     setActiveSet(index + 1);
     onSaveSet(set, index);
     fireToast({
@@ -51,7 +51,7 @@ const PlannedWorkout = ({
     });
   };
 
-  const openExerciseModal = useCallback((id) => {
+  const openExerciseModal = useCallback((id: number) => {
     setExerciseModalState({
       id,
       isOpen: true,
@@ -133,7 +133,7 @@ const PlannedWorkout = ({
                             onClick={() => {
                               saveSet({ ...set, reps, weight, isWarmUp }, i);
                               if (exerciseHistory?.id === set?.exercise) {
-                                getData();
+                                void getData();
                               }
                             }}
                             class="primary w-full"

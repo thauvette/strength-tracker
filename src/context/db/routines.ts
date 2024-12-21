@@ -1,4 +1,4 @@
-import get from 'lodash.get';
+import { get } from 'lodash';
 import { objectStores } from './config';
 import {
   getFromCursor,
@@ -6,7 +6,8 @@ import {
   openObjectStoreTransaction,
 } from './utils/dbUtils';
 import { getExerciseById } from './exercises';
-import { Exercise, Routine } from './types.js';
+import { Exercise, Routine, RoutineDay } from './types.js';
+import { RoutineSet } from '../../types/types';
 
 export const createRoutine = (
   db: IDBDatabase,
@@ -30,7 +31,14 @@ export const createRoutine = (
     };
   });
 
-export const updateRoutine = (db, id, data) =>
+export const updateRoutine = (
+  db: IDBDatabase,
+  id: number,
+  data: Partial<Routine>,
+): Promise<{
+  data: Routine;
+  id: number;
+}> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(
       db,
@@ -52,13 +60,18 @@ export const updateRoutine = (db, id, data) =>
       // Success - the data is updated!
       requestUpdate.onsuccess = (e) => {
         if (e.target instanceof IDBRequest) {
-          return resolve({ ...newValue, id: e?.target?.result });
+          return resolve({ data: newValue, id: e?.target?.result });
         }
       };
     };
   });
 
-export const updateSingleRoutineSet = (db, id, dayId, set) =>
+export const updateSingleRoutineSet = (
+  db: IDBDatabase,
+  id: number,
+  dayId: string,
+  set: RoutineSet,
+) =>
   new Promise((_, reject) => {
     const { objectStore } = openObjectStoreTransaction(
       db,
@@ -71,13 +84,12 @@ export const updateSingleRoutineSet = (db, id, dayId, set) =>
       }
       const current = {
         ...request.result,
-        days: request.result?.days?.map((day) =>
+        days: request.result?.days?.map((day: RoutineDay) =>
           day.id === dayId
             ? {
                 ...day,
                 sets: day.sets?.map((currentSet) =>
-                  currentSet.routineSetId === set.routineSetId ||
-                  currentSet.id === set.routineSetId // legacy routines have id
+                  currentSet.routineSetId === set.routineSetId
                     ? {
                         exercise: set.exercise,
                         exerciseName: set.exerciseName,

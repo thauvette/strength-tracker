@@ -1,7 +1,7 @@
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { Route, Router } from 'preact-router';
-import set from 'lodash.set';
+import { set } from 'lodash';
 import useDB from '../context/db/db';
 import { objectStores } from '../context/db/config';
 import { routes } from '../config/routes.js';

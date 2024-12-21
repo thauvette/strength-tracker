@@ -46,9 +46,11 @@ const Exercise = ({ id, remaining_path }) => {
 
   const { data: exercise, error, loading } = exerciseState;
   if (error) {
-    <div class="flex justify-center">
-      <p>{exerciseState.error}</p>
-    </div>;
+    return (
+      <div class="flex justify-center">
+        <p>{exerciseState.error}</p>
+      </div>
+    );
   }
 
   if (loading) {
@@ -63,7 +65,7 @@ const Exercise = ({ id, remaining_path }) => {
     updateEntry(objectStores.exercises, id, {
       isFavorite: !exercise?.isFavorite,
     }).finally(() => {
-      getExerciseDeatils();
+      void getExerciseDeatils();
     });
   };
 

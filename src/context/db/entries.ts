@@ -1,27 +1,40 @@
-import { objectStores } from './config.ts';
+import { objectStores } from './config';
 import { fireSetRemovedEvent } from './sets';
-import { openObjectStoreTransaction } from './utils/dbUtils.ts';
+import { openObjectStoreTransaction } from './utils/dbUtils';
 
-export const getAllEntriesByKey = async (db, store, key, id) =>
+export const getAllEntriesByKey = async <Type>(
+  db: IDBDatabase,
+  store: string,
+  key: string,
+  id: number,
+): Promise<Type[]> =>
   new Promise((resolve) => {
     const { objectStore } = openObjectStoreTransaction(db, store);
-
     const index = objectStore.index(key);
     const keyRange = IDBKeyRange.only(+id);
     const cursorRequest = index.openCursor(keyRange);
-    const result = [];
+    const response = [];
     cursorRequest.onsuccess = function (event) {
-      const data = event?.target?.result?.value;
+      const target = event.target as IDBRequest<IDBCursorWithValue>;
+      const result = target.result;
+      const data = result?.value;
       if (data) {
-        result.push(data);
-        event?.target?.result.continue();
+        response.push({
+          ...data,
+          id: result.primaryKey,
+        });
+        result.continue();
       } else {
-        resolve(result);
+        resolve(response);
       }
     };
   });
 
-export const deleteEntry = (db, store, id) =>
+export const deleteEntry = (
+  db: IDBDatabase,
+  store: string,
+  id: number,
+): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const request = db
       .transaction([store], 'readwrite')
@@ -37,7 +50,12 @@ export const deleteEntry = (db, store, id) =>
       return reject('error deleting item');
     };
   });
-export const updateEntry = (db, store, id, data) =>
+export const updateEntry = <Type>(
+  db: IDBDatabase,
+  store: string,
+  id: number,
+  data: Type,
+): Promise<Type> =>
   new Promise((resolve, reject) => {
     const { objectStore } = openObjectStoreTransaction(db, store);
 
@@ -52,32 +70,47 @@ export const updateEntry = (db, store, id, data) =>
         updated: new Date().getTime(),
       };
       const requestUpdate = objectStore.put(newValue, +id);
-      requestUpdate.onerror = (err) =>
-        reject(err.message || 'unable to update entry');
+      requestUpdate.onerror = (err) => {
+        let message = 'unable to update entry';
+        if (err instanceof Error) {
+          message = err.message;
+        }
+        reject(message);
+      };
 
       // Success - the data is updated!
-      requestUpdate.onsuccess = (e) =>
-        resolve({ ...newValue, id: e.target.result });
+      requestUpdate.onsuccess = (event) => {
+        const target = event.target as IDBRequest<IDBCursorWithValue>;
+        resolve({ ...newValue, id: target.result });
+      };
     };
   });
 
-export const createEntry = (db, store, data) =>
+export const createEntry = <Type>(
+  db: IDBDatabase,
+  store: string,
+  data: Type,
+): Promise<Type> =>
   new Promise((resolve, reject) => {
     const { transaction, objectStore } = openObjectStoreTransaction(db, store);
     const request = objectStore.add({
       ...data,
       created: new Date().getTime(),
     });
-    request.onsuccess = (event) =>
+    request.onsuccess = (event) => {
+      const target = event.target as IDBRequest<IDBCursorWithValue>;
       resolve({
         ...data,
-        id: event.target.result,
+        id: target.result,
         created: new Date().getTime(),
       });
+    };
 
     transaction.onerror = function (err) {
-      // todo: Don't forget to handle errors!
-      console.warn(err, 'oops');
-      reject(new Error(err.message || 'unable to create item'));
+      let message = 'unable to create entry';
+      if (err instanceof Error) {
+        message = err.message;
+      }
+      reject(message);
     };
   });

@@ -2,20 +2,33 @@ import { h } from 'preact';
 import Icon from '../icon/Icon';
 import { Link } from 'preact-router';
 import { routes } from '../../config/routes';
-import EditableSetList, { Set as WorkoutSet } from '../EditableSetList';
+import EditableSetList from '../EditableSetList';
 import Accordion from '../accordion/accordion';
 import Body from '../async/body';
+import { RoutineSet } from '../../types/types';
+import useAugmentSetData from '../../hooks/useAugmentSetData';
 
 interface Props {
   routineName: string;
   setRoutineName: (name: string) => void;
-  days: { id: string; name: string; sets: WorkoutSet[] }[];
+  days: { id: string; name: string; sets: RoutineSet[] }[];
   updateDayName: (id: string, name: string) => void;
   removeDay: (id: string) => void;
   addDay: () => void;
-  updateDaySets: (id: string, sets: WorkoutSet[]) => void;
+  updateDaySets: (id: string, sets: RoutineSet[]) => void;
   submit: () => void;
 }
+
+const getUniqueExerciseIds = (days: Props['days']) => {
+  return days.reduce((arr, day) => {
+    day?.sets?.forEach(({ exercise }) => {
+      if (!arr.includes(exercise)) {
+        arr.push(exercise);
+      }
+    });
+    return arr;
+  }, []);
+};
 
 const CreateRoutineDayList = ({
   routineName,
@@ -27,22 +40,25 @@ const CreateRoutineDayList = ({
   updateDaySets,
   submit,
 }: Props) => {
-  const musclesWorked = days?.reduce(
-    (obj, day) => {
-      const activePrimary = [...obj.activePrimary];
-      const activeSecondary = [...obj.activeSecondary];
+  const exerciseIds = getUniqueExerciseIds(days);
+  const exerciseData = useAugmentSetData({ exerciseIds });
+  const musclesWorked = Object.values(exerciseData || {}).reduce<{
+    activePrimary: number[];
+    activeSecondary: number[];
+  }>(
+    (obj, item) => {
+      if (item?.data?.primaryMuscleIds) {
+        obj.activePrimary = obj.activePrimary.concat(
+          item.data.primaryMuscleIds,
+        );
+      }
+      if (item?.data?.secondaryMuscleIds) {
+        obj.activeSecondary = obj.activeSecondary.concat(
+          item.data.secondaryMuscleIds,
+        );
+      }
 
-      day.sets?.forEach(
-        ({ musclesWorked = [], secondaryMusclesWorked = [] }) => {
-          activePrimary.push(...musclesWorked);
-          activeSecondary.push(...secondaryMusclesWorked);
-        },
-      );
-
-      return {
-        activePrimary: Array.from(new Set(activePrimary)),
-        activeSecondary: Array.from(new Set(activeSecondary)),
-      };
+      return obj;
     },
     {
       activePrimary: [],
@@ -115,7 +131,7 @@ const CreateRoutineDayList = ({
           + Add a day
         </button>
       </div>
-      <div class="mx-auto max-w-[10rem] mx-auto">
+      <div class="mx-auto max-w-[10rem]">
         <Body {...musclesWorked} />
       </div>
       <div class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto">

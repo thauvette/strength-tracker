@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
-import get from 'lodash.get';
+import { get } from 'lodash';
 import useDB from '../../context/db/db.tsx';
 
 import Set from '../../components/wendler/Set';

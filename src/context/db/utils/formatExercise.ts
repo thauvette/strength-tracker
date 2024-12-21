@@ -1,16 +1,14 @@
-import { Exercise } from '../types';
-
-const formatExercise = (data): Exercise => {
+const formatExercise = (data: { [key: string]: unknown }) => {
   // fix for legacy data
-  const musclesWorked = Array.isArray(data.musclesWorked)
+  const musclesWorked = Array.isArray(data?.musclesWorked)
     ? data.musclesWorked
-    : !data.musclesWorked
+    : !data?.musclesWorked
     ? []
     : [data.musclesWorked];
 
-  const secondaryMusclesWorked = Array.isArray(data.secondaryMusclesWorked)
+  const secondaryMusclesWorked = Array.isArray(data?.secondaryMusclesWorked)
     ? data.secondaryMusclesWorked
-    : !data.secondaryMusclesWorked
+    : !data?.secondaryMusclesWorked
     ? []
     : [data.secondaryMusclesWorked];
 

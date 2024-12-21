@@ -96,20 +96,22 @@ const ExerciseHistoryDay = ({
               >
                 <p class="font-medium">View Day</p>
               </button>
-              <button
-                class="underline flex-1 btn primary text-sm"
-                onClick={() => {
-                  updatePlanedSet(
-                    items.map((set) => ({
-                      weight: set.weight,
-                      reps: set.reps,
-                      isWarmUp: set.isWarmUp,
-                    })),
-                  );
-                }}
-              >
-                {reuseCta || 'Repeat'}
-              </button>
+              {updatePlanedSet && (
+                <button
+                  className="underline flex-1 btn primary text-sm"
+                  onClick={() => {
+                    updatePlanedSet(
+                      items.map((set) => ({
+                        weight: set.weight,
+                        reps: set.reps,
+                        isWarmUp: set.isWarmUp,
+                      })),
+                    );
+                  }}
+                >
+                  {reuseCta || 'Repeat'}
+                </button>
+              )}
             </div>
           </div>
         </AnimateHeight>

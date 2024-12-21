@@ -9,7 +9,7 @@ const SetNoteForm = ({ text, onSave, id }) => {
 
   const save = async (e) => {
     e.preventDefault();
-    await createOrUpdateLoggedSet(id, { note });
+    await createOrUpdateLoggedSet(+id, { note });
     if (onSave) {
       onSave(note);
     }

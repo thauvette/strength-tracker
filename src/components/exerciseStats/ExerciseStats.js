@@ -10,7 +10,7 @@ const tabs = ['history', 'PRs', 'charts', 'weight'];
 
 const ExerciseStats = ({
   exerciseHistory,
-  onChangeSet,
+  onChangeSet = null,
   updatePlanedSet,
   reuseCta,
 }) => {

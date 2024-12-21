@@ -7,6 +7,7 @@ import {
   useCallback,
 } from 'preact/compat';
 import useToast from '../toasts/Toasts';
+import { RoutineSet } from '../../types/types';
 
 interface SessionState {
   plannedSet?: {
@@ -23,15 +24,6 @@ interface SessionContext {
   startRoutine: (sets: RoutineSet[]) => void;
   updatePlanedSet: (set: RoutineSet, index: number) => void;
   updatePlanedSets: (args: { id: number; sets: RoutineSet[] }) => void;
-}
-
-interface RoutineSet {
-  reps: number;
-  weight: number;
-  isWarmUp: boolean;
-  barWeight?: number;
-  exercise: number;
-  exerciseName: string;
 }
 
 const SessionDataContext = createContext<SessionContext | null>(null);

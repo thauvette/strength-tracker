@@ -1,6 +1,6 @@
 export const formatToFixed = (num) => {
   const value = +num;
-  if (!value || isNaN(value)) {
+  if (value === null || isNaN(value)) {
     return '';
   }
 

@@ -41,8 +41,8 @@ const Track = ({
             <div class="px-2">
               <button
                 class={'primary w-full'}
-                onClick={() => {
-                  submitNewSet({ weight, reps, isWarmUp });
+                onClick={async () => {
+                  await submitNewSet({ weight, reps, isWarmUp });
                 }}
               >
                 Save

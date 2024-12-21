@@ -2,9 +2,10 @@ import { h } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import ExerciseForm from '../exerciseForm/ExerciseForm';
 
-import useDB from '../../context/db/db.tsx';
-import ExercisesByGroup from './ExercisesByGroup';
-import ExerciseSelection from './ExerciseSelection';
+import useDB from '../../context/db/db';
+import ExercisesByGroup from './ExercisesByGroup.js';
+import ExerciseSelection from './ExerciseSelection.js';
+import { Exercise } from '../../context/db/types';
 
 const ExerciseSearch = ({ handleSelectExercise }) => {
   const { getExerciseOptions } = useDB();
@@ -20,21 +21,30 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
 
   const getOptions = () => {
     getExerciseOptions().then((res) => {
-      const startedExercises = Object.values(res || {}).reduce((arr, group) => {
-        group?.items?.forEach((item) => {
-          if (item.isFavorite) {
-            arr.push(item);
-          }
-        });
-        return arr;
-      }, []);
-      const result = {
+      const favoriteExercises = Object.values(res || {}).reduce(
+        (arr, group) => {
+          group?.items?.forEach((item) => {
+            if (item.isFavorite) {
+              arr.push(item);
+            }
+          });
+          return arr;
+        },
+        [],
+      );
+      const result: {
+        [p: string]: {
+          name: string;
+          items: Exercise[];
+          id: number | string;
+        };
+      } = {
         ...res,
       };
-      if (startedExercises?.length) {
+      if (favoriteExercises?.length) {
         result.starred = {
           name: 'Favorites',
-          items: startedExercises,
+          items: favoriteExercises,
           id: 'starred',
         };
       }
@@ -67,7 +77,7 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
         <ExerciseSelection
           allExercises={exerciseOptions}
           handleSelectExercise={handleSelectExercise}
-          handleSelectGroup={(id) => setActiveGroupId(id)}
+          handleSelectGroup={(id: string) => setActiveGroupId(id)}
           searchText={searchText}
         />
       );
@@ -101,12 +111,18 @@ const ExerciseSearch = ({ handleSelectExercise }) => {
             <label>
               <p>Search</p>
               <input
-                onInput={(e) => setSearchText(e.target.value)}
+                onInput={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    setSearchText(event.target.value);
+                  }
+                }}
                 value={searchText}
-                onFocus={(e) => {
-                  e.target.scrollIntoView({
-                    behavior: 'smooth',
-                  });
+                onFocus={(event) => {
+                  if (event.target instanceof HTMLElement) {
+                    event.target.scrollIntoView({
+                      behavior: 'smooth',
+                    });
+                  }
                 }}
               />
             </label>

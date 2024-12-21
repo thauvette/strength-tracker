@@ -4,13 +4,13 @@ import { route } from 'preact-router';
 
 import useSessionContext from '../../context/sessionData/sessionData';
 import { routes } from '../../config/routes';
-import { LogsSet } from '../../context/db/types';
+import { AugmentedDataSet } from '../../context/db/types';
 import LogGroup from './LogGroup';
 import LogSet from './logSet';
 import useQuickSetAdd from '../../context/quickAddSetModalContext';
 
 interface Props {
-  activeDayData: LogsSet[];
+  activeDayData: AugmentedDataSet[];
   isToday: boolean;
   openExerciseModal?: (id: number) => void;
 }
@@ -25,11 +25,11 @@ const ExerciseLists = ({
   const { launchQuickAdd } = useQuickSetAdd();
 
   const sortedDayData: {
-    [key: string]: LogsSet[];
+    [key: string]: AugmentedDataSet[];
   } = activeDayData.reduce((obj, exercise) => {
     const key = exercise.name;
 
-    const currentExerciseSets: LogsSet[] = obj[key] || [];
+    const currentExerciseSets: AugmentedDataSet[] = obj[key] || [];
     currentExerciseSets.push(exercise);
     return {
       ...obj,
@@ -77,7 +77,7 @@ const ExerciseLists = ({
                 sets={sets}
                 quickAdd={
                   isToday
-                    ? () =>
+                    ? () => {
                         launchQuickAdd({
                           id: sets?.[0]?.exercise,
                           exerciseName: name,
@@ -86,7 +86,8 @@ const ExerciseLists = ({
                             reps: lastSet.reps,
                             isWarmUp: !!lastSet.isWarmUp,
                           },
-                        })
+                        });
+                      }
                     : null
                 }
                 openExerciseModal={openExerciseModal}

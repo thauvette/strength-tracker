@@ -1,6 +1,4 @@
-import cloneDeep from 'lodash.clonedeep';
-import get from 'lodash.get';
-import set from 'lodash.set';
+import { cloneDeep, get, set } from 'lodash';
 
 const formatCycleForDuplication = (cycle) => {
   const freshCycle = cloneDeep(cycle);

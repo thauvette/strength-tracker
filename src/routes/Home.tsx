@@ -9,7 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import useDB from '../context/db/db';
 import ExerciseLists from '../components/logs/exerciseLists';
 import LogHeader from '../components/logs/logHeader';
-import { HydradedBioEntry, LogsSet } from '../context/db/types';
+import { AugmentedDataSet, HydratedBioEntry } from '../context/db/types';
 import Modal from '../components/modal/Modal';
 import LogsCalendar from '../components/LogsCalendar/LogsCalendar';
 
@@ -20,9 +20,9 @@ interface Props {
 interface LogState {
   [key: string]: {
     loading: boolean;
-    data: LogsSet[];
+    data: AugmentedDataSet[];
     bioEntries: {
-      [key: string]: HydradedBioEntry;
+      [key: string]: HydratedBioEntry;
     };
   };
 }
@@ -31,9 +31,9 @@ interface ReducerActions {
   type: string;
   payload: {
     date: string;
-    data?: LogsSet[];
-    bioEntries?: { [key: string]: HydradedBioEntry[] };
-    set?: LogsSet;
+    data?: AugmentedDataSet[];
+    bioEntries?: { [key: string]: HydratedBioEntry[] };
+    set?: AugmentedDataSet;
   };
 }
 
@@ -60,7 +60,7 @@ const logsReducer = (state: LogState = {}, action: ReducerActions) => {
       return {
         ...state,
         [action.payload.date]: {
-          ...(state[action.payload.date], {}),
+          ...(state[action.payload.date] || {}),
           data: [
             ...(state[action.payload.date]?.data || []),
             action.payload.set,
@@ -75,14 +75,15 @@ const logsReducer = (state: LogState = {}, action: ReducerActions) => {
 };
 
 const Home = ({ date }: Props) => {
-  const { getSetsByDateRange, getBioEntriesByDateRange } = useDB();
+  const { getSetsByDateRange, getBioEntriesByDateRange, getDataAndAugmentSet } =
+    useDB();
 
   const [activeDate, setActiveDate] = useState(
     date || dayjs().format('YYYY-MM-DD'),
   );
   const [calendarIsOpen, setCalendarIsOpen] = useState(false);
   const [logState, dispatch] = useReducer(logsReducer, {});
-  const changeDate = (date) => {
+  const changeDate = (date: string) => {
     setActiveDate(date);
     route(`${routes.logs}?date=${date}`);
   };
@@ -127,22 +128,26 @@ const Home = ({ date }: Props) => {
   }, [activeDate, logState, getSetsByDateRange, getBioEntriesByDateRange]);
 
   useEffect(() => {
-    const addSet = (event: CustomEvent) => {
+    const addSet = async (event: CustomEvent) => {
+      const data = await getDataAndAugmentSet(event.detail);
       dispatch({
         type: 'ADD_SINGLE_SET',
         payload: {
           date: dayjs(event.detail.created).format('YYYY-MM-DD'),
-          set: event.detail,
+          set: {
+            ...event.detail,
+            ...(data || {}),
+          },
         },
       });
     };
     addEventListener('dbSetAdded', addSet);
     return () => removeEventListener('dbSetAdded', addSet);
-  }, []);
+  }, [getDataAndAugmentSet]);
 
   const { loading, data, bioEntries } = logState?.[activeDate] || {};
   const isToday = dayjs(activeDate).isSame(dayjs(), 'day');
-  const stepByDate = (amount) =>
+  const stepByDate = (amount: number) =>
     changeDate(dayjs(activeDate).add(amount, 'days').format(dateFormats.day));
 
   return (

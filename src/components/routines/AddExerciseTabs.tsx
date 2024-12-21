@@ -1,19 +1,20 @@
 import { h } from 'preact';
 import dayjs from 'dayjs';
 import { useState } from 'preact/hooks';
-import ExerciseStats from '../exerciseStats/ExerciseStats';
-import Plan from '../Plan';
-import EditableSet from '../editableSet/editableSet.tsx';
-import generateRandomId from '../../utilities.js/generateRandomId';
+import ExerciseStats from '../exerciseStats/ExerciseStats.js';
+import Plan from '../Plan.js';
+import EditableSet from '../editableSet/editableSet';
+import generateRandomId from '../../utilities.js/generateRandomId.js';
 import Icon from '../icon/Icon.js';
-import EditableSetList from '../EditableSetList.tsx';
+import EditableSetList from '../EditableSetList';
+import { RoutineSet } from '../../types/types';
 
 const AddExerciseTabs = ({
   selectedExercise,
   addedSets,
   setAddedSets,
   submit,
-  addFromHistroy,
+  addFromHistory,
 }) => {
   const [view, setView] = useState('add');
 
@@ -35,12 +36,9 @@ const AddExerciseTabs = ({
                       weight,
                       reps,
                       isWarmUp,
-                      id: generateRandomId(),
-                      exerciseId: selectedExercise.id,
+                      routineSetId: generateRandomId(),
+                      exercise: selectedExercise.id,
                       exerciseName: selectedExercise.name,
-                      musclesWorked: selectedExercise.musclesWorked,
-                      secondaryMusclesWorked:
-                        selectedExercise.secondaryMusclesWorked,
                     },
                   ])
                 }
@@ -68,16 +66,14 @@ const AddExerciseTabs = ({
         )}
         <Plan
           initialWeight={selectedExercise?.lastWorkoutHeaviestSet?.weight}
-          updatePlanedSet={(newSets) =>
+          updatePlanedSet={(newSets: RoutineSet[]) =>
             setAddedSets([
               ...addedSets,
               ...newSets.map((set) => ({
                 ...set,
-                id: generateRandomId(),
-                exerciseId: selectedExercise.id,
+                routineSetId: generateRandomId(),
+                exercise: selectedExercise.id,
                 exerciseName: selectedExercise.name,
-                musclesWorked: selectedExercise.musclesWorked,
-                secondaryMusclesWorked: selectedExercise.secondaryMusclesWorked,
               })),
             ])
           }
@@ -89,14 +85,13 @@ const AddExerciseTabs = ({
       <div>
         <ExerciseStats
           exerciseHistory={selectedExercise}
-          updatePlanedSet={(newSets) => {
-            addFromHistroy(
+          updatePlanedSet={(newSets: RoutineSet[]) => {
+            addFromHistory(
               newSets.map((set) => ({
                 ...set,
-                exerciseId: +selectedExercise.id,
+                exercise: +selectedExercise.id,
                 exerciseName: selectedExercise.name,
-                musclesWorked: selectedExercise.musclesWorked,
-                secondaryMusclesWorked: selectedExercise.secondaryMusclesWorked,
+                routineSetId: generateRandomId(),
               })),
             );
           }}

@@ -2,6 +2,8 @@ import getClosestTimeStamp from '../../utilities.js/getClosestTimeStamp';
 import { objectStores } from './config';
 import { getAllEntriesByKey } from './entries';
 import {
+  AugmentedExercise,
+  BioEntry,
   Exercise,
   ExerciseHistory,
   MuscleGroup,
@@ -33,7 +35,7 @@ export const getExerciseOptions = (
 
             currentGroup.items.push({
               ...exercise,
-              id: exerciseId,
+              id: +exerciseId,
             });
 
             return {
@@ -61,7 +63,11 @@ export const getExerciseById = (
 
     const cursorRequest = objectStore.openCursor(keyRange);
     cursorRequest.onsuccess = (event: ObjectStoreEvent) => {
-      resolve(event?.target?.result?.value);
+      resolve({
+        ...(event?.target?.result?.value || {}),
+        barWeight: event?.target?.result?.value?.barWeight ?? 45,
+        id: event?.target?.result.primaryKey,
+      });
     };
     cursorRequest.onerror = (err) => {
       reject(err);
@@ -72,37 +78,9 @@ export const getExerciseHistoryById = (
   db: IDBDatabase,
   id: number,
 ): Promise<ExerciseHistory> =>
-  new Promise((resolve, reject) => {
-    getExerciseById(db, id).then(async (exerciseResponse: Exercise) => {
-      if (!exerciseResponse) {
-        reject('404');
-      }
-      const muscleGroupData = await getFromCursor<MuscleGroup>(
-        db,
-        'muscle_groups',
-      );
-
-      const primaryMuscles = [];
-      const secondaryMusclesWorked = [];
-
-      if (exerciseResponse?.musclesWorked?.length) {
-        exerciseResponse.musclesWorked.forEach((muscleId) => {
-          primaryMuscles.push({
-            ...muscleGroupData[muscleId],
-            id: muscleId,
-          });
-        });
-      }
-      if (exerciseResponse?.secondaryMusclesWorked?.length) {
-        exerciseResponse.secondaryMusclesWorked.forEach((muscleId) => {
-          secondaryMusclesWorked.push({
-            ...muscleGroupData[muscleId],
-            id: muscleId,
-          });
-        });
-      }
-
-      const weights = await getAllEntriesByKey(
+  new Promise((resolve) => {
+    getAugmentedExercise(db, id).then(async (exerciseResponse) => {
+      const weights = await getAllEntriesByKey<BioEntry>(
         db,
         objectStores.bioEntries,
         'bioMetric',
@@ -121,9 +99,7 @@ export const getExerciseHistoryById = (
         ?.sort((a, b) => a - b);
 
       const { objectStore } = openObjectStoreTransaction(db, objectStores.sets);
-
       const results = [];
-
       // get all sets for this exercise
       const index = objectStore.index('exercise');
       const keyRange = IDBKeyRange.only(+id);
@@ -145,12 +121,50 @@ export const getExerciseHistoryById = (
         } else {
           resolve({
             ...exerciseResponse,
-            primaryGroupData: muscleGroupData?.[exerciseResponse?.primaryGroup],
-            musclesWorked: primaryMuscles,
-            secondaryMusclesWorked,
             items: results,
           });
         }
       };
     });
   });
+
+export const getAugmentedExercise = async (
+  db: IDBDatabase,
+  id: number,
+): Promise<AugmentedExercise> => {
+  try {
+    const exerciseResponse = await getExerciseById(db, id);
+    if (!exerciseResponse) {
+      throw new Error('404');
+    }
+    const muscleGroupData = await getFromCursor<MuscleGroup>(
+      db,
+      'muscle_groups',
+    );
+    const musclesWorked =
+      exerciseResponse.musclesWorked?.map((id) => ({
+        ...(muscleGroupData?.[id] || null),
+        id,
+      })) || [];
+    const secondaryMusclesWorked =
+      exerciseResponse.secondaryMusclesWorked?.map((id) => ({
+        ...(muscleGroupData?.[id] || null),
+        id,
+      })) || [];
+
+    return {
+      ...exerciseResponse,
+      primaryMuscleIds: exerciseResponse.musclesWorked || [],
+      secondaryMuscleIds: exerciseResponse.secondaryMusclesWorked || [],
+      musclesWorked,
+      secondaryMusclesWorked,
+      primaryGroupData: muscleGroupData?.[exerciseResponse?.primaryGroup],
+    };
+  } catch (err) {
+    let message = 'oops';
+    if (err instanceof Error) {
+      message = err.message;
+    }
+    throw new Error(message);
+  }
+};
