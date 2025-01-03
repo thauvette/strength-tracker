@@ -75,12 +75,9 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }: Props) => {
       notes,
       barWeight,
     };
-    let res;
-    if (id) {
-      res = await updateEntry(objectStores.exercises, id, data);
-    } else {
-      res = await createEntry(objectStores.exercises, data);
-    }
+    const res = id
+      ? await updateEntry(objectStores.exercises, id, data)
+      : await createEntry(objectStores.exercises, data);
     if (onSubmit) {
       e.stopPropagation();
       onSubmit(res);
@@ -122,7 +119,7 @@ const ExerciseForm = ({ onSubmit, initialValues, id = null, title }: Props) => {
             type="text"
             value={formData.notes}
             onInput={(e) => {
-              if (e.target instanceof HTMLInputElement) {
+              if (e.target instanceof HTMLTextAreaElement) {
                 setFormData({
                   ...formData,
                   notes: e.target.value,
